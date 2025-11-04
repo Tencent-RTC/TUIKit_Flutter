@@ -1,49 +1,21 @@
-name: atomic_x
+name: tencent_calls_uikit
 description: "A new Flutter project."
 version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
   flutter: '>=3.3.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  atomic_x:
+    path: ../atomic-x
 
-  flutter_localizations:
-    sdk: flutter
-  intl: any
-  cupertino_icons: ^1.0.8
-  wechat_assets_picker: ^9.5.1
-  path_provider: ^2.1.4
-  device_info_plus: ^11.3.0
-  path: ^1.9.0
-  provider: ^6.0.5
-  # audio_player
-  just_audio: ^0.9.36
-  # audio recorder
-  record: '>=6.0.0 <6.1.0'
-  record_android: '>=1.3.3 <1.4.0'
-  azlistview: ^2.0.0
-  lpinyin: ^2.0.3
-  cached_network_image: ^3.3.1
-  flutter_svg: ^2.0.10+1
-  flutter_swipe_action_cell: ^3.1.3
-  file_picker: ^10.1.9
-  open_file: ^3.5.10
-  permission_handler: ^11.3.1
-  fc_native_video_thumbnail: ^0.17.0
-  extended_text: ^15.0.0
-  extended_text_field: ^16.0.0
-  tencent_super_tooltip: ^0.0.1
-  scroll_to_index: ^2.1.1
-  video_player: ^2.7.2
-  image_picker: ^1.1.2
-  url_launcher: ^6.3.1
-  shared_preferences: ^2.5.0
-
-  atomic_x_core: ^3.4.1
+  tencent_cloud_uikit_core: ^1.7.4
+  tencent_rtc_sdk: any
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:
@@ -55,8 +27,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  uses-material-design: true
-  generate: true
   # This section identifies this Flutter project as a plugin project.
   # The 'pluginClass' specifies the class (in Java, Kotlin, Swift, Objective-C, etc.)
   # which should be registered in the plugin registry. This is required for
@@ -70,17 +40,18 @@ flutter:
   plugin:
     platforms:
       android:
-        package: io.trtc.tuikit.atomicx
-        pluginClass: AtomicXPlugin
+        package: com.tencent.cloud.tuikit.flutter.tuicallkit
+        pluginClass: TencentCallsUikitPlugin
       ios:
-        pluginClass: AtomicXPlugin
+        pluginClass: TencentCallsUikitPlugin
 
-  # To add assets to your plugin package, add an assets section, like this:
   assets:
-    - call_assets/
-    - chat_assets/config/
-    - chat_assets/emoji/
-    - chat_assets/icon/
+    - assets/audios/
+    - assets/images/
+  # To add assets to your plugin package, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

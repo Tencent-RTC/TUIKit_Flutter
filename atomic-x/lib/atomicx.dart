@@ -18,3 +18,4 @@ export 'message_input/message_input.dart';
 export 'message_list/message_list.dart';
 export 'video_picker/video_picker.dart';
 export 'user_picker/user_picker.dart';
+export 'call/call_view.dart';
