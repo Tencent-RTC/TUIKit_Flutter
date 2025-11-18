@@ -1,0 +1,37 @@
+{
+  "theme": {
+    "mode": "light",
+    "primaryColor": "#1C66E5"
+  },
+  "messageList": {
+    "alignment": "two-sided",
+    "enableReadReceipt": false,
+    "messageActionList": [
+      "copy",
+      "recall",
+      "quote",
+      "forward",
+      "delete"
+    ]
+  },
+  "conversationList": {
+    "enableCreateConversation": true,
+    "conversationActionList": [
+      "delete",
+      "mute",
+      "pin",
+      "markUnread",
+      "clearHistory"
+    ]
+  },
+  "messageInput": {
+    "hideSendButton": false,
+    "attachmentPickerMode": "collapsed"
+  },
+  "search": {
+    "hideSearch": false
+  },
+  "avatar": {
+    "shape": "circular"
+  }
+}
