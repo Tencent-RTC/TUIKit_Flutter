@@ -935,4 +935,75 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
 
   @override
   String get resendTips => 'Are you sure you want to resend?';
+
+  @override
+  String get callRejectCaller => 'Call declined by user';
+
+  @override
+  String get callRejectCallee => 'Declined';
+
+  @override
+  String get callCancelCaller => 'Canceled';
+
+  @override
+  String get callCancelCallee => 'Call canceled by caller';
+
+  @override
+  String get stopCallTip => 'Duration';
+
+  @override
+  String get callTimeoutCaller => 'Call was not answered';
+
+  @override
+  String get callTimeoutCallee => 'Call timeout';
+
+  @override
+  String get callLineBusyCaller => 'Line busy';
+
+  @override
+  String get callLineBusyCallee => 'Line busy';
+
+  @override
+  String get startCall => 'Start Call';
+
+  @override
+  String get acceptCall => 'Answered';
+
+  @override
+  String get callingSwitchToAudio => 'Switch to voice call';
+
+  @override
+  String get callingSwitchToAudioAccept => 'Confirm video to voice';
+
+  @override
+  String get invalidCommand => 'invalid command';
+
+  @override
+  String get groupCallSend => 'initiated a group call';
+
+  @override
+  String get groupCallEnd => 'End group call';
+
+  @override
+  String get groupCallNoAnswer => 'no answer';
+
+  @override
+  String get groupCallReject => 'declined call';
+
+  @override
+  String get groupCallAccept => 'answered';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => 'confirm to audio call';
+
+  @override
+  String get unknownCall => 'Unknown call';
+
+  @override
+  String get join => 'join in';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$number person are currently on the call';
+  }
 }

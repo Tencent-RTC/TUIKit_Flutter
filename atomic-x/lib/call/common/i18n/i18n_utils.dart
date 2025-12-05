@@ -4,7 +4,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:atomic_x/call/common/i18n/strings.g.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/strings.g.dart';
 
 String CallKit_t(String value) {
   final CallKitI18nUtils ttBuild = CallKitI18nUtils();

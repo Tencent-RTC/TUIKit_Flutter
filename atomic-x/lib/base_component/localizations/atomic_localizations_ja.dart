@@ -929,4 +929,75 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
 
   @override
   String get resendTips => '再送信してもよろしいですか?';
+
+  @override
+  String get callRejectCaller => '相手が拒否しました';
+
+  @override
+  String get callRejectCallee => '拒否されました';
+
+  @override
+  String get callCancelCaller => 'キャンセル';
+
+  @override
+  String get callCancelCallee => '相手がキャンセルした';
+
+  @override
+  String get stopCallTip => '通話時間';
+
+  @override
+  String get callTimeoutCaller => '相手からの応答がありません';
+
+  @override
+  String get callTimeoutCallee => '応答なしでタイムアウトする';
+
+  @override
+  String get callLineBusyCaller => '相手は忙しいです';
+
+  @override
+  String get callLineBusyCallee => '話し中のため応答なし';
+
+  @override
+  String get startCall => '通話を開始する';
+
+  @override
+  String get acceptCall => '答えた';
+
+  @override
+  String get callingSwitchToAudio => 'ビデオから音声へ';
+
+  @override
+  String get callingSwitchToAudioAccept => 'ビデオから音声への変換を確認する';
+
+  @override
+  String get invalidCommand => '認識できない呼び出しコマンド';
+
+  @override
+  String get groupCallSend => 'グループ通話が始まりました';
+
+  @override
+  String get groupCallEnd => '通話が終了しました';
+
+  @override
+  String get groupCallNoAnswer => '答えはありません';
+
+  @override
+  String get groupCallReject => 'グループ通話を拒否する';
+
+  @override
+  String get groupCallAccept => '答え';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => '動画を音声に変換することに同意する';
+
+  @override
+  String get unknownCall => '不明な電話';
+
+  @override
+  String get join => '参加する';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$numberは現在通話中です。';
+  }
 }

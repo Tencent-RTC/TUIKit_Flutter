@@ -1,4 +1,4 @@
-import 'package:permission_handler/permission_handler.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:tencent_calls_uikit/src/common/platform/call_kit_platform_interface.dart';
 
 class ForegroundService {
@@ -7,11 +7,15 @@ class ForegroundService {
   static void start() async {
     if (_isStarted) return;
 
-    if (await Permission.camera.status.isGranted) {
+    final cameraStatus = await Permission.check(PermissionType.camera);
+    if (cameraStatus == PermissionStatus.granted) {
       TUICallKitPlatform.instance.startForegroundService(true);
       _isStarted = true;
+      return;
     }
-    else if (await Permission.microphone.status.isGranted) {
+
+    final microphoneStatus = await Permission.check(PermissionType.microphone);
+    if (microphoneStatus == PermissionStatus.granted) {
       TUICallKitPlatform.instance.startForegroundService(false);
       _isStarted = true;
     }

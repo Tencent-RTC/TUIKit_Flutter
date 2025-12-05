@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="album_picker_all_photos_and_videos">图片和视频</string>
+    <string name="album_picker_all_photos">所有图片</string>
+    <string name="album_picker_all_videos">所有视频</string>
+    <string name="album_picker_collections">收藏</string>
+
+    <string name="album_picker_preview">预览</string>
+    <string name="album_picker_send">发送</string>
+    <string name="album_picker_select">选择</string>
+
+    <string name="album_request_permission_storage_title">%s申请获取存储权限</string>
+    <string name="album_request_permission_storage_reason">需要访问您的存储权限，开启后用于相册图片视频发送、聊天图片视频保存等功能</string>
+    <string name="album_request_permission_storage_tip">在设置-应用-%s-权限中开启存储权限，以正常使用相册图片视频发送、聊天图片保存等功能</string>
+
+    <string name="album_request_permission_media_title">%s申请访问照片与视频</string>
+    <string name="album_request_permission_media_reason">需要访问照片与视频，开启后用于相册图片视频发送、聊天图片视频保存等功能</string>
+    <string name="album_request_permission_media_tip">在设置-应用-%s-权限中开启照片与视频权限，以正常使用相册图片视频发送、聊天图片保存等功能</string>
+
+</resources>

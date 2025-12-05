@@ -1,6 +1,8 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'calling_message_data_provider.dart';
 
 class MessageUtil {
   static String getSystemInfoDisplayString(List<SystemMessageInfo> systemMessages, BuildContext context) {
@@ -242,6 +244,11 @@ class MessageUtil {
           return localizations.messageTypeCustom;
         }
 
+        CallingMessageDataProvider provider = CallingMessageDataProvider(messageInfo, context);
+        if (provider.isCallingSignal) {
+          return provider.content;
+        }
+
         final customInfo = ChatUtil.jsonData2Dictionary(customMessage.data);
         if (customInfo != null && customInfo['businessID'] == 'group_create') {
           final sender = customInfo['opUser'] ?? '';
@@ -297,5 +304,28 @@ class MessageUtil {
     }
 
     return timeStr;
+  }
+
+  static bool isSystemStyleCustomMessage(MessageInfo message, BuildContext context) {
+    if (message.messageType == MessageType.custom) {
+      try {
+        final customMessage = message.messageBody?.customMessage?.data;
+        final customInfo = ChatUtil.jsonData2Dictionary(customMessage);
+        if (customInfo != null) {
+          if (customInfo['businessID'] == 'group_create') {
+            return true;
+          }
+
+          final callingProvider = CallingMessageDataProvider(message, context);
+          if (callingProvider.isCallingSignal && callingProvider.participantType == CallParticipantType.group) {
+            return true;
+          }
+        }
+      } catch (e) {
+        debugPrint('isSystemStyleCustomMessage error: $e');
+      }
+    }
+
+    return false;
   }
 }

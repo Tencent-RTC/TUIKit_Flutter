@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 

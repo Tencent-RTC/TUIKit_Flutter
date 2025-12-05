@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_svg/svg.dart';
@@ -255,7 +255,7 @@ class _CreateGroupState extends State<CreateGroup> {
                                 'chat_assets/icon/close.svg',
                                 width: 18,
                                 height: 18,
-                                package: 'atomic_x',
+                                package: 'tuikit_atomic_x',
                               ),
                             ),
                           ),
@@ -309,8 +309,10 @@ class _CreateGroupState extends State<CreateGroup> {
       await Future.delayed(const Duration(milliseconds: 200));
 
       String loginUserID = LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
+      int cmdValue = _selectedGroupType == GroupType.community.value ? 1 : 0;
       Map<String, dynamic> customMessageJson = {
         'version': 4,
+        'cmd': cmdValue,
         'businessID': 'group_create',
         'opUser': loginUserID,
         'content': atomicLocale.createGroupTips,

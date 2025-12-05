@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:atomic_x/base_component/base_component.dart';
-import 'package:atomic_x/image_viewer/image_viewer.dart';
-import 'package:atomic_x/message_list/widgets/image_viewer_manager.dart';
-import 'package:atomic_x/message_list/widgets/message_status_mixin.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/image_viewer/image_viewer.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/image_viewer_manager.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class VideoMessageWidget extends StatefulWidget {
   final VoidCallback? onLongPress;
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
+  final MessageListConfigProtocol config;
 
   static const double kVideoFixedHeight = 160.0;
 
@@ -25,6 +27,7 @@ class VideoMessageWidget extends StatefulWidget {
     required this.conversationID,
     required this.isSelf,
     required this.maxWidth,
+    required this.config,
     this.onTap,
     this.onLongPress,
     this.messageListStore,
@@ -92,6 +95,7 @@ class _VideoMessageWidgetState extends State<VideoMessageWidget> with MessageSta
                     isSelf: widget.isSelf,
                     colors: colorsTheme,
                     isOverlay: true,
+                    isShowTimeInBubble: widget.config.isShowTimeInBubble,
                   ),
                 ),
               ),

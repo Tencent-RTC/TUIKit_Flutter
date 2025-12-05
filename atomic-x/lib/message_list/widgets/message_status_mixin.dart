@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,7 +22,7 @@ mixin MessageStatusMixin {
           width: 14,
           height: 14,
           colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-          package: 'atomic_x',
+          package: 'tuikit_atomic_x',
           fit: BoxFit.contain,
         );
       case MessageStatus.sending:
@@ -78,6 +78,7 @@ mixin MessageStatusMixin {
     required SemanticColorScheme colors,
     bool isOverlay = false,
     VoidCallback? onResendTap,
+    bool isShowTimeInBubble = true,
   }) {
     final widgets = <Widget>[];
 
@@ -94,16 +95,18 @@ mixin MessageStatusMixin {
       widgets.add(const SizedBox(width: 3));
     }
 
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch((message.timestamp ?? 0) * 1000);
-    final timeWidget = buildMessageTimeIndicator(
-      dateTime: dateTime,
-      colorsTheme: colors,
-      isOverlay: isOverlay,
-      isSelf: isSelf,
-    );
+    if (isShowTimeInBubble) {
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch((message.timestamp ?? 0) * 1000);
+      final timeWidget = buildMessageTimeIndicator(
+        dateTime: dateTime,
+        colorsTheme: colors,
+        isOverlay: isOverlay,
+        isSelf: isSelf,
+      );
 
-    if (timeWidget is! SizedBox || timeWidget.child != null) {
-      widgets.add(timeWidget);
+      if (timeWidget is! SizedBox || timeWidget.child != null) {
+        widgets.add(timeWidget);
+      }
     }
 
     return widgets;

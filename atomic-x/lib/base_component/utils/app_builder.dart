@@ -59,15 +59,14 @@ class AppBuilder {
     return _instance!;
   }
 
-  static Future<void> init() async {
+  static Future<void> init({required String path}) async {
     final instance = getInstance();
-    await instance._loadConfig();
+    await instance._loadConfig(path: path);
   }
 
-  Future<void> _loadConfig() async {
+  Future<void> _loadConfig({required String path}) async {
     try {
-      final String jsonString =
-          await rootBundle.loadString('packages/atomic_x/chat_assets/config/appConfig.json');
+      final String jsonString = await rootBundle.loadString(path);
       _config = json.decode(jsonString);
       _parseConfig();
       _isLoaded = true;
@@ -95,13 +94,6 @@ class AppBuilder {
     conversationListConfig = ConversationListConfig.defaultConfig();
     searchConfig = SearchConfig.defaultConfig();
     avatarConfig = AvatarConfig.defaultConfig();
-  }
-
-  static Future<void> reload() async {
-    if (_instance != null) {
-      _instance!._isLoaded = false;
-      await _instance!._loadConfig();
-    }
   }
 }
 

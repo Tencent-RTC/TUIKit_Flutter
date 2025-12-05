@@ -1,4 +1,4 @@
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 
@@ -16,10 +16,10 @@ class VoIPDataSyncHandler {
   }
 
   void handleVoipHangup() {
-    CallListStore.shared.hangup();
+    CallStore.shared.hangup();
   }
 
   void handleVoipAccept() {
-    CallListStore.shared.accept();
+    CallStore.shared.accept();
   }
 }

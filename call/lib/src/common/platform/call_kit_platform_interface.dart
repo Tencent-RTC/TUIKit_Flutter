@@ -1,4 +1,4 @@
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'call_kit_method_channel.dart';
@@ -21,7 +21,7 @@ abstract class TUICallKitPlatform extends PlatformInterface {
     instance.stopVibration();
   }
 
-  void openAndroidNotificationView(String name, String avatar, TUICallMediaType mediaType) {
+  void openAndroidNotificationView(String name, String avatar, CallMediaType mediaType) {
     instance.openAndroidNotificationView(name, avatar, mediaType);
   }
 

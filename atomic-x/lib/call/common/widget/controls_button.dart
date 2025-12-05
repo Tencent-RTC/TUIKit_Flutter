@@ -29,7 +29,7 @@ class ControlsButton extends StatelessWidget {
   Widget _buildImage() {
     return Image.asset(
       imgUrl,
-      package: 'atomic_x',
+      package: 'tuikit_atomic_x',
       color: imgColor,
     );
   }

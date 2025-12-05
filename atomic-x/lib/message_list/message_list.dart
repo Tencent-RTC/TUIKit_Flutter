@@ -1,11 +1,14 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/utils/call_ui_extension.dart';
+import 'package:tuikit_atomic_x/message_list/utils/message_utils.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_item.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import 'widgets/message_item.dart';
-
+export 'message_list_config.dart';
 export 'widgets/message_bubble.dart';
 export 'widgets/message_item.dart';
 export 'widgets/message_types/custom_message_widget.dart';
@@ -13,25 +16,46 @@ export 'widgets/message_types/system_message_widget.dart';
 
 typedef OnUserClick = void Function(String userID);
 
+class MessageCustomAction {
+  final String title;
+  final String assetName;
+  final String? package;
+  final IconData? systemIconFallback;
+  final void Function(MessageInfo) action;
+
+  const MessageCustomAction({
+    required this.title,
+    this.assetName = '',
+    this.package,
+    this.systemIconFallback,
+    required this.action,
+  });
+}
+
 class MessageList extends StatefulWidget {
   final String conversationID;
+  final MessageListConfigProtocol config;
   final MessageInfo? locateMessage;
   final OnUserClick? onUserClick;
+  final List<MessageCustomAction> customActions;
 
   const MessageList({
     super.key,
     required this.conversationID,
+    this.config = const ChatMessageListConfig(),
     this.locateMessage,
     this.onUserClick,
+    this.customActions = const [],
   });
 
   @override
   State<MessageList> createState() => _MessageListState();
 }
 
-class _MessageListState extends State<MessageList> with TickerProviderStateMixin {
+class _MessageListState extends State<MessageList> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late MessageListStore _messageListStore;
-  late AtomicLocalizations _atomicEngineLocale;
+  GroupSettingStore? _groupSettingStore;
+  late AtomicLocalizations _atomicLocale;
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   List<MessageInfo> _messages = [];
@@ -44,25 +68,39 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   bool _isInitialLoad = true;
 
   String? _highlightedMessageId;
-  String _alignment = AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED;
+
+  Widget? _callStatusWidget;
 
   static const int _messageAggregationTime = 300;
+
+  // AutomaticKeepAliveClientMixin requires this method to be implemented
+  // Returning true indicates that the state is maintained even if the Widget is not in the view.
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _loadAlignmentConfig();
+
     _messageListStore =
         MessageListStore.create(conversationID: widget.conversationID, messageListType: MessageListType.history);
     _messageListStore.addListener(_onMessageListStateChanged);
     _itemPositionsListener.itemPositions.addListener(_scrollListener);
+
+    if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
+      final groupId = widget.conversationID.replaceFirst(groupConversationIDPrefix, '');
+      _groupSettingStore = GroupSettingStore.create(groupID: groupId);
+      _groupSettingStore!.addListener(_onGroupSettingStateChanged);
+      _loadGroupAttributes();
+    }
+
     _loadInitialMessages();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _atomicEngineLocale = AtomicLocalizations.of(context);
+    _atomicLocale = AtomicLocalizations.of(context);
   }
 
   Widget _buildTimeDivider(String timeString, SemanticColorScheme colorsTheme) {
@@ -258,12 +296,8 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     });
   }
 
-  String _getMessageKey(int index) {
-    if (index >= 0 && index < _messages.length) {
-      final message = _messages[index];
-      return "${message.msgID}-${message.messageType.toString()}-$index";
-    }
-    return index.toString();
+  String _getMessageKey(MessageInfo message) {
+    return '${message.msgID}-${message.timestamp}';
   }
 
   Widget _renderItem(BuildContext context, int index) {
@@ -273,11 +307,17 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     final colors = BaseThemeProvider.colorsOf(context);
 
     final timeString = _getMessageTimeString(index);
+    final shouldShowTime = widget.config.isShowTimeMessage && timeString != null;
     Widget messageWidget = _buildMessageItem(message, colors);
+
+    // Add spacing between messages
+    final spacing =
+    index < _messages.length - 1 ? SizedBox(height: widget.config.cellSpacing) : const SizedBox.shrink();
+
     if (_isLoadingNewer && index == _messages.length - 1) {
       return Column(
         children: [
-          if (timeString != null) _buildTimeDivider(timeString, colors),
+          if (shouldShowTime) _buildTimeDivider(timeString, colors),
           messageWidget,
           const Padding(
             padding: EdgeInsets.all(16.0),
@@ -289,69 +329,88 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
     return Column(
       children: [
-        if (timeString != null) _buildTimeDivider(timeString, colors),
+        if (shouldShowTime) _buildTimeDivider(timeString, colors),
         messageWidget,
+        spacing,
       ],
     );
   }
 
-  void _loadAlignmentConfig() {
-    final appBuilder = AppBuilder.getInstance();
-    if (mounted) {
-      setState(() {
-        _alignment = appBuilder.messageListConfig.alignment;
-      });
-    }
-  }
-
   Widget _buildMessageItem(MessageInfo message, SemanticColorScheme colors) {
     bool isGroup = widget.conversationID.startsWith(groupConversationIDPrefix);
-    return MessageItem(
-      key: ValueKey(_getMessageKey(_messages.indexOf(message))),
-      message: message,
-      conversationID: widget.conversationID,
-      isGroup: isGroup,
-      maxWidth: MediaQuery.of(context).size.width - 32,
-      messageListStore: _messageListStore,
-      isHighlighted: _highlightedMessageId == message.msgID,
-      onHighlightComplete: () {
-        debugPrint('messageList, onHighlightComplete');
-        if (_highlightedMessageId == message.msgID) {
-          _highlightedMessageId = null;
-        }
-      },
-      alignment: _alignment,
-      onUserClick: widget.onUserClick,
+    return RepaintBoundary(
+      child: MessageItem(
+        key: ValueKey(_getMessageKey(message)),
+        message: message,
+        conversationID: widget.conversationID,
+        isGroup: isGroup,
+        maxWidth: MediaQuery.of(context).size.width - 32,
+        messageListStore: _messageListStore,
+        isHighlighted: _highlightedMessageId == message.msgID,
+        onHighlightComplete: () {
+          debugPrint('messageList, onHighlightComplete');
+          if (_highlightedMessageId == message.msgID) {
+            _highlightedMessageId = null;
+          }
+        },
+        onUserClick: widget.onUserClick,
+        customActions: widget.customActions,
+        config: widget.config,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Super.build must be called; AutomaticKeepAliveClientMixin is required.
+    super.build(context);
+
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     return Expanded(
       child: Container(
         color: colorsTheme.bgColorOperate,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            child: RefreshIndicator(
-              displacement: 10.0,
-              onRefresh: _loadPreviousMessages,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ScrollablePositionedList.builder(
-                  reverse: true,
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemScrollController: _itemScrollController,
-                  itemPositionsListener: _itemPositionsListener,
-                  itemCount: _messages.length,
-                  itemBuilder: _renderItem,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  child: RefreshIndicator(
+                    displacement: 10.0,
+                    onRefresh: _loadPreviousMessages,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: _callStatusWidget != null ? 70 : 8,
+                        bottom: 8,
+                      ),
+                      child: ScrollablePositionedList.builder(
+                        reverse: true,
+                        shrinkWrap: true,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemScrollController: _itemScrollController,
+                        itemPositionsListener: _itemPositionsListener,
+                        itemCount: _messages.length,
+                        itemBuilder: _renderItem,
+                        addRepaintBoundaries: true,
+                        addAutomaticKeepAlives: true,
+                        addSemanticIndexes: false,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+            if (_callStatusWidget != null)
+              Positioned(
+                top: 8,
+                left: 8,
+                right: 8,
+                child: _callStatusWidget!,
+              ),
+          ],
         ),
       ),
     );
@@ -371,16 +430,54 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     }
   }
 
+  bool _isSystemMessage(MessageInfo message) {
+    if (message.messageType == MessageType.system) {
+      return true;
+    }
+
+    if (MessageUtil.isSystemStyleCustomMessage(message, context)) {
+      return true;
+    }
+
+    return false;
+  }
+
   String? _getMessageTimeString(int index) {
     if (index < 0 || index >= _messages.length) return null;
 
     final message = _messages[index];
 
+    // Skip time display for system messages when they are hidden
+    if (!widget.config.isShowSystemMessage && _isSystemMessage(message)) {
+      return null;
+    }
+
     if (index == _messages.length - 1) {
       return _getTimeString(message.timestamp ?? 0);
     }
 
-    final prevMessage = _messages[index + 1];
+    // Find the previous message, skipping system messages if they are hidden
+    int prevIndex = index + 1;
+    MessageInfo? prevMessage;
+
+    while (prevIndex < _messages.length) {
+      final candidate = _messages[prevIndex];
+
+      // If system messages are hidden, skip them when calculating time intervals
+      if (!widget.config.isShowSystemMessage && _isSystemMessage(candidate)) {
+        prevIndex++;
+        continue;
+      }
+
+      prevMessage = candidate;
+      break;
+    }
+
+    // If no valid previous message found, show time for this message
+    if (prevMessage == null) {
+      return _getTimeString(message.timestamp ?? 0);
+    }
+
     final timeInterval = _getIntervalSeconds(message.timestamp!, prevMessage.timestamp!);
     if (timeInterval > _messageAggregationTime) {
       return _getTimeString(message.timestamp ?? 0);
@@ -414,13 +511,13 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
           } else {
             final weekdays = [
-              _atomicEngineLocale.weekdaySunday,
-              _atomicEngineLocale.weekdayMonday,
-              _atomicEngineLocale.weekdayTuesday,
-              _atomicEngineLocale.weekdayWednesday,
-              _atomicEngineLocale.weekdayThursday,
-              _atomicEngineLocale.weekdayFriday,
-              _atomicEngineLocale.weekdaySaturday,
+              _atomicLocale.weekdaySunday,
+              _atomicLocale.weekdayMonday,
+              _atomicLocale.weekdayTuesday,
+              _atomicLocale.weekdayWednesday,
+              _atomicLocale.weekdayThursday,
+              _atomicLocale.weekdayFriday,
+              _atomicLocale.weekdaySaturday,
             ];
             return weekdays[date.weekday % 7];
           }
@@ -441,5 +538,34 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     final dayOfMonth = date.day;
 
     return ((dayOfMonth + firstWeekday - 7) / 7).ceil();
+  }
+
+  void _onGroupSettingStateChanged() {
+    _updateCallStatusWidget();
+  }
+
+  Future<void> _loadGroupAttributes() async {
+    if (_groupSettingStore == null) return;
+
+    await _groupSettingStore!.fetchGroupAttributes();
+
+    debugPrint('_loadGroupAttributes: ${_groupSettingStore!.groupSettingState.groupAttributes}');
+  }
+
+  void _updateCallStatusWidget() {
+    if (_groupSettingStore == null) return;
+
+    final groupId = widget.conversationID.replaceFirst(groupConversationIDPrefix, '');
+    final groupAttributes = _groupSettingStore!.groupSettingState.groupAttributes;
+
+    debugPrint('_updateCallStatusWidget: $groupAttributes');
+
+    final callWidget = CallUIExtension.getJoinInGroupCallWidget(groupId, groupAttributes);
+
+    if (mounted) {
+      setState(() {
+        _callStatusWidget = callWidget is SizedBox ? null : callWidget;
+      });
+    }
   }
 }

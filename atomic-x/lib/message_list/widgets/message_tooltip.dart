@@ -1,18 +1,23 @@
 import 'dart:math' as math;
 
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MessageMenuItem {
   final String title;
-  final IconData icon;
+  final IconData? icon;
+  final String? assetName;
+  final String? package;
   final VoidCallback onTap;
   final bool isDestructive;
 
   const MessageMenuItem({
     required this.title,
-    required this.icon,
+    this.icon,
+    this.assetName,
+    this.package,
     required this.onTap,
     this.isDestructive = false,
   });
@@ -94,11 +99,7 @@ class MessageTooltipState extends State<MessageTooltip> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                item.icon,
-                size: 20,
-                color: item.isDestructive ? colorTheme.textColorError : colorTheme.textColorPrimary,
-              ),
+              _buildMenuIcon(item, colorTheme),
               const SizedBox(height: 4),
               Text(
                 item.title,
@@ -115,6 +116,50 @@ class MessageTooltipState extends State<MessageTooltip> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMenuIcon(MessageMenuItem item, SemanticColorScheme colorTheme) {
+    final color = item.isDestructive ? colorTheme.textColorError : colorTheme.textColorPrimary;
+    
+    if (item.assetName != null && item.assetName!.isNotEmpty) {
+      final isSvg = item.assetName!.toLowerCase().endsWith('.svg');
+      
+      if (isSvg) {
+        return SvgPicture.asset(
+          item.assetName!,
+          package: item.package,
+          width: 20,
+          height: 20,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+          placeholderBuilder: (context) => Icon(
+            item.icon,
+            size: 20,
+            color: color,
+          ),
+        );
+      } else {
+        return Image.asset(
+          item.assetName!,
+          package: item.package,
+          width: 20,
+          height: 20,
+          color: color,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              item.icon,
+              size: 20,
+              color: color,
+            );
+          },
+        );
+      }
+    }
+    
+    return Icon(
+      item.icon ,
+      size: 20,
+      color: color,
     );
   }
 }

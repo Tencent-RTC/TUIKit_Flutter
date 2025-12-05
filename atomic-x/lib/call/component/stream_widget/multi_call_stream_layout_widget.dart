@@ -1,8 +1,8 @@
-import 'package:atomic_x/atomicx.dart';
-import 'package:atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
-import 'package:atomic_x/call/common/utils/utils.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
+import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
 
 class MultiCallStreamLayoutWidget extends StatefulWidget {
   final List<ParticipantStreamView> participantViews;

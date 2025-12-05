@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:atomic_x/atomicx.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 import 'call_main_widget.dart';
 import 'component/incoming_banner/incoming_banner_widget.dart';
 import 'component/inviter/invite_user_widget.dart';
@@ -16,16 +17,19 @@ enum CallPageType {
   floating,
   invite,
   banner,
+  pip,
 }
 
 class CallPageCallbacks {
   final VoidCallback? onShowCalling;
   final VoidCallback? onShowFloating;
+  final VoidCallback? onShowPip;
   final VoidCallback? onShowInvitePage;
 
   const CallPageCallbacks({
     this.onShowCalling,
     this.onShowFloating,
+    this.onShowPip,
     this.onShowInvitePage,
   });
 }
@@ -41,135 +45,162 @@ class InviteUserCallbacks {
 class CallPageManager {
   final GlobalKey _callPageKey = GlobalKey();
   final NavigatorState? Function() _navigatorGetter;
-  final Map<CallPageType, OverlayEntry> _overlayEntries = {};
+  final AndroidPipFeature pipController = AndroidPipFeature();
  
   CallPageType _currentPageType = CallPageType.none;
   CallPageType getCurrentPageRoute() => _currentPageType;
+
+  OverlayEntry? _currentOverlayEntry;
+  OverlayEntry? _cachedCallingEntry;
+  bool _hasManuallyShownCalling = false;
  
   CallPageManager({
     required NavigatorState? Function() navigatorGetter,
   })  : _navigatorGetter = navigatorGetter;
 
+  void showCallingPage() {
+    pipController.onEnterPip = () {
+      if (_currentPageType != CallPageType.none) {
+        _showPage(CallPageType.pip, isManualSwitch: true);
+      }
+    };
 
-  void showCallingPage() => _showCallPageOverlay(CallPageType.calling);
-  void showFloatingPage() => _showCallPageOverlay(CallPageType.floating);
-  void showInvitePage() => _showInviteOverlay();
-  void showIncomingBanner() => _showIncomingBannerOverlay();
-  void closeCallingPage() => _hideOverlay(CallPageType.calling);
-  void closeFloatingPage() => _hideOverlay(CallPageType.floating);
-  void closeInvitePage() => _hideOverlay(CallPageType.invite);
-  void closeIncomingBanner() => _hideOverlay(CallPageType.banner);
-  void closeAllPage() => _hideAll();
+    pipController.onLeavePip = () {
+      if (_currentPageType != CallPageType.none) {
+        _showPage(CallPageType.calling, isManualSwitch: true);
+      }
+    };
+
+    pipController.enable();
+    _showPage(CallPageType.calling, isManualSwitch: true);
+  }
+  
+  void showFloatingPage() => _showPage(CallPageType.floating, isManualSwitch: true);
+  void showPipPage() => _showPage(CallPageType.pip, isManualSwitch: true);
+  void showInvitePage() {
+    _showPage(CallPageType.invite, isManualSwitch: true, cacheCurrentPage: true);
+  }
+  void showIncomingBanner() {
+    if (_hasManuallyShownCalling) {
+      return;
+    }
+    _showPage(CallPageType.banner, isManualSwitch: false);
+  }
+  
+  void closeCallingPage() => _hidePage(CallPageType.calling);
+  void closeFloatingPage() => _hidePage(CallPageType.floating);
+  void closeInvitePage() => _hidePage(CallPageType.invite);
+  void closeIncomingBanner() => _hidePage(CallPageType.banner);
+  
+  void closeAllPage() {
+    pipController.onEnterPip = null;
+    pipController.onLeavePip = null;
+    
+    if (pipController.isInPipMode) {
+      pipController.closePictureInPicture();
+    }
+    
+    pipController.disable();
+    _removeCurrentOverlay();
+    _clearCachedCallingEntry();
+    _hasManuallyShownCalling = false;
+  }
 
   void dispose() {
-    _hideAll();
+    _removeCurrentOverlay();
+    _clearCachedCallingEntry();
+    _hasManuallyShownCalling = false;
   }
 
-  void _showInviteOverlay() {
+  void _showPage(CallPageType pageType, {bool isManualSwitch = false, bool cacheCurrentPage = false}) {
     final overlay = _navigatorGetter()?.overlay;
     if (overlay == null) return;
+    if (AppLifecycle.instance.currentState.value == AppLifecycleState.detached) return;
 
-    if (_overlayEntries.containsKey(CallPageType.invite)) {
-      final existing = _overlayEntries[CallPageType.invite]!;
-      existing.remove();
-      overlay.insert(existing);
+    if (isManualSwitch && 
+        (pageType == CallPageType.calling || 
+         pageType == CallPageType.floating || 
+         pageType == CallPageType.pip)) {
+      _hasManuallyShownCalling = true;
+    }
+    
+    if (_currentPageType == pageType && _currentOverlayEntry != null) {
+      _currentOverlayEntry?.markNeedsBuild();
       return;
     }
 
-    final widget = _buildWidgetFor(CallPageType.invite);
-    if (widget == null) return;
-    final entry = OverlayEntry(builder: (context) => widget);
-    _overlayEntries[CallPageType.invite] = entry;
-    overlay.insert(entry);
-  }
-
-  void _showIncomingBannerOverlay() {
-    final overlay = _navigatorGetter()?.overlay;
-    if (overlay == null) return;
-
-    if (_overlayEntries.containsKey(CallPageType.banner)) {
-      final existing = _overlayEntries[CallPageType.banner]!;
-      existing.remove();
-      overlay.insert(existing);
-      return;
+    if (cacheCurrentPage && 
+        _currentPageType == CallPageType.calling && 
+        _currentOverlayEntry != null) {
+      _cacheCallingEntry();
+    } else {
+      _removeCurrentOverlay();
     }
-
-    final widget = _buildWidgetFor(CallPageType.banner);
-    if (widget == null) return;
-    final entry = OverlayEntry(builder: (context) => widget);
-    _overlayEntries[CallPageType.banner] = entry;
-    overlay.insert(entry);
-  }
-
-  void _showCallPageOverlay(CallPageType pageType) {
-    final overlay = _navigatorGetter()?.overlay;
-    if (overlay == null) return;
-
-    if (_currentPageType == pageType && _overlayEntries.containsKey(pageType)) {
-      return;
-    }
-
-    _hideCallAndFloatingOverlays();
 
     final widget = _buildWidgetFor(pageType);
     if (widget == null) return;
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-    final entry = OverlayEntry(builder: (context) => widget);
-    _overlayEntries[pageType] = entry;
-    overlay.insert(entry);
 
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+
+    _currentOverlayEntry = OverlayEntry(builder: (context) => widget);
+    overlay.insert(_currentOverlayEntry!);
     _currentPageType = pageType;
   }
 
-  void _hideCallAndFloatingOverlays() {
-    for (final type in [CallPageType.calling, CallPageType.floating]) {
-      if (_overlayEntries.containsKey(type)) {
-        _overlayEntries[type]?.remove();
-        _overlayEntries.remove(type);
+  void _hidePage(CallPageType type) {
+    if (_currentPageType == type) {
+      if (type == CallPageType.invite && _cachedCallingEntry != null) {
+        _restoreCachedCallingEntry();
+      } else {
+        _removeCurrentOverlay();
       }
-    }
-    if (_currentPageType == CallPageType.calling || _currentPageType == CallPageType.floating) {
-      _currentPageType = CallPageType.none;
     }
   }
 
-  void _hideAll() {
-    for (var entry in _overlayEntries.values) {
-      entry.remove();
-    }
-    _overlayEntries.clear();
+  void _removeCurrentOverlay() {
+    _currentOverlayEntry?.remove();
+    _currentOverlayEntry = null;
     _currentPageType = CallPageType.none;
   }
 
-  void _hideOverlay(CallPageType type) {
-    if (_overlayEntries.containsKey(type)) {
-      _overlayEntries[type]?.remove();
-      _overlayEntries.remove(type);
+  void _cacheCallingEntry() {
+    _cachedCallingEntry = _currentOverlayEntry;
+    _currentOverlayEntry?.opaque = false;
+    _currentOverlayEntry = null;
+    _currentPageType = CallPageType.none;
+  }
+
+  void _restoreCachedCallingEntry() {
+    if (_cachedCallingEntry != null) {
+      _currentOverlayEntry?.remove();
+
+      _currentOverlayEntry = _cachedCallingEntry;
+      _currentPageType = CallPageType.calling;
+      _cachedCallingEntry = null;
+
+      _currentOverlayEntry?.markNeedsBuild();
+    } else {
+      _removeCurrentOverlay();
     }
-    if (_currentPageType == type) {
-      _currentPageType = CallPageType.none;
-    }
+  }
+
+  void _clearCachedCallingEntry() {
+    _cachedCallingEntry?.remove();
+    _cachedCallingEntry = null;
   }
 
   Widget? _buildWidgetFor(CallPageType pageType) {
     switch (pageType) {
       case CallPageType.calling:
-        return CallMainWidget(
-          key: _callPageKey,
-          callPageType: CallPageType.calling,
-          callbacks: CallPageCallbacks(
-            onShowCalling: () => showCallingPage(),
-            onShowFloating: () => showFloatingPage(),
-            onShowInvitePage: () => showInvitePage(),
-          ),
-        );
       case CallPageType.floating:
+      case CallPageType.pip:
         return CallMainWidget(
           key: _callPageKey,
-          callPageType: CallPageType.floating,
+          callPageType: pageType,
           callbacks: CallPageCallbacks(
             onShowCalling: () => showCallingPage(),
             onShowFloating: () => showFloatingPage(),
+            onShowPip: () => showPipPage(),
             onShowInvitePage: () => showInvitePage(),
           ),
         );
@@ -185,21 +216,31 @@ class CallPageManager {
       case CallPageType.none:
         return null;
       case CallPageType.banner:
-        return IncomingBannerWidget(
-          onShowCalling: () {
-            closeIncomingBanner();
-            showCallingPage();
-          },
-          onCloseAll: () => closeAllPage(),
+        return Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: IncomingBannerWidget(
+                onShowCalling: () {
+                  closeIncomingBanner();
+                  showCallingPage();
+                },
+                onCloseAll: () => closeAllPage(),
+              ),
+            ),
+          ),
         );
     }
   }
 
-  void handleNoPermissionAndEndCall(TUICallRole role) async {
+  void handleNoPermissionAndEndCall(bool isCalled) async {
     final overlay = _navigatorGetter()?.overlay;
     if (overlay == null) {
-      if (role == TUICallRole.called) {
-        CallListStore.shared.hangup();
+      if (isCalled) {
+        CallStore.shared.hangup();
       }
       return;
     }
@@ -258,11 +299,11 @@ class CallPageManager {
     final goSettings = await completer.future;
 
     if (goSettings == true) {
-      await openAppSettings();
+      await Permission.openAppSettings();
     }
 
-    if (role == TUICallRole.called) {
-      CallListStore.shared.reject();
+    if (isCalled) {
+      CallStore.shared.reject();
     }
   }
 

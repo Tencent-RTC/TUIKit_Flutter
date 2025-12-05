@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:atomic_x/atomicx.dart';
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:flutter/material.dart';
 
 class HintWidget extends StatefulWidget {
@@ -48,7 +48,7 @@ class _HintWidgetState extends State<HintWidget> {
   }
 
   Widget? _buildConnectionHint(CallParticipantInfo selfInfo) {
-    if (selfInfo.status != TUICallStatus.accept || _hadShowAcceptText) {
+    if (selfInfo.status != CallParticipantStatus.accept || _hadShowAcceptText) {
       return null;
     }
 
@@ -66,20 +66,20 @@ class _HintWidgetState extends State<HintWidget> {
   }
 
   Widget? _buildStatusHint(CallParticipantInfo selfInfo) {
-    if (selfInfo.status != TUICallStatus.waiting) {
+    if (selfInfo.status != CallParticipantStatus.waiting) {
       return null;
     }
 
-    if (selfInfo.id == CallListStore.shared.state.activeCall.value.inviterId) {
+    if (selfInfo.id == CallStore.shared.state.activeCall.value.inviterId) {
       return Text(
         CallKit_t('waitingForInvitationAcceptance'),
         style: _defaultTextStyle,
       );
     }
 
-    if (selfInfo.id != CallListStore.shared.state.activeCall.value.inviterId) {
-      final mediaType = CallListStore.shared.state.activeCall.value.mediaType;
-      final hintText = mediaType == TUICallMediaType.audio
+    if (selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
+      final mediaType = CallStore.shared.state.activeCall.value.mediaType;
+      final hintText = mediaType == CallMediaType.audio
           ? CallKit_t("invitedToAudioCall")
           : CallKit_t("invitedToVideoCall");
 
@@ -103,7 +103,7 @@ class _HintWidgetState extends State<HintWidget> {
 
   String _getNetworkQualityHintText(
       CallParticipantInfo selfInfo,
-      Map<String, TUINetworkQuality> networkQualities
+      Map<String, NetworkQuality> networkQualities
       ) {
     final selfNetwork = networkQualities[selfInfo.id];
     if (selfNetwork != null && _isBadNetwork(selfNetwork)) {
@@ -119,9 +119,9 @@ class _HintWidgetState extends State<HintWidget> {
     return '';
   }
 
-  bool _isBadNetwork(TUINetworkQuality? network) {
-    return network == TUINetworkQuality.qualityBad ||
-        network == TUINetworkQuality.qualityVeryBad ||
-        network == TUINetworkQuality.qualityDown;
+  bool _isBadNetwork(NetworkQuality? network) {
+    return network == NetworkQuality.bad ||
+        network == NetworkQuality.veryBad ||
+        network == NetworkQuality.down;
   }
 }

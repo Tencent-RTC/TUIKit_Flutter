@@ -1,5 +1,5 @@
-import 'package:atomic_x/atomicx.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
 import 'package:flutter/material.dart';
 
 class ViewConfig {
@@ -23,7 +23,7 @@ class StreamViewFactory {
   }
 
   ParticipantStreamView createSingleRemoteStreamView({ViewConfig config = const ViewConfig()}) {
-    CallInfo info = CallListStore.shared.state.activeCall.value;
+    CallInfo info = CallStore.shared.state.activeCall.value;
     String userId = info.inviterId == CallParticipantStore.shared.state.selfInfo.value.id
         ? info.inviteeIds[0]
         : info.inviterId;

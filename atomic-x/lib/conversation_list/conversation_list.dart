@@ -1,17 +1,32 @@
-import 'package:atomic_x/base_component/base_component.dart';
-import 'package:atomic_x_core/api/chat/conversation_list_store.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
+import 'conversation_list_config.dart';
 import 'widgets/conversation_item.dart';
 
 export 'widgets/conversation_item.dart';
 
+class ConversationCustomAction {
+  final String title;
+  final void Function(ConversationInfo) action;
+
+  const ConversationCustomAction({
+    required this.title,
+    required this.action,
+  });
+}
+
 class ConversationList extends StatefulWidget {
   final Function(ConversationInfo)? onConversationClick;
+  final List<ConversationCustomAction> customActions;
+  final ConversationActionConfigProtocol config;
 
   const ConversationList({
     super.key,
     this.onConversationClick,
+    this.customActions = const [],
+    this.config = const ChatConversationActionConfig(),
   });
 
   @override
@@ -146,6 +161,8 @@ class _ConversationListState extends State<ConversationList> {
                     widget.onConversationClick!(conversation);
                   }
                 },
+                customActions: widget.customActions,
+                config: widget.config,
               );
             },
           ),

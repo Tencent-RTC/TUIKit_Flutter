@@ -1,9 +1,22 @@
 import 'package:tencent_calls_uikit/src/common/platform/call_kit_platform_interface.dart';
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 
 class FcmDataSyncHandler {
-  void openNotificationView(String name, String avatar, TUICallMediaType mediaType) {
-    TUICallKitPlatform.instance.openAndroidNotificationView(name, avatar, mediaType);
+  FcmDataSyncHandler() {
+    AppLifecycle.instance.currentState.addListener(_onAppLifecycleChanged);
+  }
+
+  void _onAppLifecycleChanged() {
+    if (AppLifecycle.instance.isForeground) {
+      closeNotificationView();
+    }
+  }
+
+  void openNotificationView(String name, String avatar, CallMediaType mediaType) {
+    if (AppLifecycle.instance.isBackground) {
+      TUICallKitPlatform.instance.openAndroidNotificationView(name, avatar, mediaType);
+    }
   }
 
   void closeNotificationView() {
@@ -11,10 +24,10 @@ class FcmDataSyncHandler {
   }
 
   void handleFcmReject() {
-    CallListStore.shared.reject();
+    CallStore.shared.reject();
   }
 
   void handleFcmAccept() {
-    CallListStore.shared.accept();
+    CallStore.shared.accept();
   }
 }

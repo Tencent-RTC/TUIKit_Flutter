@@ -1,4 +1,4 @@
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
 
 class TimerWidget extends StatelessWidget {
@@ -7,9 +7,9 @@ class TimerWidget extends StatelessWidget {
     return ValueListenableBuilder(
         valueListenable: CallParticipantStore.shared.state.selfInfo,
         builder: (context, info, child) {
-          if (info.status == TUICallStatus.accept) {
+          if (info.status == CallParticipantStatus.accept) {
             return ValueListenableBuilder(
-              valueListenable: CallListStore.shared.state.activeCall,
+              valueListenable: CallStore.shared.state.activeCall,
               builder: (context, activeCall, child) {
                 return Text(
                   formatDuration(activeCall.duration.toInt()),

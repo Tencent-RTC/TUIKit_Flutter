@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="album_picker_all_photos_and_videos">Photos/Videos</string>
+    <string name="album_picker_all_photos">All photos</string>
+    <string name="album_picker_all_videos">Videos</string>
+    <string name="album_picker_collections">Collections</string>
+
+    <string name="album_picker_preview">Preview</string>
+    <string name="album_picker_send">Send</string>
+    <string name="album_picker_select">Select</string>
+
+    <string name="album_request_permission_storage_title">%s requests access to storage permissions</string>
+    <string name="album_request_permission_storage_reason">Access to storage is needed to send photos and videos from the album and save pictures and videos in chat</string>
+    <string name="album_request_permission_storage_tip">Enable storage permissions in Settings-Apps-%s-Permissions to use sending photos and videos from the album and saving pictures in chat normally</string>
+
+    <string name="album_request_permission_media_title">%s requests access to photos and videos</string>
+    <string name="album_request_permission_media_reason">Access to photos and videos is needed to send photos and videos from the album and save pictures and videos in chat</string>
+    <string name="album_request_permission_media_tip">Enable photo and video permissions in Settings-Apps-%s-Permissions to use sending photos and videos from the album and saving pictures in chat normally</string>
+
+</resources>

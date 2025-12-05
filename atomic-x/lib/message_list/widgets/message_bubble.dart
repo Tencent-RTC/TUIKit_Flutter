@@ -1,15 +1,16 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/message_list.dart';
+import 'package:tuikit_atomic_x/message_list/utils/calling_message_data_provider.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:flutter/services.dart';
 import 'package:tencent_super_tooltip/tencent_super_tooltip.dart';
 
 import 'message_tooltip.dart';
-import 'message_types/custom_message_widget.dart';
+import 'message_types/call_message_widget.dart';
 import 'message_types/file_message_widget.dart';
 import 'message_types/image_message_widget.dart';
 import 'message_types/sound_message_widget.dart';
-import 'message_types/system_message_widget.dart';
 import 'message_types/text_message_widget.dart';
 import 'message_types/video_message_widget.dart';
 
@@ -63,7 +64,8 @@ class MessageBubble extends StatefulWidget {
   final MessageMenuCallbacks? menuCallbacks;
   final bool isHighlighted;
   final VoidCallback? onHighlightComplete;
-  final String alignment;
+  final List<MessageCustomAction> customActions;
+  final MessageListConfigProtocol config;
 
   const MessageBubble({
     super.key,
@@ -71,12 +73,13 @@ class MessageBubble extends StatefulWidget {
     required this.conversationID,
     required this.isSelf,
     required this.maxWidth,
+    required this.config,
     this.onLinkTapped,
     this.messageListStore,
     this.menuCallbacks,
     this.isHighlighted = false,
     this.onHighlightComplete,
-    this.alignment = AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
+    this.customActions = const [],
   });
 
   @override
@@ -87,7 +90,6 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   late MessageMenuCallbacks _menuCallbacks;
   final GlobalKey _messageKey = GlobalKey();
   SuperTooltip? tooltip;
-  List<String> _messageActionList = [];
 
   late AnimationController _highlightAnimationController;
   bool _wasHighlighted = false;
@@ -120,8 +122,6 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         _highlightAnimationController.forward(from: 0.0);
       });
     }
-
-    _loadMessageActionConfig();
   }
 
   @override
@@ -142,13 +142,6 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       tooltip?.close();
     }
     _highlightAnimationController.dispose();
-  }
-
-  void _loadMessageActionConfig() {
-    final appBuilder = AppBuilder.getInstance();
-    setState(() {
-      _messageActionList = appBuilder.messageListConfig.messageActionList;
-    });
   }
 
   void _showResendConfirmDialog() {
@@ -217,11 +210,11 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           message: widget.message,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
+          config: widget.config,
           onLongPress: _handleLongPress,
           onLinkTapped: widget.onLinkTapped,
           bubbleKey: _messageKey,
           backgroundBuilder: backgroundBuilder,
-          alignment: widget.alignment,
           onResendTap: widget.message.status == MessageStatus.sendFail ? _showResendConfirmDialog : null,
         );
         break;
@@ -232,6 +225,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           conversationID: widget.conversationID,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
+          config: widget.config,
           onLongPress: _handleLongPress,
           messageListStore: widget.messageListStore,
           bubbleKey: _messageKey,
@@ -244,6 +238,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           conversationID: widget.conversationID,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
+          config: widget.config,
           onLongPress: _handleLongPress,
           messageListStore: widget.messageListStore,
           bubbleKey: _messageKey,
@@ -255,6 +250,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           message: widget.message,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
+          config: widget.config,
           onLongPress: _handleLongPress,
           messageListStore: widget.messageListStore,
           bubbleKey: _messageKey,
@@ -266,6 +262,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           message: widget.message,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
+          config: widget.config,
           onLongPress: _handleLongPress,
           messageListStore: widget.messageListStore,
           bubbleKey: _messageKey,
@@ -279,16 +276,29 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         break;
 
       case MessageType.custom:
-        messageWidget = CustomMessageWidget(
-          message: widget.message,
-          isSelf: widget.isSelf,
-          maxWidth: widget.maxWidth,
-          onLongPress: _handleLongPress,
-          messageListStore: widget.messageListStore,
-        );
+        CallingMessageDataProvider provider = CallingMessageDataProvider(widget.message, context);
+        if (provider.isCallingSignal) {
+          messageWidget = CallMessageWidget(
+            message: widget.message,
+            isSelf: widget.isSelf,
+            maxWidth: widget.maxWidth,
+            config: widget.config,
+          );
+        } else {
+          messageWidget = CustomMessageWidget(
+            message: widget.message,
+            isSelf: widget.isSelf,
+            maxWidth: widget.maxWidth,
+            onLongPress: _handleLongPress,
+            messageListStore: widget.messageListStore,
+          );
+        }
         break;
 
       default:
+        if (!widget.config.isShowUnsupportMessage) {
+          return const SizedBox.shrink();
+        }
         messageWidget = _buildUnsupportedMessage(context);
     }
 
@@ -406,7 +416,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   List<MessageMenuItem> _buildTextMessageMenuItems() {
     final items = <MessageMenuItem>[];
 
-    if (_messageActionList.contains(AppBuilder.MESSAGE_ACTION_COPY)) {
+    if (widget.config.isSupportCopy) {
       items.add(MessageMenuItem(
         title: atomicLocal.copy,
         icon: Icons.copy,
@@ -462,7 +472,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   List<MessageMenuItem> _buildCommonMenuItems() {
     final items = <MessageMenuItem>[];
 
-    if (_messageActionList.contains(AppBuilder.MESSAGE_ACTION_DELETE)) {
+    if (widget.config.isSupportDelete) {
       items.add(MessageMenuItem(
         title: atomicLocal.delete,
         icon: Icons.delete_outline,
@@ -471,7 +481,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       ));
     }
 
-    if (_messageActionList.contains(AppBuilder.MESSAGE_ACTION_RECALL) && widget.isSelf) {
+    if (widget.config.isSupportRecall && widget.isSelf) {
       final now = DateTime.now().millisecondsSinceEpoch / 1000;
       final isWithin2Minutes = (now - (widget.message.timestamp ?? 0)) <= 2 * 60;
       final isSentSuccess = widget.message.status == MessageStatus.sendSuccess;
@@ -483,6 +493,17 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           onTap: () => _menuCallbacks.onRecallMessage(widget.message),
         ));
       }
+    }
+
+    // Add custom actions
+    for (final customAction in widget.customActions) {
+      items.add(MessageMenuItem(
+        title: customAction.title,
+        assetName: customAction.assetName.isNotEmpty ? customAction.assetName : null,
+        package: customAction.package,
+        icon: customAction.systemIconFallback,
+        onTap: () => customAction.action(widget.message),
+      ));
     }
 
     return items;
@@ -535,7 +556,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   }
 
   double _getBubbleMaxWidth() {
-    switch (widget.alignment) {
+    switch (widget.config.alignment) {
       case 'left':
       case 'right':
         return widget.maxWidth * 0.7;
@@ -546,7 +567,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   }
 
   BorderRadius _getBubbleBorderRadius() {
-    switch (widget.alignment) {
+    switch (widget.config.alignment) {
       case 'left':
         return const BorderRadius.only(
           topLeft: Radius.circular(18),

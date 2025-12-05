@@ -22,16 +22,16 @@ class CallService extends AbstractTUIService {
       final groupId = param[PARAM_NAME_GROUPID] as String;
 
       final mediaTypeString = param[PARAM_NAME_TYPE] as String;
-      var mediaType = TUICallMediaType.none;
+      CallMediaType? mediaType;
       if (mediaTypeString == TYPE_AUDIO) {
-        mediaType = TUICallMediaType.audio;
+        mediaType = CallMediaType.audio;
       } else if (mediaTypeString == TYPE_VIDEO) {
-        mediaType = TUICallMediaType.video;
+        mediaType = CallMediaType.video;
       }
 
-      TUICallParams callParams = TUICallParams();
+      CallParams callParams = CallParams();
       callParams.chatGroupId = groupId;
-      TUICallKit.instance.calls(userIDs, mediaType, callParams);
+      TUICallKit.instance.calls(userIDs, mediaType ?? CallMediaType.audio, callParams);
     }
   }
 }

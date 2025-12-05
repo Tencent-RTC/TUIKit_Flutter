@@ -1,4 +1,5 @@
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
+import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 class SettingsConfig {
   static const defaultAvatar =

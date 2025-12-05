@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 
 enum SwitchSize {
   s(26, 16, 12, 2, 10),

@@ -1,8 +1,8 @@
-import 'package:atomic_x/call/component/controls/multi_call_controls_widget.dart';
-import 'package:atomic_x/call/component/controls/single_call_controls_widget.dart';
-import 'package:atomic_x/call/component/hint/timer_widget.dart';
-import 'package:atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
-import 'package:atomic_x/call/component/stream_widget/single_call_stream_widget.dart';
+import 'package:tuikit_atomic_x/call/component/controls/multi_call_controls_widget.dart';
+import 'package:tuikit_atomic_x/call/component/controls/single_call_controls_widget.dart';
+import 'package:tuikit_atomic_x/call/component/hint/timer_widget.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/single_call_stream_widget.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class _CallViewState extends State<CallView> {
   void initState() {
     DeviceStore.shared.openLocalMicrophone();
     DeviceStore.shared.setAudioRoute(
-      CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio
+      CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
           ? AudioRoute.earpiece
           : AudioRoute.speakerphone
     );
@@ -46,7 +46,7 @@ class _CallViewState extends State<CallView> {
         width: double.infinity,
         height: double.infinity,
         child: ValueListenableBuilder(
-            valueListenable: CallListStore.shared.state.activeCall,
+            valueListenable: CallStore.shared.state.activeCall,
             builder: (context, activeCall, child) {
               return ValueListenableBuilder(
                   valueListenable: CallParticipantStore.shared.state.allParticipants,

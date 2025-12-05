@@ -296,6 +296,16 @@ class I18nUtils {
     "k_0000103": "showBlurBackground",
     "k_0000104": "otherPartyNetworkLowQuality",
     "k_0000105": "selfNetworkLowQuality",
-    "k_0000106": "errorInPeerBlacklist"
+    "k_0000106": "errorInPeerBlacklist",
+    "k_0000107": "featureRequiresAudioVideoCallingPackage",
+    "k_0000108": "currentPackageDoesNotSupportFeature",
+    "k_0000109": "microphoneOrCameraPermissionNotEnabled",
+    "k_0000110": "cameraOccupiedBySystemCall",
+    "k_0000111": "microphoneOccupiedBySystemCall",
+    "k_0000112": "currentlyOnCallCannotInitiateAnother",
+    "k_0000113": "failedToInitiateCallCheckLoginStatus",
+    "k_0000114": "failedToInitiateOrJoinCall",
+    "k_0000115": "currentCallSupportsMax9Participants",
+    "k_0000116": "inviteUserErrorOrInvalidCallParameters"
   }''';
 }

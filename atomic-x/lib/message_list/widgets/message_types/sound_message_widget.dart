@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
@@ -15,12 +16,14 @@ class SoundMessageWidget extends StatefulWidget {
   final VoidCallback? onLongPress;
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
+  final MessageListConfigProtocol config;
 
   const SoundMessageWidget({
     super.key,
     required this.message,
     required this.isSelf,
     required this.maxWidth,
+    required this.config,
     this.onTap,
     this.onLongPress,
     this.messageListStore,
@@ -88,6 +91,7 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
                   message: widget.message,
                   isSelf: widget.isSelf,
                   colors: colors,
+                  isShowTimeInBubble: widget.config.isShowTimeInBubble,
                 ),
               ),
             ),

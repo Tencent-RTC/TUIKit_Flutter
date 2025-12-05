@@ -172,9 +172,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     if (SettingsConfig.nickname.isNotEmpty) {
       int index = Random().nextInt(_userAvatarArray.length);
       SettingsConfig.avatar = _userAvatarArray[index];
-      TUIResult result =
+      CompletionHandler result =
           await TUICallKit.instance.setSelfInfo(SettingsConfig.nickname, SettingsConfig.avatar);
-      if (result.code.isEmpty) {
+      if (result.errorCode == 0) {
         _enterMainWidget();
       } else {
         _showDialog(result);
@@ -191,13 +191,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     ), (route) => false);
   }
 
-  _showDialog(TUIResult result) {
+  _showDialog(CompletionHandler result) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.login_fail),
-          content: Text("result.code:${result.code}, result.message: ${result.message}？"),
+          content: Text("result.code:${result.errorCode}, result.message: ${result.errorMessage}？"),
           actions: [
             TextButton(
               onPressed: () {

@@ -1,49 +1,57 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class AlbumPickerResult {
-  static const int albumImage = 1;
-  static const int albumVideo = 2;
+import 'album_picker_platform.dart';
 
-  final int albumType;
-  final String filePath;
-  final String fileName;
+enum PickMode {
+  image,
+  video,
+  all,
+}
+
+enum PickMediaType {
+  image,
+  video,
+  gif,
+}
+
+class AlbumPickerModel {
+  final int id;
+  final PickMediaType mediaType;
+  final String mediaPath;
+  final String fileExtension;
   final int fileSize;
-  final String extension;
+  final bool isOrigin;
+  final String? videoThumbnailPath;
 
-  AlbumPickerResult({
-    required this.albumType,
-    required this.filePath,
-    required this.fileName,
+  AlbumPickerModel({
+    required this.id,
+    required this.mediaType,
+    required this.mediaPath,
+    required this.fileExtension,
     required this.fileSize,
-    required this.extension,
+    this.isOrigin = false,
+    this.videoThumbnailPath,
   });
 
   @override
   String toString() {
-    return 'AlbumPickerResult(albumType: $albumType, filePath: $filePath, fileName: $fileName, fileSize: $fileSize, extension: $extension)';
+    return 'AlbumPickerModel(id: $id, mediaType: $mediaType, mediaPath: $mediaPath, fileExtension: $fileExtension, fileSize: $fileSize, isOrigin: $isOrigin, videoThumbnailPath: $videoThumbnailPath)';
   }
 }
 
 class AlbumPickerConfig {
-  static const int pickModeAll = 1;
-  static const int pickModeImage = 2;
-  static const int pickModeVideo = 3;
-
-  final int pickMode;
+  final PickMode pickMode;
   final int? maxCount;
   final int? gridCount;
   final Color? primaryColor;
+  final Locale? locale;
 
-  AlbumPickerConfig({
-    this.pickMode = pickModeAll,
+  const AlbumPickerConfig({
+    this.pickMode = PickMode.all,
     this.maxCount,
     this.gridCount,
     this.primaryColor,
+    this.locale,
   });
 }
 
@@ -55,84 +63,14 @@ class AlbumPicker {
 
   AlbumPicker._internal();
 
-  static Future<List<AlbumPickerResult>> pickMedia({
+  static Future<void> pickMedia({
     required BuildContext context,
     AlbumPickerConfig? config,
+    required Function(AlbumPickerModel model, int index, double progress) onProgress,
   }) async {
-    RequestType requestType = RequestType.common;
-    if (config?.pickMode == AlbumPickerConfig.pickModeImage) {
-      requestType = RequestType.image;
-    } else if (config?.pickMode == AlbumPickerConfig.pickModeVideo) {
-      requestType = RequestType.video;
-    } else {
-      requestType = RequestType.common;
-    }
-
-    try {
-      final List<AssetEntity>? result = await AssetPicker.pickAssets(
-        context,
-        pickerConfig: AssetPickerConfig(
-          requestType: requestType,
-          maxAssets: config?.maxCount ?? defaultMaxCount,
-          gridCount: config?.gridCount ?? defaultGridCount,
-          themeColor: config?.primaryColor,
-        ),
-      );
-
-      if (result == null || result.isEmpty) {
-        return [];
-      }
-
-      List<AlbumPickerResult> results = [];
-
-      for (final assetEntity in result) {
-        final File? file = await assetEntity.file;
-        if (file == null) {
-          continue;
-        }
-
-        String finalPath = file.path;
-        String fileName = path.basename(file.path);
-        String extension = path.extension(file.path).toLowerCase().replaceFirst('.', '');
-
-        results.add(AlbumPickerResult(
-          albumType: assetEntity.type == AssetType.image ? AlbumPickerResult.albumImage : AlbumPickerResult.albumVideo,
-          filePath: finalPath,
-          fileName: fileName,
-          fileSize: await file.length(),
-          extension: extension,
-        ));
-      }
-
-      return results;
-    } catch (e) {
-      debugPrint('AlbumPickerService.pickMultipleImages error: $e');
-      return [];
-    }
-  }
-
-  static Future<String> _copyFileToSandbox(File file, AssetEntity asset) async {
-    try {
-      final appDir = await getApplicationCacheDirectory();
-      var targetDir = Directory('${appDir.path}/images');
-      if (asset.type == AssetType.video) {
-        targetDir = Directory('${appDir.path}/videos');
-      }
-
-      if (!await targetDir.exists()) {
-        await targetDir.create(recursive: true);
-      }
-
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final originalExt = path.extension(file.path);
-      final fileName = 'image_$timestamp$originalExt';
-      final targetPath = '${targetDir.path}/$fileName';
-
-      final newFile = await file.copy(targetPath);
-      return newFile.path;
-    } catch (e) {
-      debugPrint('_copyFileToSandbox failed: $e');
-      return file.path;
-    }
+    return AlbumPickerPlatform.pickMediaNative(
+      config: config ?? const AlbumPickerConfig(),
+      onProgress: onProgress,
+    );
   }
 }

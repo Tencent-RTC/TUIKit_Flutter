@@ -28,7 +28,7 @@ class MethodChannelTUICallKit extends TUICallKitPlatform {
   }
 
   @override
-  void openAndroidNotificationView(String name, String avatar, TUICallMediaType mediaType) {
+  void openAndroidNotificationView(String name, String avatar, CallMediaType mediaType) {
     if (kIsWeb) return;
 
     if (Platform.isAndroid) {

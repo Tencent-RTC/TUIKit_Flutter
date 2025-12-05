@@ -1,4 +1,4 @@
-import 'package:atomic_x_core/api/call/call_list_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
@@ -185,7 +185,7 @@ class _JoinInGroupWidgetState extends State<JoinInGroupWidget> {
   }
 
   _joinInGroupCallAction() {
-    CallListStore.shared.join(widget.callId!);
+    CallStore.shared.join(widget.callId!);
   }
 
   _updateUserAvatars() async {

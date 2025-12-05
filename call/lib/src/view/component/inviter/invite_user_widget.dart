@@ -33,15 +33,17 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            getI18nString('inviteMembers'),
-            textScaleFactor: 1.0,
+          title: Center(
+            child: Text(
+              getI18nString('inviteMembers'),
+              textScaleFactor: 1.0,
+            ),
           ),
           leading: IconButton(
               onPressed: _goBack,
               icon: const Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: Colors.black,
               )),
           actions: <Widget>[
             IconButton(
@@ -55,8 +57,9 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
             itemCount: _groupMemberList.length,
             itemExtent: 60,
             itemBuilder: (context, index) {
+              final isDefaultSelected = _defaultSelectList.contains(_groupMemberList[index].userId);
               return InkWell(
-                onTap: () {
+                onTap: isDefaultSelected ? null : () {
                   _selectUser(index);
                 },
                 child: Row(
@@ -69,6 +72,7 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
                       package: 'tencent_calls_uikit',
                       width: 18,
                       height: 18,
+                      color: isDefaultSelected ? Colors.grey : null,
                     ),
                     const Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                     Container(
@@ -91,7 +95,10 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
                     Text(
                       _getMemberDisPlayName(_groupMemberList[index]),
                       textScaleFactor: 1.0,
-                      style: const TextStyle(color: Colors.black, fontSize: 18),
+                      style: TextStyle(
+                        color: isDefaultSelected ? Colors.grey : Colors.black, 
+                        fontSize: 18
+                      ),
                     )
                   ],
                 ),
@@ -103,7 +110,7 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
     final memberInfoResult = await TencentImSDKPlugin.v2TIMManager
         .getGroupManager()
         .getGroupMemberList(
-        groupID: CallListStore.shared.state.activeCall.value.chatGroupId,
+        groupID: CallStore.shared.state.activeCall.value.chatGroupId,
         filter: GroupMemberFilterTypeEnum.V2TIM_GROUP_MEMBER_FILTER_ALL,
         nextSeq: '0');
     _groupMemberList.clear();
@@ -144,6 +151,9 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
 
   _selectUser(int index) {
     if (index == 0) return;
+    if (_defaultSelectList.contains(_groupMemberList[index].userId)) {
+      return;
+    }
     _groupMemberList[index].isSelected = !_groupMemberList[index].isSelected;
     if (mounted) {
       setState(() {});
@@ -158,7 +168,7 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
       }
     }
 
-    CallListStore.shared.invite(userIdList, TUICallParams());
+    CallStore.shared.invite(userIdList, CallParams());
     _goBack();
   }
 
@@ -193,4 +203,3 @@ class GroupMemberInfo {
   String remark = "";
   bool isSelected = false;
 }
-

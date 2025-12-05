@@ -1,5 +1,5 @@
-import "package:atomic_x/atomicx.dart";
-import "package:atomic_x/base_component/utils/tui_event_bus.dart";
+import "package:tuikit_atomic_x/atomicx.dart";
+import "package:tuikit_atomic_x/base_component/utils/tui_event_bus.dart";
 import "package:tencent_calls_uikit/src/tui_call_kit_impl.dart";
 
 class EventBusHandler extends TUIObserver {
@@ -8,25 +8,44 @@ class EventBusHandler extends TUIObserver {
 
   EventBusHandler() {
     TUIEventBus.shared.subscribe("call.startCall", null, this);
+    TUIEventBus.shared.subscribe("call.startJoin", null, this);
   }
-  
+
   @override
   void onNotify(String event, String? key, NotifyParams? params) {
-    if (event != "call.startCall" || params == null || params.data == null || params.data!.isEmpty) {
+    if (params == null ||
+        params.data == null ||
+        params.data!.isEmpty) {
       return;
     }
 
-    List<String> participantIds = params.data?["participantIds"] ?? [];
-    String chatGroupId = params.data?["chatGroupId"] ?? "";
-    TUICallMediaType mediaType = params.data?["mediaType"] ?? TUICallMediaType.audio;
-    int timeout = params.data?["timeout"] ?? 30;
-    TUIOfflinePushInfo offlinePushInfo = params.data?["offlinePushInfo"];
+    if (event == "call.startCall") {
+      handleStartCall(key, params);
+      return;
+    }
 
-    TUICallParams callParams = TUICallParams();
+    if (event == "call.startJoin") {
+      handleStartJoin(key, params);
+      return;
+    }
+  }
+
+  void handleStartCall(String? key, NotifyParams? params) {
+    List<String> participantIds = params?.data?["participantIds"] ?? [];
+    String chatGroupId = params?.data?["chatGroupId"] ?? "";
+    CallMediaType mediaType =
+        params?.data?["mediaType"] ?? CallMediaType.audio;
+    int timeout = params?.data?["timeout"] ?? 30;
+
+    CallParams callParams = CallParams();
     callParams.chatGroupId = chatGroupId;
     callParams.timeout = timeout;
-    callParams.offlinePushInfo = offlinePushInfo;
 
     TUICallKitImpl.instance.calls(participantIds, mediaType, callParams);
+  }
+
+  void handleStartJoin(String? key, NotifyParams? params) {
+    String callId = params?.data?["callId"] ?? "";
+    TUICallKitImpl.instance.join(callId);
   }
 }

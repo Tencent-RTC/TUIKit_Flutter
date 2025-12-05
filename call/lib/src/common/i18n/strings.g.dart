@@ -422,6 +422,16 @@ class _StringsEn {
 	String get k_0000104 => 'The other party\'s network connection is poor';
 	String get k_0000105 => 'Your network connection is poor';
 	String get k_0000106 => 'The identifier is in blacklist. Failed to send this message!';
+	String get k_0000107 => 'This feature requires the audio and video calling capability package. To avoid affecting your usage, we recommend going to the Tencent Cloud Real-Time Audio and Video console to activate the free trial or purchase a formal package';
+	String get k_0000108 => 'Your current package type does not support this feature. To unlock more capabilities, we recommend upgrading your package in the Tencent Cloud Real-Time Audio and Video console';
+	String get k_0000109 => 'Microphone permission is not enabled, unable to start audio call. Go to \'Settings > TUICallKit\' to enable microphone permission; Camera permission is not enabled, unable to start video call. Go to \'Settings > TUICallKit\' to enable camera permission';
+	String get k_0000110 => 'Current camera is occupied by system call';
+	String get k_0000111 => 'Current microphone is occupied by system call';
+	String get k_0000112 => 'You are currently on a call, please end the current call before making another one';
+	String get k_0000113 => 'Failed to initiate call, please check your login status and try again';
+	String get k_0000114 => 'Failed to initiate call / Failed to join call';
+	String get k_0000115 => 'Current call supports a maximum of 9 participants online simultaneously';
+	String get k_0000116 => 'Invite user error or invalid call parameters';
 }
 
 // Path: <root>
@@ -547,6 +557,16 @@ class _StringsJa implements _StringsEn {
 	@override String get k_0000104 => '相手のネットワーク接続が不安定です';
 	@override String get k_0000105 => 'ネットワーク接続が不安定です';
 	@override String get k_0000106 => 'ユーザーはブラックリストに登録され、通話が開始できませんでした。';
+	@override String get k_0000107 => 'この機能には音声/ビデオ通話パッケージが必要です。使用に影響を与えないように、Tencent Cloud Real-Time Audio and Video コンソールで無料トライアルをアクティブにするか、正式なパッケージを購入することをお勧めします';
+	@override String get k_0000108 => '現在のパッケージタイプではこの機能をサポートしていません。より多くの機能を利用するには、Tencent Cloud Real-Time Audio and Video コンソールでパッケージをアップグレードすることをお勧めします';
+	@override String get k_0000109 => 'マイク権限が有効になっていないため、音声通話を開始できません。\'設定 > TUICallKit\' でマイク権限を有効にしてください。カメラ権限が有効になっていないため、ビデオ通話を開始できません。\'設定 > TUICallKit\' でカメラ権限を有効にしてください';
+	@override String get k_0000110 => '現在のカメラはシステム通話で使用中です';
+	@override String get k_0000111 => '現在のマイクはシステム通話で使用中です';
+	@override String get k_0000112 => '現在通話中です。新しい通話を開始する前に、現在の通話を終了してください';
+	@override String get k_0000113 => '通話開始に失敗しました。ログイン状態を確認して、もう一度お試しください';
+	@override String get k_0000114 => '通話開始に失敗しました / 通話参加に失敗しました';
+	@override String get k_0000115 => '現在の通話は最大9人まで同時にオンラインで参加できます。';
+	@override String get k_0000116 => 'ユーザー招待エラーまたは通話パラメータが無効です';
 }
 
 // Path: <root>
@@ -672,6 +692,16 @@ class _StringsZhHans implements _StringsEn {
 	@override String get k_0000104 => '当前通话对方网络不佳';
 	@override String get k_0000105 => '当前通话你的网络不佳';
 	@override String get k_0000106 => '发起通话失败，用户在黑名单中，禁止发起！';
+	@override String get k_0000107 => '该功能需要音视频通话能力包。为避免影响您的使用，建议前往腾讯云实时音视频控制台开通免费试用或购买正式包';
+	@override String get k_0000108 => '您当前的套餐类型不支持该功能。为解锁更多能力，建议前往腾讯云实时音视频控制台升级套餐';
+	@override String get k_0000109 => '麦克风权限未开启，无法发起语音通话。请前往"设置 > TUICallKit"开启麦克风权限；摄像头权限未开启，无法发起视频通话。请前往"设置 > TUICallKit"开启摄像头权限';
+	@override String get k_0000110 => '当前摄像头被系统通话占用';
+	@override String get k_0000111 => '当前麦克风被系统通话占用';
+	@override String get k_0000112 => '您当前正在通话中，请结束当前通话后再发起新的通话';
+	@override String get k_0000113 => '发起通话失败，请检查您的登录状态后重试';
+	@override String get k_0000114 => '发起或加入通话失败';
+	@override String get k_0000115 => '当前通话最多支持 9 人同时在线。';
+	@override String get k_0000116 => '邀请用户错误或通话参数无效';
 }
 
 /// Flat map(s) containing all translations.
@@ -787,6 +817,16 @@ extension on _StringsEn {
 			'k_0000104': 'The other party\'s network connection is poor',
 			'k_0000105': 'Your network connection is poor',
 			'k_0000106': 'The identifier is in blacklist. Failed to send this message!',
+			'k_0000107': 'This feature requires the audio and video calling capability package. To avoid affecting your usage, we recommend going to the Tencent Cloud Real-Time Audio and Video console to activate the free trial or purchase a formal package',
+			'k_0000108': 'Your current package type does not support this feature. To unlock more capabilities, we recommend upgrading your package in the Tencent Cloud Real-Time Audio and Video console',
+			'k_0000109': 'Microphone permission is not enabled, unable to start audio call. Go to \'Settings > TUICallKit\' to enable microphone permission; Camera permission is not enabled, unable to start video call. Go to \'Settings > TUICallKit\' to enable camera permission',
+			'k_0000110': 'Current camera is occupied by system call',
+			'k_0000111': 'Current microphone is occupied by system call',
+			'k_0000112': 'You are currently on a call, please end the current call before making another one',
+			'k_0000113': 'Failed to initiate call, please check your login status and try again',
+			'k_0000114': 'Failed to initiate call / Failed to join call',
+			'k_0000115': 'Current call supports a maximum of 9 participants online simultaneously',
+			'k_0000116': 'Invite user error or invalid call parameters',
 		};
 	}
 }
@@ -901,6 +941,16 @@ extension on _StringsJa {
 			'k_0000104': '相手のネットワーク接続が不安定です',
 			'k_0000105': 'ネットワーク接続が不安定です',
 			'k_0000106': 'ユーザーはブラックリストに登録され、通話が開始できませんでした。',
+			'k_0000107': 'この機能には音声/ビデオ通話パッケージが必要です。使用に影響を与えないように、Tencent Cloud Real-Time Audio and Video コンソールで無料トライアルをアクティブにするか、正式なパッケージを購入することをお勧めします',
+			'k_0000108': '現在のパッケージタイプではこの機能をサポートしていません。より多くの機能を利用するには、Tencent Cloud Real-Time Audio and Video コンソールでパッケージをアップグレードすることをお勧めします',
+			'k_0000109': 'マイク権限が有効になっていないため、音声通話を開始できません。\'設定 > TUICallKit\' でマイク権限を有効にしてください。カメラ権限が有効になっていないため、ビデオ通話を開始できません。\'設定 > TUICallKit\' でカメラ権限を有効にしてください',
+			'k_0000110': '現在のカメラはシステム通話で使用中です',
+			'k_0000111': '現在のマイクはシステム通話で使用中です',
+			'k_0000112': '現在通話中です。新しい通話を開始する前に、現在の通話を終了してください',
+			'k_0000113': '通話開始に失敗しました。ログイン状態を確認して、もう一度お試しください',
+			'k_0000114': '通話開始に失敗しました / 通話参加に失敗しました',
+			'k_0000115': '現在の通話は最大9人まで同時にオンラインで参加できます。',
+			'k_0000116': 'ユーザー招待エラーまたは通話パラメータが無効です',
 		};
 	}
 }
@@ -1015,6 +1065,16 @@ extension on _StringsZhHans {
 			'k_0000104': '当前通话对方网络不佳',
 			'k_0000105': '当前通话你的网络不佳',
 			'k_0000106': '发起通话失败，用户在黑名单中，禁止发起！',
+			'k_0000107': '该功能需要音视频通话能力包。为避免影响您的使用，建议前往腾讯云实时音视频控制台开通免费试用或购买正式包',
+			'k_0000108': '您当前的套餐类型不支持该功能。为解锁更多能力，建议前往腾讯云实时音视频控制台升级套餐',
+			'k_0000109': '麦克风权限未开启，无法发起语音通话。请前往"设置 > TUICallKit"开启麦克风权限；摄像头权限未开启，无法发起视频通话。请前往"设置 > TUICallKit"开启摄像头权限',
+			'k_0000110': '当前摄像头被系统通话占用',
+			'k_0000111': '当前麦克风被系统通话占用',
+			'k_0000112': '您当前正在通话中，请结束当前通话后再发起新的通话',
+			'k_0000113': '发起通话失败，请检查您的登录状态后重试',
+			'k_0000114': '发起通话失败 / 加入通话失败',
+			'k_0000115': '当前通话最多支持 9 人同时在线。',
+			'k_0000116': '邀请用户错误或通话参数无效',
 		};
 	}
 }

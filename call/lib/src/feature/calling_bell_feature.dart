@@ -1,4 +1,4 @@
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/foundation.dart';
@@ -47,7 +47,7 @@ class CallingBellFeature {
 
     _playByTRTC(filePath);
 
-    if (CallParticipantStore.shared.state.selfInfo.value.role == TUICallRole.called) {
+    if (_isCalled()) {
       TUICallKitPlatform.instance.startVibration();
       isVibrating = true;
     }
@@ -74,10 +74,9 @@ class CallingBellFeature {
       return customFilePath;
     }
     
-    final role = CallParticipantStore.shared.state.selfInfo.value.role;
     final String ringName;
     
-    if (role == TUICallRole.called) {
+    if (_isCalled()) {
       if (GlobalState.instance.enableMuteMode) {
         return "";
       }
@@ -89,8 +88,14 @@ class CallingBellFeature {
     return await _getAssetsFilePath(ringName);
   }
 
+  bool _isCalled() {
+    final userId = CallParticipantStore.shared.state.selfInfo.value.id;
+    final inviterId = CallStore.shared.state.activeCall.value.inviterId;
+    return userId != inviterId;
+  }
+
   bool _shouldUseCustomRing() {
-    return TUICallRole.called == CallParticipantStore.shared.state.selfInfo.value.role &&
+    return _isCalled() &&
            !GlobalState.instance.enableMuteMode;
   }
 
@@ -122,6 +127,7 @@ class CallingBellFeature {
     final audioEffectManager = trtcCloud.getAudioEffectManager();
 
     final param = AudioMusicParam(id: _musicId, path: filePath, loopCount: _loopCount);
+    param.publish = false;
     audioEffectManager.startPlayMusic(param);
     audioEffectManager.setMusicPlayoutVolume(_musicId, _volume);
   }

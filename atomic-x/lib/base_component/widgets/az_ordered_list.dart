@@ -1,7 +1,7 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/base_component/theme/color_scheme.dart';
-import 'package:atomic_x/base_component/theme/theme_state.dart';
+import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import '../basic_controls/avatar.dart';

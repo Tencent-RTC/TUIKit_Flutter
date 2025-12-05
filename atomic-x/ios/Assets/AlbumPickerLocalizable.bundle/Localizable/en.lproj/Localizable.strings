@@ -1,0 +1,42 @@
+/* AlbumPicker English Localization */
+
+/* Button texts */
+"cancel" = "Cancel";
+"done" = "Done";
+"preview" = "Preview";
+"back" = "Back";
+"edit" = "Edit";
+"setting" = "Settings";
+"original" = "Original";
+
+/* Album names */
+"camera_roll" = "Camera Roll";
+"user_library" = "User Library";
+"recently_added" = "Recently Added";
+"favorites" = "Favorites";
+"self_portraits" = "Selfies";
+"screenshots" = "Screenshots";
+"panoramas" = "Panoramas";
+"videos" = "Videos";
+"slomo_videos" = "Slo-mo";
+"timelapses" = "Time-lapse";
+"bursts" = "Bursts";
+"live_photos" = "Live Photos";
+"depth_effect" = "Portrait";
+"cloud_shared" = "Cloud Shared";
+"unknown_album" = "Unknown Album";
+
+/* Status texts */
+"loading" = "Loading...";
+"video_load_failed" = "Video Load Failed";
+"load_failed" = "Load Failed";
+
+/* Error messages */
+"authorization_denied" = "Photo access denied";
+"no_photos_found" = "No photos found";
+"loading_failed" = "Loading failed";
+"saving_failed" = "Saving failed";
+
+"no_permission" = "No permission";
+"no_permission_message" = "You do not have the corresponding permissions. Please go to settings to request permissions!";
+"go_to_settings" = "Go to settings";

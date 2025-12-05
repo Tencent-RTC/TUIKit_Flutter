@@ -936,4 +936,75 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
 
   @override
   String get resendTips => 'هل تريد إعادة الإرسال؟';
+
+  @override
+  String get callRejectCaller => 'تم رفضه من الطرف الآخ';
+
+  @override
+  String get callRejectCallee => 'تم الرفض';
+
+  @override
+  String get callCancelCaller => 'تم الإلغاء';
+
+  @override
+  String get callCancelCallee => 'تم الإلغاء من الطرف الآخر';
+
+  @override
+  String get stopCallTip => 'مدة المكالمة';
+
+  @override
+  String get callTimeoutCaller => 'لا يوجد رد من الطرف الآخر';
+
+  @override
+  String get callTimeoutCallee => 'انتهاء الاتصال بالوقت المحدد';
+
+  @override
+  String get callLineBusyCaller => 'الخط مشغول عند الطرف الآخر';
+
+  @override
+  String get callLineBusyCallee => 'الخط مشغول عند الطرف الآخر';
+
+  @override
+  String get startCall => 'بدء مكالمة';
+
+  @override
+  String get acceptCall => 'تم الرد';
+
+  @override
+  String get callingSwitchToAudio => 'تحويل الفيديو إلى صوتي';
+
+  @override
+  String get callingSwitchToAudioAccept => 'تأكيد تحويل الفيديو إلى صوتي';
+
+  @override
+  String get invalidCommand => 'أمر المكالمة غير معروف';
+
+  @override
+  String get groupCallSend => 'تم بدء مكالمة جماعية';
+
+  @override
+  String get groupCallEnd => 'تم إنهاء المكالمة';
+
+  @override
+  String get groupCallNoAnswer => 'لم يتم الرد';
+
+  @override
+  String get groupCallReject => 'رفض مكالمة جماعية ';
+
+  @override
+  String get groupCallAccept => 'قبل المكالمة ';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => 'تأكيد تحويل الفيديو إلى صوتي ';
+
+  @override
+  String get unknownCall => 'مكالمة غير معروفة';
+
+  @override
+  String get join => 'انضم إلينا';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$number في مكالمة حاليًا.';
+  }
 }

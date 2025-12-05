@@ -1,26 +1,31 @@
 import 'dart:async';
 
-import 'package:atomic_x/base_component/base_component.dart';
-import 'package:atomic_x/message_input/src/chat_special_text_span_builder.dart';
-import 'package:atomic_x/video_recorder/video_recorder.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/message_input/src/chat_special_text_span_builder.dart';
+import 'package:tuikit_atomic_x/video_recorder/video_recorder.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:fc_native_video_thumbnail/fc_native_video_thumbnail.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:provider/provider.dart';
 import '../album_picker/album_picker.dart';
 import '../audio_recoder/audio_recorder.dart';
 import '../emoji_picker/emoji_picker.dart';
 import '../file_picker/file_picker.dart';
+import '../permission/permission.dart';
+import 'message_input_config.dart';
 import 'widget/audio_record_widget.dart';
 
 class MessageInput extends StatefulWidget {
   final String conversationID;
+  final MessageInputConfigProtocol config;
 
   const MessageInput({
     super.key,
     required this.conversationID,
+    this.config = const ChatMessageInputConfig(),
   });
 
   @override
@@ -34,8 +39,10 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   Widget stickerWidget = Container();
 
   late AtomicLocalizations atomicLocale;
+  late LocaleProvider localeProvider;
 
   Timer? _recordingStarter;
+  bool _isWaitingToStartRecord = false;
   final bool _isEmojiPickerExist = true;
   bool _showSendButton = false;
   bool _showEmojiPanel = false;
@@ -132,6 +139,14 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
     if (_showMorePanel) {
       _removeOverlay();
     } else {
+      // hide keyboard
+      _textEditingFocusNode.unfocus();
+      // hide emoji panel
+      if (_showEmojiPanel) {
+        setState(() {
+          _showEmojiPanel = false;
+        });
+      }
       _showOverlay();
     }
     setState(() {
@@ -174,44 +189,38 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   }
 
   void _onPickAlbum() async {
-    List<AlbumPickerResult> pickerResultList = await AlbumPicker.pickMedia(context: context);
-    for (var pickerResult in pickerResultList) {
-      if (pickerResult.albumType == AlbumPickerResult.albumImage) {
-        final messageInfo = MessageInfo();
-        messageInfo.messageType = MessageType.image;
-        MessageBody messageBody = MessageBody();
-        messageBody.originalImagePath = pickerResult.filePath;
-        messageInfo.messageBody = messageBody;
-        final result = await _sendMessage(messageInfo);
-        if (!result.isSuccess) {
-          debugPrint("_onPickAlbum image, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}");
-        }
-      } else if (pickerResult.albumType == AlbumPickerResult.albumVideo) {
-        final videoThumbnailPlugin = FcNativeVideoThumbnail();
-        String? snapshotPath =
-            ChatUtil.generateMediaPath(messageType: MessageType.video, prefix: "snapshot", isCache: true);
-        await videoThumbnailPlugin.getVideoThumbnail(
-          srcFile: pickerResult.filePath,
-          destFile: snapshotPath,
-          format: 'jpeg',
-          width: 1280,
-          height: 1280,
-          quality: 100,
-        );
+    AlbumPickerConfig config = AlbumPickerConfig(locale: localeProvider.locale);
+    await AlbumPicker.pickMedia(
+      context: context,
+      config: config,
+      onProgress: (model, index, progress) async {
+        if (model.mediaType == PickMediaType.image) {
+          final messageInfo = MessageInfo();
+          messageInfo.messageType = MessageType.image;
+          MessageBody messageBody = MessageBody();
+          messageBody.originalImagePath = model.mediaPath;
+          messageInfo.messageBody = messageBody;
+          final result = await _sendMessage(messageInfo);
+          if (!result.isSuccess) {
+            debugPrint("_onPickAlbum image, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}");
+          }
+        } else if (model.mediaType == PickMediaType.video) {
+          String? snapshotPath = model.videoThumbnailPath;
 
-        final messageInfo = MessageInfo();
-        messageInfo.messageType = MessageType.video;
-        MessageBody messageBody = MessageBody();
-        messageBody.videoPath = pickerResult.filePath;
-        messageBody.videoSnapshotPath = snapshotPath;
-        messageBody.videoType = pickerResult.extension;
-        messageInfo.messageBody = messageBody;
-        final result = await _sendMessage(messageInfo);
-        if (!result.isSuccess) {
-          debugPrint("_onPickAlbum video, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}");
+          final messageInfo = MessageInfo();
+          messageInfo.messageType = MessageType.video;
+          MessageBody messageBody = MessageBody();
+          messageBody.videoPath = model.mediaPath;
+          messageBody.videoSnapshotPath = snapshotPath;
+          messageBody.videoType = model.fileExtension;
+          messageInfo.messageBody = messageBody;
+          final result = await _sendMessage(messageInfo);
+          if (!result.isSuccess) {
+            debugPrint("_onPickAlbum video, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}");
+          }
         }
-      }
-    }
+      },
+    );
   }
 
   Future<CompletionHandler> _sendMessage(MessageInfo messageInfo) async {
@@ -249,6 +258,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   }
 
   void _onTakeVideo() async {
+    _requestCameraPermission(context);
     VideoRecorderResult videoRecorderResult = await VideoRecorder.instance.takeVideo();
 
     final videoThumbnailPlugin = FcNativeVideoThumbnail();
@@ -276,9 +286,56 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
     }
   }
 
-  void _onTakePhoto() async {
-    VideoRecorderResult videoRecorderResult = await VideoRecorder.instance.takePhoto();
+  static Future<bool> _showPermissionDialog(BuildContext context) async {
+    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(atomicLocal.permissionNeeded),
+          content: Text(atomicLocal.permissionDeniedContent),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(atomicLocal.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(atomicLocal.confirm),
+            ),
+          ],
+        );
+      },
+    ) ??
+        false;
+  }
 
+  static  _requestCameraPermission(BuildContext context) async {
+    if (kIsWeb) {
+      return;
+    }
+
+    PermissionType permissionType = PermissionType.camera;
+    Map<PermissionType, PermissionStatus> statusMap =  await Permission.request([permissionType]);
+    PermissionStatus status = statusMap[permissionType] ?? PermissionStatus.denied;
+
+    if (status == PermissionStatus.granted) {
+      return;
+    }
+
+    if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
+      if (context.mounted) {
+        final bool shouldOpenSettings = await _showPermissionDialog(context);
+        if (shouldOpenSettings) {
+          await Permission.openAppSettings();
+        }
+      }
+    }
+  }
+
+  void _onTakePhoto() async {
+    _requestCameraPermission(context);
+    VideoRecorderResult videoRecorderResult = await VideoRecorder.instance.takePhoto();
     final messageInfo = MessageInfo();
     messageInfo.messageType = MessageType.image;
     MessageBody messageBody = MessageBody();
@@ -310,12 +367,15 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   }
 
   void _onStartRecording(PointerDownEvent event) {
-    _recordingStarter?.cancel();
-    _recordingStarter = Timer(const Duration(milliseconds: 100), () {
-      setState(() {
-        _isRecording = true;
-      });
+    setState(() {
+      _isRecording = true;
+    });
 
+    _recordingStarter?.cancel();
+    _isWaitingToStartRecord = true;
+
+    _recordingStarter = Timer(const Duration(milliseconds: 100), () {
+      _isWaitingToStartRecord = false;
       String path =
           ChatUtil.generateMediaPath(messageType: MessageType.sound, prefix: "", withExtension: ".m4a", isCache: true);
       _recordingWidgetKey.currentState?.startRecord(filePath: path);
@@ -323,11 +383,16 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   }
 
   void _onStopRecording(PointerUpEvent event) {
-    if (_recordingStarter != null && _recordingStarter!.isActive) {
-      _recordingWidgetKey.currentState?.cancelRecord();
-
+    if (_isWaitingToStartRecord) {
       _recordingStarter?.cancel();
       _recordingStarter = null;
+      _isWaitingToStartRecord = false;
+
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+        });
+      }
 
       _micTooltipKey.currentState?.ensureTooltipVisible();
       Future.delayed(const Duration(seconds: 1), () {
@@ -375,6 +440,67 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   }
 
   Widget _buildActionSheet(SemanticColorScheme colorsTheme) {
+    final List<Widget> actionItems = [];
+    bool isFirst = true;
+
+    if (widget.config.isShowPhotoTaker) {
+      actionItems.add(_buildActionItem(
+        icon: 'chat_assets/icon/camera_action.svg',
+        title: atomicLocale.takeAPhoto,
+        onTap: () {
+          _toggleMorePanel();
+          _onTakePhoto();
+        },
+        colorsTheme: colorsTheme,
+        isFirst: isFirst,
+      ));
+      isFirst = false;
+    }
+
+    if (widget.config.isShowPhotoTaker) {
+      if (actionItems.isNotEmpty) {
+        actionItems.add(_buildDivider(colorsTheme));
+      }
+      actionItems.add(_buildActionItem(
+        icon: 'chat_assets/icon/record_action.svg',
+        title: atomicLocale.recordAVideo,
+        onTap: () {
+          _toggleMorePanel();
+          _onTakeVideo();
+        },
+        colorsTheme: colorsTheme,
+        isFirst: isFirst,
+      ));
+      isFirst = false;
+    }
+
+    if (actionItems.isNotEmpty) {
+      actionItems.add(_buildDivider(colorsTheme));
+    }
+    actionItems.add(_buildActionItem(
+      icon: 'chat_assets/icon/image_action.svg',
+      title: atomicLocale.album,
+      onTap: () {
+        _toggleMorePanel();
+        _onPickAlbum();
+      },
+      colorsTheme: colorsTheme,
+      isFirst: isFirst,
+    ));
+    isFirst = false;
+
+    actionItems.add(_buildDivider(colorsTheme));
+    actionItems.add(_buildActionItem(
+      icon: 'chat_assets/icon/file_action.svg',
+      title: atomicLocale.file,
+      onTap: () {
+        _toggleMorePanel();
+        _onPickFile();
+      },
+      colorsTheme: colorsTheme,
+      isLast: true,
+    ));
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -384,49 +510,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
-            children: [
-              _buildActionItem(
-                icon: 'chat_assets/icon/camera_action.svg',
-                title: atomicLocale.takeAPhoto,
-                onTap: () {
-                  _toggleMorePanel();
-                  _onTakePhoto();
-                },
-                colorsTheme: colorsTheme,
-                isFirst: true,
-              ),
-              _buildDivider(colorsTheme),
-              _buildActionItem(
-                icon: 'chat_assets/icon/camera_action.svg',
-                title: atomicLocale.recordAVideo,
-                onTap: () {
-                  _toggleMorePanel();
-                  _onTakeVideo();
-                },
-                colorsTheme: colorsTheme,
-                isLast: true,
-              ),
-              _buildDivider(colorsTheme),
-              _buildActionItem(
-                icon: 'chat_assets/icon/image_action.svg',
-                title: atomicLocale.album,
-                onTap: () {
-                  _toggleMorePanel();
-                  _onPickAlbum();
-                },
-                colorsTheme: colorsTheme,
-              ),
-              _buildDivider(colorsTheme),
-              _buildActionItem(
-                icon: 'chat_assets/icon/file_action.svg',
-                title: atomicLocale.file,
-                onTap: () {
-                  _toggleMorePanel();
-                  _onPickFile();
-                },
-                colorsTheme: colorsTheme,
-              ),
-            ],
+            children: actionItems,
           ),
         ),
         const SizedBox(height: 12),
@@ -479,7 +563,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
           children: [
             SvgPicture.asset(
               icon,
-              package: 'atomic_x',
+              package: 'tuikit_atomic_x',
               width: 24,
               height: 24,
             ),
@@ -511,6 +595,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
   Widget build(BuildContext context) {
     _bottomPadding ??= MediaQuery.of(context).padding.bottom;
     atomicLocale = AtomicLocalizations.of(context);
+    localeProvider = Provider.of<LocaleProvider>(context);
 
     var panelHeight = _getBottomContainerHeight();
     return LayoutBuilder(
@@ -568,8 +653,8 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
             height: 50,
             child: Row(
               children: [
-                _buildAddButton(colorsTheme),
-                const SizedBox(width: 8),
+                if (widget.config.isShowMore) _buildAddButton(colorsTheme),
+                if (widget.config.isShowMore) const SizedBox(width: 8),
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
@@ -614,7 +699,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
                   children: [
                     if (_showSendButton)
                       _buildSendButton(colorsTheme)
-                    else
+                    else if (!_showSendButton && widget.config.isShowAudioRecorder)
                       Tooltip(
                         preferBelow: false,
                         verticalOffset: 36,
@@ -632,7 +717,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
                             child: Center(
                               child: SvgPicture.asset(
                                 'chat_assets/icon/mic.svg',
-                                package: 'atomic_x',
+                                package: 'tuikit_atomic_x',
                                 colorFilter: ColorFilter.mode(
                                   colorsTheme.textColorLink,
                                   BlendMode.srcIn,
@@ -702,7 +787,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
       content: IconOnlyContent(
         SvgPicture.asset(
           icon,
-          package: 'atomic_x',
+          package: 'tuikit_atomic_x',
           colorFilter: ColorFilter.mode(
             colorsTheme.textColorLink,
             BlendMode.srcIn,
@@ -746,7 +831,7 @@ class _MessageInputState extends State<MessageInput> with TickerProviderStateMix
       colorType: ButtonColorType.secondary,
       icon: SvgPicture.asset(
         'chat_assets/icon/add.svg',
-        package: 'atomic_x',
+        package: 'tuikit_atomic_x',
         colorFilter: ColorFilter.mode(
           colorsTheme.textColorLink,
           BlendMode.srcIn,

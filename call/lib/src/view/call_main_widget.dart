@@ -1,4 +1,6 @@
-import 'package:atomic_x/atomicx.dart';
+import 'dart:math';
+
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
 class CallMainWidget extends StatefulWidget {
   final CallPageCallbacks? callbacks;
   final CallPageType? callPageType;
+  
   const CallMainWidget({
     Key? key,
     this.callbacks,
@@ -25,12 +28,18 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
   static double _floatViewRight = 20;
 
   final GlobalKey _callViewKey = GlobalKey();
+  double originWidth = 0;
+  double originHeight = 0;
   bool isMultiPerson = false;
+  CallPageType? _currentPageType;
+  bool _isInitializing = true;
 
   @override
   void initState() {
     _floatViewTop = 128;
     _floatViewRight = 20;
+    _currentPageType = widget.callPageType;
+    _isInitializing = true;
     WidgetsBinding.instance.addObserver(this);
     if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
       ForegroundService.start();
@@ -41,7 +50,32 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
       DeviceOrientation.portraitDown,
     ]);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+        });
+      }
+    });
+
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(CallMainWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    if (oldWidget.callPageType != widget.callPageType) {
+      _currentPageType = widget.callPageType;
+      _isInitializing = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isInitializing = false;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -61,14 +95,59 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.callPageType) {
+    originWidth = max(MediaQuery.of(context).size.width, originWidth);
+    originHeight = max(MediaQuery.of(context).size.height, originHeight);
+    final pageType = _currentPageType ?? widget.callPageType;
+    
+    switch (pageType) {
       case CallPageType.calling:
         return _buildCallingPageWidget();
       case CallPageType.floating:
         return _buildFloatWindowWidget();
+      case CallPageType.pip:
+        return _buildPipWindowWidget();
       default:
         return _buildCallingPageWidget();
     }
+  }
+
+
+  _buildPipWindowWidget() {
+    final pipWidth = MediaQuery.of(context).size.width;
+    final pipHeight = MediaQuery.of(context).size.height;
+    final scale = pipWidth / originWidth;
+
+    return Scaffold(
+      body: SizedBox(
+        width: pipWidth,
+        height: pipHeight,
+        child: Container(
+          width: pipWidth,
+          height: pipHeight,
+          decoration: const BoxDecoration(color: Colors.transparent),
+          child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                  size: Size(originWidth ?? pipWidth, originHeight ?? pipHeight)
+              ),
+              child: ClipRect(
+                child: Transform.scale(
+                  scale: scale,
+                  alignment: Alignment.center,
+                  child: OverflowBox(
+                    maxWidth: originWidth,
+                    maxHeight: originHeight,
+                    alignment: Alignment.center,
+                    child: CallView(
+                      key: _callViewKey,
+                      disableFeatures: const [CallFeature.all],
+                    ),
+                  ),
+                ),
+              ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildFloatWindowWidget() {
@@ -109,7 +188,9 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
               Positioned.fill(
                 child: GestureDetector(
                   onTap: () {
-                    _openCallingPage();
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      _openCallingPage();
+                    });
                   },
                   onPanUpdate: (DragUpdateDetails e) {
                     _refreshViewPosition(e);
@@ -173,7 +254,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
   }
 
   _buildInviterUserBtnWidget() {
-    return CallListStore.shared.state.activeCall.value.chatGroupId.isNotEmpty
+    return CallStore.shared.state.activeCall.value.chatGroupId.isNotEmpty
         ? Positioned(
       right: 12,
       top: 52,
@@ -223,6 +304,9 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
   }
 
   _openCallingPage() {
+    if (_isInitializing) {
+      return;
+    }
     widget.callbacks?.onShowCalling?.call();
   }
 }

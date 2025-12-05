@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BaseComponent_FullScreenDialog_Animation">
+        <item name="android:windowEnterAnimation">@anim/base_component_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/base_component_dialog_exit</item>
+    </style>
+</resources>
+
+

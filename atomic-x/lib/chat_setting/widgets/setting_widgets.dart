@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_svg/svg.dart';
 
@@ -99,7 +99,7 @@ class SettingWidgets {
             if (onTap != null)
               SvgPicture.asset(
                 'chat_assets/icon/chevron_right.svg',
-                package: 'atomic_x',
+                package: 'tuikit_atomic_x',
                 width: 12,
                 height: 24,
                 colorFilter: ColorFilter.mode(colorsTheme.textColorPrimary, BlendMode.srcIn),

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:atomic_x/audio_recoder/audio_recorder.dart';
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/audio_recoder/audio_recorder.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -93,7 +93,7 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
   Future<void> stopRecord() async {
     final recordInfo = await _audioRecorder.stopRecord();
     if (recordInfo != null) {
-      if (recordInfo.errorCode != 0 && mounted) {
+      if (recordInfo.errorCode == AudioRecordCode.tooShort && mounted) {
         AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
         Toast.warning(context, atomicLocalizations.sayTimeShort);
       }
@@ -207,7 +207,7 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
                     : Border.all(color: BaseColors.transparent),
                 borderRadius: BorderRadius.circular(25),
               ),
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 50),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

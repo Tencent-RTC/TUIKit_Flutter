@@ -1,12 +1,14 @@
-import 'package:atomic_x/base_component/base_component.dart';
-import 'package:atomic_x/base_component/utils/time_util.dart';
-import 'package:atomic_x/message_list/utils/message_utils.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/utils/time_util.dart';
+import 'package:tuikit_atomic_x/message_list/utils/message_utils.dart';
 import 'package:atomic_x_core/atomicxcore.dart' hide CompletionHandler;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 
 import '../../emoji_picker/emoji_manager.dart';
+import '../conversation_list.dart';
+import '../conversation_list_config.dart';
 
 class ConversationItem extends StatefulWidget {
   final ConversationInfo conversation;
@@ -21,6 +23,10 @@ class ConversationItem extends StatefulWidget {
 
   final VoidCallback? onClearHistory;
 
+  final List<ConversationCustomAction> customActions;
+
+  final ConversationActionConfigProtocol config;
+
   const ConversationItem({
     super.key,
     required this.conversation,
@@ -29,6 +35,8 @@ class ConversationItem extends StatefulWidget {
     this.onPinToggle,
     this.onDelete,
     this.onClearHistory,
+    this.customActions = const [],
+    required this.config,
   });
 
   @override
@@ -37,12 +45,10 @@ class ConversationItem extends StatefulWidget {
 
 class _ConversationItemState extends State<ConversationItem> {
   late AtomicLocalizations atomicLocale;
-  List<String> _conversationActionList = [];
 
   @override
   void initState() {
     super.initState();
-    _loadConversationActionConfig();
   }
 
   @override
@@ -58,17 +64,10 @@ class _ConversationItemState extends State<ConversationItem> {
     );
   }
 
-  void _loadConversationActionConfig() {
-    final appBuilder = AppBuilder.getInstance();
-    setState(() {
-      _conversationActionList = appBuilder.conversationListConfig.conversationActionList;
-    });
-  }
-
   List<SwipeAction> _buildSwipeActions(SemanticColorScheme colorsTheme) {
     final actions = <SwipeAction>[];
 
-    if (_conversationActionList.contains(AppBuilder.CONVERSATION_ACTION_PIN)) {
+    if (widget.config.isSupportPin) {
       actions.add(SwipeAction(
         title: widget.conversation.isPinned ? atomicLocale.unpin : atomicLocale.pin,
         onTap: (CompletionHandler handler) async {
@@ -87,7 +86,7 @@ class _ConversationItemState extends State<ConversationItem> {
       ));
     }
 
-    if (_conversationActionList.isNotEmpty) {
+    if (_hasMoreActions()) {
       actions.add(SwipeAction(
         title: atomicLocale.more,
         onTap: (CompletionHandler handler) async {
@@ -190,21 +189,33 @@ class _ConversationItemState extends State<ConversationItem> {
     );
   }
 
+  bool _hasMoreActions() {
+    return widget.config.isSupportClearHistory || widget.config.isSupportDelete || widget.customActions.isNotEmpty;
+  }
+
   Future<void> _showMoreActions(BuildContext context, SemanticColorScheme colors) async {
     final actions = <ActionSheetItem>[];
 
-    if (_conversationActionList.contains(AppBuilder.CONVERSATION_ACTION_CLEAR_HISTORY)) {
+    if (widget.config.isSupportClearHistory) {
       actions.add(ActionSheetItem(
         title: atomicLocale.clearMessage,
         onTap: () => widget.onClearHistory?.call(),
       ));
     }
 
-    if (_conversationActionList.contains(AppBuilder.CONVERSATION_ACTION_DELETE)) {
+    if (widget.config.isSupportDelete) {
       actions.add(ActionSheetItem(
         title: atomicLocale.delete,
         isDestructive: true,
         onTap: () => widget.onDelete?.call(),
+      ));
+    }
+
+    // Add custom actions
+    for (final customAction in widget.customActions) {
+      actions.add(ActionSheetItem(
+        title: customAction.title,
+        onTap: () => customAction.action(widget.conversation),
       ));
     }
 
@@ -257,7 +268,7 @@ class _ConversationItemState extends State<ConversationItem> {
           width: 18,
           height: 18,
           colorFilter: ColorFilter.mode(colorsTheme.textColorTertiary, BlendMode.srcIn),
-          package: 'atomic_x',
+          package: 'tuikit_atomic_x',
         ),
       );
     } else if (widget.conversation.unreadCount > 0) {

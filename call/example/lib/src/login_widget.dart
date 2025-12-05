@@ -259,10 +259,10 @@ class _LoginWidgetState extends State<LoginWidget> {
     _isButtonEnabled = false;
     final result = await TUICallKit.instance
         .login(GenerateTestUserSig.sdkAppId, _userId, GenerateTestUserSig.genTestSig(_userId));
-    if (result.code == '0') {
+    if (result.errorCode == 0) {
       SettingsConfig.showBlurBackground = true;
       TUICallKit.instance.enableVirtualBackground(SettingsConfig.showBlurBackground);
-      SettingsConfig.showIncomingBanner = false;
+      SettingsConfig.showIncomingBanner = true;
       TUICallKit.instance.enableIncomingBanner(SettingsConfig.showIncomingBanner);
       SettingsConfig.enableFloatWindow = true;
       TUICallKit.instance.enableFloatWindow(SettingsConfig.enableFloatWindow);

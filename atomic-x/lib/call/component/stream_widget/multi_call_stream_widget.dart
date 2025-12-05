@@ -1,13 +1,13 @@
-import 'package:atomic_x/call/call_view.dart';
-import 'package:atomic_x/call/component/stream_widget/multi_call_stream_layout_widget.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
+import 'package:tuikit_atomic_x/call/call_view.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/multi_call_stream_layout_widget.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/participant_stream_view.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/common/constants.dart';
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
-import 'package:atomic_x/call/common/utils/utils.dart';
+import 'package:tuikit_atomic_x/call/common/constants.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
 
 class MultiCallStreamWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
@@ -51,7 +51,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
                 fit: BoxFit.cover,
                 errorBuilder: (ctx, err, stackTrace) => Image.asset(
                   'call_assets/user_icon.png',
-                  package: 'atomic_x',
+                  package: 'tuikit_atomic_x',
                 ),
               ),
             ),
@@ -61,8 +61,8 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
                 color: const Color.fromRGBO(45, 45, 45, 0.9),
               ),
             ),
-            selfInfo.id != CallListStore.shared.state.activeCall.value.inviterId
-                && selfInfo.status == TUICallStatus.waiting
+            selfInfo.id != CallStore.shared.state.activeCall.value.inviterId
+                && selfInfo.status == CallParticipantStatus.waiting
                 ? _buildReceivedGroupCallWaiting()
                 : _buildGroupCallView(),
           ],
@@ -114,7 +114,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
 
   _getCallerInfoDisplay() {
     return ValueListenableBuilder(
-      valueListenable: CallListStore.shared.state.activeCall,
+      valueListenable: CallStore.shared.state.activeCall,
       builder: (context, activeCall, child) {
         return _CallerInfoWidget(userId: activeCall.inviterId);
       },
@@ -128,7 +128,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
         List<String> inviteeAvatarList = [];
         for (var participant in allParticipants) {
           if (participant.id != CallParticipantStore.shared.state.selfInfo.value.id
-              && participant.id != CallListStore.shared.state.activeCall.value.inviterId) {
+              && participant.id != CallStore.shared.state.activeCall.value.inviterId) {
             inviteeAvatarList.add(participant.avatarURL);
           }
         }
@@ -164,7 +164,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
                         fit: BoxFit.cover,
                         errorBuilder: (ctx, err, stackTrace) => Image.asset(
                           'call_assets/user_icon.png',
-                          package: 'atomic_x',
+                          package: 'tuikit_atomic_x',
                         ),
                       ),
                     );
@@ -269,7 +269,7 @@ class _CallerInfoWidgetState extends State<_CallerInfoWidget> {
             fit: BoxFit.cover,
             errorBuilder: (ctx, err, stackTrace) => Image.asset(
               'call_assets/user_icon.png',
-              package: 'atomic_x',
+              package: 'tuikit_atomic_x',
             ),
           ),
         ),

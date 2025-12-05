@@ -1,4 +1,4 @@
-library atomic_x;
+library tuikit_atomic_x;
 
 export 'package:atomic_x_core/atomicxcore.dart';
 export 'album_picker/album_picker.dart';
@@ -19,3 +19,4 @@ export 'message_list/message_list.dart';
 export 'video_picker/video_picker.dart';
 export 'user_picker/user_picker.dart';
 export 'call/call_view.dart';
+export 'pip/android_pip_feature.dart';

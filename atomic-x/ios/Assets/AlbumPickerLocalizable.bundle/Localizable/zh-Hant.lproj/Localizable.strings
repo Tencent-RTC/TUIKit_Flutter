@@ -1,0 +1,42 @@
+/* AlbumPicker Traditional Chinese Localization */
+
+/* Button texts */
+"cancel" = "取消";
+"done" = "完成";
+"preview" = "預覽";
+"back" = "返回";
+"edit" = "編輯";
+"setting" = "設定";
+"original" = "原圖";
+
+/* Album names */
+"camera_roll" = "相機膠卷";
+"user_library" = "使用者資料庫";
+"recently_added" = "最近加入";
+"favorites" = "喜好項目";
+"self_portraits" = "自拍";
+"screenshots" = "螢幕截圖";
+"panoramas" = "全景照片";
+"videos" = "影片";
+"slomo_videos" = "慢動作";
+"timelapses" = "縮時攝影";
+"bursts" = "連拍快照";
+"live_photos" = "原況照片";
+"depth_effect" = "人像";
+"cloud_shared" = "雲端共享相簿";
+"unknown_album" = "未知相簿";
+
+/* Status texts */
+"loading" = "載入中...";
+"video_load_failed" = "影片載入失敗";
+"load_failed" = "載入失敗";
+
+/* Error messages */
+"authorization_denied" = "照片存取被拒絕";
+"no_photos_found" = "找不到照片";
+"loading_failed" = "載入失敗";
+"saving_failed" = "儲存失敗";
+
+"no_permission" = "無權限";
+"no_permission_message" = "您沒有對應的權限，請前往設定申請權限!";
+"go_to_settings" = "去設定";

@@ -1,0 +1,42 @@
+/* AlbumPicker Arabic Localization */
+
+/* Button texts */
+"cancel" = "إلغاء";
+"done" = "تم";
+"preview" = "معاينة";
+"back" = "رجوع";
+"edit" = "تحرير";
+"setting" = "الإعدادات";
+"original" = "الأصلي";
+
+/* Album names */
+"camera_roll" = "لفة الكاميرا";
+"user_library" = "مكتبة المستخدم";
+"recently_added" = "المضافة مؤخراً";
+"favorites" = "المفضلة";
+"self_portraits" = "صور شخصية";
+"screenshots" = "لقطات الشاشة";
+"panoramas" = "صور بانورامية";
+"videos" = "مقاطع الفيديو";
+"slomo_videos" = "حركة بطيئة";
+"timelapses" = "فاصل زمني";
+"bursts" = "لقطات متتالية";
+"live_photos" = "صور حية";
+"depth_effect" = "صورة شخصية";
+"cloud_shared" = "الألبوم المشترك السحابي";
+"unknown_album" = "ألبوم غير معروف";
+
+/* Status texts */
+"loading" = "جاري التحميل...";
+"video_load_failed" = "فشل تحميل الفيديو";
+"load_failed" = "فشل التحميل";
+
+/* Error messages */
+"authorization_denied" = "تم رفض الوصول للصور";
+"no_photos_found" = "لم يتم العثور على صور";
+"loading_failed" = "فشل التحميل";
+"saving_failed" = "فشل الحفظ";
+
+"no_permission" = "لا يوجد إذن";
+"no_permission_message" = "ليس لديك الأذونات اللازمة. يُرجى الانتقال إلى الإعدادات لطلب الأذونات!";
+"go_to_settings" = "انتقل إلى الإعدادات";

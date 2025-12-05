@@ -186,18 +186,17 @@ class _SingleCallWidgetState extends State<SingleCallWidget> {
 
   _call() {
     TUICallKit.instance.calls([_calledUserId,]
-      , _isAudioCall ? TUICallMediaType.audio : TUICallMediaType.video, _createTUICallParams());
+      , _isAudioCall ? CallMediaType.audio : CallMediaType.video, _createCallParams());
   }
 
-  TUICallParams _createTUICallParams() {
-    TUICallParams params = TUICallParams();
+  CallParams _createCallParams() {
+    CallParams params = CallParams();
     if (SettingsConfig.intRoomId != 0) {
-      params.roomId = TUIRoomId.intRoomId(SettingsConfig.intRoomId);
+      params.roomId = SettingsConfig.intRoomId.toString();
     } else if (SettingsConfig.strRoomId.isNotEmpty) {
-      params.roomId = TUIRoomId.strRoomId(SettingsConfig.strRoomId);
+      params.roomId = SettingsConfig.strRoomId;
     }
     params.timeout = SettingsConfig.timeout;
-    params.offlinePushInfo = SettingsConfig.offlinePushInfo ?? TUIOfflinePushInfo();
     params.userData = SettingsConfig.extendInfo;
     return params;
   }

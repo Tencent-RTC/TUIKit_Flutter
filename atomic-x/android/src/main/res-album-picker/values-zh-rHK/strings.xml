@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="album_picker_all_photos_and_videos">圖片和視頻</string>
+    <string name="album_picker_all_photos">所有圖片</string>
+    <string name="album_picker_all_videos">所有視頻</string>
+    <string name="album_picker_collections">收藏</string>
+
+    <string name="album_picker_preview">預覽</string>
+    <string name="album_picker_send">發送</string>
+    <string name="album_picker_select">選擇</string>
+
+    <string name="album_request_permission_storage_title">%s申請獲取存儲權限</string>
+    <string name="album_request_permission_storage_reason">需要訪問您的存儲權限，開啟後用於相冊圖片視頻發送、聊天圖片視頻保存等功能</string>
+    <string name="album_request_permission_storage_tip">在設置-應用-%s-權限中開啟存儲權限，以正常使用相冊圖片視頻發送、聊天圖片保存等功能</string>
+
+    <string name="album_request_permission_media_title">%s申請訪問照片與視頻</string>
+    <string name="album_request_permission_media_reason">需要訪問照片與視頻，開啟後用於相冊圖片視頻發送、聊天圖片視頻保存等功能</string>
+    <string name="album_request_permission_media_tip">在設置-應用-%s-權限中開啟照片與視頻權限，以正常使用相冊圖片視頻發送、聊天圖片保存等功能</string>
+
+</resources>

@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:flutter_svg/svg.dart';
@@ -149,7 +149,7 @@ class _GroupChatSettingState extends State<GroupChatSetting> {
                 },
                 child: SvgPicture.asset(
                   'chat_assets/icon/name_edit.svg',
-                  package: 'atomic_x',
+                  package: 'tuikit_atomic_x',
                 ),
               ),
           ],
@@ -500,7 +500,7 @@ class _GroupChatSettingState extends State<GroupChatSetting> {
             if (_hasPermission(GroupPermission.getGroupMemberInfo))
               SvgPicture.asset(
                 'chat_assets/icon/chevron_right.svg',
-                package: 'atomic_x',
+                package: 'tuikit_atomic_x',
                 width: 12,
                 height: 24,
                 colorFilter: ColorFilter.mode(colorsTheme.textColorPrimary, BlendMode.srcIn),

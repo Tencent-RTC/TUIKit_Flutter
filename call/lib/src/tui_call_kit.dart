@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tencent_calls_uikit/src/tui_call_kit_impl.dart';
 import 'bridge/bootloader/bootloader.dart';
 
@@ -13,7 +13,7 @@ abstract class TUICallKit {
   /// @param sdkAppId      sdkAppId
   /// @param userId        userId
   /// @param userSig       userSig
-  Future<TUIResult> login(int sdkAppId, String userId, String userSig) async {
+  Future<CompletionHandler> login(int sdkAppId, String userId, String userSig) async {
     // TODO: implement login
     throw UnimplementedError();
   }
@@ -31,7 +31,7 @@ abstract class TUICallKit {
   /// @param avatar   User profile photo URL, which can contain up to 500 bytes
   ///                 For example: https://liteav.sdk.qcloud.com/app/res/picture/voiceroom/avatar/user_avatar1.png
   /// @param callback Set the result callback
-  Future<TUIResult> setSelfInfo(String nickname, String avatar) async {
+  Future<CompletionHandler> setSelfInfo(String nickname, String avatar) async {
     // TODO: implement setSelfInfo
     throw UnimplementedError();
   }
@@ -41,8 +41,8 @@ abstract class TUICallKit {
   /// @param userIdList    List of userId
   /// @param callMediaType Call type
   /// @param params        Call extension parameters
-  Future<TUIResult> calls(List<String> userIdList, TUICallMediaType callMediaType,
-      [TUICallParams? params]) async {
+  Future<CompletionHandler> calls(List<String> userIdList, CallMediaType callMediaType,
+      [CallParams? params]) async {
     // TODO: implement calls
     throw UnimplementedError();
   }

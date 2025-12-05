@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="album_picker_all_photos_and_videos">الصور والفيديوهات</string>
+    <string name="album_picker_all_photos">كل الصور</string>
+    <string name="album_picker_all_videos">جميع الفيديوهات</string>
+    <string name="album_picker_collections">المجموعات</string>
+
+    <string name="album_picker_preview">معاينة</string>
+    <string name="album_picker_send">إرسال</string>
+    <string name="album_picker_select">اختيار</string>
+
+    <string name="album_request_permission_storage_title">%1$s يطلب الوصول إلى صلاحيات التخزين</string>
+    <string name="album_request_permission_storage_reason">مطلوب الوصول إلى صلاحيات التخزين لإرسال الصور والفيديوهات من الألبوم وحفظ الصور والفيديوهات في الدردشة</string>
+    <string name="album_request_permission_storage_tip">افتح صلاحيات التخزين في الإعدادات-التطبيقات-%1$s-الصلاحيات لاستخدام إرسال الصور والفيديوهات من الألبوم وحفظ الصور في الدردشة بشكل طبيعي</string>
+
+    <string name="album_request_permission_media_title">%1$s يطلب الوصول إلى الصور والفيديوهات</string>
+    <string name="album_request_permission_media_reason">مطلوب الوصول إلى الصور والفيديوهات لإرسال الصور والفيديوهات من الألبوم وحفظ الصور والفيديوهات في الدردشة</string>
+    <string name="album_request_permission_media_tip">افتح صلاحيات الصور والفيديوهات في الإعدادات-التطبيقات-%1$s-الصلاحيات لاستخدام إرسال الصور والفيديوهات من الألبوم وحفظ الصور في الدردشة بشكل طبيعي</string>
+
+</resources>

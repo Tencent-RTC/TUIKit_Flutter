@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PickerResult {
   final String filePath;
@@ -123,44 +123,38 @@ class FilePicker {
       return true;
     }
 
-    Permission permission;
+    PermissionType permissionType;
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.version.sdkInt >= 33) {
-        permission = Permission.photos;
+        permissionType = PermissionType.photos;
       } else {
-        permission = Permission.storage;
+        permissionType = PermissionType.storage;
       }
     } else if (Platform.isIOS) {
-      permission = Permission.photos;
+      permissionType = PermissionType.photos;
     } else {
       return true;
     }
 
-    PermissionStatus status = await permission.status;
+    Map<PermissionType, PermissionStatus> statusMap =  await Permission.request([permissionType]);
+    PermissionStatus status = statusMap[permissionType] ?? PermissionStatus.denied;
 
-    if (status.isGranted) {
+    if (status == PermissionStatus.granted) {
       return true;
     }
 
-    if (status.isDenied) {
-      status = await permission.request();
-      if (status.isGranted) {
-        return true;
-      }
-    }
-
-    if (status.isPermanentlyDenied) {
+    if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
       if (context.mounted) {
         final bool shouldOpenSettings = await _showPermissionDialog(context);
         if (shouldOpenSettings) {
-          await openAppSettings();
+          await Permission.openAppSettings();
         }
       }
       return false;
     }
 
-    return status.isGranted;
+    return status == PermissionStatus.granted || status == PermissionStatus.limited;
   }
 
   static Future<bool> _showPermissionDialog(BuildContext context) async {

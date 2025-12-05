@@ -159,7 +159,7 @@ class _IconToastState extends State<IconToast> with SingleTickerProviderStateMix
                             ToastTypeHelper.getIconName(widget.type),
                             width: 16,
                             height: 16,
-                            package: 'atomic_x',
+                            package: 'tuikit_atomic_x',
                           ),
                         )
                       else
@@ -167,7 +167,7 @@ class _IconToastState extends State<IconToast> with SingleTickerProviderStateMix
                           ToastTypeHelper.getIconName(widget.type),
                           width: 16,
                           height: 16,
-                          package: 'atomic_x',
+                          package: 'tuikit_atomic_x',
                           colorFilter: ColorFilter.mode(
                             ToastTypeHelper.getIconColor(widget.type, colorsTheme),
                             BlendMode.srcIn,

@@ -1,10 +1,10 @@
-import 'package:atomic_x/atomicx.dart';
-import 'package:atomic_x/call/component/hint/hint_widget.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/call/component/hint/hint_widget.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/common/constants.dart';
-import 'package:atomic_x/call/common/utils/utils.dart';
+import 'package:tuikit_atomic_x/call/common/constants.dart';
+import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
 
 class SingleCallStreamWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
@@ -19,6 +19,7 @@ class SingleCallStreamWidget extends StatefulWidget {
 }
 
 class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
+  double scale = 0.25;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
                 valueListenable: SingleCallUserWidgetData.isOnlyShowVideoView,
                 builder: (context, value, child) {
                   return Visibility(
-                    visible: CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio || !value,
+                    visible: CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio || !value,
                     child: _buildUserInfoWidget(),
                   );
                 },
@@ -85,8 +86,8 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
         Positioned.fill(
           child: GestureDetector(
             onTap: () {
-              if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio ||
-                  CallParticipantStore.shared.state.selfInfo.value.status == TUICallStatus.waiting) {
+              if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio ||
+                  CallParticipantStore.shared.state.selfInfo.value.status == CallParticipantStatus.waiting) {
                 return;
               }
               SingleCallUserWidgetData.isOnlyShowVideoView.value = !SingleCallUserWidgetData.isOnlyShowVideoView.value;
@@ -99,13 +100,16 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
   }
 
   Widget _buildSmallVideoWidget() {
-    if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio
-        || CallParticipantStore.shared.state.selfInfo.value.status == TUICallStatus.waiting) {
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
+        || CallParticipantStore.shared.state.selfInfo.value.status == CallParticipantStatus.waiting) {
       return const SizedBox();
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final scale = 120 / screenWidth;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double windowWidth = screenWidth * scale;
+    double windowHeight = screenHeight * scale;
     
     return Positioned(
       top: SingleCallUserWidgetData.smallViewTop - 40,
@@ -113,25 +117,14 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
       child: Stack(
         children: [
           SizedBox(
-            width: 110,
+            width: windowWidth,
             child: Container(
-              width: 120,
-              height: 180,
+              width: windowWidth,
+              height: windowHeight,
               decoration: const BoxDecoration(color: Colors.transparent),
-              child: ClipRect(
-                child: Transform.scale(
-                  scale: scale,
-                  alignment: Alignment.center,
-                  child: OverflowBox(
-                    maxWidth: screenWidth,
-                    maxHeight: 180 / scale,
-                    alignment: Alignment.center,
-                    child: SingleCallUserWidgetData.bigViewIndex == 1
-                        ? StreamViewFactory.instance.createSingleSelfStreamView()
-                        : StreamViewFactory.instance.createSingleRemoteStreamView(),
-                  ),
-                ),
-              ),
+              child: SingleCallUserWidgetData.bigViewIndex == 1
+                  ? StreamViewFactory.instance.createSingleSelfStreamView()
+                  : StreamViewFactory.instance.createSingleRemoteStreamView(),
             ),
           ),
           Positioned.fill(
@@ -140,7 +133,7 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
                 _changeVideoView();
               },
               onPanUpdate: (DragUpdateDetails e) {
-                if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.video) {
+                if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
                   _refreshViewPosition(e);
                 }
               },
@@ -152,8 +145,8 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
   }
 
   Widget _buildUserInfoWidget() {
-    if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.video
-        && CallParticipantStore.shared.state.selfInfo.value.status == TUICallStatus.accept) {
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video
+        && CallParticipantStore.shared.state.selfInfo.value.status == CallParticipantStatus.accept) {
       return Container();
     }
     return Positioned(
@@ -185,7 +178,7 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
                   fit: BoxFit.cover,
                   errorBuilder: (ctx, err, stackTrace) => Image.asset(
                     'call_assets/user_icon.png',
-                    package: 'atomic_x',
+                    package: 'tuikit_atomic_x',
                   ),
                 ),
               ),
@@ -209,8 +202,8 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
   }
 
   Widget _getBigVideoWidget() {
-    if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio
-        || (CallParticipantStore.shared.state.selfInfo.value.status != TUICallStatus.waiting
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
+        || (CallParticipantStore.shared.state.selfInfo.value.status != CallParticipantStatus.waiting
             && SingleCallUserWidgetData.bigViewIndex == 1)) {
       return StreamViewFactory.instance.createSingleRemoteStreamView();
     }
@@ -218,8 +211,8 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
   }
 
   _changeVideoView() {
-    if (CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio ||
-        CallParticipantStore.shared.state.selfInfo.value.status == TUICallStatus.waiting) {
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio ||
+        CallParticipantStore.shared.state.selfInfo.value.status == CallParticipantStatus.waiting) {
       return;
     }
 
@@ -229,7 +222,7 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
   }
 
   _getBackgroundColor() {
-    return CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio
+    return CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
         ? const Color(0xFFF2F2F2)
         : const Color(0xFF444444);
   }

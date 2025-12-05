@@ -1,10 +1,10 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_input/src/chat_special_text_span_builder.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
-
-import '../../../message_input/src/chat_special_text_span_builder.dart';
-import '../message_status_mixin.dart';
 
 typedef BackgroundBuilder = Widget Function(Widget child);
 
@@ -17,20 +17,20 @@ class TextMessageWidget extends StatefulWidget {
   final ValueChanged<String>? onLinkTapped;
   final GlobalKey? bubbleKey;
   final BackgroundBuilder? backgroundBuilder;
-  final String alignment;
   final VoidCallback? onResendTap;
+  final MessageListConfigProtocol config;
 
   const TextMessageWidget({
     super.key,
     required this.message,
     required this.isSelf,
     required this.maxWidth,
+    required this.config,
     this.onTap,
     this.onLongPress,
     this.onLinkTapped,
     this.bubbleKey,
     this.backgroundBuilder,
-    this.alignment = AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
     this.onResendTap,
   });
 
@@ -46,7 +46,7 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
     final content = Container(
       key: widget.bubbleKey,
       constraints: BoxConstraints(
-        maxWidth: widget.maxWidth * 0.7,
+        maxWidth: widget.maxWidth * 0.9,
       ),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: _buildTextWithStatusAndTime(colors),
@@ -83,6 +83,7 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
             isSelf: widget.isSelf,
             colors: colors,
             onResendTap: widget.onResendTap,
+            isShowTimeInBubble: widget.config.isShowTimeInBubble,
           ),
         ],
       ],
@@ -153,36 +154,36 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
   }
 
   BorderRadius _getBubbleBorderRadius() {
-    switch (widget.alignment) {
+    switch (widget.config.alignment) {
       case 'left':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(0),
-          bottomRight: Radius.circular(18),
+        return BorderRadius.only(
+          topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+          topRight: Radius.circular(widget.config.textBubbleCornerRadius),
+          bottomLeft: const Radius.circular(0),
+          bottomRight: Radius.circular(widget.config.textBubbleCornerRadius),
         );
       case 'right':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(18),
-          bottomRight: Radius.circular(0),
+        return BorderRadius.only(
+          topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+          topRight: Radius.circular(widget.config.textBubbleCornerRadius),
+          bottomLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+          bottomRight: const Radius.circular(0),
         );
       case 'two-sided':
       default:
         if (widget.isSelf) {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(18),
-            bottomRight: Radius.circular(0),
+          return BorderRadius.only(
+            topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+            topRight: Radius.circular(widget.config.textBubbleCornerRadius),
+            bottomLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+            bottomRight: const Radius.circular(0),
           );
         } else {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(0),
-            bottomRight: Radius.circular(18),
+          return BorderRadius.only(
+            topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
+            topRight: Radius.circular(widget.config.textBubbleCornerRadius),
+            bottomLeft: const Radius.circular(0),
+            bottomRight: Radius.circular(widget.config.textBubbleCornerRadius),
           );
         }
     }

@@ -412,7 +412,7 @@ class _UserPickerState extends State<UserPicker> {
                           'chat_assets/icon/close.svg',
                           width: 18,
                           height: 18,
-                          package: 'atomic_x',
+                          package: 'tuikit_atomic_x',
                         ),
                       ),
                     ),

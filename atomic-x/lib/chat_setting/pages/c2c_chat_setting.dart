@@ -1,4 +1,4 @@
-import 'package:atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 
 typedef OnSendMessageClick = void Function({String? userID, String? groupID});

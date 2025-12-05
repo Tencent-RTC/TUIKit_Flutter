@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="base_component_cancel">Cancel</string>
+    <string name="base_component_confirm">Confirm</string>
+    <string name="base_component_i_know">Got it</string>
+    <string name="base_component_switch_open">ON</string>
+    <string name="base_component_switch_close">OFF</string>
+</resources>

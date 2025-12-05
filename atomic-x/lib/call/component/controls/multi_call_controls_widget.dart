@@ -1,8 +1,8 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
-import 'package:atomic_x/call/common/widget/controls_button.dart';
-import 'package:atomic_x/call/call_view.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
+import 'package:tuikit_atomic_x/call/call_view.dart';
 
 class MultiCallControlsWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
@@ -36,8 +36,8 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
     return ValueListenableBuilder(
         valueListenable: CallParticipantStore.shared.state.selfInfo,
         builder: (context, selfInfo, child) {
-          if (selfInfo.status == TUICallStatus.waiting
-              && selfInfo.id != CallListStore.shared.state.activeCall.value.inviterId) {
+          if (selfInfo.status == CallParticipantStatus.waiting
+              && selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
             return _buildWaitingFunctionView();
           } else {
             return _buildAcceptedFunctionView(context);
@@ -136,7 +136,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                               ..scale(1.0, isFunctionExpand ? 1.0 : -1.0, 1.0),
                             child: Image.asset(
                               'call_assets/arrow.png',
-                              package: 'atomic_x',
+                              package: 'tuikit_atomic_x',
                               width: smallBtnHeight,
                             ),
                           ),
@@ -162,7 +162,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       textColor: Colors.white,
       imgHeight: 60,
       onTap: () {
-        CallListStore.shared.reject();
+        CallStore.shared.reject();
       },
     );
   }
@@ -175,7 +175,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       textColor: Colors.white,
       imgHeight: 60,
       onTap: () {
-        CallListStore.shared.accept();
+        CallStore.shared.accept();
       },
     );
   }
@@ -286,7 +286,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
           ? bigBtnHeight
           : smallBtnHeight,
       onTap: () {
-        CallListStore.shared.hangup();
+        CallStore.shared.hangup();
       },
       useAnimation: true,
       duration: Duration(milliseconds: duration),

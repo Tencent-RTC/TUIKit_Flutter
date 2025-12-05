@@ -927,6 +927,77 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
 
   @override
   String get resendTips => '确定重发吗？';
+
+  @override
+  String get callRejectCaller => '对方已拒绝';
+
+  @override
+  String get callRejectCallee => '已拒绝';
+
+  @override
+  String get callCancelCaller => '已取消';
+
+  @override
+  String get callCancelCallee => '对方已取消';
+
+  @override
+  String get stopCallTip => '通话时长';
+
+  @override
+  String get callTimeoutCaller => '对方无应答';
+
+  @override
+  String get callTimeoutCallee => '超时无应答';
+
+  @override
+  String get callLineBusyCaller => '对方忙线中';
+
+  @override
+  String get callLineBusyCallee => '忙线未接听';
+
+  @override
+  String get startCall => '发起通话';
+
+  @override
+  String get acceptCall => '已接听';
+
+  @override
+  String get callingSwitchToAudio => '视频转语音';
+
+  @override
+  String get callingSwitchToAudioAccept => '确认视频转语音';
+
+  @override
+  String get invalidCommand => '不能识别的通话指令';
+
+  @override
+  String get groupCallSend => '发起了群通话';
+
+  @override
+  String get groupCallEnd => '通话结束';
+
+  @override
+  String get groupCallNoAnswer => '未接听';
+
+  @override
+  String get groupCallReject => '拒绝群通话';
+
+  @override
+  String get groupCallAccept => '接听';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => '同意视频转语音';
+
+  @override
+  String get unknownCall => '未知通话';
+
+  @override
+  String get join => '加入';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$number 人正在通话中';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1852,4 +1923,75 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
 
   @override
   String get resendTips => '確定重發嗎？';
+
+  @override
+  String get callRejectCaller => '對方已拒絕';
+
+  @override
+  String get callRejectCallee => '已拒絕';
+
+  @override
+  String get callCancelCaller => '已取消';
+
+  @override
+  String get callCancelCallee => '對方已取消';
+
+  @override
+  String get stopCallTip => '通話時長';
+
+  @override
+  String get callTimeoutCaller => '對方無應答';
+
+  @override
+  String get callTimeoutCallee => '超時無應答';
+
+  @override
+  String get callLineBusyCaller => '對方忙線中';
+
+  @override
+  String get callLineBusyCallee => '忙線未接聽';
+
+  @override
+  String get startCall => '發起通話';
+
+  @override
+  String get acceptCall => '已接聽';
+
+  @override
+  String get callingSwitchToAudio => '視頻轉語音';
+
+  @override
+  String get callingSwitchToAudioAccept => '確認視頻轉語音';
+
+  @override
+  String get invalidCommand => '不能識別的通話指令';
+
+  @override
+  String get groupCallSend => '發起了群通話';
+
+  @override
+  String get groupCallEnd => '通話結束';
+
+  @override
+  String get groupCallNoAnswer => '未接聽';
+
+  @override
+  String get groupCallReject => '拒絕群通話';
+
+  @override
+  String get groupCallAccept => '接聽';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => '同意視頻轉語音';
+
+  @override
+  String get unknownCall => '未知通話';
+
+  @override
+  String get join => '加入';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$number人正在通話中';
+  }
 }

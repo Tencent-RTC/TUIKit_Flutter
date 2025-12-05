@@ -1892,6 +1892,144 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to resend?'**
   String get resendTips;
+
+  /// No description provided for @callRejectCaller.
+  ///
+  /// In en, this message translates to:
+  /// **'Call declined by user'**
+  String get callRejectCaller;
+
+  /// No description provided for @callRejectCallee.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get callRejectCallee;
+
+  /// No description provided for @callCancelCaller.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get callCancelCaller;
+
+  /// No description provided for @callCancelCallee.
+  ///
+  /// In en, this message translates to:
+  /// **'Call canceled by caller'**
+  String get callCancelCallee;
+
+  /// No description provided for @stopCallTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get stopCallTip;
+
+  /// No description provided for @callTimeoutCaller.
+  ///
+  /// In en, this message translates to:
+  /// **'Call was not answered'**
+  String get callTimeoutCaller;
+
+  /// No description provided for @callTimeoutCallee.
+  ///
+  /// In en, this message translates to:
+  /// **'Call timeout'**
+  String get callTimeoutCallee;
+
+  /// No description provided for @callLineBusyCaller.
+  ///
+  /// In en, this message translates to:
+  /// **'Line busy'**
+  String get callLineBusyCaller;
+
+  /// No description provided for @callLineBusyCallee.
+  ///
+  /// In en, this message translates to:
+  /// **'Line busy'**
+  String get callLineBusyCallee;
+
+  /// No description provided for @startCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Call'**
+  String get startCall;
+
+  /// No description provided for @acceptCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered'**
+  String get acceptCall;
+
+  /// No description provided for @callingSwitchToAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to voice call'**
+  String get callingSwitchToAudio;
+
+  /// No description provided for @callingSwitchToAudioAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm video to voice'**
+  String get callingSwitchToAudioAccept;
+
+  /// No description provided for @invalidCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'invalid command'**
+  String get invalidCommand;
+
+  /// No description provided for @groupCallSend.
+  ///
+  /// In en, this message translates to:
+  /// **'initiated a group call'**
+  String get groupCallSend;
+
+  /// No description provided for @groupCallEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End group call'**
+  String get groupCallEnd;
+
+  /// No description provided for @groupCallNoAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'no answer'**
+  String get groupCallNoAnswer;
+
+  /// No description provided for @groupCallReject.
+  ///
+  /// In en, this message translates to:
+  /// **'declined call'**
+  String get groupCallReject;
+
+  /// No description provided for @groupCallAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'answered'**
+  String get groupCallAccept;
+
+  /// No description provided for @groupCallConfirmSwitchToAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'confirm to audio call'**
+  String get groupCallConfirmSwitchToAudio;
+
+  /// No description provided for @unknownCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown call'**
+  String get unknownCall;
+
+  /// No description provided for @join.
+  ///
+  /// In en, this message translates to:
+  /// **'join in'**
+  String get join;
+
+  /// No description provided for @peopleOnCall.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} person are currently on the call'**
+  String peopleOnCall(Object number);
 }
 
 class _AtomicLocalizationsDelegate

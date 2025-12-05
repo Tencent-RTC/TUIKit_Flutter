@@ -1,11 +1,11 @@
-import 'package:atomic_x/call/common/constants.dart';
-import 'package:atomic_x/call/common/utils/utils.dart';
-import 'package:atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
-import 'package:atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
+import 'package:tuikit_atomic_x/call/common/constants.dart';
+import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/stream_view/stream_view_factory.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/call_view.dart';
+import 'package:tuikit_atomic_x/call/call_view.dart';
 
 class ParticipantStreamView extends StatefulWidget {
   final int index;
@@ -27,7 +27,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
   @override
   void initState() {
     if (CallParticipantStore.shared.state.selfInfo.value.id == widget.userId
-        && CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.video) {
+        && CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
       DeviceStore.shared.openLocalCamera(true);
     }
     super.initState();
@@ -44,7 +44,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: CallListStore.shared.state.activeCall,
+        valueListenable: CallStore.shared.state.activeCall,
         builder: (context, activeCall, child) {
           final isMultiCall = activeCall.chatGroupId.isNotEmpty
               || activeCall.inviteeIds.length > 1;
@@ -80,7 +80,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
           children: [
             AbsorbPointer(
               absorbing: true,
-              child: ParticipantView(participantId: info.id),
+              child: CallParticipantView(participantId: info.id),
             ),
             Visibility(
               visible: _isShowBackgroundImage(info),
@@ -89,7 +89,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
               ),
             ),
             Visibility(
-              visible: info.status == TUICallStatus.waiting,
+              visible: info.status == CallParticipantStatus.waiting,
               child: const Center(child: _LoadingAnimation(),),
             ),
             _getSwitchCameraButton(info),
@@ -105,7 +105,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        ParticipantView(participantId: info.id),
+        CallParticipantView(participantId: info.id),
         _getBackgroundImage(info),
       ],
     );
@@ -140,7 +140,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
                       height: 14,
                       child: Image.asset(
                         "call_assets/switch_camera.png",
-                        package: 'atomic_x',
+                        package: 'tuikit_atomic_x',
                         width: 14,
                         height: 14,
                       ),
@@ -174,7 +174,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
               ),
               child: Image.asset(
                 "call_assets/network_bad.png",
-                package: 'atomic_x',
+                package: 'tuikit_atomic_x',
               ),
             ),
           );
@@ -223,7 +223,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
                         ),
                         child: Image.asset(
                           "call_assets/speaking.png",
-                          package: 'atomic_x',
+                          package: 'tuikit_atomic_x',
                         )
                     );
                   }
@@ -243,7 +243,7 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
                     ),
                     child: Image.asset(
                       "call_assets/audio_unavailable.png",
-                      package: 'atomic_x',
+                      package: 'tuikit_atomic_x',
                     )),
               ),
             ],
@@ -269,18 +269,24 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
               ),
           ),
           Visibility(
-            visible: info.status == TUICallStatus.accept
-            && CallListStore.shared.state.activeCall.value.mediaType == TUICallMediaType.video,
-            child: Center(
-              child: Container(
-                height: 80,
-                width: 80,
-                clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-                child: _getUserAvatar(info),
-              ),
+            visible: info.status == CallParticipantStatus.accept
+            && CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isFullScreen = constraints.maxWidth > MediaQuery.of(context).size.width * 0.5;
+                final size = isFullScreen ? 100.0 : 50.0;
+                return Center(
+                  child: Container(
+                    height: size,
+                    width: size,
+                    clipBehavior: Clip.hardEdge,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    child: _getUserAvatar(info),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -296,15 +302,15 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
       fit: BoxFit.cover,
       errorBuilder: (ctx, err, stackTrace) => Image.asset(
         'call_assets/user_icon.png',
-        package: 'atomic_x',
+        package: 'tuikit_atomic_x',
       ),
     );
   }
 
-  bool _isBadNetWork(TUINetworkQuality? network) {
-    return network == TUINetworkQuality.qualityBad
-        || network == TUINetworkQuality.qualityVeryBad
-        || network == TUINetworkQuality.qualityDown;
+  bool _isBadNetWork(NetworkQuality? network) {
+    return network == NetworkQuality.bad
+        || network == NetworkQuality.veryBad
+        || network == NetworkQuality.down;
   }
   
   bool _isShowBackgroundImage(CallParticipantInfo info) {

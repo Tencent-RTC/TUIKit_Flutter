@@ -52,7 +52,7 @@ class ThemeState extends ChangeNotifier {
     _loadThemeFromLocal();
   }
 
-  void setThemeType(ThemeType type) {
+  void setThemeMode(ThemeType type) {
     _clearCache();
     _currentTheme = ThemeConfig(type: type, primaryColor: _currentTheme.primaryColor);
     saveTheme();
@@ -140,9 +140,21 @@ class ThemeState extends ChangeNotifier {
     }
   }
 
-  bool get isSystemDarkMode {
+  ThemeConfig get currentTheme {
+    return _currentTheme;
+  }
+
+  bool get isDarkMode {
+    return _currentTheme.type == ThemeType.dark || (_currentTheme.type == ThemeType.system && _isSystemDarkMode);
+  }
+
+  bool get _isSystemDarkMode {
     final brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
     return brightness == Brightness.dark;
+  }
+
+  bool get hasCustomPrimaryColor {
+    return _currentTheme.primaryColor != null;
   }
 
   SemanticColorScheme get colors {
@@ -168,7 +180,7 @@ class ThemeState extends ChangeNotifier {
 
     switch (_currentTheme.type) {
       case ThemeType.system:
-        effectiveMode = isSystemDarkMode ? ThemeType.dark : ThemeType.light;
+        effectiveMode = _isSystemDarkMode ? ThemeType.dark : ThemeType.light;
       case ThemeType.light:
       case ThemeType.dark:
         effectiveMode = _currentTheme.type;
@@ -198,7 +210,7 @@ class ThemeState extends ChangeNotifier {
   }
 
   SemanticColorScheme _getSystemScheme() {
-    return isSystemDarkMode ? DarkSemanticScheme : LightSemanticScheme;
+    return _isSystemDarkMode ? DarkSemanticScheme : LightSemanticScheme;
   }
 
   SemanticColorScheme _getCustomScheme({

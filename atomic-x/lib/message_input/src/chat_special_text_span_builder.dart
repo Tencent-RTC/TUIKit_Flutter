@@ -1,4 +1,4 @@
-import 'package:atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class EmojiText extends SpecialText {
     }
 
     return ImageSpan(
-      AssetImage(res, package: "atomic_x"),
+      AssetImage(res, package: "tuikit_atomic_x"),
       actualText: key,
       imageWidth: 22,
       imageHeight: 22,

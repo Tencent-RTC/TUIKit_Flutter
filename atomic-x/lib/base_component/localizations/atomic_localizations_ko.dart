@@ -928,4 +928,75 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
 
   @override
   String get resendTips => '다시 보내시겠습니까?';
+
+  @override
+  String get callRejectCaller => '상대방이 거부함';
+
+  @override
+  String get callRejectCallee => '거부됨';
+
+  @override
+  String get callCancelCaller => '취소';
+
+  @override
+  String get callCancelCallee => '상대방이 취소했습니다.';
+
+  @override
+  String get stopCallTip => '통화 시간';
+
+  @override
+  String get callTimeoutCaller => '상대방의 응답이 없습니다.';
+
+  @override
+  String get callTimeoutCallee => '응답 없이 시간 초과.';
+
+  @override
+  String get callLineBusyCaller => '상대방이 바빠요';
+
+  @override
+  String get callLineBusyCallee => '통화중 회선에 응답이 없습니다.';
+
+  @override
+  String get startCall => '통화 시작';
+
+  @override
+  String get acceptCall => '답변됨';
+
+  @override
+  String get callingSwitchToAudio => '영상에서 연설로';
+
+  @override
+  String get callingSwitchToAudioAccept => '음성으로 영상 확인';
+
+  @override
+  String get invalidCommand => '인식할 수 없는 호출 명령';
+
+  @override
+  String get groupCallSend => '그룹통화가 시작되었습니다';
+
+  @override
+  String get groupCallEnd => '통화가 종료되었습니다';
+
+  @override
+  String get groupCallNoAnswer => '답변 없음';
+
+  @override
+  String get groupCallReject => '그룹 통화 거부';
+
+  @override
+  String get groupCallAccept => '답변';
+
+  @override
+  String get groupCallConfirmSwitchToAudio => '영상을 음성으로 변환하는 데 동의합니다.';
+
+  @override
+  String get unknownCall => '알 수 없는 전화';
+
+  @override
+  String get join => '참여하다';
+
+  @override
+  String peopleOnCall(Object number) {
+    return '$number님은 현재 통화 중입니다.';
+  }
 }

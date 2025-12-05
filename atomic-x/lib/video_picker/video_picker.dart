@@ -1,28 +1,27 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-import '../base_component/localizations/atomic_localizations.dart';
+import '../album_picker/album_picker.dart';
 
-class VideoPickerResult {
-  final String filePath;
-  final String fileName;
+class VideoPickerModel {
+  final int id;
+  final String mediaPath;
   final int fileSize;
-  final String extension;
+  final String fileExtension;
+  final bool isOrigin;
+  final String? videoThumbnailPath;
 
-  VideoPickerResult({
-    required this.filePath,
-    required this.fileName,
+  VideoPickerModel({
+    required this.id,
+    required this.mediaPath,
     required this.fileSize,
-    required this.extension,
+    required this.fileExtension,
+    this.isOrigin = false,
+    this.videoThumbnailPath,
   });
 
   @override
   String toString() {
-    return 'VideoPickerResult(filePath: $filePath, fileName: $fileName, fileSize: $fileSize, extension: $extension)';
+    return 'VideoPickerModel(id: $id, mediaPath: $mediaPath, fileSize: $fileSize, fileExtension: $fileExtension, isOrigin: $isOrigin, videoThumbnailPath: $videoThumbnailPath)';
   }
 }
 
@@ -30,11 +29,13 @@ class VideoPickerConfig {
   final int? maxCount;
   final int? gridCount;
   final Color? primaryColor;
+  final Locale? locale;
 
-  VideoPickerConfig({
+  const VideoPickerConfig({
     this.maxCount,
     this.gridCount,
     this.primaryColor,
+    this.locale,
   });
 }
 
@@ -46,95 +47,39 @@ class VideoPicker {
 
   VideoPicker._internal();
 
-  static Future<List<VideoPickerResult>> pickVideos({
+  static Future<void> pickVideos({
     required BuildContext context,
     VideoPickerConfig? config,
+    required Function(VideoPickerModel model, int index, double progress) onProgress,
   }) async {
     try {
-      final List<AssetEntity>? result = await AssetPicker.pickAssets(
-        context,
-        pickerConfig: AssetPickerConfig(
-          requestType: RequestType.video,
-          maxAssets: config?.maxCount ?? defaultMaxCount,
+      await AlbumPicker.pickMedia(
+        context: context,
+        config: AlbumPickerConfig(
+          pickMode: PickMode.video,
+          maxCount: config?.maxCount ?? defaultMaxCount,
           gridCount: config?.gridCount ?? defaultGridCount,
-          themeColor: config?.primaryColor,
+          primaryColor: config?.primaryColor,
+          locale: config?.locale,
         ),
+        onProgress: (albumModel, index, progress) {
+          // 只处理视频类型
+          if (albumModel.mediaType == PickMediaType.video) {
+            final videoModel = VideoPickerModel(
+              id: albumModel.id,
+              mediaPath: albumModel.mediaPath,
+              fileSize: albumModel.fileSize,
+              fileExtension: albumModel.fileExtension,
+              isOrigin: albumModel.isOrigin,
+              videoThumbnailPath: albumModel.videoThumbnailPath,
+            );
+            onProgress(videoModel, index, progress);
+          }
+        },
       );
-
-      if (result == null || result.isEmpty) {
-        return [];
-      }
-
-      List<VideoPickerResult> results = [];
-
-      for (final assetEntity in result) {
-        final File? file = await assetEntity.file;
-        if (file == null) {
-          continue;
-        }
-
-        String finalPath = file.path;
-
-        String fileName = path.basename(file.path);
-        String extension = path.extension(file.path).toLowerCase().replaceFirst('.', '');
-
-        results.add(VideoPickerResult(
-          filePath: finalPath,
-          fileName: fileName,
-          fileSize: await file.length(),
-          extension: extension,
-        ));
-      }
-
-      return results;
     } catch (e) {
-      debugPrint('VideoPickerService.pickMultipleAssets error: $e');
-      if (context.mounted) {
-        _showErrorDialog(context, 'Failed：$e');
-      }
-      return [];
-    }
-  }
-
-  static void _showErrorDialog(BuildContext context, String message) {
-    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(atomicLocal.error),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(atomicLocal.confirm),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Future<String> _copyFileToSandbox(File file, AssetEntity asset) async {
-    try {
-      final appDir = await getApplicationCacheDirectory();
-      var targetDir = Directory('${appDir.path}/images');
-      if (asset.type == AssetType.video) {
-        targetDir = Directory('${appDir.path}/videos');
-      }
-
-      if (!await targetDir.exists()) {
-        await targetDir.create(recursive: true);
-      }
-
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final originalExt = path.extension(file.path);
-      final fileName = 'image_$timestamp$originalExt';
-      final targetPath = '${targetDir.path}/$fileName';
-
-      final newFile = await file.copy(targetPath);
-      return newFile.path;
-    } catch (e) {
-      debugPrint('_copyFileToSandbox faield: $e');
-      return file.path;
+      debugPrint('VideoPicker.pickVideos error: $e');
+      rethrow;
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:atomic_x/atomicx.dart';
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 import 'package:tencent_calls_uikit/src/common/utils/foreground_service.dart';
 import 'package:tencent_calls_uikit/src/feature/calling_bell_feature.dart';
@@ -13,23 +13,28 @@ import 'package:tencent_calls_uikit/src/tui_call_kit.dart';
 import 'package:tencent_cloud_uikit_core/tencent_cloud_uikit_core.dart';
 import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
 import 'bridge/bootloader/bootloader.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:rtc_room_engine/rtc_room_engine.dart' hide CallEndReason;
 import 'bridge/voip/fcm_data_sync_handler.dart';
 import 'bridge/voip/voip_data_sync_handler.dart';
+import 'common/utils/error_parser.dart';
+import 'feature/ios_pip_feature.dart';
 
 class TUICallKitImpl implements TUICallKit {
   static final TUICallKitImpl _instance = TUICallKitImpl();
   static TUICallKitImpl get instance => _instance;
   late final CallPageManager pageManager;
-  final voIPDataSyncHandler = VoIPDataSyncHandler();
-  final fcmDataSyncHandler = FcmDataSyncHandler();
+  IosPipFeature? pictureInPictureFeature;
+  late final voIPDataSyncHandler;
+  late final fcmDataSyncHandler;
   final contactListStore = ContactListStore.create();
   bool isNotificationPreparing = false;
   late CallEventListener callEventListener = CallEventListener(
-    onCallEnded: (reason, userId) {
+    onCallEnded: (callId, mediaType, reason, userId) {
+      _closePage();
+      _stopRing();
       ForegroundService.stop();
-      if (CallListStore.shared.state.activeCall.value.inviteeIds.length > 1
-          || CallListStore.shared.state.activeCall.value.chatGroupId.isNotEmpty
+      if (CallStore.shared.state.activeCall.value.inviteeIds.length > 1
+          || CallStore.shared.state.activeCall.value.chatGroupId.isNotEmpty
           || CallParticipantStore.shared.state.selfInfo.value.id == userId) {
         return;
       }
@@ -63,27 +68,30 @@ class TUICallKitImpl implements TUICallKit {
   );
 
   TUICallKitImpl() {
-    CallListStore.shared;
+    CallStore.shared;
     CallParticipantStore.shared;
+    voIPDataSyncHandler = VoIPDataSyncHandler();
+    fcmDataSyncHandler = FcmDataSyncHandler();
     pageManager = CallPageManager(navigatorGetter: () => Bootloader.instance.navigator);
     _subscribeState();
   }
 
   @override
-  Future<TUIResult> login(int sdkAppId, String userId, String userSig) async {
-    final completer = Completer<TUIResult>();
+  Future<CompletionHandler> login(int sdkAppId, String userId, String userSig) async {
+    final completer = Completer<CompletionHandler>();
     TUILogin.instance.login(sdkAppId, userId, userSig, TUICallback(
       onSuccess: () {
-        completer.complete(TUIResult(
-          code: "0",
-          message: "success",
-        ));
+        CompletionHandler handler = CompletionHandler();
+        handler.errorCode = 0;
+        handler.errorMessage = "success";
+        completer.complete(handler);
       },
       onError: (code, message) {
-        completer.complete(TUIResult(
-          code: code.toString(),
-          message: message,
-        ));
+        handleErrorCode(code);
+        CompletionHandler handler = CompletionHandler();
+        handler.errorCode = code;
+        handler.errorMessage = message;
+        completer.complete(handler);
       }
     ));
     return completer.future;
@@ -98,7 +106,7 @@ class TUICallKitImpl implements TUICallKit {
   }
 
   @override
-  Future<TUIResult> setSelfInfo(String nickname, String avatar) async {
+  Future<CompletionHandler> setSelfInfo(String nickname, String avatar) async {
     UserProfile userInfo = UserProfile(
         userID: LoginStore.shared.loginState.loginUserInfo!.userID,
         nickname: nickname,
@@ -134,35 +142,34 @@ class TUICallKitImpl implements TUICallKit {
             .loginState
             .loginUserInfo!
             .customInfo);
-     CompletionHandler handler = await LoginStore.shared.setSelfInfo(userInfo: userInfo);
-    return TUIResult(
-      code: handler.errorCode.toString(),
-      message: handler.errorMessage,
-    );
+    CompletionHandler handler = await LoginStore.shared.setSelfInfo(userInfo: userInfo);
+    return handler;
   }
 
   @override
-  Future<TUIResult> calls(List<String> userIdList, callMediaType, [TUICallParams? params]) async {
+  Future<CompletionHandler> calls(List<String> userIdList, callMediaType, [CallParams? params]) async {
     bool isGroupCall = (userIdList.length > 1) || (params?.chatGroupId.isNotEmpty ?? false);
     final hasPermission = await _getAndroidAudioAndVideoPermission(callMediaType, isGroupCall);
     if (!hasPermission) {
-      pageManager.handleNoPermissionAndEndCall(TUICallRole.caller);
-      return TUIResult(
-        code: "-1101",
-        message: "Failed to obtain audio and video permissions",
-      );
+      pageManager.handleNoPermissionAndEndCall(false);
+      handleErrorCode(-1101);
+      CompletionHandler handler = CompletionHandler();
+      handler.errorCode = -1101;
+      handler.errorMessage = "Failed to obtain audio and video permissions";
+      return handler;
     }
-    CompletionHandler handler = await CallListStore.shared.calls(
+    CompletionHandler handler = await CallStore.shared.calls(
         userIdList, callMediaType, params);
-    return TUIResult(
-      code: handler.errorCode.toString(),
-      message: handler.errorMessage,
-    );
+
+    handleErrorCode(handler.errorCode);
+    
+    return handler;
   }
 
   @override
   Future<void> join(String callId) async {
-    await CallListStore.shared.join(callId);
+    CompletionHandler handler = await CallStore.shared.join(callId);
+    handleErrorCode(handler.errorCode);
   }
 
   @override
@@ -200,96 +207,140 @@ class TUICallKitImpl implements TUICallKit {
     TUICallEngine.instance.init(sdkAppID, userId, userSig);
     LoginStore.shared.login(
         sdkAppID: sdkAppID, userID: userId, userSig: userSig);
-    CallListStore.shared.addListener(callEventListener);
+    CallStore.shared.addListener(callEventListener);
+    if (Platform.isIOS) {
+      pictureInPictureFeature = IosPipFeature();
+    }
   }
 
-  void handleLogoutSuccess() {
+  void handleLogoutSuccess() async {
     TUICallEngine.instance.unInit();
-    CallListStore.shared.removeListener(callEventListener);
+    CallStore.shared.removeListener(callEventListener);
     LoginStore.shared.logout();
+    if (Platform.isIOS && pictureInPictureFeature != null) {
+      pictureInPictureFeature!.dispose();
+      pictureInPictureFeature = null;
+    }
   }
 
   void _subscribeState() {
     contactListStore.addListener(() async {
-      final activeCall = CallListStore.shared.state.activeCall.value;
+      final activeCall = CallStore.shared.state.activeCall.value;
+      final selfInfo = CallParticipantStore.shared.state.selfInfo.value;
       if (isNotificationPreparing && activeCall.inviterId.isNotEmpty) {
-        if (contactListStore.contactListState.addFriendInfo?.contactID == activeCall.inviterId) {
+        if (contactListStore.contactListState.addFriendInfo?.contactID == activeCall.inviterId
+            && activeCall.inviterId != selfInfo.id && activeCall.mediaType != null) {
           fcmDataSyncHandler.openNotificationView(
             contactListStore.contactListState.addFriendInfo?.title ?? "",
             contactListStore.contactListState.addFriendInfo?.avatarURL ?? "",
-            activeCall.mediaType,
+            activeCall.mediaType!,
           );
         }
       }
     });
 
     CallParticipantStore.shared.state.selfInfo.addListener(() async {
-      final activeCall = CallListStore.shared.state.activeCall.value;
-      final role = CallParticipantStore.shared.state.selfInfo.value.role;
+      final activeCall = CallStore.shared.state.activeCall.value;
+      final isCalled = CallParticipantStore.shared.state.selfInfo.value.id != activeCall.inviterId;
       final isGroupCall = activeCall.inviteeIds.length > 1 || activeCall.chatGroupId.isNotEmpty;
-      final hasPermission = await _getAndroidAudioAndVideoPermission(activeCall.mediaType, isGroupCall);
 
+      if (activeCall.mediaType == null) {
+        return;
+      }
+      final hasPermission = await _getAndroidAudioAndVideoPermission(activeCall.mediaType!, isGroupCall);
       if (!hasPermission) { 
-        pageManager.handleNoPermissionAndEndCall(role);
+        pageManager.handleNoPermissionAndEndCall(isCalled);
         return;
       }
 
       final callStatus = CallParticipantStore.shared.state.selfInfo.value.status;
 
-      if (callStatus == TUICallStatus.waiting) {
-        _handleCallWaiting();
-      } else if (callStatus == TUICallStatus.none) {
-        _handleCallNone();
-      } else {
-        _handleOtherCallStatus();
+      if (callStatus == CallParticipantStatus.waiting) {
+        _showPage();
+        _startRing();
+      } else if (callStatus == CallParticipantStatus.accept) {
+        _showPage();
+        _stopRing();
+      } else if (callStatus == CallParticipantStatus.none) {
+        _closePage();
+        _stopRing();
       }
     });
   }
 
-  Future<bool> _getAndroidAudioAndVideoPermission(TUICallMediaType mediaType, bool isGroupCall) async {
-
-    if (mediaType == TUICallMediaType.video || isGroupCall) {
-      final status = await [Permission.camera, Permission.microphone].request();
-      if (status.containsValue(PermissionStatus.denied) || status.containsValue(PermissionStatus.permanentlyDenied)) {
+  Future<bool> _getAndroidAudioAndVideoPermission(CallMediaType mediaType, bool isGroupCall) async {
+    if (mediaType == CallMediaType.video || isGroupCall) {
+      final cameraStatus = await Permission.check(PermissionType.camera);
+      final microphoneStatus = await Permission.check(PermissionType.microphone);
+      
+      if (cameraStatus == PermissionStatus.granted && microphoneStatus == PermissionStatus.granted) {
+        return true;
+      }
+      
+      final status = await Permission.request([PermissionType.camera, PermissionType.microphone]);
+      if (status.containsValue(PermissionStatus.denied) ||
+          status.containsValue(PermissionStatus.permanentlyDenied)) {
         return false;
       }
       return true;
     }
 
-    if (mediaType == TUICallMediaType.audio) {
-      final status = await Permission.microphone.request();
-      if (status.isDenied || status.isPermanentlyDenied) {
+    if (mediaType == CallMediaType.audio) {
+      final microphoneStatus = await Permission.check(PermissionType.microphone);
+      
+      if (microphoneStatus == PermissionStatus.granted) {
+        return true;
+      }
+      
+      final status = await Permission.request([PermissionType.microphone]);
+      final micStatus = status[PermissionType.microphone];
+      if (micStatus == PermissionStatus.denied ||
+          micStatus == PermissionStatus.permanentlyDenied) {
         return false;
       }
       return true;
     }
-
     return true;
   }
 
-  void _handleCallWaiting() async {
-    final activeCall = CallListStore.shared.state.activeCall.value;
+  void _showPage() async {
+    if (pageManager.getCurrentPageRoute() != CallPageType.none) return;
+
+    final activeCall = CallStore.shared.state.activeCall.value;
     if (AppLifecycle.instance.isBackground && activeCall.inviterId.isNotEmpty) {
       contactListStore.fetchUserInfo(userID: activeCall.inviterId);
       isNotificationPreparing = true;
     }
 
-    if (GlobalState.instance.enableIncomingBanner) {
+    if (GlobalState.instance.enableIncomingBanner &&
+        CallParticipantStore.shared.state.selfInfo.value.id !=
+            CallStore.shared.state.activeCall.value.inviterId) {
       pageManager.showIncomingBanner();
     } else {
       pageManager.showCallingPage();
     }
-    await CallingBellFeature.instance.startRing();
   }
 
-  void _handleCallNone() async {
+  void _closePage() async {
+    if (pageManager.getCurrentPageRoute() == CallPageType.none) return;
+
     isNotificationPreparing = false;
-    await CallingBellFeature.instance.stopRing();
     fcmDataSyncHandler.closeNotificationView();
     pageManager.closeAllPage();
   }
 
-  void _handleOtherCallStatus() async {
+  void _startRing() async {
+    await CallingBellFeature.instance.startRing();
+  }
+
+  void _stopRing() async {
     await CallingBellFeature.instance.stopRing();
+  }
+
+  void handleErrorCode(int errorCode) {
+    final errorMessage = ErrorParser.getErrorMessage(errorCode);
+    if (errorMessage != null) {
+      TUIToast.show(content: errorMessage);
+    }
   }
 }

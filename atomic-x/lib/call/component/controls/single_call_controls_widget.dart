@@ -1,9 +1,9 @@
-import 'package:atomic_x/call/call_view.dart';
-import 'package:atomic_x/call/common/widget/controls_button.dart';
-import 'package:atomic_x/call/component/stream_widget/single_call_stream_widget.dart';
+import 'package:tuikit_atomic_x/call/call_view.dart';
+import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
+import 'package:tuikit_atomic_x/call/component/stream_widget/single_call_stream_widget.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 
 typedef _ViewBuilder = Widget Function();
 
@@ -27,13 +27,19 @@ class SingleCallControlsWidget extends StatelessWidget {
           return Container();
         }
         return ValueListenableBuilder(
-          valueListenable: CallListStore.shared.state.activeCall,
+          valueListenable: CallStore.shared.state.activeCall,
           builder: (context, activeCall, child) {
-            final type = activeCall.mediaType;
+            if (activeCall.mediaType == null) {
+              return Container();
+            }
+            final type = activeCall.mediaType!;
             return ValueListenableBuilder(
                 valueListenable: CallParticipantStore.shared.state.selfInfo,
                 builder: (context, selfInfo, child) {
-                  return _selectViewStrategy(type, selfInfo.status, selfInfo.role);
+                  if (selfInfo.id == activeCall.inviterId) {
+                    return _selectViewStrategy(type, selfInfo.status, "caller");
+                  }
+                  return _selectViewStrategy(type, selfInfo.status, "called");
                 }
             );
           },
@@ -54,16 +60,15 @@ class SingleCallControlsWidget extends StatelessWidget {
     };
   }
 
-  String _generateViewKey(TUICallMediaType mediaType, TUICallStatus status, TUICallRole role) {
+  String _generateViewKey(CallMediaType mediaType, CallParticipantStatus status, String role) {
     final mediaStr = mediaType.toString().split('.').last;
     final statusStr = status.toString().split('.').last;
-    final roleStr = role.toString().split('.').last;
 
-    return '${mediaStr}_${statusStr}_${roleStr}'.toLowerCase();
+    return '${mediaStr}_${statusStr}_$role'.toLowerCase();
   }
 
-  String _generateAcceptViewKey(TUICallMediaType mediaType, TUICallStatus status) {
-    if (status != TUICallStatus.accept) return '';
+  String _generateAcceptViewKey(CallMediaType mediaType, CallParticipantStatus status) {
+    if (status != CallParticipantStatus.accept) return '';
 
     final mediaStr = mediaType.toString().split('.').last;
     final statusStr = status.toString().split('.').last;
@@ -71,13 +76,13 @@ class SingleCallControlsWidget extends StatelessWidget {
     return '${mediaStr}_${statusStr}'.toLowerCase();
   }
 
-  Widget _selectViewStrategy(TUICallMediaType mediaType, TUICallStatus status, TUICallRole role) {
+  Widget _selectViewStrategy(CallMediaType mediaType, CallParticipantStatus status, String role) {
     final preciseKey = _generateViewKey(mediaType, status, role);
     if (_viewStrategies.containsKey(preciseKey)) {
       return _viewStrategies[preciseKey]!();
     }
 
-    if (status == TUICallStatus.accept) {
+    if (status == CallParticipantStatus.accept) {
       final acceptKey = _generateAcceptViewKey(mediaType, status);
       if (_viewStrategies.containsKey(acceptKey)) {
         return _viewStrategies[acceptKey]!();
@@ -190,7 +195,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       textColor: Colors.white,
       imgHeight: 60,
       onTap: () {
-        CallListStore.shared.accept();
+        CallStore.shared.accept();
       },
     );
   }
@@ -203,7 +208,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       textColor: Colors.white,
       imgHeight: 60,
       onTap: () {
-        CallListStore.shared.hangup();
+        CallStore.shared.hangup();
       },
     );
   }
@@ -216,7 +221,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       textColor: Colors.white,
       imgHeight: 60,
       onTap: () {
-        CallListStore.shared.reject();
+        CallStore.shared.reject();
       },
     );
   }

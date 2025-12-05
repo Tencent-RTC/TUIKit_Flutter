@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
-
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import '../message_status_mixin.dart';
 
 class FileMessageWidget extends StatefulWidget {
@@ -16,12 +16,14 @@ class FileMessageWidget extends StatefulWidget {
   final VoidCallback? onLongPress;
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
+  final MessageListConfigProtocol config;
 
   const FileMessageWidget({
     super.key,
     required this.message,
     required this.isSelf,
     required this.maxWidth,
+    required this.config,
     this.onLongPress,
     this.messageListStore,
     this.bubbleKey,
@@ -97,6 +99,7 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
                   message: widget.message,
                   isSelf: widget.isSelf,
                   colors: colors,
+                  isShowTimeInBubble: widget.config.isShowTimeInBubble,
                 ),
               ),
             ),
@@ -124,20 +127,15 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
       final DeviceInfoPlugin packageInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await packageInfo.androidInfo;
       if ((androidInfo.version.sdkInt) <= 32) {
-        Permission permission = Permission.storage;
-        PermissionStatus status = await permission.status;
-        if (status.isGranted) {
+        Map<PermissionType, PermissionStatus> statusMap =  await Permission.request([PermissionType.storage]);
+        PermissionStatus status = statusMap[PermissionType.storage] ?? PermissionStatus.denied;
+        if (status == PermissionStatus.granted) {
           isGranted = true;
-        } else if (status.isDenied) {
-          status = await permission.request();
-          if (status.isGranted) {
-            isGranted = true;
-          }
-        } else if (status.isPermanentlyDenied) {
+        } else if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
           if (mounted) {
             final bool shouldOpenSettings = await _showPermissionDialog(context);
             if (shouldOpenSettings) {
-              await openAppSettings();
+              await Permission.openAppSettings();
               return;
             }
           }
