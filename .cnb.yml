@@ -1,0 +1,14 @@
+# .cnb.yml
+
+main:
+  "crontab: 0 1 * * *": 
+    - name: sync from github
+      stages:
+        - name: sync from github
+          image: tencentcom/git-sync
+          settings:
+            target_url: https://github.com/Tencent-RTC/TUIKit_Flutter.git
+            auth_type: https
+            username: ${GIT_USERNAME}
+            password: ${GIT_ACCESS_TOKEN}
+            sync_mode: pull
