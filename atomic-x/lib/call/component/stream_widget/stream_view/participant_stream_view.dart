@@ -12,12 +12,12 @@ class ParticipantStreamView extends StatefulWidget {
   final String userId;
   final ViewConfig config;
 
-  const ParticipantStreamView(
-      {Key? key,
-        required this.userId,
-        required this.index,
-        required this.config,})
-      : super(key: key);
+  const ParticipantStreamView({
+    Key? key,
+    required this.userId,
+    required this.index,
+    required this.config,
+  }) : super(key: key);
 
   @override
   State<ParticipantStreamView> createState() => _ParticipantStreamViewState();
@@ -26,8 +26,8 @@ class ParticipantStreamView extends StatefulWidget {
 class _ParticipantStreamViewState extends State<ParticipantStreamView> {
   @override
   void initState() {
-    if (CallParticipantStore.shared.state.selfInfo.value.id == widget.userId
-        && CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
+    if (CallParticipantStore.shared.state.selfInfo.value.id == widget.userId &&
+        CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
       DeviceStore.shared.openLocalCamera(true);
     }
     super.initState();
@@ -44,30 +44,29 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: CallStore.shared.state.activeCall,
-        builder: (context, activeCall, child) {
-          final isMultiCall = activeCall.chatGroupId.isNotEmpty
-              || activeCall.inviteeIds.length > 1;
-          return ValueListenableBuilder(
-            valueListenable: CallParticipantStore.shared.state.allParticipants,
-            builder: (context, allParticipants, child) {
-              CallParticipantInfo? info;
-              for (var participant in allParticipants) {
-                if (participant.id == widget.userId) {
-                  info = participant;
-                }
+      valueListenable: CallStore.shared.state.activeCall,
+      builder: (context, activeCall, child) {
+        final isMultiCall = activeCall.chatGroupId.isNotEmpty || activeCall.inviteeIds.length > 1;
+        return ValueListenableBuilder(
+          valueListenable: CallParticipantStore.shared.state.allParticipants,
+          builder: (context, allParticipants, child) {
+            CallParticipantInfo? info;
+            for (var participant in allParticipants) {
+              if (participant.id == widget.userId) {
+                info = participant;
               }
-              if (info == null) {
-                return const Center(
-                  child: _LoadingAnimation(isCircular: true,),
-                );
-              }
-              return isMultiCall
-                  ? _buildMultiCallStreamView(info)
-                  : _buildSingleCallStreamView(info);
-            },
-          );
-        },
+            }
+            if (info == null) {
+              return const Center(
+                child: _LoadingAnimation(
+                  isCircular: true,
+                ),
+              );
+            }
+            return isMultiCall ? _buildMultiCallStreamView(info) : _buildSingleCallStreamView(info);
+          },
+        );
+      },
     );
   }
 
@@ -90,7 +89,9 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
             ),
             Visibility(
               visible: info.status == CallParticipantStatus.waiting,
-              child: const Center(child: _LoadingAnimation(),),
+              child: const Center(
+                child: _LoadingAnimation(),
+              ),
             ),
             _getSwitchCameraButton(info),
             _getNetworkQualityReminder(info),
@@ -113,41 +114,41 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
 
   Widget _getSwitchCameraButton(CallParticipantInfo info) {
     return Visibility(
-      visible: !widget.config.disableFeatures.contains(CallFeature.all)
-          && CallParticipantStore.shared.state.selfInfo.value.id == info.id
-          && DeviceStore.shared.state.cameraStatus.value == DeviceSwitchStatus.on
-          && MultiCallUserWidgetData.blockBigger.value[widget.index]!,
+      visible: !widget.config.disableFeatures.contains(CallFeature.all) &&
+          CallParticipantStore.shared.state.selfInfo.value.id == info.id &&
+          DeviceStore.shared.state.cameraStatus.value == DeviceStatus.on &&
+          MultiCallUserWidgetData.blockBigger.value[widget.index]!,
       child: Positioned(
         right: 10,
         bottom: 5,
         width: 24,
         height: 24,
         child: InkWell(
-            onTap: () {
-              DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
-            },
-            child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: [
-                    Positioned(
-                      width: 14,
-                      height: 14,
-                      child: Image.asset(
-                        "call_assets/switch_camera.png",
-                        package: 'tuikit_atomic_x',
-                        width: 14,
-                        height: 14,
-                      ),
-                    ),
-                  ],
-                ),
+          onTap: () {
+            DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Positioned(
+                  width: 14,
+                  height: 14,
+                  child: Image.asset(
+                    "call_assets/switch_camera.png",
+                    package: 'tuikit_atomic_x',
+                    width: 14,
+                    height: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -163,9 +164,9 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
         valueListenable: CallParticipantStore.shared.state.networkQualities,
         builder: (context, map, child) {
           return Visibility(
-            visible: !widget.config.disableFeatures.contains(CallFeature.all)
-                && !widget.config.disableFeatures.contains(CallFeature.networkQuality)
-                && _isBadNetWork(map[widget.userId]),
+            visible: !widget.config.disableFeatures.contains(CallFeature.all) &&
+                !widget.config.disableFeatures.contains(CallFeature.networkQuality) &&
+                _isBadNetWork(map[widget.userId]),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -201,7 +202,9 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(width: 10,),
+                const SizedBox(
+                  width: 10,
+                ),
               ],
             ),
           ),
@@ -211,8 +214,9 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
               ValueListenableBuilder(
                 valueListenable: CallParticipantStore.shared.state.speakerVolumes,
                 builder: (context, map, _) {
-                  if (!widget.config.disableFeatures.contains(CallFeature.all)
-                      && map.containsKey(widget.userId) && map[widget.userId]! > 0) {
+                  if (!widget.config.disableFeatures.contains(CallFeature.all) &&
+                      map.containsKey(widget.userId) &&
+                      map[widget.userId]! > 0) {
                     return Container(
                         width: 24,
                         height: 24,
@@ -224,15 +228,15 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
                         child: Image.asset(
                           "call_assets/speaking.png",
                           package: 'tuikit_atomic_x',
-                        )
-                    );
+                        ));
                   }
                   return const SizedBox();
-                },),
+                },
+              ),
               Visibility(
-                visible: !widget.config.disableFeatures.contains(CallFeature.all)
-                    && CallParticipantStore.shared.state.selfInfo.value.id == widget.userId
-                    && !CallParticipantStore.shared.state.selfInfo.value.isMicrophoneOpened,
+                visible: !widget.config.disableFeatures.contains(CallFeature.all) &&
+                    CallParticipantStore.shared.state.selfInfo.value.id == widget.userId &&
+                    !CallParticipantStore.shared.state.selfInfo.value.isMicrophoneOpened,
                 child: Container(
                     width: 24,
                     height: 24,
@@ -263,14 +267,14 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
             child: _getUserAvatar(info),
           ),
           Opacity(
-              opacity: 1,
-              child: Container(
-                color: const Color.fromRGBO(45, 45, 45, 0.9),
-              ),
+            opacity: 1,
+            child: Container(
+              color: const Color.fromRGBO(45, 45, 45, 0.9),
+            ),
           ),
           Visibility(
-            visible: info.status == CallParticipantStatus.accept
-            && CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video,
+            visible: info.status == CallParticipantStatus.accept &&
+                CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final isFullScreen = constraints.maxWidth > MediaQuery.of(context).size.width * 0.5;
@@ -308,20 +312,20 @@ class _ParticipantStreamViewState extends State<ParticipantStreamView> {
   }
 
   bool _isBadNetWork(NetworkQuality? network) {
-    return network == NetworkQuality.bad
-        || network == NetworkQuality.veryBad
-        || network == NetworkQuality.down;
+    return network == NetworkQuality.bad || network == NetworkQuality.veryBad || network == NetworkQuality.down;
   }
-  
+
   bool _isShowBackgroundImage(CallParticipantInfo info) {
-    return info.id == CallParticipantStore.shared.state.selfInfo.value.id 
-        ? DeviceStore.shared.state.cameraStatus.value == DeviceSwitchStatus.off
+    return info.id == CallParticipantStore.shared.state.selfInfo.value.id
+        ? DeviceStore.shared.state.cameraStatus.value == DeviceStatus.off
         : !info.isCameraOpened;
   }
 
   double _getNetworkBadHintRightMargin(CallParticipantInfo info) {
     return MultiCallUserWidgetData.blockBigger.value[widget.index]!
-        ? info.isCameraOpened ? 90 : 10
+        ? info.isCameraOpened
+            ? 90
+            : 10
         : 10;
   }
 

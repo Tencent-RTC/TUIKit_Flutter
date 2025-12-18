@@ -43,7 +43,7 @@ dependencies:
   scrollable_positioned_list: ^0.2.3
   tencent_cloud_chat_sdk: any
 
-  atomic_x_core: ^3.5.0
+  atomic_x_core: ^3.6.0
 
 dev_dependencies:
   flutter_test:

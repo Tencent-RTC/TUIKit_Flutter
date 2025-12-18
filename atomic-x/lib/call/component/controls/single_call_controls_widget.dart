@@ -40,8 +40,7 @@ class SingleCallControlsWidget extends StatelessWidget {
                     return _selectViewStrategy(type, selfInfo.status, "caller");
                   }
                   return _selectViewStrategy(type, selfInfo.status, "called");
-                }
-            );
+                });
           },
         );
       },
@@ -53,7 +52,6 @@ class SingleCallControlsWidget extends StatelessWidget {
       'audio_waiting_caller': _buildAudioCallerWaitingView,
       'audio_waiting_called': _buildAudioAndVideoCalleeWaitingView,
       'audio_accept': _buildAudioAcceptedView,
-
       'video_waiting_caller': _buildVideoCallerWaitingView,
       'video_waiting_called': _buildAudioAndVideoCalleeWaitingView,
       'video_accept': _buildVideoCallerAndCalleeAcceptedView,
@@ -162,13 +160,12 @@ class SingleCallControlsWidget extends StatelessWidget {
           ValueListenableBuilder(
               valueListenable: DeviceStore.shared.state.cameraStatus,
               builder: (context, value, child) {
-                return value == DeviceSwitchStatus.on
+                return value == DeviceStatus.on
                     ? _getSwitchCameraSmallButton()
                     : const SizedBox(
-                  width: 100,
-                );
-              }
-          ),
+                        width: 100,
+                      );
+              }),
         ]),
       ],
     );
@@ -232,24 +229,19 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.toggleMicrophone),
-            imgUrl: value == DeviceSwitchStatus.on
-                ? "call_assets/mute.png"
-                : "call_assets/mute_on.png",
-            tips: value == DeviceSwitchStatus.on
-                ? CallKit_t("microphoneIsOn")
-                : CallKit_t("microphoneIsOff"),
+            imgUrl: value == DeviceStatus.on ? "call_assets/mute.png" : "call_assets/mute_on.png",
+            tips: value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"),
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {
-              if (value == DeviceSwitchStatus.on) {
+              if (value == DeviceStatus.on) {
                 DeviceStore.shared.closeLocalMicrophone();
               } else {
                 DeviceStore.shared.openLocalMicrophone();
               }
             },
           );
-        }
-    );
+        });
   }
 
   Widget _getSpeakerphoneButton() {
@@ -258,12 +250,8 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.selectAudioRoute),
-            imgUrl: value == AudioRoute.speakerphone
-                ? "call_assets/handsfree_on.png"
-                : "call_assets/handsfree.png",
-            tips: value == AudioRoute.speakerphone
-                ? CallKit_t("speakerIsOn")
-                : CallKit_t("speakerIsOff"),
+            imgUrl: value == AudioRoute.speakerphone ? "call_assets/handsfree_on.png" : "call_assets/handsfree.png",
+            tips: value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"),
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {
@@ -274,8 +262,7 @@ class SingleCallControlsWidget extends StatelessWidget {
               }
             },
           );
-        }
-    );
+        });
   }
 
   Widget _getCameraControlButton() {
@@ -284,24 +271,19 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.toggleCamera),
-            imgUrl: value == DeviceSwitchStatus.on
-                ? "call_assets/camera_on.png"
-                : "call_assets/camera_off.png",
-            tips: value == DeviceSwitchStatus.on
-                ? CallKit_t("cameraIsOn")
-                : CallKit_t("cameraIsOff"),
+            imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
+            tips: value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff"),
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {
-              if (value == DeviceSwitchStatus.on) {
+              if (value == DeviceStatus.on) {
                 DeviceStore.shared.closeLocalCamera();
               } else {
                 DeviceStore.shared.openLocalCamera(DeviceStore.shared.state.isFrontCamera.value);
               }
             },
           );
-        }
-    );
+        });
   }
 
   Widget _getSwitchCameraSmallButton() {
@@ -319,10 +301,9 @@ class SingleCallControlsWidget extends StatelessWidget {
               DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
             },
           );
-        }
-    );
+        });
   }
-  
+
   bool _isWidgetDisabled(CallFeature feature) {
     return disableFeatures.contains(CallFeature.all) || disableFeatures.contains(feature);
   }

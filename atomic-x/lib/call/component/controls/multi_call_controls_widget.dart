@@ -36,14 +36,13 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
     return ValueListenableBuilder(
         valueListenable: CallParticipantStore.shared.state.selfInfo,
         builder: (context, selfInfo, child) {
-          if (selfInfo.status == CallParticipantStatus.waiting
-              && selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
+          if (selfInfo.status == CallParticipantStatus.waiting &&
+              selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
             return _buildWaitingFunctionView();
           } else {
             return _buildAcceptedFunctionView(context);
           }
-        }
-    );
+        });
   }
 
   _buildWaitingFunctionView() {
@@ -82,9 +81,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? ((MediaQuery.of(context).size.width / 4) - (btnWidth / 2))
                           : (MediaQuery.of(context).size.width * 2 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand
-                          ? bottomEdge + bigBtnHeight + edge
-                          : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
                       child: _getAnimatedMicButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -93,9 +90,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? (MediaQuery.of(context).size.width / 2 - btnWidth / 2)
                           : (MediaQuery.of(context).size.width * 3 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand
-                          ? bottomEdge + bigBtnHeight + edge
-                          : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
                       child: _getAnimatedSpeakerPhoneButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -104,9 +99,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? (MediaQuery.of(context).size.width * 3 / 4 - btnWidth / 2)
                           : (MediaQuery.of(context).size.width * 4 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand
-                          ? bottomEdge + bigBtnHeight + edge
-                          : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
                       child: _getAnimatedCameraButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -122,9 +115,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                         curve: curve,
                         duration: Duration(milliseconds: duration),
                         left: (MediaQuery.of(context).size.width / 6 - smallBtnHeight / 2),
-                        bottom: isFunctionExpand
-                            ? bottomEdge + smallBtnHeight / 4 + 22
-                            : bottomEdge + 22,
+                        bottom: isFunctionExpand ? bottomEdge + smallBtnHeight / 4 + 22 : bottomEdge + 22,
                         child: InkWell(
                           onTap: () {
                             isFunctionExpand = !isFunctionExpand;
@@ -132,8 +123,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                           },
                           child: Transform(
                             alignment: Alignment.center,
-                            transform: Matrix4.identity()
-                              ..scale(1.0, isFunctionExpand ? 1.0 : -1.0, 1.0),
+                            transform: Matrix4.identity()..scale(1.0, isFunctionExpand ? 1.0 : -1.0, 1.0),
                             child: Image.asset(
                               'call_assets/arrow.png',
                               package: 'tuikit_atomic_x',
@@ -180,27 +170,20 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
     );
   }
 
-
   Widget _getAnimatedMicButton(bool isFunctionExpand) {
     return ValueListenableBuilder(
         valueListenable: DeviceStore.shared.state.microphoneStatus,
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.toggleMicrophone),
-            imgUrl: value == DeviceSwitchStatus.on
-                ? "call_assets/mute.png"
-                : "call_assets/mute_on.png",
+            imgUrl: value == DeviceStatus.on ? "call_assets/mute.png" : "call_assets/mute_on.png",
             tips: isFunctionExpand
-                ? (value == DeviceSwitchStatus.on
-                ? CallKit_t("microphoneIsOn")
-                : CallKit_t("microphoneIsOff"))
+                ? (value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"))
                 : '',
             textColor: Colors.white,
-            imgHeight: isFunctionExpand
-                ? bigBtnHeight
-                : smallBtnHeight,
+            imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
-              if (value == DeviceSwitchStatus.on) {
+              if (value == DeviceStatus.on) {
                 DeviceStore.shared.closeLocalMicrophone();
               } else {
                 DeviceStore.shared.openLocalMicrophone();
@@ -209,8 +192,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             useAnimation: true,
             duration: Duration(milliseconds: duration),
           );
-        }
-    );
+        });
   }
 
   Widget _getAnimatedSpeakerPhoneButton(bool isFunctionExpand) {
@@ -219,18 +201,12 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.selectAudioRoute),
-            imgUrl: value == AudioRoute.speakerphone
-                ? "call_assets/handsfree_on.png"
-                : "call_assets/handsfree.png",
+            imgUrl: value == AudioRoute.speakerphone ? "call_assets/handsfree_on.png" : "call_assets/handsfree.png",
             tips: isFunctionExpand
-                ? (value == AudioRoute.speakerphone
-                ? CallKit_t("speakerIsOn")
-                : CallKit_t("speakerIsOff"))
+                ? (value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"))
                 : '',
             textColor: Colors.white,
-            imgHeight: isFunctionExpand
-                ? bigBtnHeight
-                : smallBtnHeight,
+            imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == AudioRoute.speakerphone) {
                 DeviceStore.shared.setAudioRoute(AudioRoute.earpiece);
@@ -241,8 +217,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             useAnimation: true,
             duration: Duration(milliseconds: duration),
           );
-        }
-    );
+        });
   }
 
   Widget _getAnimatedCameraButton(bool isFunctionExpand) {
@@ -251,20 +226,13 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
         builder: (context, value, child) {
           return ControlsButton(
             isDisabled: _isWidgetDisabled(CallFeature.toggleCamera),
-            imgUrl: value == DeviceSwitchStatus.on
-                ? "call_assets/camera_on.png"
-                : "call_assets/camera_off.png",
-            tips: isFunctionExpand
-                ? (value == DeviceSwitchStatus.on
-                ? CallKit_t("cameraIsOn")
-                : CallKit_t("cameraIsOff"))
-                : '',
+            imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
+            tips:
+                isFunctionExpand ? (value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff")) : '',
             textColor: Colors.white,
-            imgHeight: isFunctionExpand
-                ? bigBtnHeight
-                : smallBtnHeight,
+            imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
-              if (value == DeviceSwitchStatus.on) {
+              if (value == DeviceStatus.on) {
                 DeviceStore.shared.closeLocalCamera();
               } else {
                 DeviceStore.shared.openLocalCamera(DeviceStore.shared.state.isFrontCamera.value);
@@ -273,8 +241,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             useAnimation: true,
             duration: Duration(milliseconds: duration),
           );
-        }
-    );
+        });
   }
 
   Widget _getAnimatedHangupButton(bool isFunctionExpand) {
@@ -282,9 +249,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       textColor: Colors.white,
-      imgHeight: isFunctionExpand
-          ? bigBtnHeight
-          : smallBtnHeight,
+      imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
       onTap: () {
         CallStore.shared.hangup();
       },
@@ -292,7 +257,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       duration: Duration(milliseconds: duration),
     );
   }
-  
+
   bool _isWidgetDisabled(CallFeature feature) {
     return widget.disableFeatures.contains(CallFeature.all) || widget.disableFeatures.contains(feature);
   }
