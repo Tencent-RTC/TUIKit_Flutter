@@ -1,5 +1,4 @@
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 class SettingsConfig {
   static const defaultAvatar =
@@ -19,11 +18,4 @@ class SettingsConfig {
   static String strRoomId = "";
   static int timeout = 30;
   static String extendInfo = "";
-  static TUIOfflinePushInfo? offlinePushInfo;
-
-  static Resolution resolution = Resolution.resolution_1280_720;
-  static ResolutionMode resolutionMode = ResolutionMode.portrait;
-  static FillMode fillMode = FillMode.fill;
-  static Rotation rotation = Rotation.rotation_0;
-  static double beautyLevel = 6;
 }

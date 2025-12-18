@@ -1,14 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_calls_uikit_example/src/settings/settings_config.dart';
 import 'package:tencent_calls_uikit_example/generate/app_localizations.dart';
 
 enum SettingWidgetType {
   avatar,
   extendInfo,
-  offlinePush,
 }
 
 class SettingsDetailWidget extends StatefulWidget {
@@ -62,8 +59,6 @@ class _SettingsDetailWidgetState extends State<SettingsDetailWidget> {
         return AppLocalizations.of(context)!.avatar_settings;
       case SettingWidgetType.extendInfo:
         return AppLocalizations.of(context)!.extended_info_settings;
-      case SettingWidgetType.offlinePush:
-        return AppLocalizations.of(context)!.offline_push_info_settings;
     }
   }
 
@@ -76,67 +71,6 @@ class _SettingsDetailWidgetState extends State<SettingsDetailWidget> {
       case SettingWidgetType.extendInfo:
         SettingsConfig.extendInfo = _data;
         break;
-      case SettingWidgetType.offlinePush:
-        _setOfflinePushInfo();
-        break;
-    }
-  }
-
-  _setOfflinePushInfo() {
-    Map offlinePushMap = json.decode(_data);
-
-    if (offlinePushMap['title'].isNull) {
-      SettingsConfig.offlinePushInfo?.title = offlinePushMap['title'];
-    }
-
-    if (offlinePushMap['desc'].isNull) {
-      SettingsConfig.offlinePushInfo?.desc = offlinePushMap['desc'];
-    }
-
-    if (offlinePushMap['ignoreIOSBadge'].isNull) {
-      SettingsConfig.offlinePushInfo?.ignoreIOSBadge = offlinePushMap['ignoreIOSBadge'];
-    }
-
-    if (offlinePushMap['iOSSound'].isNull) {
-      SettingsConfig.offlinePushInfo?.iOSSound = offlinePushMap['iOSSound'];
-    }
-
-    if (offlinePushMap['androidSound'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidSound = offlinePushMap['androidSound'];
-    }
-
-    if (offlinePushMap['androidOPPOChannelID'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidOPPOChannelID = offlinePushMap['androidOPPOChannelID'];
-    }
-
-    if (offlinePushMap['androidVIVOClassification'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidVIVOClassification =
-          offlinePushMap['androidVIVOClassification'];
-    }
-
-    if (offlinePushMap['androidXiaoMiChannelID'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidXiaoMiChannelID =
-          offlinePushMap['androidXiaoMiChannelID'];
-    }
-
-    if (offlinePushMap['androidFCMChannelID'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidXiaoMiChannelID =
-          offlinePushMap['androidFCMChannelID'];
-    }
-
-    if (offlinePushMap['androidHuaWeiCategory'].isNull) {
-      SettingsConfig.offlinePushInfo?.androidXiaoMiChannelID =
-          offlinePushMap['androidHuaWeiCategory'];
-    }
-
-    if (offlinePushMap['isDisablePush'].isNull) {
-      SettingsConfig.offlinePushInfo?.isDisablePush = offlinePushMap['isDisablePush'];
-    }
-
-    if (offlinePushMap['iOSPushType'].isNull) {
-      int index = offlinePushMap['iOSPushType'];
-      SettingsConfig.offlinePushInfo?.iOSPushType =
-          index == 0 ? TUICallIOSOfflinePushType.APNs : TUICallIOSOfflinePushType.VoIP;
     }
   }
 
