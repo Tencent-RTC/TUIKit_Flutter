@@ -1,0 +1,300 @@
+import 'package:atomic_x_core/api/live/co_host_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:flutter/material.dart';
+import 'package:live_uikit_barrage/live_uikit_barrage.dart';
+import 'package:live_uikit_gift/live_uikit_gift.dart';
+import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
+import 'package:tencent_live_uikit/common/widget/float_window/float_window_mode.dart';
+import 'package:tencent_live_uikit/live_stream/features/audience/panel/audience_settings_panel_widget.dart';
+import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_type_select_panel_widget.dart';
+import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
+import 'package:rtc_room_engine/rtc_room_engine.dart';
+
+import '../../../state/co_guest_state.dart';
+
+class AudienceBottomMenuWidget extends StatefulWidget {
+  final LiveStreamManager liveStreamManager;
+
+  const AudienceBottomMenuWidget({
+    super.key,
+    required this.liveStreamManager,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _AudienceBottomMenuWidgetState();
+}
+
+class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
+  final String kSettingsPanelName = "SettingsPanel";
+  final String kCoGuestPanelName = "CoGuestPanel";
+  BottomSheetHandler? _settingsPanelHandler;
+  BottomSheetHandler? _coGuestPanelHandler;
+  BarrageSendController? _barrageSendController;
+  GiftListController? _giftListController;
+  LikeSendController? _likeSendController;
+  late final VoidCallback _onFloatWindowModeChangedListener = _onFloatWindowModeChanged;
+  late final LiveListListener _liveListListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
+      _closeAllDialog();
+    });
+    LiveListStore.shared.addLiveListListener(_liveListListener);
+    widget.liveStreamManager.floatWindowState.floatWindowMode.addListener(_onFloatWindowModeChangedListener);
+  }
+
+  @override
+  void dispose() {
+    LiveListStore.shared.removeLiveListListener(_liveListListener);
+    widget.liveStreamManager.floatWindowState.floatWindowMode.removeListener(_onFloatWindowModeChangedListener);
+    _likeSendController?.dispose();
+    super.dispose();
+  }
+
+  void _closeAllDialog() {
+    if (_coGuestPanelHandler?.isShowing() == true) {
+      Navigator.of(Global.appContext()).popUntil((Route<dynamic> route) {
+        return route.settings.name == kCoGuestPanelName;
+      });
+      _coGuestPanelHandler?.close();
+    }
+    if (_settingsPanelHandler?.isShowing() == true) {
+      Navigator.of(Global.appContext()).popUntil((Route<dynamic> route) {
+        return route.settings.name == kSettingsPanelName;
+      });
+      _settingsPanelHandler?.close();
+    }
+  }
+
+  void _onFloatWindowModeChanged() {
+    bool isFloatWindow = widget.liveStreamManager.floatWindowState.floatWindowMode.value != FloatWindowMode.none;
+    _giftListController?.setFloatWindowMode(isFloatWindow);
+    _barrageSendController?.setFloatWindowMode(isFloatWindow);
+    if (isFloatWindow) {
+      _closeAllDialog();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      _buildBarrageSendWidget(),
+      Positioned(
+        top: 2.height,
+        right: 20.width,
+        height: 32.height,
+        width: 152.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildGiftSendWidget(),
+            SizedBox(width: 8.width),
+            ValueListenableBuilder(
+              valueListenable: widget.liveStreamManager.roomState.roomVideoStreamIsLandscape,
+              builder: (BuildContext context, isLandScape, Widget? child) {
+                return Visibility(
+                    visible: !isLandScape,
+                    child: Row(
+                      children: [
+                        _buildCoGuestWidget(),
+                        SizedBox(width: 8.width),
+                      ],
+                    ));
+              },
+            ),
+            _buildLikeSendWidget(),
+            SizedBox(width: 8.width),
+            _buildSettingsWidget()
+          ],
+        ),
+      ),
+    ]);
+  }
+
+  Widget _buildBarrageSendWidget() {
+    _initBarrageSendController();
+    return Positioned(
+      left: 15.width,
+      top: 0,
+      width: 130.width,
+      height: 36.height,
+      child: BarrageSendWidget(controller: _barrageSendController!, parentContext: Global.appContext()),
+    );
+  }
+
+  Widget _buildCoGuestWidget() {
+    CoHostStore coHostStore = CoHostStore.create(widget.liveStreamManager.roomState.roomId);
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        widget.liveStreamManager.coGuestState.coGuestStatus,
+        coHostStore.coHostState.connected,
+      ]),
+      builder: (context, _) {
+        bool isDisable = coHostStore.coHostState.connected.value.isNotEmpty;
+        return SizedBox(
+          width: 32.radius,
+          height: 32.radius,
+          child: GestureDetector(
+            onTap: () => _handleCoGuestTap(widget.liveStreamManager.coGuestState.coGuestStatus.value, isDisable),
+            child: Image.asset(
+              _getImageByCoGuestStatus(isDisable),
+              package: Constants.pluginName,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGiftSendWidget() {
+    _initGiftSendController();
+    return SizedBox(
+      width: 32.radius,
+      height: 32.radius,
+      child: GiftSendWidget(controller: _giftListController!, parentContext: Global.appContext()),
+    );
+  }
+
+  Widget _buildLikeSendWidget() {
+    _initLikeSendController();
+    return SizedBox(
+      width: 32.radius,
+      height: 32.radius,
+      child: LikeSendWidget(controller: _likeSendController!),
+    );
+  }
+
+  Widget _buildSettingsWidget() {
+    return GestureDetector(
+      onTap: () => _showSettingsPanel(),
+      child: SizedBox(
+        width: 32.radius,
+        height: 32.radius,
+        child: Image.asset(LiveImages.more, package: Constants.pluginName),
+      ),
+    );
+  }
+
+  void _showSettingsPanel() {
+    _settingsPanelHandler = popupWidget(AudienceSettingsPanelWidget(liveStreamManager: widget.liveStreamManager),
+        routeSettings: RouteSettings(name: kSettingsPanelName));
+  }
+
+  void _handleCoGuestTap(CoGuestStatus status, bool isCoGuestDisable) {
+    if (isCoGuestDisable) {
+      return;
+    }
+    switch (status) {
+      case CoGuestStatus.none:
+        _showCoGuestPanelWidget();
+        break;
+      case CoGuestStatus.applying:
+        _showCancelRequestPanelWidget();
+        break;
+      case CoGuestStatus.linking:
+        _showCloseCoGuestPanelWidget();
+        break;
+    }
+  }
+
+  void _showCoGuestPanelWidget() {
+    _coGuestPanelHandler = popupWidget(
+        CoGuestTypeSelectPanelWidget(liveStreamManager: widget.liveStreamManager, seatIndex: -1),
+        routeSettings: RouteSettings(name: kCoGuestPanelName));
+  }
+}
+
+extension on _AudienceBottomMenuWidgetState {
+  String _getLiveID() {
+    return widget.liveStreamManager.roomState.roomId;
+  }
+
+  void _initBarrageSendController() {
+    _barrageSendController ??= BarrageSendController(
+      roomId: _getLiveID(),
+      ownerId: widget.liveStreamManager.roomState.liveInfo.liveOwner.userID,
+      selfUserId: TUIRoomEngine.getSelfInfo().userId,
+      selfName: TUIRoomEngine.getSelfInfo().userName,
+    );
+  }
+
+  void _initGiftSendController() {
+    final language = DeviceLanguage.getCurrentLanguageCode(context);
+    _giftListController ??= GiftListController(roomId: _getLiveID(), language: language);
+  }
+
+  void _initLikeSendController() {
+    _likeSendController ??= LikeSendController(roomId: _getLiveID());
+  }
+
+  void _showCancelRequestPanelWidget() {
+    List<ActionSheetModel> list = [
+      ActionSheetModel(
+          isCenter: true,
+          text: LiveKitLocalizations.of(Global.appContext())!.common_text_cancel_link_mic_apply,
+          textStyle: const TextStyle(
+            color: LiveColors.designStandardFlowkitRed,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+          lineHeight: 3,
+          bingData: 1),
+      ActionSheetModel(
+          isCenter: true,
+          text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
+          isShowBottomLine: false,
+          bingData: 2),
+    ];
+    ActionSheet.show(list, (ActionSheetModel model) async {
+      if (model.bingData == 1) {
+        CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
+        coGuestStore.cancelApplication();
+        widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
+      }
+    });
+  }
+
+  void _showCloseCoGuestPanelWidget() {
+    List<ActionSheetModel> list = [
+      ActionSheetModel(
+          isCenter: true,
+          text: LiveKitLocalizations.of(Global.appContext())!.common_text_close_link_mic,
+          textStyle: const TextStyle(
+            color: LiveColors.designStandardFlowkitRed,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+          lineHeight: 3,
+          bingData: 1),
+      ActionSheetModel(
+          isCenter: true,
+          text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
+          isShowBottomLine: false,
+          bingData: 2),
+    ];
+    ActionSheet.show(list, (ActionSheetModel model) async {
+      if (model.bingData == 1) {
+        CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
+        coGuestStore.disconnect();
+      }
+    });
+  }
+
+  String _getImageByCoGuestStatus(bool isCoGuestDisabled) {
+    if (isCoGuestDisabled) {
+      return LiveImages.functionLinkDisable;
+    }
+    switch (widget.liveStreamManager.coGuestState.coGuestStatus.value) {
+      case CoGuestStatus.none:
+        return LiveImages.functionLinkDefault;
+      case CoGuestStatus.applying:
+        return LiveImages.functionRequest;
+      case CoGuestStatus.linking:
+        return LiveImages.functionLinked;
+    }
+  }
+}

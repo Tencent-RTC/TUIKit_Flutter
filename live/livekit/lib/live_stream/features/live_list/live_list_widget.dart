@@ -1,0 +1,338 @@
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
+import 'package:tencent_rtc_sdk/trtc_cloud.dart';
+
+import '../../../common/index.dart';
+import '../../../tencent_live_uikit.dart';
+import 'service/live_list_service.dart';
+
+class LiveListWidget extends StatefulWidget {
+  const LiveListWidget({super.key});
+
+  @override
+  LiveListWidgetState createState() {
+    return LiveListWidgetState();
+  }
+}
+
+class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
+  late final cellWidth = (1.screenWidth - 39.width) * 0.5;
+  late final cellHeight = cellWidth / _childAspectRatio;
+  final int _column = 2;
+  final double _childAspectRatio = 168.width / 262.height;
+  late final LiveListService _liveListService = LiveListService();
+
+  final ScrollController _scrollController = ScrollController();
+  late final VoidCallback _listener = _onLoginChange;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route == null) return;
+    TUILiveKitNavigatorObserver.instance.subscribe(this, route);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+    _addListener();
+    _enableSwitchPlaybackQuality(true);
+    GlobalFloatWindowManager.instance.setOverlayClosedCallback(() => _onRefresh());
+    _liveListService.refreshFetchList();
+  }
+
+  @override
+  void dispose() {
+    GlobalFloatWindowManager.instance.setOverlayClosedCallback(null);
+    _enableSwitchPlaybackQuality(false);
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    _removeListener();
+    TUILiveKitNavigatorObserver.instance.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    _onRefresh();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          return SizedBox(
+            height: 1.screenHeight,
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                _buildNoDataWidget(),
+                _buildSliverGridWidget(),
+                _buildBottomWidget(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _initData() {
+    _scrollController.addListener(_scrollListener);
+    if (Boot().isLogin.value) {
+      _onRefresh();
+    }
+  }
+
+  void _addListener() {
+    Boot().isLogin.addListener(_listener);
+  }
+
+  void _removeListener() {
+    Boot().isLogin.removeListener(_listener);
+  }
+
+  void _onLoginChange() {
+    if (Boot().isLogin.value) {
+      _onRefresh();
+    }
+  }
+}
+
+extension LiveListWidgetStateLogicExtension on LiveListWidgetState {
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      _liveListService.loadMoreData();
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await _liveListService.refreshFetchList();
+  }
+
+  Widget _buildSliverGridWidget() {
+    return ValueListenableBuilder(
+      valueListenable: _liveListService.roomListState.liveInfoList,
+      builder: (BuildContext context, value, Widget? child) {
+        return SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: _childAspectRatio,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: index % _column == 0 ? 16.width : 3.5.width,
+                  right: index % _column == 1 ? 16.width : 3.5.width,
+                  top: 8.height,
+                ),
+                child: _buildItemWidget(index),
+              );
+            },
+            childCount: _liveListService.roomListState.liveInfoList.value.length,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildItemWidget(int index) {
+    final item = _liveListService.roomListState.liveInfoList.value[index];
+    final url =
+        _isValidUrl(item.coverURL.split(';').first) ? item.coverURL.split(';').first : Constants.defaultCoverUrl;
+    return GestureDetector(
+      onTap: () {
+        _clickItem(index);
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(12.radius)),
+        child: SizedBox(
+          width: cellWidth,
+          child: Stack(
+            children: [
+              Positioned(
+                child: Container(
+                    width: cellWidth,
+                    padding: const EdgeInsets.all(0),
+                    child: CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.fill,
+                        placeholder: (context, url) {
+                          return Image.asset(LiveImages.streamDefaultCover,
+                              fit: BoxFit.fill, package: Constants.pluginName);
+                        },
+                        errorWidget: (context, url, error) {
+                          return Image.asset(LiveImages.streamDefaultCover,
+                              fit: BoxFit.fill, package: Constants.pluginName);
+                        })),
+              ),
+              Positioned(
+                left: 8.width,
+                top: 6.height,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 8.radius,
+                      width: 8.radius,
+                      child: Image.asset(
+                        fit: BoxFit.fill,
+                        LiveImages.roomListItemLiveStatus,
+                        package: Constants.pluginName,
+                      ),
+                    ),
+                    SizedBox(width: 5.width),
+                    Text(
+                      LiveKitLocalizations.of(Global.appContext())!
+                          .livelist_viewed_audience_count
+                          .replaceAll('xxx', "${item.totalViewerCount}"),
+                      style: const TextStyle(
+                          color: LiveColors.designStandardFlowkitWhite, fontSize: 14, fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 8.width,
+                bottom: 32.height,
+                right: 8.width,
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: 26.height, maxWidth: 152.width),
+                  child: Text(
+                    item.liveName,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: LiveColors.designStandardFlowkitWhite.withAlpha(0xE6),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 8.width,
+                bottom: 10.height,
+                right: 8.width,
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(8.radius)),
+                      child: SizedBox(
+                        height: 16.radius,
+                        width: 16.radius,
+                        child: Image.network(
+                          item.liveOwner.avatarURL,
+                          fit: BoxFit.fill,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              fit: BoxFit.fill,
+                              LiveImages.defaultAvatar,
+                              package: Constants.pluginName,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 4.width),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 132.width, maxHeight: 20.height),
+                      child: Text(
+                        item.liveOwner.userName.isNotEmpty ? item.liveOwner.userName : item.liveOwner.userID,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C), fontSize: 12),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomWidget() {
+    return ValueListenableBuilder(
+        valueListenable: _liveListService.roomListState.loadStatus,
+        builder: (BuildContext context, value, Widget? child) {
+          return SliverToBoxAdapter(
+            child:
+                (_liveListService.roomListState.isHaveMoreData.value && _liveListService.roomListState.loadStatus.value)
+                    ? Container(
+                        padding: EdgeInsets.all(16.radius),
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      )
+                    : SizedBox(height: 12.height),
+          );
+        });
+  }
+
+  Widget _buildNoDataWidget() {
+    return ValueListenableBuilder(
+        valueListenable: _liveListService.roomListState.refreshStatus,
+        builder: (BuildContext context, value, Widget? child) {
+          final isShow = _liveListService.roomListState.liveInfoList.value.isEmpty &&
+              !_liveListService.roomListState.refreshStatus.value;
+          return SliverToBoxAdapter(
+            child: isShow
+                ? Container(
+                    padding: EdgeInsets.all(16.radius),
+                    alignment: Alignment.center,
+                    child: Text(LiveKitLocalizations.of(Global.appContext())!.livelist_no_more_data),
+                  )
+                : const SizedBox.shrink(),
+          );
+        });
+  }
+
+  void _clickItem(int index) {
+    final liveInfo = _liveListService.roomListState.liveInfoList.value[index];
+    final roomType = LiveIdentityGenerator.instance.getIDType(liveInfo.liveID);
+    if (roomType == RoomType.voice) {
+      TUILiveKitNavigatorObserver.instance.enterVoiceRoomPage(liveInfo);
+    } else {
+      TUILiveKitNavigatorObserver.instance.enterLiveRoomPage(liveInfo);
+    }
+  }
+}
+
+extension on LiveListWidgetState {
+  void _enableSwitchPlaybackQuality(bool enable) async {
+    Map<String, dynamic> config = {
+      'key': 'Liteav.engine.set.live.qos.audience.strategy.version"',
+      'value': enable ? 1 : 0
+    };
+
+    Map<String, dynamic> params = {
+      'configs': [config]
+    };
+    Map<String, dynamic> jsonObject = {'api': 'setPrivateConfig', 'params': params};
+
+    try {
+      final jsonString = json.encode(jsonObject);
+      final trtc = await TRTCCloud.sharedInstance();
+      trtc.callExperimentalAPI(jsonString);
+    } catch (e) {
+      LiveKitLogger.error('Error enableSwitchPlaybackQuality');
+    }
+  }
+
+  bool _isValidUrl(String urlString) {
+    try {
+      Uri parsedUri = Uri.parse(urlString);
+      return parsedUri.scheme.isNotEmpty && parsedUri.host.isNotEmpty;
+    } on FormatException catch (e) {
+      return false;
+    }
+  }
+}

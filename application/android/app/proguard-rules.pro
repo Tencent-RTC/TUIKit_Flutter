@@ -1,0 +1,5 @@
+-keep class com.tencent.** { *; }
+-dontwarn com.tencent.rtmp.ITXVodPlayListener$ITXVodAudioFrameDataListener
+-dontwarn com.tencent.rtmp.TXVodDef$TXVodAudioFrameData
+-dontwarn com.tencent.xmagic.XmagicApi$XmagicLightGameListener
+-dontwarn com.tencent.xmagic.XmagicApi
