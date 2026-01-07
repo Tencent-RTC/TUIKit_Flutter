@@ -402,7 +402,7 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
   }
 
   Future<CompletionHandler> _deleteFriend() async {
-    return await settingStore.deleteFriend(userID: widget.userID);
+    return await settingStore.deleteFriend();
   }
 
   void _navigateToMessageList() {

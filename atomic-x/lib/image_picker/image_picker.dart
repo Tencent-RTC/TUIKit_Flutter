@@ -26,21 +26,14 @@ class ImagePickerModel {
 class ImagePickerConfig {
   final int? maxCount;
   final int? gridCount;
-  final Color? primaryColor;
-  final Locale? locale;
 
   const ImagePickerConfig({
-    this.maxCount,
-    this.gridCount,
-    this.primaryColor,
-    this.locale,
+    this.maxCount = 9,
+    this.gridCount = 4,
   });
 }
 
 class ImagePicker {
-  static const int defaultMaxCount = 9;
-  static const int defaultGridCount = 4;
-
   static final ImagePicker instance = ImagePicker._internal();
   ImagePicker._internal();
 
@@ -54,10 +47,8 @@ class ImagePicker {
         context: context,
         config: AlbumPickerConfig(
           pickMode: PickMode.image,
-          maxCount: config?.maxCount ?? defaultMaxCount,
-          gridCount: config?.gridCount ?? defaultGridCount,
-          primaryColor: config?.primaryColor,
-          locale: config?.locale,
+          maxCount: config?.maxCount,
+          gridCount: config?.gridCount,
         ),
         onProgress: (albumModel, index, progress) {
           if (albumModel.mediaType == PickMediaType.image) {

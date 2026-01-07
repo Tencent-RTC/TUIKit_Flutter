@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" color="#147AFF">
+  <path d="M2,3.5L2,3.5A0.5,0.5 0,0 1,2.5 4L2.5,4A0.5,0.5 0,0 1,2 4.5L2,4.5A0.5,0.5 0,0 1,1.5 4L1.5,4A0.5,0.5 0,0 1,2 3.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+  <path d="M5,3.5L14,3.5A0.5,0.5 0,0 1,14.5 4L14.5,4A0.5,0.5 0,0 1,14 4.5L5,4.5A0.5,0.5 0,0 1,4.5 4L4.5,4A0.5,0.5 0,0 1,5 3.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+  
+  <path d="M2,7.5L2,7.5A0.5,0.5 0,0 1,2.5 8L2.5,8A0.5,0.5 0,0 1,2 8.5L2,8.5A0.5,0.5 0,0 1,1.5 8L1.5,8A0.5,0.5 0,0 1,2 7.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+  <path d="M5,7.5L14,7.5A0.5,0.5 0,0 1,14.5 8L14.5,8A0.5,0.5 0,0 1,14 8.5L5,8.5A0.5,0.5 0,0 1,4.5 8L4.5,8A0.5,0.5 0,0 1,5 7.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+  
+  <path d="M2,11.5L2,11.5A0.5,0.5 0,0 1,2.5 12L2.5,12A0.5,0.5 0,0 1,2 12.5L2,12.5A0.5,0.5 0,0 1,1.5 12L1.5,12A0.5,0.5 0,0 1,2 11.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+  <path d="M5,11.5L14,11.5A0.5,0.5 0,0 1,14.5 12L14.5,12A0.5,0.5 0,0 1,14 12.5L5,12.5A0.5,0.5 0,0 1,4.5 12L4.5,12A0.5,0.5 0,0 1,5 11.5z" fill="none" stroke="currentColor" stroke-width="1"/>
+</svg>

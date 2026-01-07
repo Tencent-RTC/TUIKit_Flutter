@@ -32,7 +32,7 @@
   "app_conference": "会议",
   "app_conference_description": "快速会议·邀请入会·会中管控·共享屏幕",
   "app_call": "通话",
-  "app_call_description": "铃声通知·悬浮窗·通话卡顿优化",
+  "app_call_description": "响铃通知·通话悬浮窗·通话卡顿优化",
   "app_call_user_ids": "通话列表",
   "app_call_media_type": "媒体类型",
   "app_call_optional_params": "可选参数",

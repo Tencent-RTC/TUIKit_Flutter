@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="video_recorder_empty">""</string>
+    <string name="video_recorder_torch">الشعلة</string>
+    <string name="video_recorder_aspect">النسبة</string>
+    <string name="video_recorder_beauty">الجمال</string>
+
+    <string name="video_recorder_confirm">تأكيد</string>
+    <string name="video_recorder_cancel">إلغاء</string>
+    <string name="video_recorder_close">إغلاق</string>
+    <string name="video_recorder_strength">القوة</string>
+    <string name="video_recorder_setup">إعداد</string>
+    <string name="video_recorder_common_none">لا شيء</string>
+    <string name="video_recorder_palm_out">كف اليد</string>
+
+    <string name="video_recorder_setting_panel_style">الأسلوب</string>
+    <string name="video_recorder_setting_panel_beauty">الجمال</string>
+    <string name="video_recorder_setting_panel_filter">الفلتر</string>
+
+    <string name="video_recorder_beauty_cancel">إلغاء</string>
+    <string name="video_recorder_panel_style_smooth">ناعم</string>
+    <string name="video_recorder_panel_style_natural">جمال طبيعي</string>
+    <string name="video_recorder_panel_style_pitu">جمال (PS)</string>
+
+    <string name="video_recorder_panel_white">أبيض</string>
+    <string name="video_recorder_panel_ruddy">متورد</string>
+
+    <string name="video_recorder_panel_filter_standard">قياسي</string>
+    <string name="video_recorder_panel_filter_ziran">طبيعي</string>
+    <string name="video_recorder_panel_filter_baixi">أشقر</string>
+    <string name="video_recorder_panel_filter_cheery">مبهج</string>
+    <string name="video_recorder_panel_filter_cloud">سحاب</string>
+    <string name="video_recorder_panel_filter_pure">نقي</string>
+    <string name="video_recorder_panel_filter_orchid">أوركيد</string>
+    <string name="video_recorder_panel_filter_vitality">حيوية</string>
+    <string name="video_recorder_panel_filter_super">سوبر</string>
+    <string name="video_recorder_panel_filter_fragrance">عطر</string>
+    <string name="video_recorder_panel_filter_white">أبيض</string>
+    <string name="video_recorder_panel_filter_romantic">رومانسي</string>
+    <string name="video_recorder_panel_filter_fresh">منعش</string>
+    <string name="video_recorder_panel_filter_beautiful">جمالي</string>
+    <string name="video_recorder_panel_filter_pink">وردي</string>
+    <string name="video_recorder_panel_filter_reminiscence">حنين</string>
+    <string name="video_recorder_panel_filter_blues">بلوز</string>
+    <string name="video_recorder_panel_filter_cool">بارد</string>
+    <string name="video_recorder_panel_filter_Japanese">حلو</string>
+
+    <string name="video_recorder_default_bgm_name">اسم موسيقى غير معروف</string>
+    <string name="video_recorder_default_time">00:00</string>
+    <string name="video_recorder_bgm_music">موسيقى</string>
+    <string name="video_recorder_origin_audio">الصوت الأصلي</string>
+    <string name="video_recorder_send">إرسال</string>
+    <string name="video_recorder_done">تم</string>
+    <string name="video_recorder_restore">اختزال</string>
+    <string name="video_recorder_zero">0</string>
+    <string name="video_recorder_zero_time">00:00</string>
+    <string name="video_recorder_local">محلي</string>
+    <string name="video_recorder_default">افتراضي</string>
+
+    <string name="video_recorder_mixed_mode_operation_tips">اضغط لالتقاط صورة، اضغط مطولاً للتسجيل</string>
+    <string name="video_recorder_phone_mode_operation_tips">اضغط لالتقاط صورة</string>
+    <string name="video_recorder_video_mode_operation_tips">اضغط على تسجيل طويل</string>
+    <string name="video_recorder_bgm_type_name_default">افتراضي</string>
+    <string name="video_recorder_bgm_type_name_chosen">مختار</string>
+    <string name="video_recorder_bgm_item_bgm_name_default">موسيقى مجهولة</string>
+    <string name="video_recorder_bgm_item_bgm_author_default">مؤلف مجهول</string>
+
+    <string name="video_recorder_picker_preview">معاينة</string>
+    <string name="video_recorder_picker_full_image">الصورة كاملة</string>
+    <string name="video_recorder_picker_send">إرسال</string>
+    <string name="video_recorder_picker_edit">تعديل</string>
+    <string name="video_recorder_picker_select">اختيار</string>
+    <string name="video_recorder_recode_time_short_tips">وقت التسجيل قصير جدا</string>
+
+    <string name="video_recorder_request_permission_storage_title">%s يطلب الوصول إلى صلاحيات التخزين</string>
+    <string name="video_recorder_request_permission_storage_reason">مطلوب الوصول إلى صلاحيات التخزين لإرسال الصور والفيديوهات من الألبوم وحفظ الصور والفيديوهات في الدردشة</string>
+    <string name="video_recorder_request_permission_storage_tip">افتح صلاحيات التخزين في الإعدادات-التطبيقات-%s-الصلاحيات لاستخدام إرسال الصور والفيديوهات من الألبوم وحفظ الصور في الدردشة بشكل طبيعي</string>
+
+    <string name="video_recorder_request_permission_media_title">%s يطلب الوصول إلى الصور والفيديوهات</string>
+    <string name="video_recorder_request_permission_media_reason">مطلوب الوصول إلى الصور والفيديوهات لإرسال الصور والفيديوهات من الألبوم وحفظ الصور والفيديوهات في الدردشة</string>
+    <string name="video_recorder_request_permission_media_tip">افتح صلاحيات الصور والفيديوهات في الإعدادات-التطبيقات-%s-الصلاحيات لاستخدام إرسال الصور والفيديوهات من الألبوم وحفظ الصور في الدردشة بشكل طبيعي</string>
+
+    <string name="audio_authorization_prompter">التكوين الحالي لا يمكن تمكين منظمة العفو الدولية للحد من الضوضاء . تصحيح الإصدارات ف</string>
+    <string name="audio_recorder_less_than_min_time">تسجيل الصوت طويل جدا و قصير جدا</string>
+    <string name="audio_record_time_limit_reached">لقد تم الوصول إلى الحد الزمني لتسجيل الصوت</string>
+
+    <string name="video_recorder_authorization_prompter">الوظيفة الحالية الخاصة بك سوف تكون محدودة بسبب عدم تمكين الوسائط المتعددة المكونات الإضافية .</string>
+    <string name="video_recorder_authorization_prompter_accessing_documents">1 . يمكنك الوصول إلى الملفات التالية لفتح الوسائط المتعددة المكونات في الأذونات : الوسائط المتعددة المكونات في فتح المبادئ التوجيهية</string>
+    <string name="video_recorder_authorization_prompter_remove_module">2 . يمكنك أيضا منع هذه الميزة في ملف التكوين ( ملف التكوين موقع assets / editor_config.json المشروع )</string>
+    <string name="video_recorder_authorization_prompter_documents_title">الوسائط المتعددة المكونات في فتح المبادئ التوجيهية</string>
+    <string name="prompter">جديلة</string>
+    <string name="link_error">لا يمكن فتح الرابط</string>
+
+    <!--  بداية الصلاحيات -->
+    <string name="video_recorder_permission_mic_reason_title">%s يطلب الحصول على صلاحية الميكروفون</string>
+    <string name="video_recorder_permission_mic_reason">لتسهيل إرسال رسائل الصوت، والتصوير وإجراء المكالمات الصوتية والمرئية، يرجى السماح لنا بالوصول إلى الميكروفون.</string>
+    <string name="video_recorder_permission_camera_reason_title">%s يطلب الحصول على صلاحية الكاميرا</string>
+    <string name="video_recorder_permission_camera_reason">لتسهيل التقاط الصور والفيديو لإرسالها للأصدقاء، وإجراء المكالمات الفيديو، يرجى السماح لنا بالوصول إلى الكاميرا.</string>
+    <string name="video_recorder_permission_storage_reason_title">%s يطلب الحصول على صلاحية التخزين</string>
+    <string name="video_recorder_permission_storage_reason">لتسهيل حفظ الصور والفيديو على الجهاز، يرجى السماح لنا بالوصول إلى التخزين.</string>
+    <string name="video_recorder_permission_mic_dialog_alert">للسماح بالوصول إلى الميكروفون، اذهب إلى الإعدادات -> التطبيقات -> %s لاستخدام رسائل الصوت، وكاميرات الفيديو، ومكالمات الصوت والفيديو كالمعتاد.</string>
+    <string name="video_recorder_permission_camera_dialog_alert">السماح بالوصول إلى الكاميرا في الإعدادات -> التطبيقات -> %s لاستخدام وظائف التصوير الفوتوغرافي والفيديو والمكالمات الفيديو كالمعتاد.</string>
+    <string name="video_recorder_permission_storage_dialog_alert">السماح بالوصول إلى التخزين في الإعدادات -> التطبيقات -> %s لاستخدام وظيفة حفظ الصور والفيديو بشكل طبيعي.</string>
+    <!--  بداية الصلاحيات -->
+</resources>

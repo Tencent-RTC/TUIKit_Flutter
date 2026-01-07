@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-
-import '../../image_viewer/image_element.dart';
+import 'package:tuikit_atomic_x/image_viewer/image_element.dart';
 
 class ImageViewerManager {
   bool _isShowingImageViewer = false;

@@ -3,8 +3,8 @@ import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/calling_message_data_provider.dart';
-import '../message_status_mixin.dart';
+import 'package:tuikit_atomic_x/message_list/utils/calling_message_data_provider.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 import 'system_message_widget.dart';
 
 typedef BackgroundBuilder = Widget Function(Widget child);
@@ -23,6 +23,7 @@ class CallMessageWidget extends StatefulWidget {
   final String alignment;
   final VoidCallback? onResendTap;
   final MessageListConfigProtocol config;
+  final bool isInMergedDetailView;
 
   const CallMessageWidget({
     super.key,
@@ -39,6 +40,7 @@ class CallMessageWidget extends StatefulWidget {
     this.backgroundBuilder,
     this.alignment = AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
     this.onResendTap,
+    this.isInMergedDetailView = false,
   });
 
   @override
@@ -117,6 +119,7 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
             colors: colors,
             onResendTap: widget.onResendTap,
             isShowTimeInBubble: widget.config.isShowTimeInBubble,
+            isInMergedDetailView: widget.isInMergedDetailView,
           ),
         ],
       ],

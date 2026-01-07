@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'album_picker.dart';
 
@@ -35,6 +36,8 @@ class AlbumPickerPlatform {
 
   static Future<void> pickMediaNative({
     required AlbumPickerConfig config,
+    Locale? locale,
+    String? primaryColor,
     required Function(AlbumPickerModel model, int index, double progress) onProgress,
   }) async {
     if (!Platform.isAndroid && !Platform.isIOS) {
@@ -84,12 +87,12 @@ class AlbumPickerPlatform {
         'pickMedia',
         {
           'pickMode': _convertPickMode(config.pickMode),
-          'maxCount': config.maxCount ?? AlbumPicker.defaultMaxCount,
-          'gridCount': config.gridCount ?? AlbumPicker.defaultGridCount,
-          'primaryColor': config.primaryColor?.value ?? -1,
-          'languageCode': config.locale?.languageCode,
-          'countryCode': config.locale?.countryCode,
-          'scriptCode': config.locale?.scriptCode,
+          'maxCount': config.maxCount,
+          'gridCount': config.gridCount,
+          'primaryColor': primaryColor ?? '',
+          'languageCode': locale?.languageCode,
+          'countryCode': locale?.countryCode,
+          'scriptCode': locale?.scriptCode,
         },
       );
     } catch (e) {

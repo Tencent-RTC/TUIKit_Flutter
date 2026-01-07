@@ -931,6 +931,9 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get messageNum => 'messages';
 
   @override
+  String get draft => '[Draft]';
+
+  @override
   String get sendMessageFail => 'Send Failed';
 
   @override
@@ -1006,4 +1009,187 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String peopleOnCall(Object number) {
     return '$number person are currently on the call';
   }
+
+  @override
+  String get messageReadDetail => 'Message Read Details';
+
+  @override
+  String get groupReadBy => 'Read by';
+
+  @override
+  String get groupDeliveredTo => 'Delivered to';
+
+  @override
+  String get loadingMore => 'Load more...';
+
+  @override
+  String get unknownFile => 'Unknown file';
+
+  @override
+  String get messageReadReceipt => 'Message Read Receipt';
+
+  @override
+  String get messageReadReceiptEnabledDesc =>
+      'If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.';
+
+  @override
+  String get messageReadReceiptDisabledDesc =>
+      'If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get markAsRead => 'Mark As Read';
+
+  @override
+  String get markAsUnread => 'Mark As Unread';
+
+  @override
+  String get multiSelect => 'Multi-Select';
+
+  @override
+  String get selectChat => 'Select Chat';
+
+  @override
+  String sendCount(int count) {
+    return 'Send ($count)';
+  }
+
+  @override
+  String selectedCount(int count) {
+    return 'Selected $count';
+  }
+
+  @override
+  String get forwardIndividually => 'Forward Individually';
+
+  @override
+  String get forwardMerged => 'Forward as Merged';
+
+  @override
+  String get groupChatHistory => 'Group Chat History';
+
+  @override
+  String c2cChatHistoryFormat(String name) {
+    return '$name\'s Chat History';
+  }
+
+  @override
+  String chatHistoryForSomebodyFormat(String name1, String name2) {
+    return 'Chat History of $name1 and $name2';
+  }
+
+  @override
+  String get recentChats => 'Recent Chats';
+
+  @override
+  String get forwardCompatibleText => 'Please upgrade to view chat history';
+
+  @override
+  String get forwardFailedMessageTip => 'Failed messages cannot be forwarded!';
+
+  @override
+  String get forwardSeparateLimitTip =>
+      'Too many messages selected, individual forwarding is not supported';
+
+  @override
+  String get deleteMessagesConfirmTip =>
+      'Are you sure you want to delete the selected messages?';
+
+  @override
+  String get conversationListAtAll => '[@All]';
+
+  @override
+  String get conversationListAtMe => '[@Me]';
+
+  @override
+  String get messageInputAllMembers => 'All';
+
+  @override
+  String get selectMentionMember => 'Select Members';
+
+  @override
+  String get tapToRemove => 'Tap to remove';
+
+  @override
+  String get messageTypeSecurityStrike => 'Sensitive content involved';
+
+  @override
+  String get convertToText => 'Convert to Text';
+
+  @override
+  String get convertToTextFailed => 'Unable to convert';
+
+  @override
+  String get hide => 'Hide';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get translate => 'Translate';
+
+  @override
+  String get translateFailed => 'Unable to translate';
+
+  @override
+  String get translateDefaultTips => 'Translation powered by Tencent Cloud IM';
+
+  @override
+  String get translating => 'Translating...';
+
+  @override
+  String get translateTargetLanguage => 'Translate Target Language';
+
+  @override
+  String get translateLanguageZh => '简体中文';
+
+  @override
+  String get translateLanguageZhTW => '繁體中文';
+
+  @override
+  String get translateLanguageEn => 'English';
+
+  @override
+  String get translateLanguageJa => '日本語';
+
+  @override
+  String get translateLanguageKo => '한국어';
+
+  @override
+  String get translateLanguageFr => 'Français';
+
+  @override
+  String get translateLanguageEs => 'Español';
+
+  @override
+  String get translateLanguageIt => 'Italiano';
+
+  @override
+  String get translateLanguageDe => 'Deutsch';
+
+  @override
+  String get translateLanguageTr => 'Türkçe';
+
+  @override
+  String get translateLanguageRu => 'Русский';
+
+  @override
+  String get translateLanguagePt => 'Português';
+
+  @override
+  String get translateLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get translateLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get translateLanguageTh => 'ภาษาไทย';
+
+  @override
+  String get translateLanguageMs => 'Bahasa Melayu';
+
+  @override
+  String get translateLanguageHi => 'हिन्दी';
 }

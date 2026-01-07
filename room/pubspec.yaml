@@ -1,0 +1,54 @@
+name: tencent_conference_uikit
+description: tencent_conference_uikit is a UIKit about audio&video room launched by Tencent Cloud.
+version: 4.0.0
+repository: https://github.com/Tencent-RTC/TUIKit_Flutter
+homepage: https://trtc.io/
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.27.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: '>= 0.19.0'
+  plugin_platform_interface: ^2.0.2
+  tuikit_atomic_x:
+    path: ../atomic-x
+  atomic_x_core: ^3.6.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # Enable code generation for localization
+  generate: true
+  
+  # This section identifies this Flutter project as a plugin project.
+  # The 'pluginClass' specifies the class (in Java, Kotlin, Swift, Objective-C, etc.)
+  # which should be registered in the plugin registry. This is required for
+  # using method channels.
+  # The Android 'package' specifies package in which the registered class is.
+  # This is required for using method channels on Android.
+  # The 'ffiPlugin' specifies that native code should be built and bundled.
+  # This is required for using `dart:ffi`.
+  # All these are used by the tooling to maintain consistency when
+  # adding or updating assets for this project.
+  plugin:
+    platforms:
+      android:
+        package: com.example.tencent_conference_uikit
+        pluginClass: TencentConferenceUikitPlugin
+      ios:
+        pluginClass: TencentConferenceUikitPlugin
+
+  assets:
+    - assets/images/

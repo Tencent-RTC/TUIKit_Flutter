@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide IconButton;
+import 'package:tuikit_atomic_x/video_player/video_player.dart';
+import 'package:tuikit_atomic_x/video_player/video_player_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 import 'image_element.dart';
 
 typedef EventHandler = void Function(Map<String, dynamic> eventData, Function(dynamic) callback);
 
+/// Play button overlay for videos that need to be downloaded
 class _PlayButtonView extends StatelessWidget {
   final ImageElement element;
   final bool isDownloading;
@@ -60,53 +62,21 @@ class _PlayButtonView extends StatelessWidget {
   }
 }
 
-class _MediaItemView extends StatelessWidget {
+/// Image item view (for images only)
+class _ImageItemView extends StatelessWidget {
   final ImageElement element;
-  final bool isDownloading;
-  final VoidCallback onPlayButtonTap;
-  final VoidCallback onDownloadButtonTap;
-  final VoidCallback onImageTap;
+  final VoidCallback onTap;
 
-  const _MediaItemView({
+  const _ImageItemView({
     required this.element,
-    required this.isDownloading,
-    required this.onPlayButtonTap,
-    required this.onDownloadButtonTap,
-    required this.onImageTap,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        if (element.isImage) {
-          onImageTap();
-        } else if (element.isVideo) {
-          if (element.hasVideoFile) {
-            onPlayButtonTap();
-          } else if (!isDownloading) {
-            onDownloadButtonTap();
-          }
-        }
-      },
-      onDoubleTap: () {
-        onImageTap();
-      },
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          _buildImage(),
-          if (element.isVideo)
-            Center(
-              child: _PlayButtonView(
-                element: element,
-                isDownloading: isDownloading,
-                onPlayTap: onPlayButtonTap,
-                onDownloadTap: onDownloadButtonTap,
-              ),
-            ),
-        ],
-      ),
+      onTap: onTap,
+      child: _buildImage(),
     );
   }
 
@@ -125,9 +95,9 @@ class _MediaItemView extends StatelessWidget {
   Widget _buildErrorImage() {
     return Container(
       color: Colors.grey.withOpacity(0.3),
-      child: Center(
+      child: const Center(
         child: Icon(
-          element.isImage ? Icons.image : Icons.videocam,
+          Icons.image,
           color: Colors.grey,
           size: 80,
         ),
@@ -136,30 +106,87 @@ class _MediaItemView extends StatelessWidget {
   }
 }
 
-class _ToastView extends StatelessWidget {
-  final String message;
-  final bool isShowing;
+/// Video item view using VideoPlayerWidget
+class _VideoItemView extends StatelessWidget {
+  final ImageElement element;
+  final bool isDownloading;
+  final bool isCurrentPage;
+  final VoidCallback onDownloadTap;
+  final VoidCallback onClose;
 
-  const _ToastView({
-    required this.message,
-    required this.isShowing,
+  const _VideoItemView({
+    required this.element,
+    required this.isDownloading,
+    required this.isCurrentPage,
+    required this.onDownloadTap,
+    required this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (!isShowing) return const SizedBox.shrink();
+    // If video file doesn't exist, show thumbnail with download button
+    if (!element.hasVideoFile) {
+      return _buildThumbnailWithButton();
+    }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(25),
+    // Video file exists - use VideoPlayerWidget
+    return VideoPlayerWidget(
+      video: VideoData(
+        localPath: element.videoPath,
+        snapshotLocalPath: element.imagePath,
       ),
-      child: Text(
-        message,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
+      onClose: onClose,
+      showCloseButton: true,
+    );
+  }
+
+  Widget _buildThumbnailWithButton() {
+    return GestureDetector(
+      onTap: () {
+        if (!isDownloading) {
+          onDownloadTap();
+        }
+      },
+      child: Container(
+        color: Colors.black,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(child: _buildThumbnail()),
+            Center(
+              child: _PlayButtonView(
+                element: element,
+                isDownloading: isDownloading,
+                onPlayTap: () {},
+                onDownloadTap: onDownloadTap,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThumbnail() {
+    if (File(element.imagePath).existsSync()) {
+      return Image.file(
+        File(element.imagePath),
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => _buildErrorImage(),
+      );
+    } else {
+      return _buildErrorImage();
+    }
+  }
+
+  Widget _buildErrorImage() {
+    return Container(
+      color: Colors.black,
+      child: const Center(
+        child: Icon(
+          Icons.videocam,
+          color: Colors.grey,
+          size: 80,
         ),
       ),
     );
@@ -206,167 +233,6 @@ class _LoadingIndicatorView extends StatelessWidget {
   }
 }
 
-class _VideoPlayerView extends StatefulWidget {
-  final String videoPath;
-  final VoidCallback onClose;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
-  final bool hasPrevious;
-  final bool hasNext;
-
-  const _VideoPlayerView({
-    required this.videoPath,
-    required this.onClose,
-    required this.onPrevious,
-    required this.onNext,
-    required this.hasPrevious,
-    required this.hasNext,
-  });
-
-  @override
-  State<_VideoPlayerView> createState() => _VideoPlayerViewState();
-}
-
-class _VideoPlayerViewState extends State<_VideoPlayerView> {
-  late VideoPlayerController _controller;
-  bool _isInitialized = false;
-  bool _showControls = true;
-  Timer? _hideControlsTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeVideo();
-  }
-
-  Future<void> _initializeVideo() async {
-    _controller = VideoPlayerController.file(File(widget.videoPath));
-    try {
-      await _controller.initialize();
-      setState(() {
-        _isInitialized = true;
-      });
-      _controller.play();
-      _startHideControlsTimer();
-    } catch (e) {
-      debugPrint('Video initialization error: $e');
-    }
-  }
-
-  void _startHideControlsTimer() {
-    _hideControlsTimer?.cancel();
-    _hideControlsTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _showControls = false;
-        });
-      }
-    });
-  }
-
-  void _toggleControls() {
-    setState(() {
-      _showControls = !_showControls;
-    });
-    if (_showControls) {
-      _startHideControlsTimer();
-    }
-  }
-
-  @override
-  void dispose() {
-    _hideControlsTimer?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleControls,
-      onHorizontalDragEnd: (DragEndDetails details) {
-        if (details.primaryVelocity != null) {
-          if (details.primaryVelocity! > 0) {
-            if (widget.hasPrevious) {
-              widget.onPrevious();
-            }
-          } else if (details.primaryVelocity! < 0) {
-            if (widget.hasNext) {
-              widget.onNext();
-            }
-          }
-        }
-      },
-      child: Container(
-        color: Colors.black,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Center(
-              child: _isInitialized
-                  ? AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      child: VideoPlayer(_controller),
-                    )
-                  : const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-            ),
-            if (_showControls) ...[
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 16,
-                left: 16,
-                child: GestureDetector(
-                  onTap: () {
-                    widget.onClose();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            if (_showControls && _isInitialized)
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _controller.value.isPlaying ? _controller.pause() : _controller.play();
-                    });
-                    _startHideControlsTimer();
-                  },
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ImageViewerWidget extends StatefulWidget {
   final List<ImageElement> imageElements;
   final int initialIndex;
@@ -389,8 +255,6 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
   late int _previousIndex;
   late PageController _pageController;
 
-  bool _isShowingVideoPlayer = false;
-  String? _currentVideoPath;
   bool _isLoadingOlder = false;
   bool _isLoadingNewer = false;
   bool _isUpdatingData = false;
@@ -421,14 +285,6 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
   }
 
   void _onImageTap() {
-    if (_isShowingVideoPlayer) {
-      setState(() {
-        _isShowingVideoPlayer = false;
-        _currentVideoPath = null;
-      });
-      return;
-    }
-
     Navigator.of(context).pop();
   }
 
@@ -461,13 +317,6 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
   }
 
   void _handleIndexChange(int newIndex) {
-    if (_isShowingVideoPlayer) {
-      setState(() {
-        _isShowingVideoPlayer = false;
-        _currentVideoPath = null;
-      });
-    }
-
     _checkIfLoadMore(newIndex, _previousIndex);
     _previousIndex = newIndex;
   }
@@ -621,13 +470,6 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
     });
   }
 
-  void _playVideo(String videoPath) {
-    setState(() {
-      _currentVideoPath = videoPath;
-      _isShowingVideoPlayer = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -636,25 +478,11 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
         fit: StackFit.expand,
         children: [
           if (_isUpdatingData && _currentIndex < _imageElements.length)
-            _MediaItemView(
-              element: _imageElements[_currentIndex],
-              isDownloading: _downloadingVideoElements.contains(_imageElements[_currentIndex].imagePath),
-              onPlayButtonTap: () {
-                final element = _imageElements[_currentIndex];
-                if (element.hasVideoFile) {
-                  _playVideo(element.videoPath!);
-                }
-              },
-              onDownloadButtonTap: () {
-                _downloadVideo(_imageElements[_currentIndex]);
-              },
-              onImageTap: _onImageTap,
-            )
+            _buildMediaItem(_imageElements[_currentIndex], _currentIndex)
           else
             NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification notification) {
                 if (notification is OverscrollNotification) {
-                  // Detecting overscroll (boundary sliding)
                   final isAtStart = _currentIndex == 0 && notification.overscroll < 0;
                   final isAtEnd = _currentIndex == _imageElements.length - 1 && notification.overscroll > 0;
 
@@ -662,7 +490,7 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
                     _showNoMoreDataToastWithDebounce();
                   }
                 }
-                return false; // Do not prevent notifications from continuing to be delivered
+                return false;
               },
               child: PageView.builder(
                 controller: _pageController,
@@ -675,60 +503,38 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
                 },
                 itemBuilder: (context, index) {
                   final element = _imageElements[index];
-                  return _MediaItemView(
-                    element: element,
-                    isDownloading: _downloadingVideoElements.contains(element.imagePath),
-                    onPlayButtonTap: () {
-                      if (element.hasVideoFile) {
-                        _playVideo(element.videoPath!);
-                      }
-                    },
-                    onDownloadButtonTap: () {
-                      _downloadVideo(element);
-                    },
-                    onImageTap: _onImageTap,
-                  );
+                  return _buildMediaItem(element, index);
                 },
               ),
             ),
-          if (_isShowingVideoPlayer && _currentVideoPath != null)
-            _VideoPlayerView(
-              videoPath: _currentVideoPath!,
-              onClose: () {
-                Navigator.of(context).pop();
-              },
-              onPrevious: () {
-                if (_currentIndex > 0) {
-                  setState(() {
-                    _currentIndex--;
-                    _pageController.animateToPage(
-                      _currentIndex,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  });
-                }
-              },
-              onNext: () {
-                if (_currentIndex < _imageElements.length - 1) {
-                  setState(() {
-                    _currentIndex++;
-                    _pageController.animateToPage(
-                      _currentIndex,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  });
-                }
-              },
-              hasPrevious: _currentIndex > 0,
-              hasNext: _currentIndex < _imageElements.length - 1,
-            ),
+          
+          // Loading indicator
           Center(
             child: _LoadingIndicatorView(isShowing: _showLoadingIndicator),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildMediaItem(ImageElement element, int index) {
+    final isCurrentPage = index == _currentIndex;
+    
+    if (element.isImage) {
+      return _ImageItemView(
+        element: element,
+        onTap: _onImageTap,
+      );
+    } else if (element.isVideo) {
+      return _VideoItemView(
+        element: element,
+        isDownloading: _downloadingVideoElements.contains(element.imagePath),
+        isCurrentPage: isCurrentPage,
+        onDownloadTap: () => _downloadVideo(element),
+        onClose: _onImageTap,
+      );
+    }
+    
+    return const SizedBox.shrink();
   }
 }

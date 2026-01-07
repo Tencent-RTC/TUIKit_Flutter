@@ -1,0 +1,88 @@
+/* 
+  Localizable.strings
+  English
+  
+  Created by rickwrwang on 2024/07/16.
+  
+*/
+
+"record_mode_mix_tip" = "Tap to take a photo, long press to record";
+"record_mode_photo_tip" = "Click to take a photo";
+"record_mode_video_tip" = "Long press to record";
+
+"flash" = "Flash";
+"aspect" = "Aspect";
+"beautify" = "Beautify";
+"filter" = "Filter";
+
+"strength" = "Strength";
+
+"filter_none" = "None";
+"filter_bailan" = "Orchid";
+"filter_baixi" = "White";
+"filter_biaozhun" = "Standard";
+"filter_chaotuo" = "Super";
+"filter_chunzhen" = "Pure";
+"filter_fennen" = "Rosy";
+"filter_huaijiu" = "Nostalgic";
+"filter_landiao" = "Blues";
+"filter_langman" = "Romantic";
+"filter_qingliang" = "Cool";
+"filter_qingxin" = "Fresh";
+"filter_rixi" = "Sweet";
+"filter_weimei" = "Aesthetic";
+"filter_white" = "white";
+"filter_xiangfen" = "Fragrance";
+"filter_yinghong" = "Cheery";
+"filter_yuanqi" = "Vitality";
+"filter_yunshang" = "Cloud";
+"filter_ziran" = "Nature";
+
+"beautify_none" = "None";
+"beautify_smooth" = "Smooth";
+"beautify_natural" = "Beauty(Natural)";
+"beautify_pitu" = "Beauty(PS)";
+"beautify_whitness" = "Whiteness";
+"beautify_ruddy" = "Ruddy";
+
+"record_failed" = "Unable to record";
+"record_failed_reason_camera" = "Please check if camera access is allowed";
+"record_failed_reason_microphone" = "Please check if microphone access is allowed";
+"record_failed_reason_license" = "Unable to verify license";
+"record_failed_reason_unknown" = "Unknown reason";
+
+"photo_failed" = "Unable to photograph";
+
+"modify_load_assert_failed" = "Unable to load video asset";
+
+"editor_bgm" = "BGM";
+"editor_origin_audio" = "Video Sound";
+
+"ok" = "OK";
+"cancel" = "Cancel";
+"delete" = "Delete";
+
+"send" = "Send";
+"done" = "Done";
+
+"default_1" = "Defaults1";
+"default_2" = "Defaults2";
+"default_3" = "Defaults3";
+"custom" = "Custom";
+
+"default" = "Default";
+"best" = "Best";
+
+"bgm_test_name" = "Test Music ";
+
+"bgm_source_unknown" = "Unknown Singer";
+
+"remove_paster" = "Delete Paster";
+"restore" = "Restore";
+
+"authorization_prompter_no_signature" = "Due to your lack of permission to use the multimedia plugin, your current functionality will be restricted. You can either disable the relevant features in CONFIG or enable the multimedia plugin permission to continue using the feature. For details, please refer to the READ.ME file under the module";
+
+"authorization_prompter_no_liteav_sdk" = "Due to your project configuration, your current functionality will be restricted. You can disable the relevant features in CONFIG or change your project configuration to continue using the feature. For details, please refer to the READ.ME file under the module";
+
+"prompter" = "Debug Version Prompt";
+"link_error" = "Unable to open link";

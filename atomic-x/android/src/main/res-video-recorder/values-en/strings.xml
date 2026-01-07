@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="video_recorder_empty">""</string>
+    <string name="video_recorder_torch">Torch</string>
+    <string name="video_recorder_aspect">Aspect</string>
+    <string name="video_recorder_beauty">Beauty</string>
+
+    <string name="video_recorder_confirm">Confirm</string>
+    <string name="video_recorder_cancel">Cancel</string>
+    <string name="video_recorder_close">Close</string>
+    <string name="video_recorder_strength">Strength</string>
+    <string name="video_recorder_setup">Setup</string>
+    <string name="video_recorder_common_none">None</string>
+    <string name="video_recorder_palm_out">Palm out</string>
+
+    <string name="video_recorder_setting_panel_style">Style</string>
+    <string name="video_recorder_setting_panel_beauty">Beauty</string>
+    <string name="video_recorder_setting_panel_filter">Filter</string>
+
+    <string name="video_recorder_beauty_cancel">Cancel</string>
+    <string name="video_recorder_panel_style_smooth">Smooth</string>
+    <string name="video_recorder_panel_style_natural">Beauty(Natural)</string>
+    <string name="video_recorder_panel_style_pitu">Beauty(PS)</string>
+
+    <string name="video_recorder_panel_white">White</string>
+    <string name="video_recorder_panel_ruddy">Ruddy</string>
+
+    <string name="video_recorder_panel_filter_standard">Standard</string>
+    <string name="video_recorder_panel_filter_ziran">Natural</string>
+    <string name="video_recorder_panel_filter_baixi">Blond</string>
+    <string name="video_recorder_panel_filter_cheery">Cheery</string>
+    <string name="video_recorder_panel_filter_cloud">Cloud</string>
+    <string name="video_recorder_panel_filter_pure">Pure</string>
+    <string name="video_recorder_panel_filter_orchid">Orchid</string>
+    <string name="video_recorder_panel_filter_vitality">Vitality</string>
+    <string name="video_recorder_panel_filter_super">Super</string>
+    <string name="video_recorder_panel_filter_fragrance">Fragrance</string>
+    <string name="video_recorder_panel_filter_white">White</string>
+    <string name="video_recorder_panel_filter_romantic">Romantic</string>
+    <string name="video_recorder_panel_filter_fresh">Fresh</string>
+    <string name="video_recorder_panel_filter_beautiful">Aesthetic</string>
+    <string name="video_recorder_panel_filter_pink">Rosy</string>
+    <string name="video_recorder_panel_filter_reminiscence">Nostalgic</string>
+    <string name="video_recorder_panel_filter_blues">Blues</string>
+    <string name="video_recorder_panel_filter_cool">Cool</string>
+    <string name="video_recorder_panel_filter_Japanese">Sweet</string>
+
+    <string name="video_recorder_default_bgm_name">Unknown music name </string>
+    <string name="video_recorder_default_time">00:00</string>
+    <string name="video_recorder_bgm_music">Music</string>
+    <string name="video_recorder_origin_audio">Audio</string>
+    <string name="video_recorder_send">Send</string>
+    <string name="video_recorder_done">Done</string>
+    <string name="video_recorder_restore">Restore</string>
+    <string name="video_recorder_zero">0</string>
+    <string name="video_recorder_zero_time">00:00</string>
+    <string name="video_recorder_local">Local</string>
+    <string name="video_recorder_default">Default</string>
+    <string name="video_recorder_mixed_mode_operation_tips">Tap to take a photo, long press to record</string>
+    <string name="video_recorder_phone_mode_operation_tips">Click to take a photo</string>
+    <string name="video_recorder_bgm_type_name_default">default</string>
+    <string name="video_recorder_bgm_type_name_chosen">chosen</string>
+    <string name="video_recorder_bgm_item_bgm_name_default">unknown music</string>
+    <string name="video_recorder_bgm_item_bgm_author_default">unknown author</string>
+
+    <string name="video_recorder_picker_preview">Preview</string>
+    <string name="video_recorder_picker_full_image">Full Image</string>
+    <string name="video_recorder_picker_send">Send</string>
+    <string name="video_recorder_picker_edit">Edit</string>
+    <string name="video_recorder_picker_select">Select</string>
+
+    <string name="video_recorder_request_permission_storage_title">%s requests access to storage permissions</string>
+    <string name="video_recorder_request_permission_storage_reason">Access to storage is needed to send photos and videos from the album and save pictures and videos in chat</string>
+    <string name="video_recorder_request_permission_storage_tip">Enable storage permissions in Settings-Apps-%s-Permissions to use sending photos and videos from the album and saving pictures in chat normally</string>
+
+    <string name="video_recorder_request_permission_media_title">%s requests access to photos and videos</string>
+    <string name="video_recorder_request_permission_media_reason">Access to photos and videos is needed to send photos and videos from the album and save pictures and videos in chat</string>
+    <string name="video_recorder_request_permission_media_tip">Enable photo and video permissions in Settings-Apps-%s-Permissions to use sending photos and videos from the album and saving pictures in chat normally</string>
+
+    <string name="authorization_prompter_no_signature">Due to your lack of permission to use the multimedia plugin, your current functionality will be restricted. You can either disable the relevant features in CONFIG or enable the multimedia plugin permission to continue using the feature. For details, please refer to the READ.ME file under the module</string>
+    <string name="authorization_prompter_no_liteav_sdk">Due to your project configuration, your current functionality will be restricted. You can disable the relevant features in CONFIG or change your project configuration to continue using the feature. For details, please refer to the READ.ME file under the module</string>
+    <string name="prompter">Prompt</string>
+    <string name="link_error">Unable to open link</string>
+
+    <string name="video_recorder_permission_mic_reason_title">%s applies for access to the microphone</string>
+    <string name="video_recorder_permission_mic_reason">In order for you to send voice messages, make video and audio and video calls, please allow us to access the microphone.</string>
+    <string name="video_recorder_permission_camera_reason_title">%s applies for camera permission</string>
+    <string name="video_recorder_permission_camera_reason">In order for you to take photos or videos to send to contacts, and to make video calls, please allow us to access the webcam.</string>
+    <string name="video_recorder_permission_storage_reason_title">%s applies for storage permission</string>
+    <string name="video_recorder_permission_storage_reason">In order for you to save photos and videos to your device, please allow us to write photos and videos to your device.</string>
+    <string name="video_recorder_permission_mic_dialog_alert">Allow microphone access in Settings->Apps->%s to use voice messages, video cameras, and audio and video calls as normal</string>
+    <string name="video_recorder_permission_camera_dialog_alert">Allow camera access in Settings->Apps->%s to use the photo, video and video calling functions as normal</string>
+    <string name="video_recorder_permission_storage_dialog_alert">Allow storage access in Settings->Apps->%s to use the function of saving photos and videos normally</string>
+</resources>

@@ -12,6 +12,7 @@ class AlbumPickerHandler: NSObject {
     private var pendingResult: FlutterResult?
     private var eventSink: ((Any) -> Void)?
     private let languageState = LanguageState()
+    private let themeState = ThemeState()
     
     init(viewController: UIViewController?, eventSink: @escaping (Any) -> Void) {
         self.viewController = viewController
@@ -43,12 +44,12 @@ class AlbumPickerHandler: NSObject {
         let pickModeInt = args["pickMode"] as? Int ?? 2
         let maxCount = args["maxCount"] as? Int ?? 9
         let gridCount = args["gridCount"] as? Int ?? 4
-        let primaryColorValue = args["primaryColor"] as? Int ?? -1
+        let primaryColorHex = args["primaryColor"] as? String
         let languageCode = args["languageCode"] as? String
         let countryCode = args["countryCode"] as? String
         let scriptCode = args["scriptCode"] as? String
         
-        print("[AlbumPickerHandler] Config - pickMode: \(pickModeInt), maxCount: \(maxCount), gridCount: \(gridCount), primaryColor: \(primaryColorValue), language: \(languageCode ?? "nil")")
+        print("[AlbumPickerHandler] Config - pickMode: \(pickModeInt), maxCount: \(maxCount), gridCount: \(gridCount), primaryColor: \(primaryColorHex ?? "nil"), language: \(languageCode ?? "nil")")
         
         // 设置语言
         if let languageCode = languageCode {
@@ -68,15 +69,10 @@ class AlbumPickerHandler: NSObject {
             albumMode = .all
         }
         
-        // 转换主题色
-        var primaryColorHex: String? = nil
-        if primaryColorValue != -1 {
-            let alpha = (primaryColorValue >> 24) & 0xFF
-            let red = (primaryColorValue >> 16) & 0xFF
-            let green = (primaryColorValue >> 8) & 0xFF
-            let blue = primaryColorValue & 0xFF
-            // Flutter 的颜色格式是 ARGB，转换为 RGB 十六进制
-            primaryColorHex = String(format: "#%02X%02X%02X", red, green, blue)
+        // 设置主题色
+        if let primaryColorHex = primaryColorHex, !primaryColorHex.isEmpty {
+            print("[VideoRecorderHandler] Primary color: \(primaryColorHex)")
+            themeState.setPrimaryColor(primaryColorHex)
         }
         
         // 创建配置
@@ -167,19 +163,29 @@ class AlbumPickerHandler: NSObject {
     }
     
     private func setupLanguage(languageCode: String, countryCode: String?, scriptCode: String?) {
-        var localeIdentifier = languageCode
+        var normalizedLanguage: String
         
-        if let scriptCode = scriptCode, !scriptCode.isEmpty {
-            localeIdentifier += "-\(scriptCode)"
+        if languageCode.hasPrefix("zh") {
+            if let scriptCode = scriptCode, !scriptCode.isEmpty {
+                if scriptCode == "Hans" {
+                    normalizedLanguage = "zh-Hans"
+                } else if scriptCode == "Hant" {
+                    normalizedLanguage = "zh-Hant"
+                } else {
+                    normalizedLanguage = "zh-Hans"
+                }
+            } else {
+                normalizedLanguage = "zh-Hans"
+            }
+        } else if languageCode.hasPrefix("en") {
+            normalizedLanguage = "en"
+        } else if languageCode.hasPrefix("ar") {
+            normalizedLanguage = "ar"
+        } else {
+            normalizedLanguage = "en"
         }
         
-        if let countryCode = countryCode, !countryCode.isEmpty {
-            localeIdentifier += "_\(countryCode)"
-        }
-        
-        print("[AlbumPickerHandler] Language set to: \(localeIdentifier)")
-        
-        languageState.setLanguage(localeIdentifier)
+        languageState.setLanguage(normalizedLanguage)
     }
     
     private func checkPhotoLibraryPermission(completion: @escaping (Bool) -> Void) {

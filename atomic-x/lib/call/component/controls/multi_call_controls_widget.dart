@@ -4,6 +4,8 @@ import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
 import 'package:tuikit_atomic_x/call/call_view.dart';
 
+import '../../common/call_colors.dart';
+
 class MultiCallControlsWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
 
@@ -149,7 +151,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       tips: CallKit_t("hangUp"),
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
         CallStore.shared.reject();
@@ -162,7 +164,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       isDisabled: _isWidgetDisabled(CallFeature.accept),
       imgUrl: "call_assets/dialing.png",
       tips: CallKit_t("accept"),
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
         CallStore.shared.accept();
@@ -180,7 +182,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             tips: isFunctionExpand
                 ? (value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"))
                 : '',
-            textColor: Colors.white,
+            textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == DeviceStatus.on) {
@@ -205,7 +207,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             tips: isFunctionExpand
                 ? (value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"))
                 : '',
-            textColor: Colors.white,
+            textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == AudioRoute.speakerphone) {
@@ -229,7 +231,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
             tips:
                 isFunctionExpand ? (value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff")) : '',
-            textColor: Colors.white,
+            textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == DeviceStatus.on) {
@@ -248,7 +250,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
     return ControlsButton(
       isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
       onTap: () {
         CallStore.shared.hangup();

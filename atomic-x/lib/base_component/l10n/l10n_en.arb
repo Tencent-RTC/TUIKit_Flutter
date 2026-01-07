@@ -342,6 +342,7 @@
     "setNickname": "Edit nickname",
     "setSignature": "Edit signature",
     "messageNum": "messages",
+    "draft": "[Draft]",
     "sendMessageFail": "Send Failed",
     "resendTips": "Are you sure you want to resend?",
     "callRejectCaller": "Call declined by user",
@@ -366,5 +367,93 @@
     "groupCallConfirmSwitchToAudio": "confirm to audio call",
     "unknownCall": "Unknown call",
     "join": "join in",
-    "peopleOnCall": "{number} person are currently on the call"
+    "peopleOnCall": "{number} person are currently on the call",
+    "messageReadDetail": "Message Read Details",
+    "groupReadBy": "Read by",
+    "groupDeliveredTo": "Delivered to",
+    "loadingMore": "Load more...",
+    "unknownFile": "Unknown file",
+    "messageReadReceipt": "Message Read Receipt",
+    "messageReadReceiptEnabledDesc": "If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.",
+    "messageReadReceiptDisabledDesc": "If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.",
+    "appearance": "Appearance",
+    "markAsRead": "Mark As Read",
+    "markAsUnread": "Mark As Unread",
+    "multiSelect": "Multi-Select",
+    "selectChat": "Select Chat",
+    "sendCount": "Send ({count})",
+    "@sendCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectedCount": "Selected {count}",
+    "@selectedCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "forwardIndividually": "Forward Individually",
+    "forwardMerged": "Forward as Merged",
+    "groupChatHistory": "Group Chat History",
+    "c2cChatHistoryFormat": "{name}'s Chat History",
+    "@c2cChatHistoryFormat": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "chatHistoryForSomebodyFormat": "Chat History of {name1} and {name2}",
+    "@chatHistoryForSomebodyFormat": {
+        "placeholders": {
+            "name1": {
+                "type": "String"
+            },
+            "name2": {
+                "type": "String"
+            }
+        }
+    },
+    "recentChats": "Recent Chats",
+    "forwardCompatibleText": "Please upgrade to view chat history",
+    "forwardFailedMessageTip": "Failed messages cannot be forwarded!",
+    "forwardSeparateLimitTip": "Too many messages selected, individual forwarding is not supported",
+    "deleteMessagesConfirmTip": "Are you sure you want to delete the selected messages?",
+    "conversationListAtAll": "[@All]",
+    "conversationListAtMe": "[@Me]",
+    "messageInputAllMembers": "All",
+    "selectMentionMember": "Select Members",
+    "tapToRemove": "Tap to remove",
+    "messageTypeSecurityStrike": "Sensitive content involved",
+    "convertToText": "Convert to Text",
+    "convertToTextFailed": "Unable to convert",
+    "hide": "Hide",
+    "copied": "Copied",
+    "translate": "Translate",
+    "translateFailed": "Unable to translate",
+    "translateDefaultTips": "Translation powered by Tencent Cloud IM",
+    "translating": "Translating...",
+    "translateTargetLanguage": "Translate Target Language",
+    "translateLanguageZh": "简体中文",
+    "translateLanguageZhTW": "繁體中文",
+    "translateLanguageEn": "English",
+    "translateLanguageJa": "日本語",
+    "translateLanguageKo": "한국어",
+    "translateLanguageFr": "Français",
+    "translateLanguageEs": "Español",
+    "translateLanguageIt": "Italiano",
+    "translateLanguageDe": "Deutsch",
+    "translateLanguageTr": "Türkçe",
+    "translateLanguageRu": "Русский",
+    "translateLanguagePt": "Português",
+    "translateLanguageVi": "Tiếng Việt",
+    "translateLanguageId": "Bahasa Indonesia",
+    "translateLanguageTh": "ภาษาไทย",
+    "translateLanguageMs": "Bahasa Melayu",
+    "translateLanguageHi": "हिन्दी"
 }

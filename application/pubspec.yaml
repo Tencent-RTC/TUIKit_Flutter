@@ -43,6 +43,8 @@ dependencies:
   url_launcher_android: '<=6.3.14'
   tencent_live_uikit:
     path: ../live/livekit
+  tencent_conference_uikit: 
+    path: ../room
   tencent_calls_uikit:
     path: ../call
 

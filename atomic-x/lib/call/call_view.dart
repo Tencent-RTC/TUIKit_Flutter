@@ -1,3 +1,4 @@
+import 'package:tuikit_atomic_x/call/component/aisubtitle/ai_subtitle.dart';
 import 'package:tuikit_atomic_x/call/component/controls/multi_call_controls_widget.dart';
 import 'package:tuikit_atomic_x/call/component/controls/single_call_controls_widget.dart';
 import 'package:tuikit_atomic_x/call/component/hint/timer_widget.dart';
@@ -59,9 +60,22 @@ class _CallViewState extends State<CallView> {
                       controlsWidget = MultiCallControlsWidget(disableFeatures: widget.disableFeatures,);
                     }
 
+                    final isTwoRowsButtons = activeCall.mediaType == CallMediaType.video || isMultiPerson;
                     return Stack(
                       children: [
                         streamWidget,
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: isTwoRowsButtons ? 240 : 120,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width * 0.9,
+                              maxHeight: MediaQuery.of(context).size.height * 0.3,
+                            ),
+                            child: AISubtitle(userId: CallParticipantStore.shared.state.selfInfo.value.id),
+                          ),
+                        ),
                         if (!widget.disableFeatures.contains(CallFeature.all)
                             && !widget.disableFeatures.contains(CallFeature.timer))
                           getTimerWidget(),

@@ -17,6 +17,8 @@ export 'image_viewer/image_viewer_widget.dart';
 export 'message_input/message_input.dart';
 export 'message_list/message_list.dart';
 export 'video_picker/video_picker.dart';
+export 'video_recorder/video_recorder.dart';
 export 'user_picker/user_picker.dart';
 export 'call/call_view.dart';
 export 'pip/android_pip_feature.dart';
+export 'permission/permission.dart';

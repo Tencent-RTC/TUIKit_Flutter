@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="video_recorder_empty">""</string>
+    <string name="video_recorder_torch">闪光灯</string>
+    <string name="video_recorder_aspect">屏比</string>
+    <string name="video_recorder_beauty">美颜</string>
+
+    <string name="video_recorder_confirm">确定</string>
+    <string name="video_recorder_cancel">取消</string>
+    <string name="video_recorder_close">关闭</string>
+    <string name="video_recorder_strength">强度</string>
+    <string name="video_recorder_setup">设置</string>
+    <string name="video_recorder_common_none">无</string>
+
+    <string name="video_recorder_setting_panel_beauty">美颜</string>
+    <string name="video_recorder_setting_panel_filter">滤镜</string>
+
+    <string name="video_recorder_beauty_cancel">关闭</string>
+    <string name="video_recorder_panel_style_smooth">磨皮</string>
+    <string name="video_recorder_panel_style_natural">美颜(自然)</string>
+    <string name="video_recorder_panel_style_pitu">美颜(天天P图)</string>
+    <string name="video_recorder_panel_white">美白</string>
+    <string name="video_recorder_panel_ruddy">红润</string>
+
+    <string name="video_recorder_panel_filter_standard">标准</string>
+    <string name="video_recorder_panel_filter_baixi">白皙</string>
+    <string name="video_recorder_panel_filter_ziran">自然</string>
+    <string name="video_recorder_panel_filter_cheery">樱红</string>
+    <string name="video_recorder_panel_filter_cloud">云裳</string>
+    <string name="video_recorder_panel_filter_pure">纯真</string>
+    <string name="video_recorder_panel_filter_orchid">白兰</string>
+    <string name="video_recorder_panel_filter_vitality">元气</string>
+    <string name="video_recorder_panel_filter_super">超脱</string>
+    <string name="video_recorder_panel_filter_fragrance">香氛</string>
+    <string name="video_recorder_panel_filter_white">美白</string>
+    <string name="video_recorder_panel_filter_romantic">浪漫</string>
+    <string name="video_recorder_panel_filter_fresh">清新</string>
+    <string name="video_recorder_panel_filter_beautiful">唯美</string>
+    <string name="video_recorder_panel_filter_pink">粉嫩</string>
+    <string name="video_recorder_panel_filter_reminiscence">怀旧</string>
+    <string name="video_recorder_panel_filter_blues">蓝调</string>
+    <string name="video_recorder_panel_filter_cool">清凉</string>
+    <string name="video_recorder_panel_filter_Japanese">日系</string>
+
+    <string name="video_recorder_default_bgm_name">未知音乐名</string>
+    <string name="video_recorder_default_time">00:00</string>
+    <string name="video_recorder_bgm_music">配乐</string>
+    <string name="video_recorder_origin_audio">视频原声</string>
+    <string name="video_recorder_send">发送</string>
+    <string name="video_recorder_done">完成</string>
+    <string name="video_recorder_restore">还原</string>
+    <string name="video_recorder_zero">0</string>
+    <string name="video_recorder_zero_time">00:00</string>
+    <string name="video_recorder_local">本地</string>
+    <string name="video_recorder_default">默认</string>
+    <string name="video_recorder_mixed_mode_operation_tips">轻触拍照，长按录制</string>
+    <string name="video_recorder_phone_mode_operation_tips">点击拍照</string>
+    <string name="video_recorder_video_mode_operation_tips">长按录制</string>
+    <string name="video_recorder_bgm_type_name_default">默认</string>
+    <string name="video_recorder_bgm_type_name_chosen">精选</string>
+    <string name="video_recorder_bgm_item_bgm_name_default">未知歌名</string>
+    <string name="video_recorder_bgm_item_bgm_author_default">未知歌手</string>
+
+    <string name="video_recorder_picker_preview">预览</string>
+    <string name="video_recorder_picker_full_image">原图</string>
+    <string name="video_recorder_picker_send">发送</string>
+    <string name="video_recorder_picker_edit">编辑</string>
+    <string name="video_recorder_picker_select">选择</string>
+    <string name="video_recorder_recode_time_short_tips">录制时间太短</string>
+
+    <string name="video_recorder_request_permission_storage_title">%s申请获取存储权限</string>
+    <string name="video_recorder_request_permission_storage_reason">需要访问您的存储权限，开启后用于相册图片视频发送、聊天图片视频保存等功能</string>
+    <string name="video_recorder_request_permission_storage_tip">在设置-应用-%s-权限中开启存储权限，以正常使用相册图片视频发送、聊天图片保存等功能</string>
+
+    <string name="video_recorder_request_permission_media_title">%s申请访问照片与视频</string>
+    <string name="video_recorder_request_permission_media_reason">需要访问照片与视频，开启后用于相册图片视频发送、聊天图片视频保存等功能</string>
+    <string name="video_recorder_request_permission_media_tip">在设置-应用-%s-权限中开启照片与视频权限，以正常使用相册图片视频发送、聊天图片保存等功能</string>
+
+<!--    <string name="video_recorder_authorization_prompter">由于您未开通多媒体插件使用权限，您当前功能将受限</string>-->
+<!--    <string name="video_recorder_authorization_prompter_accessing_documents">1. 您可以访问下面的文档开通多媒体插件使用权限：多媒体插件开通指引</string>-->
+<!--    <string name="video_recorder_authorization_prompter_remove_module">2. 您也可以在工程的config文件中屏蔽该功能（config文件位置 assets/config/video_recorder_config.json）</string>-->
+<!--    <string name="video_recorder_authorization_prompter_documents_title">多媒体插件开通指引</string>-->
+
+    <string name="audio_authorization_prompter">当前配置不能开启AI降噪.仅Debug版本有该提示</string>
+    <string name="audio_recorder_less_than_min_time">语音录制时长太短</string>
+    <string name="audio_record_time_limit_reached">语音录制时长达到上限</string>
+
+    <string name="authorization_prompter_no_signature">由于您未开通多媒体插件使用权限，您当前功能将受限, 您可以在CONFIG中屏蔽相关功能，也可以开通多媒体插件权限继续使用该功能，详情请阅读模块下的READ.ME文件</string>
+    <string name="authorization_prompter_no_liteav_sdk">由于您的工程配置，您当前功能将受限，您可以在CONFIG中屏蔽相关功能，也可以更改您的工程配置继续使用该功能，详情请阅读模块下的READ.ME文件</string>
+
+    <string name="prompter">提示</string>
+    <string name="link_error">无法打开链接</string>
+
+    <string name="video_recorder_permission_mic_reason_title">%s申请获取麦克风权限</string>
+    <string name="video_recorder_permission_mic_reason">为方便您发送语音消息，进行摄像和音视频通话，请允许我们访问麦克风。</string>
+    <string name="video_recorder_permission_camera_reason_title">%s申请获取相机权限</string>
+    <string name="video_recorder_permission_camera_reason">为方便您拍摄照片或视频以发送给朋友，以及进行视频通话，请允许我们访问摄像头。</string>
+    <string name="video_recorder_permission_storage_reason_title">%s申请获取存储权限</string>
+    <string name="video_recorder_permission_storage_reason">为方便您保存照片和视频到设备，请允许我们写入照片和视频到设备。</string>
+    <string name="video_recorder_permission_mic_dialog_alert">在设置-应用-%s-权限中开启麦克风权限，以正常使用语音消息、摄像和音视频通话功能</string>
+    <string name="video_recorder_permission_camera_dialog_alert">在设置-应用-%s-权限中开启相机权限，以正常使用拍照、摄像和视频通话功能</string>
+    <string name="video_recorder_permission_storage_dialog_alert">在设置-应用-%s-权限中开启存储权限，以正常使用保存照片和视频功能</string>
+</resources>

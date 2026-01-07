@@ -50,14 +50,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 Column(
                   children: [
                     SizedBox(
-                        width: _calculateTextWidth(AppLocalizations.of(context)!.app_trtc,
-                                    const TextStyle(fontSize: 32)) >
-                                (MediaQuery.sizeOf(context).width - 70 - 10)
-                            ? _calculateTextWidth(AppLocalizations.of(context)!.app_trtc,
-                                    const TextStyle(fontSize: 32)) /
-                                2
-                            : _calculateTextWidth(AppLocalizations.of(context)!.app_trtc,
-                                const TextStyle(fontSize: 32)),
+                        width:
+                            _calculateTextWidth(AppLocalizations.of(context)!.app_trtc, const TextStyle(fontSize: 32)) >
+                                    (MediaQuery.sizeOf(context).width - 70 - 10)
+                                ? _calculateTextWidth(
+                                        AppLocalizations.of(context)!.app_trtc, const TextStyle(fontSize: 32)) /
+                                    2
+                                : _calculateTextWidth(
+                                    AppLocalizations.of(context)!.app_trtc, const TextStyle(fontSize: 32)),
                         child: Text(
                           AppLocalizations.of(context)!.app_trtc,
                           maxLines: 3,
@@ -97,10 +97,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   const SizedBox(width: 10),
                   Text(
                     AppLocalizations.of(context)!.app_nick_name,
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.normal,
-                        color: Colors.black),
+                    style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: Colors.black),
                   ),
                   const SizedBox(width: 10),
                   SizedBox(
@@ -112,6 +109,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         labelStyle: TextStyle(fontSize: 16),
                       ),
                       onChanged: ((value) => AppStore.userName.value = value),
+                      maxLength: 20,
                     ),
                   )
                 ],
@@ -124,17 +122,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               child: ElevatedButton(
                 onPressed: () => _isButtonEnabled ? _setUserInfo() : null,
                 style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStateProperty.all(const Color(0xff056DF6)),
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15))),
+                  backgroundColor: WidgetStateProperty.all(const Color(0xff056DF6)),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                 ),
                 child: Text(AppLocalizations.of(context)!.app_confirm,
                     style: const TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white)),
+                        fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white)),
               ),
             )
           ],
@@ -154,8 +147,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     _isButtonEnabled = false;
     if (AppStore.userName.value.isNotEmpty) {
       int index = Random().nextInt(_userAvatarArray.length);
-      var result = await AppManager.setSelfInfo(
-          _userAvatarArray[index], AppStore.userName.value);
+      var result = await AppManager.setSelfInfo(_userAvatarArray[index], AppStore.userName.value);
       if (result.code == 0) {
         _enterMainWidget();
       } else {
@@ -179,8 +171,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.app_login_fail),
-          content: Text(
-              "result.code:${result.code}, result.message: ${result.message}？"),
+          content: Text("result.code:${result.code}, result.message: ${result.message}？"),
           actions: [
             TextButton(
               onPressed: () {

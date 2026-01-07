@@ -75,7 +75,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_video => 'Living';
 
   @override
-  String get app_video_description => 'Live preview/Beauty filters/Multi-hostK';
+  String get app_video_description => 'Live preview/Beauty filters/Multi-host';
 
   @override
   String get app_voice => 'Voice';
@@ -114,8 +114,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_call => 'Call';
 
   @override
-  String get app_call_description =>
-      'Ringtone Notifications · Floating Window · Call Lag Optimization';
+  String get app_call_description => 'Ringtone/Floating Window/Less stutter';
 
   @override
   String get app_call_user_ids => 'Call User List';

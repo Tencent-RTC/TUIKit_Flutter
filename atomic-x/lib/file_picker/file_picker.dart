@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/device_info/device.dart';
 import 'package:tuikit_atomic_x/permission/permission.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:file_picker/file_picker.dart' as file_picker;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
+
+import 'file_picker_platform.dart';
 
 class PickerResult {
   final String filePath;
@@ -24,24 +23,14 @@ class PickerResult {
 
   @override
   String toString() {
-    return 'FilePickerResult(filePath: $filePath, fileName: $fileName, fileSize: $fileSize, extension: $extension)';
+    return 'PickerResult(filePath: $filePath, fileName: $fileName, fileSize: $fileSize, extension: $extension)';
   }
-}
-
-enum FileType {
-  any,
-  media,
-  image,
-  video,
-  audio,
 }
 
 class FilePickerConfig {
   final int? maxCount;
-  final FileType? fileType;
 
   FilePickerConfig({
-    this.fileType,
     this.maxCount,
   });
 }
@@ -58,63 +47,39 @@ class FilePicker {
     FilePickerConfig? config,
   }) async {
     try {
+      // FilePicker uses SAF (Storage Access Framework) which doesn't require permissions
+      // The system handles permission through the document picker UI
       if (!await _checkAndRequestPermission(context)) {
         return [];
       }
 
-      final file_picker.FilePickerResult? result = await file_picker.FilePicker.platform.pickFiles(
-        type: config?.fileType != null ? _convertFileType(config!.fileType!) : file_picker.FileType.any,
-      );
+      if (Platform.isAndroid || Platform.isIOS) {
+        int maxCount = config?.maxCount ?? maxFileCount;
 
-      if (result == null || result.files.isEmpty) {
-        return [];
-      }
+        final List<PickerResult> results = await FilePickerPlatform.pickFiles(
+          maxCount: maxCount,
+          allowedMimeTypes: [],
+        );
 
-      int maxCount = config?.maxCount ?? maxFileCount;
-      List<file_picker.PlatformFile> files = result.files;
-
-      if (files.length > maxCount) {
-        if (context.mounted) {
-          AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
-          _showErrorDialog(context, atomicLocal.maxCountFile(maxCount));
+        if (results.isEmpty) {
+          return [];
         }
-        files = files.take(maxCount).toList();
-      }
 
-      List<PickerResult> results = [];
-
-      for (final file in files) {
-        String finalPath = file.path ?? '';
-
-        if (finalPath.isNotEmpty) {
-          results.add(PickerResult(
-            filePath: finalPath,
-            fileName: file.name,
-            fileSize: file.size,
-            extension: path.extension(file.name).toLowerCase().replaceFirst('.', ''),
-          ));
+        if (results.length > maxCount) {
+          if (context.mounted) {
+            AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
+            _showErrorDialog(context, atomicLocal.maxCountFile(maxCount));
+          }
+          return results.take(maxCount).toList();
         }
-      }
 
-      return results;
+        return results;
+      } else {
+        throw UnsupportedError('FilePicker only supports Android and iOS');
+      }
     } catch (e) {
-      debugPrint('FilePickerService.pickMultipleFiles error: $e');
+      debugPrint('FilePicker.pickFiles error: $e');
       return [];
-    }
-  }
-
-  static file_picker.FileType _convertFileType(FileType type) {
-    switch (type) {
-      case FileType.any:
-        return file_picker.FileType.any;
-      case FileType.media:
-        return file_picker.FileType.media;
-      case FileType.image:
-        return file_picker.FileType.image;
-      case FileType.video:
-        return file_picker.FileType.video;
-      case FileType.audio:
-        return file_picker.FileType.audio;
     }
   }
 
@@ -125,8 +90,8 @@ class FilePicker {
 
     PermissionType permissionType;
     if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.version.sdkInt >= 33) {
+      final sdkInt = await Device.sdkInt;
+      if (sdkInt! >= 33) {
         permissionType = PermissionType.photos;
       } else {
         permissionType = PermissionType.storage;
@@ -137,7 +102,7 @@ class FilePicker {
       return true;
     }
 
-    Map<PermissionType, PermissionStatus> statusMap =  await Permission.request([permissionType]);
+    Map<PermissionType, PermissionStatus> statusMap = await Permission.request([permissionType]);
     PermissionStatus status = statusMap[permissionType] ?? PermissionStatus.denied;
 
     if (status == PermissionStatus.granted) {
@@ -155,6 +120,31 @@ class FilePicker {
     }
 
     return status == PermissionStatus.granted || status == PermissionStatus.limited;
+  }
+
+  /// Open file with system default application
+  ///
+  /// Returns true if the file was successfully opened, false otherwise.
+  /// On Android, uses Intent.ACTION_VIEW to open the file.
+  /// On iOS, uses UIDocumentInteractionController to open the file.
+  static Future<bool> openFile(String filePath) async {
+    try {
+      if (!Platform.isAndroid && !Platform.isIOS) {
+        throw UnsupportedError('File opening only supports Android and iOS');
+      }
+
+      // Check if file exists
+      final file = File(filePath);
+      if (!file.existsSync()) {
+        debugPrint('FilePicker.openFile: File does not exist: $filePath');
+        return false;
+      }
+
+      return await FilePickerPlatform.openFile(filePath);
+    } catch (e) {
+      debugPrint('FilePicker.openFile error: $e');
+      return false;
+    }
   }
 
   static Future<bool> _showPermissionDialog(BuildContext context) async {
@@ -198,33 +188,5 @@ class FilePicker {
         );
       },
     );
-  }
-
-  static Future<String> _copyFileToSandbox(file_picker.PlatformFile file) async {
-    try {
-      if (file.path == null) {
-        debugPrint('_copyFileToSandbox, file path is empty');
-      }
-
-      final Directory appDocDir = await getApplicationDocumentsDirectory();
-      final String filesDir = path.join(appDocDir.path, 'files');
-
-      final Directory filesDirObj = Directory(filesDir);
-      if (!await filesDirObj.exists()) {
-        await filesDirObj.create(recursive: true);
-      }
-
-      final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-      final String newFileName = '${timestamp}_${file.name}';
-      final String newFilePath = path.join(filesDir, newFileName);
-
-      final File sourceFile = File(file.path!);
-      final File targetFile = await sourceFile.copy(newFilePath);
-
-      return targetFile.path;
-    } catch (e) {
-      debugPrint('_copyFileToSandbox failed: $e');
-      return file.path ?? '';
-    }
   }
 }

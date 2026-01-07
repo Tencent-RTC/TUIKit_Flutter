@@ -1,20 +1,73 @@
-import 'package:tuikit_atomic_x/base_component/base_component.dart';
-import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
-import 'package:tuikit_atomic_x/message_list/utils/call_ui_extension.dart';
-import 'package:tuikit_atomic_x/message_list/utils/message_utils.dart';
-import 'package:tuikit_atomic_x/message_list/widgets/message_item.dart';
+import 'dart:async';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AlertDialog;
+import 'package:flutter/services.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/utils/asr_display_manager.dart';
+import 'package:tuikit_atomic_x/message_list/utils/call_ui_extension.dart';
+import 'package:tuikit_atomic_x/message_list/utils/message_utils.dart';
+import 'package:tuikit_atomic_x/message_list/utils/translation_display_manager.dart';
+import 'package:tuikit_atomic_x/message_list/utils/translation_text_parser.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/asr_popup_menu.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_item.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/forward/forward_service.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 export 'message_list_config.dart';
 export 'widgets/message_bubble.dart';
 export 'widgets/message_item.dart';
 export 'widgets/message_types/custom_message_widget.dart';
 export 'widgets/message_types/system_message_widget.dart';
+export 'widgets/multi_select_bottom_bar.dart';
+export 'widgets/message_checkbox.dart';
+export 'widgets/message_reaction_bar.dart';
+export 'widgets/reaction_emoji_picker.dart';
+export 'widgets/reaction_detail_sheet.dart';
+export 'utils/recent_emoji_manager.dart';
 
 typedef OnUserClick = void Function(String userID);
+
+/// Callback when user long presses on avatar (for @ mention feature)
+/// [userID] is the user ID of the message sender
+/// [displayName] is the display name of the message sender
+typedef OnUserLongPress = void Function(String userID, String displayName);
+
+/// Multi-select mode state callback
+typedef OnMultiSelectModeChanged = void Function(bool isMultiSelectMode, int selectedCount);
+
+/// Multi-select mode state
+class MultiSelectState {
+  final bool isActive;
+  final int selectedCount;
+  final VoidCallback onCancel;
+  final VoidCallback onDelete;
+  final Future<void> Function(BuildContext context) onForward;
+
+  const MultiSelectState({
+    required this.isActive,
+    required this.selectedCount,
+    required this.onCancel,
+    required this.onDelete,
+    required this.onForward,
+  });
+}
+
+/// Multi-select mode action callbacks
+class MultiSelectCallbacks {
+  final VoidCallback onCancel;
+  final VoidCallback onDelete;
+  final VoidCallback onForward;
+
+  const MultiSelectCallbacks({
+    required this.onCancel,
+    required this.onDelete,
+    required this.onForward,
+  });
+}
 
 class MessageCustomAction {
   final String title;
@@ -37,7 +90,13 @@ class MessageList extends StatefulWidget {
   final MessageListConfigProtocol config;
   final MessageInfo? locateMessage;
   final OnUserClick? onUserClick;
+  /// Callback when user long presses on avatar (for @ mention feature in group chat)
+  final OnUserLongPress? onUserLongPress;
   final List<MessageCustomAction> customActions;
+  /// Multi-select mode change callback
+  final OnMultiSelectModeChanged? onMultiSelectModeChanged;
+  /// Multi-select state change callback (includes action methods)
+  final void Function(MultiSelectState? state)? onMultiSelectStateChanged;
 
   const MessageList({
     super.key,
@@ -45,7 +104,10 @@ class MessageList extends StatefulWidget {
     this.config = const ChatMessageListConfig(),
     this.locateMessage,
     this.onUserClick,
+    this.onUserLongPress,
     this.customActions = const [],
+    this.onMultiSelectModeChanged,
+    this.onMultiSelectStateChanged,
   });
 
   @override
@@ -59,7 +121,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   List<MessageInfo> _messages = [];
-  MessageListChangeReason _messageListChangeReason = MessageListChangeReason.unknown;
+  StreamSubscription<MessageEvent>? _messageEventSubscription;
   bool isLoading = false;
   bool _isLoadingNewer = false;
 
@@ -73,18 +135,47 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   static const int _messageAggregationTime = 300;
 
+  final Set<String> _pendingReceiptMessageIDs = {};
+  final Set<String> _sentReceiptMessageIDs = {};
+  Timer? _receiptTimer;
+  static const Duration _receiptDebounceInterval = Duration(milliseconds: 800);
+
+  // Multi-select mode state
+  bool _isMultiSelectMode = false;
+  final Set<String> _selectedMessageIDs = {};
+
+  // ASR display manager for voice-to-text feature
+  late AsrDisplayManager _asrDisplayManager;
+
+  // Translation display manager for text translation feature
+  late TranslationDisplayManager _translationDisplayManager;
+
   // AutomaticKeepAliveClientMixin requires this method to be implemented
   // Returning true indicates that the state is maintained even if the Widget is not in the view.
   @override
   bool get wantKeepAlive => true;
 
+  /// Whether in multi-select mode
+  bool get isMultiSelectMode => _isMultiSelectMode;
+
+  /// List of selected messages
+  List<MessageInfo> get selectedMessages => 
+      _messages.where((m) => m.msgID != null && _selectedMessageIDs.contains(m.msgID)).toList();
+
+  /// Number of selected messages
+  int get selectedCount => _selectedMessageIDs.length;
+
   @override
   void initState() {
     super.initState();
 
+    _asrDisplayManager = AsrDisplayManager();
+    _translationDisplayManager = TranslationDisplayManager();
+
     _messageListStore =
         MessageListStore.create(conversationID: widget.conversationID, messageListType: MessageListType.history);
     _messageListStore.addListener(_onMessageListStateChanged);
+    _messageEventSubscription = _messageListStore.messageEventStream.listen(_onMessageEvent);
     _itemPositionsListener.itemPositions.addListener(_scrollListener);
 
     if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
@@ -129,7 +220,11 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   @override
   void dispose() {
     _messageListStore.removeListener(_onMessageListStateChanged);
+    _messageEventSubscription?.cancel();
     _itemPositionsListener.itemPositions.removeListener(_scrollListener);
+    _receiptTimer?.cancel();
+    _asrDisplayManager.dispose();
+    _translationDisplayManager.dispose();
     super.dispose();
   }
 
@@ -165,10 +260,6 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   }
 
   void _onMessageListStateChanged() {
-    _messageListChangeReason = _messageListStore.messageListState.messageListChangeSource;
-
-    _clearUnreadCountIfNeeded();
-
     setState(() {
       _messages = _messageListStore.messageListState.messageList.reversed.toList();
     });
@@ -178,20 +269,54 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       _scrollToMessageAndHighlight(widget.locateMessage!.msgID!);
       return;
     }
+  }
 
-    if (isLoading) return;
-
-    // scrollable_positioned_list can keep position
-    if (_messageListChangeReason == MessageListChangeReason.loadMoreMessages) {
-      return;
+  void _onMessageEvent(MessageEvent event) {
+    switch (event) {
+      case FetchMessagesEvent():
+        _clearUnreadCount();
+        if (widget.locateMessage == null && !isLoading) {
+          _scrollToBottom();
+        }
+        // Fetch reactions for loaded messages
+        if (widget.config.isSupportReaction) {
+          _fetchMessageReactions(event.messageList);
+        }
+        break;
+      case FetchMoreMessagesEvent():
+        // scrollable_positioned_list can keep position, no need to scroll
+        // Fetch reactions for newly loaded messages
+        if (widget.config.isSupportReaction) {
+          _fetchMessageReactions(event.messageList);
+        }
+        break;
+      case SendMessageEvent():
+        if (!isLoading) {
+          _scrollToBottom();
+        }
+        break;
+      case RecvMessageEvent():
+        _clearUnreadCount();
+        if (!isLoading && _isUserAtBottom()) {
+          _scrollToBottom();
+        }
+        // Fetch reactions for new message
+        if (widget.config.isSupportReaction) {
+          _fetchMessageReactions([event.message]);
+        }
+        break;
+      case DeleteMessagesEvent():
+        // no need to scroll
+        break;
     }
+  }
 
-    if (widget.locateMessage == null &&
-        (_isInitialLoad ||
-            _messageListChangeReason == MessageListChangeReason.sendMessage ||
-            (_isUserAtBottom() && _messageListChangeReason == MessageListChangeReason.recvMessage))) {
-      _scrollToBottom();
-    }
+  Future<void> _fetchMessageReactions(List<MessageInfo> messages) async {
+    if (messages.isEmpty) return;
+    await _messageListStore.fetchMessageReactions(
+      messageList: messages,
+      maxUserCountPerReaction: 3,
+    );
   }
 
   bool _isUserAtBottom() {
@@ -312,7 +437,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
     // Add spacing between messages
     final spacing =
-    index < _messages.length - 1 ? SizedBox(height: widget.config.cellSpacing) : const SizedBox.shrink();
+        index < _messages.length - 1 ? SizedBox(height: widget.config.cellSpacing) : const SizedBox.shrink();
 
     if (_isLoadingNewer && index == _messages.length - 1) {
       return Column(
@@ -338,26 +463,70 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   Widget _buildMessageItem(MessageInfo message, SemanticColorScheme colors) {
     bool isGroup = widget.conversationID.startsWith(groupConversationIDPrefix);
-    return RepaintBoundary(
-      child: MessageItem(
-        key: ValueKey(_getMessageKey(message)),
-        message: message,
-        conversationID: widget.conversationID,
-        isGroup: isGroup,
-        maxWidth: MediaQuery.of(context).size.width - 32,
-        messageListStore: _messageListStore,
-        isHighlighted: _highlightedMessageId == message.msgID,
-        onHighlightComplete: () {
-          debugPrint('messageList, onHighlightComplete');
-          if (_highlightedMessageId == message.msgID) {
-            _highlightedMessageId = null;
-          }
+
+    final messageWidget = RepaintBoundary(
+      child: ListenableBuilder(
+        listenable: Listenable.merge([_asrDisplayManager, _translationDisplayManager]),
+        builder: (context, child) {
+          return MessageItem(
+            key: ValueKey(_getMessageKey(message)),
+            message: message,
+            conversationID: widget.conversationID,
+            isGroup: isGroup,
+            maxWidth: MediaQuery.of(context).size.width - 32,
+            messageListStore: _messageListStore,
+            isHighlighted: _highlightedMessageId == message.msgID,
+            onHighlightComplete: () {
+              debugPrint('messageList, onHighlightComplete');
+              if (_highlightedMessageId == message.msgID) {
+                _highlightedMessageId = null;
+              }
+            },
+            onUserClick: widget.onUserClick,
+            onUserLongPress: isGroup ? widget.onUserLongPress : null,
+            customActions: widget.customActions,
+            config: widget.config,
+            isMultiSelectMode: _isMultiSelectMode,
+            isSelected: isMessageSelected(message),
+            onToggleSelection: () => toggleMessageSelection(message),
+            onEnterMultiSelectMode: () => enterMultiSelectMode(initialMessage: message),
+            asrDisplayManager: _asrDisplayManager,
+            onAsrBubbleLongPress: _showAsrTextMenu,
+            translationDisplayManager: _translationDisplayManager,
+            onTranslationBubbleLongPress: _showTranslationTextMenu,
+          );
         },
-        onUserClick: widget.onUserClick,
-        customActions: widget.customActions,
-        config: widget.config,
       ),
     );
+
+    if (_shouldTrackVisibility(message)) {
+      return VisibilityDetector(
+        key: Key('visibility_${message.msgID}'),
+        onVisibilityChanged: (info) {
+          if (info.visibleFraction > 0.5) {
+            _handleMessageAppear(message);
+          }
+        },
+        child: messageWidget,
+      );
+    }
+
+    return messageWidget;
+  }
+
+  bool _shouldTrackVisibility(MessageInfo message) {
+    if (message.isSelf) return false;
+
+    if (!message.needReadReceipt) return false;
+
+    if (message.messageType == MessageType.system) return false;
+
+    final msgID = message.msgID;
+    if (msgID == null) return false;
+
+    if (_sentReceiptMessageIDs.contains(msgID)) return false;
+
+    return true;
   }
 
   @override
@@ -416,19 +585,136 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     );
   }
 
-  void _clearUnreadCountIfNeeded() {
+  void _clearUnreadCount() {
     ConversationListStore conversationListStore = ConversationListStore.create();
-    ConversationInfo conversationInfo = ConversationInfo(conversationID: widget.conversationID);
-    if (_messageListChangeReason == MessageListChangeReason.fetchMessages) {
-      conversationListStore.clearConversationUnreadCount(conversationID: conversationInfo.conversationID);
+    conversationListStore.clearConversationUnreadCount(conversationID: widget.conversationID);
+  }
+
+  // ==================== Multi-select mode ====================
+
+  /// Enter multi-select mode
+  void enterMultiSelectMode({MessageInfo? initialMessage}) {
+    setState(() {
+      _isMultiSelectMode = true;
+      _selectedMessageIDs.clear();
+      if (initialMessage != null && initialMessage.msgID != null) {
+        _selectedMessageIDs.add(initialMessage.msgID!);
+      }
+    });
+    _notifyMultiSelectModeChanged();
+  }
+
+  /// Exit multi-select mode
+  void exitMultiSelectMode() {
+    setState(() {
+      _isMultiSelectMode = false;
+      _selectedMessageIDs.clear();
+    });
+    _notifyMultiSelectModeChanged();
+  }
+
+  /// Toggle message selection state
+  void toggleMessageSelection(MessageInfo message) {
+    final msgID = message.msgID;
+    if (msgID == null) return;
+    
+    setState(() {
+      if (_selectedMessageIDs.contains(msgID)) {
+        _selectedMessageIDs.remove(msgID);
+      } else {
+        _selectedMessageIDs.add(msgID);
+      }
+    });
+    _notifyMultiSelectModeChanged();
+  }
+
+  /// Check if message is selected
+  bool isMessageSelected(MessageInfo message) {
+    return message.msgID != null && _selectedMessageIDs.contains(message.msgID);
+  }
+
+  /// Notify multi-select mode change
+  void _notifyMultiSelectModeChanged() {
+    widget.onMultiSelectModeChanged?.call(_isMultiSelectMode, _selectedMessageIDs.length);
+    
+    // Notify full state
+    if (_isMultiSelectMode) {
+      widget.onMultiSelectStateChanged?.call(MultiSelectState(
+        isActive: true,
+        selectedCount: _selectedMessageIDs.length,
+        onCancel: exitMultiSelectMode,
+        onDelete: deleteSelectedMessages,
+        onForward: forwardSelectedMessages,
+      ));
+    } else {
+      widget.onMultiSelectStateChanged?.call(null);
+    }
+  }
+
+  /// Delete selected messages
+  Future<void> deleteSelectedMessages() async {
+    if (_selectedMessageIDs.isEmpty) return;
+
+    // Show confirmation dialog
+    final confirmed = await AlertDialog.show(
+      context,
+      title: '',
+      content: _atomicLocale.deleteMessagesConfirmTip,
+      isDestructive: true,
+    );
+
+    if (confirmed != true) return;
+
+    final messagesToDelete = selectedMessages;
+    await _messageListStore.deleteMessages(messageList: messagesToDelete);
+    exitMultiSelectMode();
+  }
+
+  /// Forward selected messages
+  Future<void> forwardSelectedMessages(BuildContext context) async {
+    if (_selectedMessageIDs.isEmpty) return;
+
+    // Get selected messages in the order they appear in _messages.
+    // _messages is reversed from messageListStore (newest first), so we need to reverse it back to get oldest first
+    final messages = _messages.reversed
+        .where((message) => message.msgID != null && _selectedMessageIDs.contains(message.msgID))
+        .toList();
+
+    // 1. Validate message status first (don't exit multi-select if failed)
+    final statusError = ForwardService.validateMessagesStatus(context, messages);
+    if (statusError != null) {
+      Toast.error(context, statusError);
       return;
     }
 
-    if (_messageListChangeReason == MessageListChangeReason.recvMessage) {
-      conversationListStore.clearConversationUnreadCount(conversationID: conversationInfo.conversationID);
+    // 2. Select forward type
+    final forwardType = await ForwardService.showForwardTypeSelector(context);
+    if (forwardType == null) {
       return;
     }
+
+    // 3. Validate separate forward limit (don't exit multi-select if failed)
+    final limitError = ForwardService.validateSeparateForwardLimit(context, messages, forwardType);
+    if (limitError != null) {
+      Toast.error(context, limitError);
+      return;
+    }
+
+    // 4. Exit multi-select mode before showing target selector
+    exitMultiSelectMode();
+
+    // 5. Continue with forward flow (target selection and execution)
+    ForwardService.forwardMessagesWithType(
+      context: context,
+      messages: messages,
+      messageListStore: _messageListStore,
+      config: widget.config,
+      forwardType: forwardType,
+      sourceConversationID: widget.conversationID,
+    );
   }
+
+  // ==================== Multi-select mode end ====================
 
   bool _isSystemMessage(MessageInfo message) {
     if (message.messageType == MessageType.system) {
@@ -567,5 +853,185 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
         _callStatusWidget = callWidget is SizedBox ? null : callWidget;
       });
     }
+  }
+
+  // ==================== readReceipt ====================
+
+  void _handleMessageAppear(MessageInfo message) {
+    if (message.isSelf) return;
+
+    if (!message.needReadReceipt) return;
+
+    final msgID = message.msgID;
+    if (msgID == null) return;
+
+    if (_sentReceiptMessageIDs.contains(msgID)) return;
+
+    _pendingReceiptMessageIDs.add(msgID);
+
+    _debounceReadReceipt();
+  }
+
+  void _debounceReadReceipt() {
+    _receiptTimer?.cancel();
+    _receiptTimer = Timer(_receiptDebounceInterval, () {
+      _sendBatchReadReceipts();
+    });
+  }
+
+  Future<void> _sendBatchReadReceipts() async {
+    if (_pendingReceiptMessageIDs.isEmpty) return;
+
+    final messagesToSend = _messages.where((message) {
+      final msgID = message.msgID;
+      return msgID != null && _pendingReceiptMessageIDs.contains(msgID);
+    }).toList();
+
+    if (messagesToSend.isEmpty) {
+      _pendingReceiptMessageIDs.clear();
+      return;
+    }
+
+    debugPrint('messageList, _sendBatchReadReceipts: ${messagesToSend.length} messages');
+
+    final result = await _messageListStore.sendMessageReadReceipts(messageList: messagesToSend);
+
+    if (result.isSuccess) {
+      for (final message in messagesToSend) {
+        final msgID = message.msgID;
+        if (msgID != null) {
+          _sentReceiptMessageIDs.add(msgID);
+        }
+      }
+    }
+
+    // 清空待发送列表
+    _pendingReceiptMessageIDs.clear();
+  }
+
+  // ==================== ASR text bubble menu ====================
+
+  /// Show ASR text bubble long press menu (popup above the target)
+  void _showAsrTextMenu(MessageInfo message, GlobalKey asrBubbleKey) {
+    final asrText = message.messageBody?.asrText ?? '';
+    if (asrText.isEmpty) return;
+
+    showAsrPopupMenu(
+      context: context,
+      targetKey: asrBubbleKey,
+      isSelf: message.isSelf,
+      actions: [
+        AsrPopupMenuAction(
+          label: _atomicLocale.hide,
+          iconAsset: 'chat_assets/icon/hide.svg',
+          onTap: () => _hideAsrText(message),
+        ),
+        AsrPopupMenuAction(
+          label: _atomicLocale.forward,
+          iconAsset: 'chat_assets/icon/forward.svg',
+          onTap: () => _forwardAsrText(message),
+        ),
+        AsrPopupMenuAction(
+          label: _atomicLocale.copy,
+          iconAsset: 'chat_assets/icon/copy.svg',
+          onTap: () => _copyAsrText(message),
+        ),
+      ],
+    );
+  }
+
+  /// Hide ASR text bubble (only for this session)
+  void _hideAsrText(MessageInfo message) {
+    final messageID = message.msgID ?? '';
+    _asrDisplayManager.hide(messageID);
+  }
+
+  /// Forward ASR text as text message
+  void _forwardAsrText(MessageInfo message) {
+    final asrText = message.messageBody?.asrText ?? '';
+    if (asrText.isEmpty) return;
+
+    ForwardService.forwardText(
+      context: context,
+      text: asrText,
+      excludeConversationID: widget.conversationID,
+    );
+  }
+
+  /// Copy ASR text to clipboard
+  void _copyAsrText(MessageInfo message) {
+    final asrText = message.messageBody?.asrText ?? '';
+    if (asrText.isEmpty) return;
+
+    Clipboard.setData(ClipboardData(text: asrText));
+  }
+
+  // ==================== Translation text bubble menu ====================
+
+  /// Show translation text bubble long press menu (popup above the target)
+  void _showTranslationTextMenu(MessageInfo message, GlobalKey translationBubbleKey) {
+    final translatedTextMap = message.messageBody?.translatedText;
+    if (translatedTextMap == null || translatedTextMap.isEmpty) return;
+
+    showAsrPopupMenu(
+      context: context,
+      targetKey: translationBubbleKey,
+      isSelf: message.isSelf,
+      actions: [
+        AsrPopupMenuAction(
+          label: _atomicLocale.hide,
+          iconAsset: 'chat_assets/icon/hide.svg',
+          onTap: () => _hideTranslationText(message),
+        ),
+        AsrPopupMenuAction(
+          label: _atomicLocale.forward,
+          iconAsset: 'chat_assets/icon/forward.svg',
+          onTap: () => _forwardTranslationText(message),
+        ),
+        AsrPopupMenuAction(
+          label: _atomicLocale.copy,
+          iconAsset: 'chat_assets/icon/copy.svg',
+          onTap: () => _copyTranslationText(message),
+        ),
+      ],
+    );
+  }
+
+  /// Hide translation text bubble (only for this session)
+  void _hideTranslationText(MessageInfo message) {
+    final messageID = message.msgID ?? '';
+    _translationDisplayManager.hide(messageID);
+  }
+
+  /// Forward translated text as text message
+  void _forwardTranslationText(MessageInfo message) {
+    final translatedTextMap = message.messageBody?.translatedText;
+    if (translatedTextMap == null || translatedTextMap.isEmpty) return;
+
+    // Get the original text for forwarding (no need to process @ and emoji)
+    final originalText = message.messageBody?.text ?? '';
+    if (originalText.isEmpty) return;
+
+    ForwardService.forwardText(
+      context: context,
+      text: originalText,
+      excludeConversationID: widget.conversationID,
+    );
+  }
+
+  /// Copy translated text to clipboard
+  void _copyTranslationText(MessageInfo message) {
+    final translatedTextMap = message.messageBody?.translatedText;
+    if (translatedTextMap == null || translatedTextMap.isEmpty) return;
+
+    // Get the translated display text with emoji preserved (no need to fetch atUserNames)
+    final originalText = message.messageBody?.text ?? '';
+    final textToCopy = TranslationTextParser.buildTranslatedDisplayText(
+      originalText,
+      translatedTextMap,
+      [],
+    );
+    
+    Clipboard.setData(ClipboardData(text: textToCopy));
   }
 }

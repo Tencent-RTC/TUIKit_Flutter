@@ -34,17 +34,22 @@ class ActionSheet {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        // Calculate max height: 60% of screen height
+        final maxHeight = MediaQuery.of(context).size.height * 0.6;
+        
         return Container(
           padding: const EdgeInsets.all(8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
+                constraints: BoxConstraints(maxHeight: maxHeight),
                 decoration: BoxDecoration(
                   color: colors.bgColorDialog,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     if (title != null || message != null)
                       Container(
@@ -79,25 +84,32 @@ class ActionSheet {
                     if (title != null || message != null)
                       _buildDivider(colors),
 
-                    ...actions.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final action = entry.value;
-                      final isFirst = index == 0 && title == null && message == null;
-                      final isLast = index == actions.length - 1;
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: actions.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final action = entry.value;
+                            final isFirst = index == 0 && title == null && message == null;
+                            final isLast = index == actions.length - 1;
 
-                      return Column(
-                        children: [
-                          _buildActionButton(
-                            context: context,
-                            colors: colors,
-                            item: action,
-                            isFirst: isFirst,
-                            isLast: isLast,
-                          ),
-                          if (!isLast) _buildDivider(colors),
-                        ],
-                      );
-                    }).toList(),
+                            return Column(
+                              children: [
+                                _buildActionButton(
+                                  context: context,
+                                  colors: colors,
+                                  item: action,
+                                  isFirst: isFirst,
+                                  isLast: isLast,
+                                ),
+                                if (!isLast) _buildDivider(colors),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

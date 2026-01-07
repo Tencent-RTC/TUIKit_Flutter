@@ -45,6 +45,8 @@ class PermissionHandler {
       return getMicrophonePermissionStatus()
     case "notification":
       return getNotificationPermissionStatus()
+    case "systemAlertWindow", "displayOverOtherApps":
+      return "granted"
     default:
       return "denied"
     }
@@ -62,6 +64,8 @@ class PermissionHandler {
       requestMicrophonePermission(result: result)
     case "notification":
       requestNotificationPermission(result: result)
+    case "systemAlertWindow", "displayOverOtherApps":
+      result("granted")
     default:
       result("denied")
     }

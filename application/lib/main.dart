@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_live_uikit/common/widget/global.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
+import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 
 import 'src/login/index.dart';
 import 'src/utils/index.dart';
@@ -28,15 +30,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final themeState = ThemeState();
+    themeState.setThemeMode(ThemeType.dark);
+    return ComponentTheme(
+      themeState: themeState,
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [TUILiveKitNavigatorObserver.instance,
-        TUICallKit.navigatorObserver],
+        navigatorObservers: [
+          TUILiveKitNavigatorObserver.instance,
+          RoomNavigatorObserver.instance,
+          TUICallKit.navigatorObserver
+        ],
         localizationsDelegates: const [
           ...AppLocalizations.localizationsDelegates,
           ...LiveKitLocalizations.localizationsDelegates,
           ...BarrageLocalizations.localizationsDelegates,
           ...GiftLocalizations.localizationsDelegates,
+          ...RoomLocalizations.localizationsDelegates,
         ],
         supportedLocales: const [
           Locale('en'),
@@ -45,14 +55,14 @@ class _MyAppState extends State<MyApp> {
           Locale('zh'),
         ],
         builder: (context, child) => Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: GestureDetector(
-                onTap: () {
-                  hideKeyboard(context);
-                },
-                child: child,
-              ),
-            ),
+          resizeToAvoidBottomInset: false,
+          body: GestureDetector(
+            onTap: () {
+              hideKeyboard(context);
+            },
+            child: child,
+          ),
+        ),
         home: Navigator(
           key: Global.secondaryNavigatorKey,
           onGenerateRoute: (settings) => MaterialPageRoute(
@@ -60,7 +70,9 @@ class _MyAppState extends State<MyApp> {
               builder: (BuildContext context) {
                 return const LoginWidget();
               }),
-        ));
+        ),
+      ),
+    );
   }
 
   void hideKeyboard(BuildContext context) {

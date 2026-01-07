@@ -1,6 +1,8 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/call_colors.dart';
+
 class TimerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,11 @@ class TimerWidget extends StatelessWidget {
               builder: (context, activeCall, child) {
                 return Text(
                   formatDuration(activeCall.duration.toInt()),
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
+                        ? CallColors.colorG7
+                        : CallColors.colorWhite,
+                  ),
                 );
               },
             );
@@ -26,13 +32,17 @@ class TimerWidget extends StatelessWidget {
 
   String formatDuration(int timeCount) {
     int hour = timeCount ~/ 3600;
-    String hourShow = hour <= 9 ? "0$hour" : "$hour";
     int minute = (timeCount % 3600) ~/ 60;
     String minuteShow = minute <= 9 ? "0$minute" : "$minute";
     int second = timeCount % 60;
     String secondShow = second <= 9 ? "0$second" : "$second";
 
-    return '$hourShow:$minuteShow:$secondShow';
+    if (hour > 0) {
+      String hourShow = hour <= 9 ? "0$hour" : "$hour";
+      return '$hourShow:$minuteShow:$secondShow';
+    } else {
+      return '$minuteShow:$secondShow';
+    }
   }
 
 }

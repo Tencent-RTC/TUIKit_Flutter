@@ -1,15 +1,62 @@
-import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/utils/message_list_helper.dart';
 
 mixin MessageStatusMixin {
+  /// Build status indicator (sendFail, violation, or sending) - to be shown outside bubble
+  /// Returns null if no status to show
+  Widget? buildOutsideBubbleStatusIndicator({
+    required MessageInfo message,
+    required SemanticColorScheme colorsTheme,
+    VoidCallback? onResendTap,
+  }) {
+    switch (message.status) {
+      case MessageStatus.sendFail:
+      case MessageStatus.violation:
+        return GestureDetector(
+          onTap: onResendTap,
+          child: Icon(
+            Icons.error,
+            size: 18,
+            color: colorsTheme.textColorError,
+          ),
+        );
+      case MessageStatus.sending:
+        return SizedBox(
+          width: 14,
+          height: 14,
+          child: CircularProgressIndicator(
+            strokeWidth: 1,
+            valueColor: AlwaysStoppedAnimation<Color>(colorsTheme.textColorSecondary),
+          ),
+        );
+      default:
+        return null;
+    }
+  }
+
+  /// Check if message has error status (sendFail or violation)
+  bool hasErrorStatus(MessageInfo message) {
+    return message.status == MessageStatus.sendFail || message.status == MessageStatus.violation;
+  }
+
+  /// Check if message status should be shown outside bubble
+  bool shouldShowStatusOutsideBubble(MessageInfo message) {
+    return message.status == MessageStatus.sendFail ||
+        message.status == MessageStatus.violation ||
+        message.status == MessageStatus.sending;
+  }
+
   Widget buildMessageStatusIndicator({
     required MessageInfo message,
     required bool isSelf,
     required SemanticColorScheme colorsTheme,
     bool isOverlay = false,
     VoidCallback? onResendTap,
+    bool enableReadReceipt = false,
+    bool isInMergedDetailView = false,
   }) {
     if (!isSelf) return const SizedBox.shrink();
 
@@ -17,6 +64,21 @@ mixin MessageStatusMixin {
 
     switch (message.status) {
       case MessageStatus.sendSuccess:
+        // In merged detail view, don't show any read status indicator
+        if (isInMergedDetailView) {
+          return const SizedBox.shrink();
+        }
+        if (MessageListHelper.shouldShowReadReceipt(
+          message: message,
+          enableReadReceipt: enableReadReceipt,
+        )) {
+          return buildReadReceiptIndicator(
+            message: message,
+            enableReadReceipt: enableReadReceipt,
+            colorsTheme: colorsTheme,
+            isOverlay: isOverlay,
+          );
+        }
         return SvgPicture.asset(
           'chat_assets/icon/message_read_status.svg',
           width: 14,
@@ -26,24 +88,10 @@ mixin MessageStatusMixin {
           fit: BoxFit.contain,
         );
       case MessageStatus.sending:
-        return SizedBox(
-          width: 14,
-          height: 14,
-          child: CircularProgressIndicator(
-            strokeWidth: 1,
-            valueColor: AlwaysStoppedAnimation<Color>(
-                isOverlay ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorSecondary),
-          ),
-        );
       case MessageStatus.sendFail:
-        return GestureDetector(
-          onTap: onResendTap,
-          child: Icon(
-            Icons.error_outline,
-            size: 14,
-            color: colorsTheme.textColorError,
-          ),
-        );
+      case MessageStatus.violation:
+        // These status icons are now shown outside the bubble in message_item.dart
+        return const SizedBox.shrink();
       default:
         return const SizedBox.shrink();
     }
@@ -79,6 +127,8 @@ mixin MessageStatusMixin {
     bool isOverlay = false,
     VoidCallback? onResendTap,
     bool isShowTimeInBubble = true,
+    bool enableReadReceipt = false,
+    bool isInMergedDetailView = false,
   }) {
     final widgets = <Widget>[];
 
@@ -88,6 +138,8 @@ mixin MessageStatusMixin {
       colorsTheme: colors,
       isOverlay: isOverlay,
       onResendTap: onResendTap,
+      enableReadReceipt: enableReadReceipt,
+      isInMergedDetailView: isInMergedDetailView,
     );
 
     if (statusWidget is! SizedBox || statusWidget.child != null) {
@@ -114,5 +166,45 @@ mixin MessageStatusMixin {
 
   String _formatMessageTime(DateTime dateTime) {
     return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+  }
+
+  /// 构建已读回执指示器
+  Widget buildReadReceiptIndicator({
+    required MessageInfo message,
+    required bool enableReadReceipt,
+    required SemanticColorScheme colorsTheme,
+    bool isOverlay = false,
+  }) {
+    if (!MessageListHelper.shouldShowReadReceipt(
+      message: message,
+      enableReadReceipt: enableReadReceipt,
+    )) {
+      return const SizedBox.shrink();
+    }
+
+    final iconName = MessageListHelper.getReceiptIconName(message);
+    final isHighlight = iconName == 'read_receipt_check_all_highlight';
+
+    // 高亮图标使用固定颜色，其他图标使用主题颜色
+    if (isHighlight) {
+      return SvgPicture.asset(
+        'chat_assets/icon/$iconName.svg',
+        width: 14,
+        height: 14,
+        package: 'tuikit_atomic_x',
+        fit: BoxFit.contain,
+      );
+    }
+
+    Color iconColor = colorsTheme.textColorAntiPrimary;
+
+    return SvgPicture.asset(
+      'chat_assets/icon/$iconName.svg',
+      width: 14,
+      height: 14,
+      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+      package: 'tuikit_atomic_x',
+      fit: BoxFit.contain,
+    );
   }
 }

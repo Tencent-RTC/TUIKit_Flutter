@@ -12,6 +12,9 @@
     <!-- Android 14 or higher -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
+    <!-- System alert window / Display over other apps permission -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application>
         <activity
             android:name="io.trtc.tuikit.atomicx.albumpicker.ui.picker.AlbumPickerActivity"
@@ -19,10 +22,43 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseComponent.Theme.FullScreen" />
 
+        <activity
+            android:name="io.trtc.tuikit.atomicx.videorecorder.view.VideoRecorderBridgeActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="io.trtc.tuikit.atomicx.videorecorder.view.VideoRecorderActivity"
+            android:exported="true"
+            android:theme="@style/BaseComponent.Theme.FullScreen" />
+
+        <activity
+            android:name="io.trtc.tuikit.atomicx.filepicker.impl.FilePickerBridgeActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="io.trtc.tuikit.atomicx.videoplayer.impl.VideoPlayerActivity"
+            android:exported="true"
+            android:theme="@style/BaseComponent.Theme.FullScreen" />
+
         <provider
             android:name=".basecomponent.utils.ContextProvider"
             android:authorities="${applicationId}.BaseComponent.ContextProvider"
             android:exported="false"
             android:initOrder="10000" />
+
+        <!-- FileProvider for opening files -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.BaseComponent.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/base_component_file_paths" />
+        </provider>
     </application>
 </manifest>

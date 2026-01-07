@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @app_video_description.
   ///
   /// In en, this message translates to:
-  /// **'Live preview/Beauty filters/Multi-hostK'**
+  /// **'Live preview/Beauty filters/Multi-host'**
   String get app_video_description;
 
   /// No description provided for @app_voice.
@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @app_call_description.
   ///
   /// In en, this message translates to:
-  /// **'Ringtone Notifications · Floating Window · Call Lag Optimization'**
+  /// **'Ringtone/Floating Window/Less stutter'**
   String get app_call_description;
 
   /// No description provided for @app_call_user_ids.

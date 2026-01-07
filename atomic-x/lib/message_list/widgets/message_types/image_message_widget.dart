@@ -18,6 +18,7 @@ class ImageMessageWidget extends StatefulWidget {
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
   final MessageListConfigProtocol config;
+  final bool isInMergedDetailView;
 
   static const double kImageFixedHeight = 160.0;
 
@@ -32,6 +33,7 @@ class ImageMessageWidget extends StatefulWidget {
     this.onLongPress,
     this.messageListStore,
     this.bubbleKey,
+    this.isInMergedDetailView = false,
   });
 
   @override
@@ -67,6 +69,16 @@ class _ImageMessageWidgetState extends State<ImageMessageWidget> with MessageSta
   Widget build(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
+    final statusAndTimeWidgets = buildStatusAndTimeWidgets(
+      message: widget.message,
+      isSelf: widget.isSelf,
+      colors: colorsTheme,
+      isOverlay: true,
+      isShowTimeInBubble: widget.config.isShowTimeInBubble,
+      enableReadReceipt: widget.config.enableReadReceipt,
+      isInMergedDetailView: widget.isInMergedDetailView,
+    );
+
     return GestureDetector(
       onTap: _handleTap,
       onLongPress: widget.onLongPress,
@@ -79,27 +91,22 @@ class _ImageMessageWidgetState extends State<ImageMessageWidget> with MessageSta
         child: Stack(
           children: [
             _buildImageContent(colorsTheme),
-            Positioned(
-              bottom: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: colorsTheme.bgColorDefault,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: buildStatusAndTimeWidgets(
-                    message: widget.message,
-                    isSelf: widget.isSelf,
-                    colors: colorsTheme,
-                    isOverlay: true,
-                    isShowTimeInBubble: widget.config.isShowTimeInBubble,
+            if (statusAndTimeWidgets.isNotEmpty)
+              Positioned(
+                bottom: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: colorsTheme.bgColorDefault,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: statusAndTimeWidgets,
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

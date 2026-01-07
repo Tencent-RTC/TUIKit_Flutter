@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <io.trtc.tuikit.atomicx.videorecorder.view.preview.TransformLayout
+            android:id="@+id/rl_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    </io.trtc.tuikit.atomicx.videorecorder.view.preview.TransformLayout>
+
+    <ImageView
+            android:id="@+id/edit_return_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/video_recorder_return"
+            android:visibility="visible" />
+
+    <RelativeLayout
+            android:id="@+id/operation_layout"
+            android:background="@color/video_recorder_edit_function_view_background"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true">
+
+        <LinearLayout
+                android:id="@+id/function_button_layout"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@+id/send_btn"
+                android:gravity="center_vertical">
+
+        </LinearLayout>
+
+        <Button
+                android:id="@+id/send_btn"
+                android:layout_height="28dp"
+                android:layout_width="60dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:text="@string/video_recorder_send"
+                android:textColor="@color/video_recorder_white"
+                android:textSize="@dimen/video_recorder_common_text_size"
+                android:fontFamily="@string/video_recorder_common_font"
+                android:layout_marginEnd="20dp"
+                android:padding="1dp" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -50,7 +50,6 @@ dependencies:
   tencent_cloud_chat_push: ^8.7.7201
 
 dependency_overrides:
-  tencent_cloud_chat_sdk: 8.7.7201+2
   tuikit_atomic_x:
     path: ../../atomic-x
 dev_dependencies:

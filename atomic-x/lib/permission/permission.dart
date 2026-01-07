@@ -1,4 +1,3 @@
-import 'dart:io' show Platform;
 import 'permission_method_channel.dart';
 
 /// Permission types supported by the plugin.
@@ -24,7 +23,19 @@ enum PermissionType {
   storage('storage'),
 
   /// Notifications permission
-  notification('notification');
+  notification('notification'),
+
+  /// System alert window permission (overlay/floating window)
+  /// - iOS: Not applicable (always granted)
+  /// - Android: SYSTEM_ALERT_WINDOW permission
+  ///   Required for displaying floating windows over other apps
+  systemAlertWindow('systemAlertWindow'),
+
+  /// Display over other apps permission (same as systemAlertWindow)
+  /// - iOS: Not applicable (always granted)
+  /// - Android: SYSTEM_ALERT_WINDOW permission
+  ///   Required for bringing app to foreground from background
+  displayOverOtherApps('displayOverOtherApps');
 
   const PermissionType(this.identifier);
 

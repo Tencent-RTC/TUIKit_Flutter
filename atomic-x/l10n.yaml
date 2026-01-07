@@ -4,4 +4,3 @@ nullable-getter: false
 output-dir: lib/base_component/localizations
 output-localization-file: atomic_localizations.dart
 output-class: AtomicLocalizations
-synthetic-package: false

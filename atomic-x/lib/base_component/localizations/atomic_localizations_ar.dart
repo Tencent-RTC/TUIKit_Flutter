@@ -932,6 +932,9 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get messageNum => 'رسالة';
 
   @override
+  String get draft => '[مسودة]';
+
+  @override
   String get sendMessageFail => 'فشل الإرسال';
 
   @override
@@ -1007,4 +1010,186 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String peopleOnCall(Object number) {
     return '$number في مكالمة حاليًا.';
   }
+
+  @override
+  String get messageReadDetail => 'تفاصيل قراءة الرسالة';
+
+  @override
+  String get groupReadBy => 'قرأ بواسطة';
+
+  @override
+  String get groupDeliveredTo => 'تم التسليم إلى';
+
+  @override
+  String get loadingMore => 'تحميل المزيد...';
+
+  @override
+  String get unknownFile => 'ملف غير معروف';
+
+  @override
+  String get messageReadReceipt => 'حالة قراءة الرسالة';
+
+  @override
+  String get messageReadReceiptEnabledDesc =>
+      'عند الإغلاق، لن تظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها، ولن تتمكن من معرفة ما إذا قرأ الطرف الآخر الرسالة أم لا، وبالمثل، الطرف الآخر لن يتمكن من معرفة ما إذا قرأت الرسالة أم لا.';
+
+  @override
+  String get messageReadReceiptDisabledDesc =>
+      'عند الفتح، ستظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها في المحادثات الجماعية، ويمكنك رؤية ما إذا قرأ الطرف الآخر الرسالة أم لا. إذا قام أصدقاؤك في المحادثات الفردية بتفعيل حالة قراءة الرسائل، ستظهر حالة قراءة الرسائل في المحادثات الفردية التي تتبادلها معهم.';
+
+  @override
+  String get appearance => 'مظهر';
+
+  @override
+  String get markAsRead => 'وضع علامة كمقروء';
+
+  @override
+  String get markAsUnread => 'وضع علامة كغير مقروء';
+
+  @override
+  String get multiSelect => 'تحديد متعدد';
+
+  @override
+  String get selectChat => 'اختر محادثة';
+
+  @override
+  String sendCount(int count) {
+    return 'إرسال ($count)';
+  }
+
+  @override
+  String selectedCount(int count) {
+    return 'تم تحديد $count';
+  }
+
+  @override
+  String get forwardIndividually => 'إعادة توجيه فردي';
+
+  @override
+  String get forwardMerged => 'إعادة توجيه مدمج';
+
+  @override
+  String get groupChatHistory => 'سجل محادثة المجموعة';
+
+  @override
+  String c2cChatHistoryFormat(String name) {
+    return 'سجل دردشة $name';
+  }
+
+  @override
+  String chatHistoryForSomebodyFormat(String name1, String name2) {
+    return 'سجل الدردشة لـ $name1 و $name2';
+  }
+
+  @override
+  String get recentChats => 'المحادثات الأخيرة';
+
+  @override
+  String get forwardCompatibleText => 'يرجى الترقية لعرض سجل المحادثة';
+
+  @override
+  String get forwardFailedMessageTip => 'لا يمكن إعادة توجيه الرسائل الفاشلة!';
+
+  @override
+  String get forwardSeparateLimitTip =>
+      'عدد الرسائل كبير جدًا، إعادة التوجيه الفردية غير مدعومة';
+
+  @override
+  String get deleteMessagesConfirmTip => 'هل أنت متأكد من حذف الرسائل المحددة؟';
+
+  @override
+  String get conversationListAtAll => '[@الجميع]';
+
+  @override
+  String get conversationListAtMe => '[@أنا]';
+
+  @override
+  String get messageInputAllMembers => 'الجميع';
+
+  @override
+  String get selectMentionMember => 'اختر الأعضاء';
+
+  @override
+  String get tapToRemove => 'اضغط للإزالة';
+
+  @override
+  String get messageTypeSecurityStrike => 'يتضمن محتوى حساس';
+
+  @override
+  String get convertToText => 'تحويل إلى نص';
+
+  @override
+  String get convertToTextFailed => 'فشل التحويل';
+
+  @override
+  String get hide => 'إخفاء';
+
+  @override
+  String get copied => 'تم النسخ';
+
+  @override
+  String get translate => 'ترجمة';
+
+  @override
+  String get translateFailed => 'فشلت الترجمة';
+
+  @override
+  String get translateDefaultTips => 'الترجمة مدعومة من Tencent Cloud IM';
+
+  @override
+  String get translating => 'جارٍ الترجمة...';
+
+  @override
+  String get translateTargetLanguage => 'لغة الترجمة المستهدفة';
+
+  @override
+  String get translateLanguageZh => '简体中文';
+
+  @override
+  String get translateLanguageZhTW => '繁體中文';
+
+  @override
+  String get translateLanguageEn => 'English';
+
+  @override
+  String get translateLanguageJa => '日本語';
+
+  @override
+  String get translateLanguageKo => '한국어';
+
+  @override
+  String get translateLanguageFr => 'Français';
+
+  @override
+  String get translateLanguageEs => 'Español';
+
+  @override
+  String get translateLanguageIt => 'Italiano';
+
+  @override
+  String get translateLanguageDe => 'Deutsch';
+
+  @override
+  String get translateLanguageTr => 'Türkçe';
+
+  @override
+  String get translateLanguageRu => 'Русский';
+
+  @override
+  String get translateLanguagePt => 'Português';
+
+  @override
+  String get translateLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get translateLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get translateLanguageTh => 'ภาษาไทย';
+
+  @override
+  String get translateLanguageMs => 'Bahasa Melayu';
+
+  @override
+  String get translateLanguageHi => 'हिन्दी';
 }

@@ -4,6 +4,8 @@ import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/call_colors.dart';
+
 class HintWidget extends StatefulWidget {
   const HintWidget({super.key});
 
@@ -15,18 +17,6 @@ class _HintWidgetState extends State<HintWidget> {
   final _acceptTextDisplayDuration = const Duration(seconds: 1);
   Timer? _acceptTextTimer;
   bool _hadShowAcceptText = false;
-
-  final _defaultTextStyle = const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      color: Colors.white
-  );
-
-  final _boldTextStyle = const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w600,
-      color: Colors.white
-  );
 
   @override
   void dispose() {
@@ -61,7 +51,11 @@ class _HintWidgetState extends State<HintWidget> {
 
     return Text(
       CallKit_t('connected'),
-      style: _boldTextStyle,
+      style: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: CallColors.colorG7,
+      ),
     );
   }
 
@@ -73,7 +67,11 @@ class _HintWidgetState extends State<HintWidget> {
     if (selfInfo.id == CallStore.shared.state.activeCall.value.inviterId) {
       return Text(
         CallKit_t('waitingForInvitationAcceptance'),
-        style: _defaultTextStyle,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: _getHintTextColor(),
+        ),
       );
     }
 
@@ -83,7 +81,14 @@ class _HintWidgetState extends State<HintWidget> {
           ? CallKit_t("invitedToAudioCall")
           : CallKit_t("invitedToVideoCall");
 
-      return Text(hintText, style: _defaultTextStyle);
+      return Text(
+        hintText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: _getHintTextColor(),
+        ),
+      );
     }
 
     return null;
@@ -95,7 +100,14 @@ class _HintWidgetState extends State<HintWidget> {
       builder: (context, networkQualities, child) {
         final hintText = _getNetworkQualityHintText(selfInfo, networkQualities);
         return hintText.isNotEmpty
-            ? Text(hintText, style: _defaultTextStyle)
+            ? Text(
+          hintText,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: _getHintTextColor(),
+          ),
+        )
             : const SizedBox();
       },
     );
@@ -123,5 +135,12 @@ class _HintWidgetState extends State<HintWidget> {
     return network == NetworkQuality.bad ||
         network == NetworkQuality.veryBad ||
         network == NetworkQuality.down;
+  }
+
+  Color _getHintTextColor() {
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
+      return CallColors.colorWhite;
+    }
+    return CallColors.colorG7;
   }
 }

@@ -110,7 +110,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_call => '通话';
 
   @override
-  String get app_call_description => '铃声通知·悬浮窗·通话卡顿优化';
+  String get app_call_description => '响铃通知·通话悬浮窗·通话卡顿优化';
 
   @override
   String get app_call_user_ids => '通话列表';

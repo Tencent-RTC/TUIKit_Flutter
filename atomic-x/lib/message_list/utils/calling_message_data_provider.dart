@@ -1,13 +1,28 @@
 import 'dart:convert';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
-import '../../base_component/localizations/atomic_localizations.dart';
+enum CallProtocolType {
+  unknown,
+  send,
+  accept,
+  reject,
+  cancel,
+  hangup,
+  timeout,
+  lineBusy,
+  switchToAudio,
+  switchToAudioConfirm
+}
 
-enum CallProtocolType { unknown, send, accept, reject, cancel, hangup, timeout, lineBusy, switchToAudio, switchToAudioConfirm }
 enum CallStreamMediaType { unknown, audio, video }
+
 enum CallParticipantType { unknown, c2c, group }
+
 enum CallParticipantRole { unknown, caller, callee }
+
 enum CallMessageDirection { incoming, outcoming }
 
 class CallingMessageDataProvider {
@@ -29,20 +44,28 @@ class CallingMessageDataProvider {
   bool _isCallingSignal = false;
 
   CallProtocolType get protocolType => _protocolType;
+
   // 媒体类型
   CallStreamMediaType get streamMediaType => _streamMediaType;
+
   // 通话类型
   CallParticipantType get participantType => _participantType;
+
   // 用户角色
   CallParticipantRole get participantRole => _participantRole;
+
   // 上屏信息的方向信息
   CallMessageDirection get direction => _direction;
+
   // 是否需要上屏
   bool get excludeFromHistory => _excludeFromHistory;
+
   // 主角ID
   String get callerId => _callerId;
+
   // 上屏内容
   String get content => _content;
+
   // 是否Call信令
   bool get isCallingSignal => _isCallingSignal;
 
@@ -181,7 +204,8 @@ class CallingMessageDataProvider {
           }
         }
       }
-    } else if (_protocolType == CallProtocolType.switchToAudio || _protocolType == CallProtocolType.switchToAudioConfirm) {
+    } else if (_protocolType == CallProtocolType.switchToAudio ||
+        _protocolType == CallProtocolType.switchToAudioConfirm) {
       _streamMediaType = CallStreamMediaType.video;
     }
   }
@@ -236,7 +260,8 @@ class CallingMessageDataProvider {
   }
 
   _setExcludeFromHistory() {
-    _excludeFromHistory = _protocolType != CallProtocolType.unknown && _isExcludedFromLastMessage && _isExcludedFromUnreadCount;
+    _excludeFromHistory =
+        _protocolType != CallProtocolType.unknown && _isExcludedFromLastMessage && _isExcludedFromUnreadCount;
   }
 
   _setContent() {
@@ -322,11 +347,11 @@ class CallingMessageDataProvider {
       return '';
     }
 
-    if (messageInfo.rawMessage!.nameCard?.isNotEmpty == true)  {
+    if (messageInfo.rawMessage!.nameCard?.isNotEmpty == true) {
       return messageInfo.rawMessage!.nameCard!;
-    } else if (messageInfo.rawMessage!.friendRemark?.isNotEmpty == true)  {
+    } else if (messageInfo.rawMessage!.friendRemark?.isNotEmpty == true) {
       return messageInfo.rawMessage!.friendRemark!;
-    } else if (messageInfo.rawMessage!.nickName?.isNotEmpty == true)   {
+    } else if (messageInfo.rawMessage!.nickName?.isNotEmpty == true) {
       return messageInfo.rawMessage!.nickName!;
     } else {
       return messageInfo.sender;

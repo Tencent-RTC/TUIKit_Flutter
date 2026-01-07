@@ -1,0 +1,5 @@
+arb-dir: lib/base/language/i10n
+template-arb-file: roomkit_en.arb
+output-localization-file: room_localizations.dart
+output-dir: lib/base/language/gen
+output-class: RoomLocalizations

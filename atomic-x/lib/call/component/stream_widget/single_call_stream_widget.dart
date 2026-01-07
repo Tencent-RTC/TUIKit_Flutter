@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/call/common/constants.dart';
 import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
 
+import '../../common/call_colors.dart';
+
 class SingleCallStreamWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
 
@@ -106,10 +108,9 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     double windowWidth = screenWidth * scale;
-    double windowHeight = screenHeight * scale;
+    double windowHeight = windowWidth / 9 * 16;
     
     return Positioned(
       top: SingleCallUserWidgetData.smallViewTop - 40,
@@ -121,10 +122,27 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
             child: Container(
               width: windowWidth,
               height: windowHeight,
-              decoration: const BoxDecoration(color: Colors.transparent),
-              child: SingleCallUserWidgetData.bigViewIndex == 1
-                  ? StreamViewFactory.instance.createSingleSelfStreamView()
-                  : StreamViewFactory.instance.createSingleRemoteStreamView(),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 8.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: SingleCallUserWidgetData.bigViewIndex == 1
+                    ? StreamViewFactory.instance.createSingleSelfStreamView()
+                    : StreamViewFactory.instance.createSingleRemoteStreamView(),
+              ),
             ),
           ),
           Positioned.fill(
@@ -165,8 +183,8 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: 110,
-                width: 110,
+                height: 100,
+                width: 100,
                 clipBehavior: Clip.hardEdge,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -182,15 +200,15 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Text(
                 remoteParticipant != null
                     ? _getUserDisplayName(remoteParticipant)
                     : "",
                 textScaleFactor: 1.0,
-                style: const TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: _getUserNameColor(),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -219,6 +237,12 @@ class _SingleCallStreamWidgetState extends State<SingleCallStreamWidget> {
     setState(() {
       SingleCallUserWidgetData.bigViewIndex = SingleCallUserWidgetData.bigViewIndex == 0 ? 1 : 0;
     });
+  }
+
+  _getUserNameColor() {
+    return CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
+        ? CallColors.colorG7
+        : CallColors.colorWhite;
   }
 
   _getBackgroundColor() {

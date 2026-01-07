@@ -342,6 +342,7 @@
     "setNickname": "تعديل الاسم المستعار",
     "setSignature": "تعديل التوقيع الشخصي",
     "messageNum": "رسالة",
+    "draft": "[مسودة]",
     "sendMessageFail": "فشل الإرسال",
     "resendTips": "هل تريد إعادة الإرسال؟",
     "callRejectCaller": "تم رفضه من الطرف الآخ",
@@ -366,5 +367,93 @@
     "groupCallConfirmSwitchToAudio": "تأكيد تحويل الفيديو إلى صوتي ",
     "unknownCall": "مكالمة غير معروفة",
     "join": "انضم إلينا",
-    "peopleOnCall": "{number} في مكالمة حاليًا."
+    "peopleOnCall": "{number} في مكالمة حاليًا.",
+    "messageReadDetail": "تفاصيل قراءة الرسالة",
+    "groupReadBy": "قرأ بواسطة",
+    "groupDeliveredTo": "تم التسليم إلى",
+    "loadingMore": "تحميل المزيد...",
+    "unknownFile": "ملف غير معروف",
+    "messageReadReceipt": "حالة قراءة الرسالة",
+    "messageReadReceiptEnabledDesc": "عند الإغلاق، لن تظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها، ولن تتمكن من معرفة ما إذا قرأ الطرف الآخر الرسالة أم لا، وبالمثل، الطرف الآخر لن يتمكن من معرفة ما إذا قرأت الرسالة أم لا.",
+    "messageReadReceiptDisabledDesc": "عند الفتح، ستظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها في المحادثات الجماعية، ويمكنك رؤية ما إذا قرأ الطرف الآخر الرسالة أم لا. إذا قام أصدقاؤك في المحادثات الفردية بتفعيل حالة قراءة الرسائل، ستظهر حالة قراءة الرسائل في المحادثات الفردية التي تتبادلها معهم.",
+    "appearance": "مظهر",
+    "markAsRead": "وضع علامة كمقروء",
+    "markAsUnread": "وضع علامة كغير مقروء",
+    "multiSelect": "تحديد متعدد",
+    "selectChat": "اختر محادثة",
+    "sendCount": "إرسال ({count})",
+    "@sendCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectedCount": "تم تحديد {count}",
+    "@selectedCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "forwardIndividually": "إعادة توجيه فردي",
+    "forwardMerged": "إعادة توجيه مدمج",
+    "groupChatHistory": "سجل محادثة المجموعة",
+    "c2cChatHistoryFormat": "سجل دردشة {name}",
+    "@c2cChatHistoryFormat": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "chatHistoryForSomebodyFormat": "سجل الدردشة لـ {name1} و {name2}",
+    "@chatHistoryForSomebodyFormat": {
+        "placeholders": {
+            "name1": {
+                "type": "String"
+            },
+            "name2": {
+                "type": "String"
+            }
+        }
+    },
+    "recentChats": "المحادثات الأخيرة",
+    "forwardCompatibleText": "يرجى الترقية لعرض سجل المحادثة",
+    "forwardFailedMessageTip": "لا يمكن إعادة توجيه الرسائل الفاشلة!",
+    "forwardSeparateLimitTip": "عدد الرسائل كبير جدًا، إعادة التوجيه الفردية غير مدعومة",
+    "deleteMessagesConfirmTip": "هل أنت متأكد من حذف الرسائل المحددة؟",
+    "conversationListAtAll": "[@الجميع]",
+    "conversationListAtMe": "[@أنا]",
+    "messageInputAllMembers": "الجميع",
+    "selectMentionMember": "اختر الأعضاء",
+    "tapToRemove": "اضغط للإزالة",
+    "messageTypeSecurityStrike": "يتضمن محتوى حساس",
+    "convertToText": "تحويل إلى نص",
+    "convertToTextFailed": "فشل التحويل",
+    "hide": "إخفاء",
+    "copied": "تم النسخ",
+    "translate": "ترجمة",
+    "translateFailed": "فشلت الترجمة",
+    "translateDefaultTips": "الترجمة مدعومة من Tencent Cloud IM",
+    "translating": "جارٍ الترجمة...",
+    "translateTargetLanguage": "لغة الترجمة المستهدفة",
+    "translateLanguageZh": "简体中文",
+    "translateLanguageZhTW": "繁體中文",
+    "translateLanguageEn": "English",
+    "translateLanguageJa": "日本語",
+    "translateLanguageKo": "한국어",
+    "translateLanguageFr": "Français",
+    "translateLanguageEs": "Español",
+    "translateLanguageIt": "Italiano",
+    "translateLanguageDe": "Deutsch",
+    "translateLanguageTr": "Türkçe",
+    "translateLanguageRu": "Русский",
+    "translateLanguagePt": "Português",
+    "translateLanguageVi": "Tiếng Việt",
+    "translateLanguageId": "Bahasa Indonesia",
+    "translateLanguageTh": "ภาษาไทย",
+    "translateLanguageMs": "Bahasa Melayu",
+    "translateLanguageHi": "हिन्दी"
 }

@@ -1,9 +1,8 @@
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
-import 'package:extended_text/extended_text.dart';
+import 'package:tuikit_atomic_x/emoji_picker/emoji_picker_data.dart';
+import 'package:tuikit_atomic_x/third_party/extended_text/extended_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-import '../../emoji_picker/emoji_picker_data.dart';
 
 class ChatSpecialTextSpanBuilder extends SpecialTextSpanBuilder {
   final ValueChanged<String> onTapUrl;
@@ -64,7 +63,7 @@ class EmojiText extends SpecialText {
     }
 
     return ImageSpan(
-      AssetImage(res, package: "tuikit_atomic_x"),
+      AssetImage(res, package: 'tuikit_atomic_x'),
       actualText: key,
       imageWidth: 22,
       imageHeight: 22,

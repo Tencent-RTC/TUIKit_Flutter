@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:tuikit_atomic_x/base_component/utils/storage_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -46,6 +48,8 @@ class AppBuilder {
 
   late AvatarConfig avatarConfig;
 
+  late TranslateConfig translateConfig;
+
   AppBuilder._();
 
   static AppBuilder getInstance() {
@@ -85,6 +89,7 @@ class AppBuilder {
     conversationListConfig = ConversationListConfig.fromJson(_config['conversationList'] ?? {});
     searchConfig = SearchConfig.fromJson(_config['search'] ?? {});
     avatarConfig = AvatarConfig.fromJson(_config['avatar'] ?? {});
+    translateConfig = TranslateConfig();
   }
 
   void _setDefaultConfig() {
@@ -94,6 +99,7 @@ class AppBuilder {
     conversationListConfig = ConversationListConfig.defaultConfig();
     searchConfig = SearchConfig.defaultConfig();
     avatarConfig = AvatarConfig.defaultConfig();
+    translateConfig = TranslateConfig();
   }
 }
 
@@ -125,15 +131,30 @@ class AtomicThemeConfig {
 }
 
 class MessageListConfig {
+  static const String _enableReadReceiptKey = 'atomic_enable_read_receipt';
+  
   final String alignment;
-  final bool enableReadReceipt;
   final List<String> messageActionList;
+  final bool _jsonEnableReadReceipt;
 
   MessageListConfig({
     required this.alignment,
-    required this.enableReadReceipt,
     required this.messageActionList,
-  });
+    required bool jsonEnableReadReceipt,
+  }) : _jsonEnableReadReceipt = jsonEnableReadReceipt;
+
+  bool get enableReadReceipt {
+    final value = StorageUtil.get(_enableReadReceiptKey);
+    if (value is bool) {
+      return value;
+    }
+
+    return _jsonEnableReadReceipt;
+  }
+
+  Future<bool> setEnableReadReceipt(bool value) {
+    return StorageUtil.set(_enableReadReceiptKey, value);
+  }
 
   factory MessageListConfig.fromJson(Map<String, dynamic> json) {
     List<String> actionList = [];
@@ -143,15 +164,14 @@ class MessageListConfig {
 
     return MessageListConfig(
       alignment: json['alignment'] ?? AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
-      enableReadReceipt: json['enableReadReceipt'] ?? false,
       messageActionList: actionList,
+      jsonEnableReadReceipt: json['enableReadReceipt'] ?? false,
     );
   }
 
   factory MessageListConfig.defaultConfig() {
     return MessageListConfig(
       alignment: AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
-      enableReadReceipt: false,
       messageActionList: [
         AppBuilder.MESSAGE_ACTION_COPY,
         AppBuilder.MESSAGE_ACTION_RECALL,
@@ -159,6 +179,7 @@ class MessageListConfig {
         AppBuilder.MESSAGE_ACTION_FORWARD,
         AppBuilder.MESSAGE_ACTION_DELETE
       ],
+      jsonEnableReadReceipt: false,
     );
   }
 }
@@ -259,5 +280,25 @@ class AvatarConfig {
     return AvatarConfig(
       shape: AppBuilder.AVATAR_SHAPE_CIRCULAR,
     );
+  }
+}
+
+class TranslateConfig {
+  static const String _translateTargetLanguageKey = 'atomic_translate_target_language';
+
+  /// Get translate target language
+  /// Returns saved language or device language as default
+  String get targetLanguage {
+    final saved = StorageUtil.get(_translateTargetLanguageKey);
+    if (saved is String && saved.isNotEmpty) {
+      return saved;
+    }
+    // Return device language as default
+    return PlatformDispatcher.instance.locale.languageCode;
+  }
+
+  /// Set translate target language
+  Future<bool> setTargetLanguage(String languageCode) {
+    return StorageUtil.set(_translateTargetLanguageKey, languageCode);
   }
 }

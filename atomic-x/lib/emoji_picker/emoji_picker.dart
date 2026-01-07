@@ -164,7 +164,7 @@ class EmojiPickerTabState extends State<EmojiPickerTab> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Image(
-                      image: AssetImage(e.iconPath, package: "tuikit_atomic_x"),
+                      image: AssetImage(e.iconPath, package: 'tuikit_atomic_x'),
                       width: e.iconSize,
                     ),
                   ),
@@ -267,7 +267,7 @@ class EmojiPickerContentState extends State<EmojiPickerContent> {
                                     );
                                   },
                                   child: Image(
-                                    image: AssetImage(e.path, package: "tuikit_atomic_x"),
+                                    image: AssetImage(e.path, package: 'tuikit_atomic_x'),
                                   ),
                                 ),
                               )

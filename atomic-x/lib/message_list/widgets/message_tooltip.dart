@@ -4,6 +4,8 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tuikit_atomic_x/emoji_picker/emoji_picker_model.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/reaction_emoji_picker.dart';
 
 class MessageMenuItem {
   final String title;
@@ -44,6 +46,8 @@ class MessageTooltip extends StatefulWidget {
   final MessageInfo message;
   final VoidCallback onCloseTooltip;
   final bool isSelf;
+  final bool showReactionPicker;
+  final void Function(EmojiPickerModelItem emoji)? onReactionSelected;
 
   const MessageTooltip({
     super.key,
@@ -51,6 +55,8 @@ class MessageTooltip extends StatefulWidget {
     required this.message,
     required this.onCloseTooltip,
     required this.isSelf,
+    this.showReactionPicker = false,
+    this.onReactionSelected,
   });
 
   @override
@@ -72,10 +78,36 @@ class MessageTooltipState extends State<MessageTooltip> {
         constraints: BoxConstraints(
           maxWidth: math.min(MediaQuery.of(context).size.width * 0.75, 350),
         ),
-        child: Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: widget.menuItems.map((item) => _buildMenuItem(item, colorTheme)).toList(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Reaction emoji picker
+            if (widget.showReactionPicker && widget.onReactionSelected != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ReactionEmojiPicker(
+                  onEmojiClick: (emoji) {
+                    widget.onCloseTooltip();
+                    widget.onReactionSelected!(emoji);
+                  },
+                  onExpandClick: () async {
+                    widget.onCloseTooltip();
+                    final selectedEmoji = await ReactionEmojiPickerSheet.show(context);
+                    if (selectedEmoji != null && widget.onReactionSelected != null) {
+                      widget.onReactionSelected!(selectedEmoji);
+                    }
+                  },
+                ),
+              ),
+            // Menu items
+            Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 4,
+              runSpacing: 4,
+              children: widget.menuItems.map((item) => _buildMenuItem(item, colorTheme)).toList(),
+            ),
+          ],
         ),
       ),
     );
@@ -106,7 +138,7 @@ class MessageTooltipState extends State<MessageTooltip> {
                 style: TextStyle(
                   decoration: TextDecoration.none,
                   color: item.isDestructive ? colorTheme.textColorError : colorTheme.textColorPrimary,
-                  fontSize: 10,
+                  fontSize: 12,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -120,7 +152,7 @@ class MessageTooltipState extends State<MessageTooltip> {
   }
 
   Widget _buildMenuIcon(MessageMenuItem item, SemanticColorScheme colorTheme) {
-    final color = item.isDestructive ? colorTheme.textColorError : colorTheme.textColorPrimary;
+    final color = colorTheme.buttonColorPrimaryDefault;
     
     if (item.assetName != null && item.assetName!.isNotEmpty) {
       final isSvg = item.assetName!.toLowerCase().endsWith('.svg');
@@ -129,12 +161,12 @@ class MessageTooltipState extends State<MessageTooltip> {
         return SvgPicture.asset(
           item.assetName!,
           package: item.package,
-          width: 20,
-          height: 20,
+          width: 18,
+          height: 18,
           colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           placeholderBuilder: (context) => Icon(
             item.icon,
-            size: 20,
+            size: 18,
             color: color,
           ),
         );
@@ -142,13 +174,13 @@ class MessageTooltipState extends State<MessageTooltip> {
         return Image.asset(
           item.assetName!,
           package: item.package,
-          width: 20,
-          height: 20,
+          width: 18,
+          height: 18,
           color: color,
           errorBuilder: (context, error, stackTrace) {
             return Icon(
               item.icon,
-              size: 20,
+              size: 18,
               color: color,
             );
           },
@@ -158,7 +190,7 @@ class MessageTooltipState extends State<MessageTooltip> {
     
     return Icon(
       item.icon ,
-      size: 20,
+      size: 18,
       color: color,
     );
   }

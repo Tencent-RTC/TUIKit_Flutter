@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
 import '../app_store/index.dart';
@@ -6,7 +7,6 @@ import '../call/call_main_widget.dart';
 import '../live/index.dart';
 import '../mine/me_widget.dart';
 import '../utils/language/index.dart';
-import '../utils/screen/screen_adapter.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({super.key});
@@ -21,6 +21,8 @@ class _MainWidgetState extends State<MainWidget> {
   @override
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.sizeOf(context).width;
+    final cardWidth = _screenWidth / 2 - 12.width;
+    final cardHeight = 106.0.height;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -62,31 +64,58 @@ class _MainWidgetState extends State<MainWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 12.height),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: context.adapter.getWidth(8)),
+                padding: EdgeInsets.symmetric(horizontal: 8.width),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Card(
+                      margin: EdgeInsets.zero,
                       child: SizedBox(
-                        width: 165.width,
-                        child: MenuItemWidget(
-                          iconUrl: 'assets/app_video_live.png',
-                          title: AppLocalizations.of(context)!.app_video,
-                          description: AppLocalizations.of(context)!.app_video_description,
-                          onTap: () => _enterLiveWidget(),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      child: SizedBox(
-                        width: 165.width,
+                        width: cardWidth,
+                        height: cardHeight,
                         child: MenuItemWidget(
                           iconUrl: 'assets/app_call.png',
                           title: AppLocalizations.of(context)!.app_call,
                           description: AppLocalizations.of(context)!.app_call_description,
                           onTap: () => _enterCallWidget(),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: SizedBox()),
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: SizedBox(
+                        width: cardWidth,
+                        height: cardHeight,
+                        child: MenuItemWidget(
+                          iconUrl: 'assets/app_video_live.png',
+                          title: AppLocalizations.of(context)!.app_live,
+                          description: AppLocalizations.of(context)!.app_video_description,
+                          onTap: () => _enterLiveWidget(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8.height),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.width),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: SizedBox(
+                        width: cardWidth,
+                        height: cardHeight,
+                        child: MenuItemWidget(
+                          iconUrl: 'assets/app_conference.png',
+                          title: AppLocalizations.of(context)!.app_conference,
+                          description: AppLocalizations.of(context)!.app_conference_description,
+                          onTap: () => _enterRoomWidget(),
                         ),
                       ),
                     ),
@@ -110,6 +139,14 @@ class _MainWidgetState extends State<MainWidget> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const LiveMainWidget();
+      },
+    ));
+  }
+
+  void _enterRoomWidget() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const RoomHomeWidget();
       },
     ));
   }
@@ -157,7 +194,7 @@ class MenuItemWidget extends StatelessWidget {
                     ),
                     SizedBox(width: 6.width),
                     SizedBox(
-                      width: 60.width,
+                      width: 80.width,
                       child: Padding(
                         padding: EdgeInsets.only(top: 16.height),
                         child: Text(
@@ -165,27 +202,27 @@ class MenuItemWidget extends StatelessWidget {
                           style: const TextStyle(
                             color: Color(0xFF262b32),
                           ),
+                          maxLines: 1,
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 16.height, left: 16.width),
-                        child: Image.asset(
-                          'assets/app_arrow.png',
-                          width: 16.radius,
-                          height: 16.radius,
-                        ),
+                    Expanded(child: SizedBox()),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16.height, right: 16.width),
+                      child: Image.asset(
+                        'assets/app_arrow.png',
+                        width: 16.radius,
+                        height: 16.radius,
                       ),
-                    )
+                    ),
                   ],
                 ),
-                SizedBox(height: 20.height),
+                SizedBox(height: 12.height),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.width),
+                  padding: EdgeInsets.symmetric(horizontal: 12.width),
                   child: Text(
                     description,
-                    style: const TextStyle(color: Color(0xFF626e84)),
+                    style: const TextStyle(color: Color(0xFF626e84), fontSize: 12),
                   ),
                 )
               ],

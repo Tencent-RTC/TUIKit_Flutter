@@ -1881,6 +1881,12 @@ abstract class AtomicLocalizations {
   /// **'messages'**
   String get messageNum;
 
+  /// No description provided for @draft.
+  ///
+  /// In en, this message translates to:
+  /// **'[Draft]'**
+  String get draft;
+
   /// No description provided for @sendMessageFail.
   ///
   /// In en, this message translates to:
@@ -2030,6 +2036,348 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'{number} person are currently on the call'**
   String peopleOnCall(Object number);
+
+  /// No description provided for @messageReadDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Read Details'**
+  String get messageReadDetail;
+
+  /// No description provided for @groupReadBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read by'**
+  String get groupReadBy;
+
+  /// No description provided for @groupDeliveredTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered to'**
+  String get groupDeliveredTo;
+
+  /// No description provided for @loadingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more...'**
+  String get loadingMore;
+
+  /// No description provided for @unknownFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown file'**
+  String get unknownFile;
+
+  /// No description provided for @messageReadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Read Receipt'**
+  String get messageReadReceipt;
+
+  /// No description provided for @messageReadReceiptEnabledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.'**
+  String get messageReadReceiptEnabledDesc;
+
+  /// No description provided for @messageReadReceiptDisabledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.'**
+  String get messageReadReceiptDisabledDesc;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @markAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark As Read'**
+  String get markAsRead;
+
+  /// No description provided for @markAsUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark As Unread'**
+  String get markAsUnread;
+
+  /// No description provided for @multiSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Select'**
+  String get multiSelect;
+
+  /// No description provided for @selectChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Chat'**
+  String get selectChat;
+
+  /// No description provided for @sendCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Send ({count})'**
+  String sendCount(int count);
+
+  /// No description provided for @selectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected {count}'**
+  String selectedCount(int count);
+
+  /// No description provided for @forwardIndividually.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward Individually'**
+  String get forwardIndividually;
+
+  /// No description provided for @forwardMerged.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward as Merged'**
+  String get forwardMerged;
+
+  /// No description provided for @groupChatHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Chat History'**
+  String get groupChatHistory;
+
+  /// No description provided for @c2cChatHistoryFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s Chat History'**
+  String c2cChatHistoryFormat(String name);
+
+  /// No description provided for @chatHistoryForSomebodyFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat History of {name1} and {name2}'**
+  String chatHistoryForSomebodyFormat(String name1, String name2);
+
+  /// No description provided for @recentChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Chats'**
+  String get recentChats;
+
+  /// No description provided for @forwardCompatibleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upgrade to view chat history'**
+  String get forwardCompatibleText;
+
+  /// No description provided for @forwardFailedMessageTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed messages cannot be forwarded!'**
+  String get forwardFailedMessageTip;
+
+  /// No description provided for @forwardSeparateLimitTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many messages selected, individual forwarding is not supported'**
+  String get forwardSeparateLimitTip;
+
+  /// No description provided for @deleteMessagesConfirmTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the selected messages?'**
+  String get deleteMessagesConfirmTip;
+
+  /// No description provided for @conversationListAtAll.
+  ///
+  /// In en, this message translates to:
+  /// **'[@All]'**
+  String get conversationListAtAll;
+
+  /// No description provided for @conversationListAtMe.
+  ///
+  /// In en, this message translates to:
+  /// **'[@Me]'**
+  String get conversationListAtMe;
+
+  /// No description provided for @messageInputAllMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get messageInputAllMembers;
+
+  /// No description provided for @selectMentionMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Members'**
+  String get selectMentionMember;
+
+  /// No description provided for @tapToRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to remove'**
+  String get tapToRemove;
+
+  /// No description provided for @messageTypeSecurityStrike.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive content involved'**
+  String get messageTypeSecurityStrike;
+
+  /// No description provided for @convertToText.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to Text'**
+  String get convertToText;
+
+  /// No description provided for @convertToTextFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to convert'**
+  String get convertToTextFailed;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @translate.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate'**
+  String get translate;
+
+  /// No description provided for @translateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to translate'**
+  String get translateFailed;
+
+  /// No description provided for @translateDefaultTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation powered by Tencent Cloud IM'**
+  String get translateDefaultTips;
+
+  /// No description provided for @translating.
+  ///
+  /// In en, this message translates to:
+  /// **'Translating...'**
+  String get translating;
+
+  /// No description provided for @translateTargetLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate Target Language'**
+  String get translateTargetLanguage;
+
+  /// No description provided for @translateLanguageZh.
+  ///
+  /// In en, this message translates to:
+  /// **'简体中文'**
+  String get translateLanguageZh;
+
+  /// No description provided for @translateLanguageZhTW.
+  ///
+  /// In en, this message translates to:
+  /// **'繁體中文'**
+  String get translateLanguageZhTW;
+
+  /// No description provided for @translateLanguageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get translateLanguageEn;
+
+  /// No description provided for @translateLanguageJa.
+  ///
+  /// In en, this message translates to:
+  /// **'日本語'**
+  String get translateLanguageJa;
+
+  /// No description provided for @translateLanguageKo.
+  ///
+  /// In en, this message translates to:
+  /// **'한국어'**
+  String get translateLanguageKo;
+
+  /// No description provided for @translateLanguageFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get translateLanguageFr;
+
+  /// No description provided for @translateLanguageEs.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get translateLanguageEs;
+
+  /// No description provided for @translateLanguageIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get translateLanguageIt;
+
+  /// No description provided for @translateLanguageDe.
+  ///
+  /// In en, this message translates to:
+  /// **'Deutsch'**
+  String get translateLanguageDe;
+
+  /// No description provided for @translateLanguageTr.
+  ///
+  /// In en, this message translates to:
+  /// **'Türkçe'**
+  String get translateLanguageTr;
+
+  /// No description provided for @translateLanguageRu.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский'**
+  String get translateLanguageRu;
+
+  /// No description provided for @translateLanguagePt.
+  ///
+  /// In en, this message translates to:
+  /// **'Português'**
+  String get translateLanguagePt;
+
+  /// No description provided for @translateLanguageVi.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiếng Việt'**
+  String get translateLanguageVi;
+
+  /// No description provided for @translateLanguageId.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Indonesia'**
+  String get translateLanguageId;
+
+  /// No description provided for @translateLanguageTh.
+  ///
+  /// In en, this message translates to:
+  /// **'ภาษาไทย'**
+  String get translateLanguageTh;
+
+  /// No description provided for @translateLanguageMs.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Melayu'**
+  String get translateLanguageMs;
+
+  /// No description provided for @translateLanguageHi.
+  ///
+  /// In en, this message translates to:
+  /// **'हिन्दी'**
+  String get translateLanguageHi;
 }
 
 class _AtomicLocalizationsDelegate

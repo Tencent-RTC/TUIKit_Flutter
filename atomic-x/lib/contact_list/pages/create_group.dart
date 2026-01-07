@@ -303,8 +303,8 @@ class _CreateGroupState extends State<CreateGroup> {
         groupType: _selectedGroupType,
         groupName: groupName,
         groupID: _groupIdController.text.trim(),
-        faceUrl: _selectedAvatarURL,
-        contactInfoList: widget.selectedMembers);
+        avatarURL: _selectedAvatarURL,
+        memberList: widget.selectedMembers);
     if (result.isSuccess) {
       await Future.delayed(const Duration(milliseconds: 200));
 

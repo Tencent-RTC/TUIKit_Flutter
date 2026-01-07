@@ -9,6 +9,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.trtc.tuikit.atomicx.albumpicker.interfaces.AlbumPickerListener
 import io.trtc.tuikit.atomicx.albumpicker.ui.picker.AlbumPickerActivity
+import io.trtc.tuikit.atomicx.basecomponent.theme.ThemeState
 import io.trtc.tuikit.atomicx.basecomponent.utils.ContextProvider
 import io.trtc.tuikit.atomicx.messageinput.utils.FileUtils
 import io.trtc.tuikit.atomicx.utils.LocaleUtils
@@ -43,7 +44,7 @@ class AlbumPickerHandler(
             val pickModeInt = call.argument<Int>("pickMode") ?: 1
             val maxCount = call.argument<Int>("maxCount") ?: 9
             val gridCount = call.argument<Int>("gridCount") ?: 4
-            val primaryColor = call.argument<Int>("primaryColor") ?: -1
+            val primaryColor = call.argument<String>("primaryColor")
             val languageCode = call.argument<String>("languageCode")
             val countryCode = call.argument<String>("countryCode")
             val scriptCode = call.argument<String>("scriptCode")
@@ -64,8 +65,12 @@ class AlbumPickerHandler(
                 pickMode = pickMode,
                 maxCount = maxCount,
                 gridCount = gridCount,
-                primaryColor = if (primaryColor != -1) primaryColor else -1,
             )
+
+            // 设置主题色
+            if (!primaryColor.isNullOrEmpty()) {
+                ThemeState.shared.setPrimaryColor(primaryColor)
+            }
 
             if (!languageCode.isNullOrEmpty()) {
                 setupLanguageCallback(languageCode, countryCode, scriptCode)

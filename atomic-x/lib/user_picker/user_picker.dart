@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import '../base_component/basic_controls/avatar.dart';
-import '../base_component/basic_controls/button.dart' as atomicx;
-import '../base_component/localizations/atomic_localizations.dart';
-import '../base_component/theme/color_scheme.dart';
-import '../base_component/theme/theme_state.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/button.dart' as atomicx;
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 
 class UserPickerData {
   final String key;
@@ -52,6 +51,9 @@ class UserPicker extends StatefulWidget {
   final bool showSelectedList;
   final VoidCallback? onReachEnd;
   final Function(List<UserPickerData>)? onConfirm;
+  
+  /// Optional widget to display at the top of the list (before the sorted items)
+  final Widget? headerWidget;
 
   const UserPicker({
     super.key,
@@ -66,6 +68,7 @@ class UserPicker extends StatefulWidget {
     this.showSelectedList = false,
     this.onReachEnd,
     this.maxCount,
+    this.headerWidget,
   });
 
   @override
@@ -117,6 +120,9 @@ class _UserPickerState extends State<UserPicker> {
   void _initItemList() {
     final List<SelectableItemModel> showList = [];
 
+    // Preserve currently selected items by key when dataSource updates
+    final previousSelectedKeys = _selectedItems.map((item) => item.key).toSet();
+    
     _selectedItems = [];
     final defaultKeys = widget.defaultSelectedItems ?? [];
     final lockedKeys = widget.lockedItems ?? [];
@@ -152,6 +158,12 @@ class _UserPickerState extends State<UserPicker> {
       showList.add(model);
 
       if ((item.isPreSelected || lockedKeys.contains(item.key)) &&
+          !_selectedItems.any((selected) => selected.key == item.key)) {
+        _selectedItems.add(item);
+      }
+      
+      // Restore previously selected items that exist in new dataSource
+      if (previousSelectedKeys.contains(item.key) &&
           !_selectedItems.any((selected) => selected.key == item.key)) {
         _selectedItems.add(item);
       }
@@ -314,9 +326,10 @@ class _UserPickerState extends State<UserPicker> {
       body: Column(
         children: [
           if (widget.showSelectedList) _buildSelectedListWidget(),
+          if (widget.headerWidget != null) widget.headerWidget!,
           Expanded(
             child: _itemList.isEmpty
-                ? Center()
+                ? const Center()
                 : AzListView(
                     data: _itemList,
                     itemCount: _itemList.length,

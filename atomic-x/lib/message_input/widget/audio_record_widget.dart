@@ -45,6 +45,7 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
   @override
   void dispose() {
     _shakeAnimationController.dispose();
+    _audioRecorder.cancelRecord();
     _audioRecorder.dispose();
     if (_pointerEventListener != null) {
       WidgetsBinding.instance.pointerRouter.removeGlobalRoute(_pointerEventListener!);
@@ -87,22 +88,36 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
   }
 
   Future<void> startRecord({required String filePath}) async {
-    await _audioRecorder.startRecord(filePath: filePath);
+    await _audioRecorder.startRecord(
+      filePath: filePath,
+      onComplete: (recordInfo) {
+        if (recordInfo != null) {
+          if (recordInfo.errorCode == AudioRecordResultCode.errorLessThanMinDuration && mounted) {
+            AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
+            Toast.warning(context, atomicLocalizations.sayTimeShort);
+          }
+          widget.onRecordFinish(recordInfo);
+        }
+      },
+    );
   }
 
-  Future<void> stopRecord() async {
-    final recordInfo = await _audioRecorder.stopRecord();
-    if (recordInfo != null) {
-      if (recordInfo.errorCode == AudioRecordCode.tooShort && mounted) {
-        AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
-        Toast.warning(context, atomicLocalizations.sayTimeShort);
-      }
-      widget.onRecordFinish(recordInfo);
-    }
+  void stopRecord() {
+    _audioRecorder.stopRecord();
   }
 
   Future<void> cancelRecord() async {
     await _audioRecorder.cancelRecord();
+  }
+
+  /// Reset recording state to initial values
+  void resetRecordingState() {
+    if (mounted) {
+      setState(() {
+        _recordingDuration = 0;
+        _recordingProgress = 0.0;
+      });
+    }
   }
 
   bool isPointerOverTrashIcon(Offset globalPosition) {

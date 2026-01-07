@@ -923,6 +923,9 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
   String get messageNum => '条';
 
   @override
+  String get draft => '[草稿]';
+
+  @override
   String get sendMessageFail => '发送失败';
 
   @override
@@ -998,6 +1001,187 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
   String peopleOnCall(Object number) {
     return '$number 人正在通话中';
   }
+
+  @override
+  String get messageReadDetail => '消息已读详情';
+
+  @override
+  String get groupReadBy => '已读';
+
+  @override
+  String get groupDeliveredTo => '未读';
+
+  @override
+  String get loadingMore => '加载更多...';
+
+  @override
+  String get unknownFile => '未知文件';
+
+  @override
+  String get messageReadReceipt => '消息阅读状态';
+
+  @override
+  String get messageReadReceiptEnabledDesc =>
+      '关闭后，您收发的消息均不带消息阅读状态，您将无法看到对方是否已读，同时对方也无法看到您是否已读。';
+
+  @override
+  String get messageReadReceiptDisabledDesc =>
+      '开启后，您在群聊中收发的消息均带有消息阅读状态，并且可以看到对方是否已读。与您单聊的好友若也开启了消息阅读状态，您与好友在单聊中收发的消息也将带有消息阅读状态。';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get markAsRead => '标为已读';
+
+  @override
+  String get markAsUnread => '标为未读';
+
+  @override
+  String get multiSelect => '多选';
+
+  @override
+  String get selectChat => '选择会话';
+
+  @override
+  String sendCount(int count) {
+    return '发送 ($count)';
+  }
+
+  @override
+  String selectedCount(int count) {
+    return '已选择 $count 条';
+  }
+
+  @override
+  String get forwardIndividually => '逐条转发';
+
+  @override
+  String get forwardMerged => '合并转发';
+
+  @override
+  String get groupChatHistory => '群聊的聊天记录';
+
+  @override
+  String c2cChatHistoryFormat(String name) {
+    return '$name的聊天记录';
+  }
+
+  @override
+  String chatHistoryForSomebodyFormat(String name1, String name2) {
+    return '$name1和$name2的聊天记录';
+  }
+
+  @override
+  String get recentChats => '最近聊天';
+
+  @override
+  String get forwardCompatibleText => '请升级到最新版本查看聊天记录';
+
+  @override
+  String get forwardFailedMessageTip => '发送失败消息不支持转发！';
+
+  @override
+  String get forwardSeparateLimitTip => '转发消息过多，暂不支持逐条转发';
+
+  @override
+  String get deleteMessagesConfirmTip => '确定删除已选消息？';
+
+  @override
+  String get conversationListAtAll => '[@所有人]';
+
+  @override
+  String get conversationListAtMe => '[有人@我]';
+
+  @override
+  String get messageInputAllMembers => '所有人';
+
+  @override
+  String get selectMentionMember => '选择提醒的人';
+
+  @override
+  String get tapToRemove => '点击移除';
+
+  @override
+  String get messageTypeSecurityStrike => '涉及敏感内容';
+
+  @override
+  String get convertToText => '转文字';
+
+  @override
+  String get convertToTextFailed => '转换失败';
+
+  @override
+  String get hide => '隐藏';
+
+  @override
+  String get copied => '已复制';
+
+  @override
+  String get translate => '翻译';
+
+  @override
+  String get translateFailed => '翻译失败';
+
+  @override
+  String get translateDefaultTips => '由腾讯云 IM 提供翻译支持';
+
+  @override
+  String get translating => '翻译中...';
+
+  @override
+  String get translateTargetLanguage => '翻译目标语言';
+
+  @override
+  String get translateLanguageZh => '简体中文';
+
+  @override
+  String get translateLanguageZhTW => '繁體中文';
+
+  @override
+  String get translateLanguageEn => 'English';
+
+  @override
+  String get translateLanguageJa => '日本語';
+
+  @override
+  String get translateLanguageKo => '한국어';
+
+  @override
+  String get translateLanguageFr => 'Français';
+
+  @override
+  String get translateLanguageEs => 'Español';
+
+  @override
+  String get translateLanguageIt => 'Italiano';
+
+  @override
+  String get translateLanguageDe => 'Deutsch';
+
+  @override
+  String get translateLanguageTr => 'Türkçe';
+
+  @override
+  String get translateLanguageRu => 'Русский';
+
+  @override
+  String get translateLanguagePt => 'Português';
+
+  @override
+  String get translateLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get translateLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get translateLanguageTh => 'ภาษาไทย';
+
+  @override
+  String get translateLanguageMs => 'Bahasa Melayu';
+
+  @override
+  String get translateLanguageHi => 'हिन्दी';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1919,6 +2103,9 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
   String get messageNum => '條';
 
   @override
+  String get draft => '[草稿]';
+
+  @override
   String get sendMessageFail => '發送失敗';
 
   @override
@@ -1994,4 +2181,185 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
   String peopleOnCall(Object number) {
     return '$number人正在通話中';
   }
+
+  @override
+  String get messageReadDetail => '訊息已讀詳情';
+
+  @override
+  String get groupReadBy => '已讀';
+
+  @override
+  String get groupDeliveredTo => '未讀';
+
+  @override
+  String get loadingMore => '載入更多...';
+
+  @override
+  String get unknownFile => '未知檔案';
+
+  @override
+  String get messageReadReceipt => '消息閱讀狀態';
+
+  @override
+  String get messageReadReceiptEnabledDesc =>
+      '關閉後，您收發的消息均不帶消息閱讀狀態，您將無法看到對方是否已讀，同時對方也無法看到您是否已讀。';
+
+  @override
+  String get messageReadReceiptDisabledDesc =>
+      '開啟後，您在群聊中收發的消息均帶有消息閱讀狀態，並且可以看到對方是否已讀。與您單聊的好友若也開啟了消息閱讀狀態，您與好友在單聊中收發的消息也將帶有消息閱讀狀態。';
+
+  @override
+  String get appearance => '外觀';
+
+  @override
+  String get markAsRead => '標為已讀';
+
+  @override
+  String get markAsUnread => '標為未讀';
+
+  @override
+  String get multiSelect => '多選';
+
+  @override
+  String get selectChat => '選擇會話';
+
+  @override
+  String sendCount(int count) {
+    return '發送 ($count)';
+  }
+
+  @override
+  String selectedCount(int count) {
+    return '已選擇 $count 條';
+  }
+
+  @override
+  String get forwardIndividually => '逐條轉發';
+
+  @override
+  String get forwardMerged => '合併轉發';
+
+  @override
+  String get groupChatHistory => '群聊的聊天記錄';
+
+  @override
+  String c2cChatHistoryFormat(String name) {
+    return '$name的聊天記錄';
+  }
+
+  @override
+  String chatHistoryForSomebodyFormat(String name1, String name2) {
+    return '$name1和$name2的聊天記錄';
+  }
+
+  @override
+  String get recentChats => '最近聊天';
+
+  @override
+  String get forwardCompatibleText => '請升級到最新版本查看聊天記錄';
+
+  @override
+  String get forwardFailedMessageTip => '發送失敗訊息不支援轉發！';
+
+  @override
+  String get forwardSeparateLimitTip => '轉發訊息過多，暫不支援逐條轉發';
+
+  @override
+  String get deleteMessagesConfirmTip => '確定刪除已選消息？';
+
+  @override
+  String get conversationListAtAll => '[@所有人]';
+
+  @override
+  String get conversationListAtMe => '[有人@我]';
+
+  @override
+  String get messageInputAllMembers => '所有人';
+
+  @override
+  String get selectMentionMember => '選擇提醒的人';
+
+  @override
+  String get tapToRemove => '點擊移除';
+
+  @override
+  String get messageTypeSecurityStrike => '涉及敏感內容';
+
+  @override
+  String get convertToText => '轉文字';
+
+  @override
+  String get convertToTextFailed => '轉換失敗';
+
+  @override
+  String get hide => '隱藏';
+
+  @override
+  String get copied => '已複製';
+
+  @override
+  String get translate => '翻譯';
+
+  @override
+  String get translateFailed => '翻譯失敗';
+
+  @override
+  String get translateDefaultTips => '由騰訊雲 IM 提供翻譯支持';
+
+  @override
+  String get translating => '翻譯中...';
+
+  @override
+  String get translateTargetLanguage => '翻譯目標語言';
+
+  @override
+  String get translateLanguageZh => '简体中文';
+
+  @override
+  String get translateLanguageZhTW => '繁體中文';
+
+  @override
+  String get translateLanguageEn => 'English';
+
+  @override
+  String get translateLanguageJa => '日本語';
+
+  @override
+  String get translateLanguageKo => '한국어';
+
+  @override
+  String get translateLanguageFr => 'Français';
+
+  @override
+  String get translateLanguageEs => 'Español';
+
+  @override
+  String get translateLanguageIt => 'Italiano';
+
+  @override
+  String get translateLanguageDe => 'Deutsch';
+
+  @override
+  String get translateLanguageTr => 'Türkçe';
+
+  @override
+  String get translateLanguageRu => 'Русский';
+
+  @override
+  String get translateLanguagePt => 'Português';
+
+  @override
+  String get translateLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get translateLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get translateLanguageTh => 'ภาษาไทย';
+
+  @override
+  String get translateLanguageMs => 'Bahasa Melayu';
+
+  @override
+  String get translateLanguageHi => 'हिन्दी';
 }

@@ -1,12 +1,11 @@
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
-import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
-import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../../base_component/basic_controls/avatar.dart';
-import '../../base_component/utils/tui_event_bus.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
+import 'package:tuikit_atomic_x/base_component/utils/tui_event_bus.dart';
 
 class JoinInGroupCallWidget extends StatefulWidget {
   final List<String> userIDs;
@@ -183,8 +182,7 @@ class _JoinInGroupCallWidgetState extends State<JoinInGroupCallWidget> {
   _joinInGroupCallAction() {
     PublishParams params = PublishParams();
     params.isSticky = false;
-    params.data = {
-      "callId": widget.callId};
+    params.data = {"callId": widget.callId};
     TUIEventBus.shared.publish("call.startJoin", null, params);
   }
 

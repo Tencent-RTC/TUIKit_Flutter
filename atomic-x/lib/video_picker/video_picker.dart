@@ -28,21 +28,14 @@ class VideoPickerModel {
 class VideoPickerConfig {
   final int? maxCount;
   final int? gridCount;
-  final Color? primaryColor;
-  final Locale? locale;
 
   const VideoPickerConfig({
     this.maxCount,
     this.gridCount,
-    this.primaryColor,
-    this.locale,
   });
 }
 
 class VideoPicker {
-  static const int defaultMaxCount = 9;
-  static const int defaultGridCount = 4;
-
   static final VideoPicker instance = VideoPicker._internal();
 
   VideoPicker._internal();
@@ -57,10 +50,8 @@ class VideoPicker {
         context: context,
         config: AlbumPickerConfig(
           pickMode: PickMode.video,
-          maxCount: config?.maxCount ?? defaultMaxCount,
-          gridCount: config?.gridCount ?? defaultGridCount,
-          primaryColor: config?.primaryColor,
-          locale: config?.locale,
+          maxCount: config?.maxCount,
+          gridCount: config?.gridCount,
         ),
         onProgress: (albumModel, index, progress) {
           // 只处理视频类型

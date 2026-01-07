@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="video_recorder_common_text_size">15sp</dimen>
+    <dimen name="video_recorder_common_tab_text_size">16sp</dimen>
+    <dimen name="dialog_min_width">320dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
+</resources>

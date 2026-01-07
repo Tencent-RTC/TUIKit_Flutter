@@ -1,84 +1,133 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:just_audio/just_audio.dart' as just_audio;
+import 'audio_player_platform.dart';
+
+/// Audio player listener interface
+abstract class AudioPlayerListener {
+  void onPlay() {}
+  void onPause() {}
+  void onResume() {}
+  void onProgressUpdate(int currentPosition, int duration) {}
+  void onCompletion() {}
+  void onError(String errorMessage) {}
+}
 
 class AudioPlayer {
-  final _player = just_audio.AudioPlayer();
-  
   String? _currentPath;
-
-  VoidCallback? _onComplete;
-
+  AudioPlayerListener? _listener;
   bool _isPaused = false;
-  
-  bool get isPlaying => _player.playing;
+  bool _isPlaying = false;
+  int _currentPosition = 0;
+  int _duration = 0;
 
+  bool get isPlaying => _isPlaying;
   bool get isPaused => _isPaused;
-  
-  Stream<Duration> get positionStream => _player.positionStream;
-  
-  Stream<just_audio.PlayerState> get playerStateStream => _player.playerStateStream;
-  
+
   AudioPlayer._();
-  
+
   static AudioPlayer createInstance() {
     return AudioPlayer._();
   }
-  
-  Future<void> play(String filePath, {VoidCallback? onComplete}) async {
+
+  /// Set listener for audio player events
+  AudioPlayer setListener(AudioPlayerListener? listener) {
+    _listener = listener;
+    return this;
+  }
+
+  Future<void> play(String filePath) async {
     try {
       _isPaused = false;
-      if (_currentPath == filePath && isPlaying) {
+      if (_currentPath == filePath && _isPlaying) {
         await stop();
         return;
       }
-      
-      if (isPlaying) {
+
+      if (_isPlaying) {
         await stop();
       }
-      
-      _onComplete = onComplete;
+
       _currentPath = filePath;
 
-      await _player.setFilePath(filePath);
-      
-      _player.playerStateStream.listen((state) {
-        if (state.processingState == just_audio.ProcessingState.completed) {
-          _onComplete?.call();
-        }
-      });
-      
-      await _player.play();
+      // Use native implementation on mobile platforms
+      if (Platform.isAndroid || Platform.isIOS) {
+        await AudioPlayerPlatform.play(
+          filePath: filePath,
+          onComplete: () {
+            _isPlaying = false;
+            _isPaused = false;
+            _listener?.onCompletion();
+          },
+          onProgressUpdate: (currentPosition, duration) {
+            _currentPosition = currentPosition;
+            _duration = duration;
+            _listener?.onProgressUpdate(currentPosition, duration);
+          },
+          onPlay: () {
+            _isPlaying = true;
+            _isPaused = false;
+            _listener?.onPlay();
+          },
+          onPause: () {
+            _isPlaying = false;
+            _isPaused = true;
+            _listener?.onPause();
+          },
+          onResume: () {
+            _isPlaying = true;
+            _isPaused = false;
+            _listener?.onResume();
+          },
+          onError: (errorMessage) {
+            debugPrint('AudioPlayer error: $errorMessage');
+            _isPlaying = false;
+            _isPaused = false;
+            _listener?.onError(errorMessage);
+          },
+        );
+      } else {
+        throw UnsupportedError('AudioPlayer only supports Android and iOS');
+      }
     } catch (e) {
       debugPrint('play failed: $e');
       rethrow;
     }
   }
-  
+
   Future<void> pause() async {
+    if (!_isPlaying) return;
     _isPaused = true;
-    await _player.pause();
+    _isPlaying = false;
+    await AudioPlayerPlatform.pause();
   }
 
   Future<void> resume() async {
+    if (!_isPaused) return;
     _isPaused = false;
+    _isPlaying = true;
+    await AudioPlayerPlatform.resume();
   }
 
   Future<void> stop() async {
-    await _player.stop();
+    await AudioPlayerPlatform.stop();
     _currentPath = null;
+    _isPlaying = false;
+    _isPaused = false;
+    _currentPosition = 0;
+    _duration = 0;
   }
 
   int getCurrentPosition() {
-    return _player.position.inMilliseconds;
+    return _currentPosition;
   }
 
   int getDuration() {
-    return _player.duration?.inMilliseconds ?? 0;
-  }
-  
-  Future<void> dispose() async {
-    await _player.dispose();
+    return _duration;
   }
 
+  Future<void> dispose() async {
+    await AudioPlayerPlatform.dispose();
+    _listener = null;
+  }
 } 

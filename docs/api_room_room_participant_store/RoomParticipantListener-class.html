@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the RoomParticipantListener class from the room_participant_store library, for the Dart programming language.">
+  <title>RoomParticipantListener class - room_participant_store library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">atomic_x_core</a></li>
+    <li><a href="../api_room_room_participant_store/api_room_room_participant_store-library.html">api&#47;room&#47;room_participant_store.dart</a></li>
+    <li class="self-crumb">RoomParticipantListener class</li>
+  </ol>
+  <div class="self-name">RoomParticipantListener</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="api_room_room_participant_store&#47;api_room_room_participant_store-library-sidebar.html"
+    data-below-sidebar="api_room_room_participant_store&#47;RoomParticipantListener-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">RoomParticipantListener</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Participant event callback</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="RoomParticipantListener" class="callable">
+          <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/RoomParticipantListener.html">RoomParticipantListener</a></span><span class="signature">({<span class="parameter" id="-param-onParticipantJoined"><span class="type-annotation">void</span> <span class="parameter-name">onParticipantJoined</span>(<span class="parameter" id="param-participant"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">participant</span></span>)?, </span><span class="parameter" id="-param-onParticipantLeft"><span class="type-annotation">void</span> <span class="parameter-name">onParticipantLeft</span>(<span class="parameter" id="param-participant"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">participant</span></span>)?, </span><span class="parameter" id="-param-onOwnerChanged"><span class="type-annotation">void</span> <span class="parameter-name">onOwnerChanged</span>(<span class="parameter" id="param-newOwner"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">newOwner</span>, </span><span class="parameter" id="param-oldOwner"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">oldOwner</span></span>)?, </span><span class="parameter" id="-param-onAdminSet"><span class="type-annotation">void</span> <span class="parameter-name">onAdminSet</span>(<span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span>)?, </span><span class="parameter" id="-param-onAdminRevoked"><span class="type-annotation">void</span> <span class="parameter-name">onAdminRevoked</span>(<span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span>)?, </span><span class="parameter" id="-param-onKickedFromRoom"><span class="type-annotation">void</span> <span class="parameter-name">onKickedFromRoom</span>(<span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_room_room_participant_store/KickedOutOfRoomReason.html">KickedOutOfRoomReason</a></span> <span class="parameter-name">reason</span>, </span><span class="parameter" id="param-message"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">message</span></span>)?, </span><span class="parameter" id="-param-onParticipantDeviceClosed"><span class="type-annotation">void</span> <span class="parameter-name">onParticipantDeviceClosed</span>(<span class="parameter" id="param-device"><span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onUserMessageDisabled"><span class="type-annotation">void</span> <span class="parameter-name">onUserMessageDisabled</span>(<span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onAllDevicesDisabled"><span class="type-annotation">void</span> <span class="parameter-name">onAllDevicesDisabled</span>(<span class="parameter" id="param-device"><span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onAllMessagesDisabled"><span class="type-annotation">void</span> <span class="parameter-name">onAllMessagesDisabled</span>(<span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestReceived"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestReceived</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestCancelled"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestCancelled</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestTimeout</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestApproved"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestApproved</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestRejected"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestRejected</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onDeviceRequestProcessed"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceRequestProcessed</span>(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onDeviceInvitationReceived"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceInvitationReceived</span>(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)?, </span><span class="parameter" id="-param-onDeviceInvitationCancelled"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceInvitationCancelled</span>(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)?, </span><span class="parameter" id="-param-onDeviceInvitationTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceInvitationTimeout</span>(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)?, </span><span class="parameter" id="-param-onDeviceInvitationAccepted"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceInvitationAccepted</span>(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?, </span><span class="parameter" id="-param-onDeviceInvitationDeclined"><span class="type-annotation">void</span> <span class="parameter-name">onDeviceInvitationDeclined</span>(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)?</span>})</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="onAdminRevoked" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onAdminRevoked.html">onAdminRevoked</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when an admin is revoked.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onAdminSet" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onAdminSet.html">onAdminSet</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when an admin is set.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onAllDevicesDisabled" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onAllDevicesDisabled.html">onAllDevicesDisabled</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-device"><span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when all devices are disabled.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onAllMessagesDisabled" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onAllMessagesDisabled.html">onAllMessagesDisabled</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when all users are muted.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceInvitationAccepted" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceInvitationAccepted.html">onDeviceInvitationAccepted</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device invitation is accepted.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceInvitationCancelled" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceInvitationCancelled.html">onDeviceInvitationCancelled</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device invitation is cancelled.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceInvitationDeclined" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceInvitationDeclined.html">onDeviceInvitationDeclined</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device invitation is declined.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceInvitationReceived" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceInvitationReceived.html">onDeviceInvitationReceived</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device invitation is received.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceInvitationTimeout" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceInvitationTimeout.html">onDeviceInvitationTimeout</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-invitation"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">invitation</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device invitation times out.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestApproved" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestApproved.html">onDeviceRequestApproved</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request is approved.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestCancelled" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestCancelled.html">onDeviceRequestCancelled</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request is cancelled.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestProcessed" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestProcessed.html">onDeviceRequestProcessed</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request is processed.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestReceived" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestReceived.html">onDeviceRequestReceived</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request is received.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestRejected" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestRejected.html">onDeviceRequestRejected</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request is rejected.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onDeviceRequestTimeout" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onDeviceRequestTimeout.html">onDeviceRequestTimeout</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></span> <span class="parameter-name">request</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a device request times out.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onKickedFromRoom" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onKickedFromRoom.html">onKickedFromRoom</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_room_room_participant_store/KickedOutOfRoomReason.html">KickedOutOfRoomReason</a></span> <span class="parameter-name">reason</span>, </span><span class="parameter" id="param-message"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">message</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when kicked from the room.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onOwnerChanged" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onOwnerChanged.html">onOwnerChanged</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-newOwner"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">newOwner</span>, </span><span class="parameter" id="param-oldOwner"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">oldOwner</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when the owner changes.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onParticipantDeviceClosed" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onParticipantDeviceClosed.html">onParticipantDeviceClosed</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-device"><span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a participant's device is closed.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onParticipantJoined" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onParticipantJoined.html">onParticipantJoined</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-participant"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">participant</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a participant joins the room.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onParticipantLeft" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onParticipantLeft.html">onParticipantLeft</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-participant"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">participant</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a participant leaves the room.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="onUserMessageDisabled" class="property">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantListener/onUserMessageDisabled.html">onUserMessageDisabled</a></span>
+  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-disable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span>, </span><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span>)</span>?</span>
+  
+
+</dt>
+<dd>
+  Triggered when a user is muted.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">atomic_x_core</a></li>
+    <li><a href="../api_room_room_participant_store/api_room_room_participant_store-library.html">room_participant_store</a></li>
+    <li class="self-crumb">RoomParticipantListener class</li>
+</ol>
+
+    <h5>room_participant_store library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    atomic_x_core
+      3.6.2
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

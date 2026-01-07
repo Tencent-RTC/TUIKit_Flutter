@@ -9,6 +9,8 @@ import 'package:tuikit_atomic_x/call/common/constants.dart';
 import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:tuikit_atomic_x/call/common/utils/utils.dart';
 
+import '../../common/call_colors.dart';
+
 class MultiCallStreamWidget extends StatefulWidget {
   final List<CallFeature> disableFeatures;
 
@@ -101,7 +103,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
           Text(
             CallKit_t("invitedToGroupCall"),
             textScaleFactor: 1.0,
-            style: const TextStyle(fontSize: 18, color: Colors.white),
+            style: const TextStyle(fontSize: 18, color: CallColors.colorG5),
           ),
           const SizedBox(
             height: 50,
@@ -140,7 +142,7 @@ class _MultiCallStreamWidgetState extends State<MultiCallStreamWidget> {
               Text(
                 CallKit_t("theyAreAlsoThere"),
                 textScaleFactor: 1.0,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: CallColors.colorG7),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -278,7 +280,7 @@ class _CallerInfoWidgetState extends State<_CallerInfoWidget> {
           child: Text(
             displayName,
             textScaleFactor: 1.0,
-            style: const TextStyle(fontSize: 24, color: Colors.white),
+            style: const TextStyle(fontSize: 24, color: CallColors.colorG7,),
           ),
         ),
       ],

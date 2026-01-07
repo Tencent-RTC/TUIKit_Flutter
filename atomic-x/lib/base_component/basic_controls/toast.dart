@@ -271,34 +271,40 @@ class SimpleToast extends StatelessWidget {
 class Toast {
   static Toast? _instance;
   static Toast get instance => _instance ??= Toast._();
-  
+
   Toast._();
 
   OverlayEntry? _overlayEntry;
   Timer? _hideTimer;
 
-  static void success(BuildContext context, String message, {Duration duration = const Duration(seconds: 2)}) {
-    instance._showToast(context, message, ToastType.success, duration);
+  static void success(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2), bool useRootOverlay = false}) {
+    instance._showToast(context, message, ToastType.success, duration, useRootOverlay);
   }
 
-  static void info(BuildContext context, String message, {Duration duration = const Duration(seconds: 2)}) {
-    instance._showToast(context, message, ToastType.info, duration);
+  static void info(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2), bool useRootOverlay = false}) {
+    instance._showToast(context, message, ToastType.info, duration, useRootOverlay);
   }
 
-  static void warning(BuildContext context, String message, {Duration duration = const Duration(seconds: 2)}) {
-    instance._showToast(context, message, ToastType.warning, duration);
+  static void warning(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2), bool useRootOverlay = false}) {
+    instance._showToast(context, message, ToastType.warning, duration, useRootOverlay);
   }
 
-  static void error(BuildContext context, String message, {Duration duration = const Duration(seconds: 2)}) {
-    instance._showToast(context, message, ToastType.error, duration);
+  static void error(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2), bool useRootOverlay = false}) {
+    instance._showToast(context, message, ToastType.error, duration, useRootOverlay);
   }
 
-  static void loading(BuildContext context, String message, {Duration duration = const Duration(seconds: 3)}) {
-    instance._showToast(context, message, ToastType.loading, duration);
+  static void loading(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 3), bool useRootOverlay = false}) {
+    instance._showToast(context, message, ToastType.loading, duration, useRootOverlay);
   }
 
-  static void simple(BuildContext context, String message, {Duration duration = const Duration(seconds: 2)}) {
-    instance._showSimpleToast(context, message, duration);
+  static void simple(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2), bool useRootOverlay = false}) {
+    instance._showSimpleToast(context, message, duration, useRootOverlay);
   }
 
   static void show(
@@ -306,15 +312,16 @@ class Toast {
     String message, {
     ToastType type = ToastType.info,
     Duration duration = const Duration(seconds: 2),
+    bool useRootOverlay = false,
   }) {
-    instance._showToast(context, message, type, duration);
+    instance._showToast(context, message, type, duration, useRootOverlay);
   }
 
   static void hide() {
     instance._hide();
   }
 
-  void _showToast(BuildContext context, String message, ToastType type, Duration duration) {
+  void _showToast(BuildContext context, String message, ToastType type, Duration duration, bool useRootOverlay) {
     _hide();
 
     _overlayEntry = OverlayEntry(
@@ -327,9 +334,9 @@ class Toast {
     );
 
     try {
-      final overlay = Overlay.of(context);
+      final overlay = Overlay.of(context, rootOverlay: useRootOverlay);
       overlay.insert(_overlayEntry!);
-      
+
       _hideTimer?.cancel();
       _hideTimer = Timer(duration, _hide);
     } catch (e) {
@@ -338,7 +345,7 @@ class Toast {
     }
   }
 
-  void _showSimpleToast(BuildContext context, String message, Duration duration) {
+  void _showSimpleToast(BuildContext context, String message, Duration duration, bool useRootOverlay) {
     _hide();
 
     _overlayEntry = OverlayEntry(
@@ -350,15 +357,15 @@ class Toast {
     );
 
     try {
-      final overlay = Overlay.of(context);
+      final overlay = Overlay.of(context, rootOverlay: useRootOverlay);
       overlay.insert(_overlayEntry!);
-      
+
       _hideTimer?.cancel();
       _hideTimer = Timer(duration, _hide);
     } catch (e) {
       print('Toast: Failed to show toast - $e');
       _overlayEntry = null;
-      
+
       _showToastFallback(context, message, duration);
     }
   }
@@ -383,7 +390,7 @@ class Toast {
   void _hide() {
     _hideTimer?.cancel();
     _hideTimer = null;
-    
+
     if (_overlayEntry != null) {
       try {
         _overlayEntry!.remove();

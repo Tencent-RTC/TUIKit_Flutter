@@ -23,6 +23,7 @@ class PermissionHandler(
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 9527
+        private const val OVERLAY_PERMISSION_REQUEST_CODE = 9528
         
         // Permission identifiers from Dart
         private const val PERMISSION_CAMERA = "camera"
@@ -30,12 +31,15 @@ class PermissionHandler(
         private const val PERMISSION_PHOTOS = "photos"
         private const val PERMISSION_STORAGE = "storage"
         private const val PERMISSION_NOTIFICATION = "notification"
+        private const val PERMISSION_SYSTEM_ALERT_WINDOW = "systemAlertWindow"
+        private const val PERMISSION_DISPLAY_OVER_OTHER_APPS = "displayOverOtherApps"
     }
 
     private var activity: Activity? = null
     private var pendingResult: MethodChannel.Result? = null
     private var requestedPermissionTypes: List<String>? = null
     private var requestedAndroidPermissions: List<String>? = null
+    private var pendingOverlayPermissionTypes: List<String>? = null
 
     fun setActivity(activity: Activity?) {
         this.activity = activity
@@ -86,6 +90,10 @@ class PermissionHandler(
                     }
                     // Android <13: Notifications don't require runtime permission
                 }
+                PERMISSION_SYSTEM_ALERT_WINDOW, PERMISSION_DISPLAY_OVER_OTHER_APPS -> {
+                    // These permissions are handled separately via Settings.canDrawOverlays()
+                    // Don't add to androidPermissions list
+                }
             }
         }
         
@@ -111,47 +119,34 @@ class PermissionHandler(
     }
 
     /**
-     * Check if all Android permissions for a permission type are granted
+     * Check if overlay/system alert window permission is granted
      */
-    private fun checkPermissionType(permissionType: String): Boolean {
-        val androidPermissions = convertToAndroidPermissions(listOf(permissionType))
-        if (androidPermissions.isEmpty()) {
-            // No runtime permission needed (e.g., notification on Android <13)
-            return true
+    private fun canDrawOverlays(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val context = activity ?: pluginBinding.applicationContext
+            return Settings.canDrawOverlays(context)
         }
-        
-        val context = activity ?: pluginBinding.applicationContext
-        return androidPermissions.all { permission ->
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-        }
+        // Below Android M, this permission is granted by default
+        return true
     }
 
     /**
-     * Check if a specific Android permission is permanently denied
-     * Note: We need to check if the permission was requested before
+     * Check if permission type is overlay permission
      */
-    private fun isPermissionPermanentlyDenied(permission: String): Boolean {
-        val currentActivity = activity ?: return false
-        val context = currentActivity
-        
-        // If permission is granted, it's not permanently denied
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-        
-        // If shouldShowRequestPermissionRationale returns true, user can still be asked
-        // If it returns false AND permission is not granted, it could be:
-        // 1. First time asking (never requested before) - NOT permanently denied
-        // 2. User selected "Don't ask again" - IS permanently denied
-        // We can't distinguish these cases perfectly, but we assume if this is called
-        // after a request, it's case 2
-        return !ActivityCompat.shouldShowRequestPermissionRationale(currentActivity, permission)
+    private fun isOverlayPermission(permissionType: String): Boolean {
+        return permissionType == PERMISSION_SYSTEM_ALERT_WINDOW || 
+               permissionType == PERMISSION_DISPLAY_OVER_OTHER_APPS
     }
 
     /**
      * Get the status of a permission type
      */
     private fun getPermissionTypeStatus(permissionType: String): String {
+        // Handle overlay permissions separately
+        if (isOverlayPermission(permissionType)) {
+            return if (canDrawOverlays()) "granted" else "denied"
+        }
+        
         val androidPermissions = convertToAndroidPermissions(listOf(permissionType))
         if (androidPermissions.isEmpty()) {
             // No runtime permission needed
@@ -208,24 +203,123 @@ class PermissionHandler(
             return
         }
 
-        val androidPermissions = convertToAndroidPermissions(permissionTypes)
+        // Separate overlay permissions from regular permissions
+        val (overlayPermissions, regularPermissions) = permissionTypes.partition { isOverlayPermission(it) }
         
-        if (androidPermissions.isEmpty()) {
+        // If only overlay permissions, handle them directly
+        if (regularPermissions.isEmpty() && overlayPermissions.isNotEmpty()) {
+            requestOverlayPermission(overlayPermissions, result)
+            return
+        }
+        
+        val androidPermissions = convertToAndroidPermissions(regularPermissions)
+        
+        if (androidPermissions.isEmpty() && overlayPermissions.isEmpty()) {
             // No runtime permission needed, return granted for all
             val resultMap = permissionTypes.associateWith { "granted" }
             result.success(resultMap)
             return
         }
 
-        requestedPermissionTypes = permissionTypes
+        // If we have overlay permissions, we need to handle them after regular permissions
+        if (overlayPermissions.isNotEmpty()) {
+            pendingOverlayPermissionTypes = overlayPermissions
+        }
+        
+        requestedPermissionTypes = regularPermissions
         requestedAndroidPermissions = androidPermissions
         pendingResult = result
         
-        ActivityCompat.requestPermissions(
-            currentActivity,
-            androidPermissions.toTypedArray(),
-            PERMISSION_REQUEST_CODE
-        )
+        if (androidPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                currentActivity,
+                androidPermissions.toTypedArray(),
+                PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Only overlay permissions left
+            requestOverlayPermission(overlayPermissions, result)
+        }
+    }
+    
+    /**
+     * Request overlay permission by opening system settings
+     */
+    private fun requestOverlayPermission(overlayPermissions: List<String>, result: MethodChannel.Result) {
+        val currentActivity = activity
+        if (currentActivity == null) {
+            result.error("NO_ACTIVITY", "Activity is not available", null)
+            return
+        }
+        
+        // Check if already granted or if below Android M
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(currentActivity)) {
+            val resultMap = overlayPermissions.associateWith { "granted" }
+            result.success(resultMap)
+            return
+        }
+        
+        // Need to request permission
+        try {
+            pendingOverlayPermissionTypes = overlayPermissions
+            pendingResult = result
+            
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${currentActivity.packageName}")
+            )
+            currentActivity.startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
+        } catch (e: Exception) {
+            // If opening settings fails, return denied status
+            val resultMap = overlayPermissions.associateWith { "denied" }
+            result.success(resultMap)
+            clearPendingRequest()
+        }
+    }
+    
+    /**
+     * Handle overlay permission result when user returns from settings
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (requestCode != OVERLAY_PERMISSION_REQUEST_CODE) {
+            return false
+        }
+        
+        val result = pendingResult ?: return false
+        val overlayPermissions = pendingOverlayPermissionTypes
+        
+        if (overlayPermissions.isNullOrEmpty()) {
+            result.error("INTERNAL_ERROR", "No pending overlay permission request", null)
+            clearPendingRequest()
+            return true
+        }
+        
+        // Build result map
+        val resultMap = buildResultMap(requestedPermissionTypes ?: emptyList(), overlayPermissions)
+        
+        result.success(resultMap)
+        clearPendingRequest()
+        return true
+    }
+    
+    /**
+     * Build result map for both regular and overlay permissions
+     */
+    private fun buildResultMap(regularPermissions: List<String>, overlayPermissions: List<String>): Map<String, String> {
+        val resultMap = mutableMapOf<String, String>()
+        
+        // Add regular permissions status
+        for (permissionType in regularPermissions) {
+            resultMap[permissionType] = getPermissionTypeStatus(permissionType)
+        }
+        
+        // Add overlay permissions status
+        val overlayStatus = if (canDrawOverlays()) "granted" else "denied"
+        for (permissionType in overlayPermissions) {
+            resultMap[permissionType] = overlayStatus
+        }
+        
+        return resultMap
     }
 
     fun openAppSettings(): Boolean {
@@ -257,22 +351,71 @@ class PermissionHandler(
 
         val result = pendingResult ?: return false
         val permissionTypes = requestedPermissionTypes
+        val overlayPermissions = pendingOverlayPermissionTypes
 
-        if (permissionTypes == null || permissionTypes.isEmpty()) {
+        if (permissionTypes.isNullOrEmpty()) {
             result.error("INTERNAL_ERROR", "No pending permission request", null)
             clearPendingRequest()
             return true
         }
 
-        // Build result map based on permission types
-        val resultMap = mutableMapOf<String, String>()
-        for (permissionType in permissionTypes) {
-            resultMap[permissionType] = getPermissionTypeStatus(permissionType)
+        // If we have pending overlay permissions, request them now
+        if (!overlayPermissions.isNullOrEmpty()) {
+            requestOverlayPermissionAfterRegular(permissionTypes, overlayPermissions, result)
+            return true
         }
+
+        // Build result map based on permission types
+        val resultMap = permissionTypes.associateWith { getPermissionTypeStatus(it) }
         
         result.success(resultMap)
         clearPendingRequest()
         return true
+    }
+    
+    /**
+     * Request overlay permission after regular permissions are handled
+     */
+    private fun requestOverlayPermissionAfterRegular(
+        regularPermissions: List<String>,
+        overlayPermissions: List<String>,
+        result: MethodChannel.Result
+    ) {
+        val currentActivity = activity
+        if (currentActivity == null) {
+            // Merge results and return
+            val resultMap = buildResultMap(regularPermissions, overlayPermissions)
+            result.success(resultMap)
+            clearPendingRequest()
+            return
+        }
+        
+        // Check if already granted or below Android M
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(currentActivity)) {
+            val resultMap = buildResultMap(regularPermissions, overlayPermissions)
+            result.success(resultMap)
+            clearPendingRequest()
+            return
+        }
+        
+        // Need to request overlay permission
+        try {
+            // Store regular results
+            requestedPermissionTypes = regularPermissions
+            pendingOverlayPermissionTypes = overlayPermissions
+            pendingResult = result
+            
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${currentActivity.packageName}")
+            )
+            currentActivity.startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
+        } catch (e: Exception) {
+            // Merge results and return
+            val resultMap = buildResultMap(regularPermissions, overlayPermissions)
+            result.success(resultMap)
+            clearPendingRequest()
+        }
     }
 
     fun dispose() {
@@ -283,5 +426,6 @@ class PermissionHandler(
         pendingResult = null
         requestedPermissionTypes = null
         requestedAndroidPermissions = null
+        pendingOverlayPermissionTypes = null
     }
 }

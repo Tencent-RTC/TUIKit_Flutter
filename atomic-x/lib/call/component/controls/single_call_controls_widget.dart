@@ -5,6 +5,8 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 
+import '../../common/call_colors.dart';
+
 typedef _ViewBuilder = Widget Function();
 
 class SingleCallControlsWidget extends StatelessWidget {
@@ -189,7 +191,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       isDisabled: _isWidgetDisabled(CallFeature.accept),
       imgUrl: "call_assets/dialing.png",
       tips: CallKit_t("accept"),
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
         CallStore.shared.accept();
@@ -202,7 +204,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       tips: CallKit_t("hangUp"),
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
         CallStore.shared.hangup();
@@ -215,7 +217,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       tips: CallKit_t("hangUp"),
-      textColor: Colors.white,
+      textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
         CallStore.shared.reject();
@@ -309,6 +311,6 @@ class SingleCallControlsWidget extends StatelessWidget {
   }
 
   Color _getTextColor() {
-    return Colors.white;
+    return CallColors.colorG7;
   }
 }

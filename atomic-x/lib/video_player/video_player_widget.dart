@@ -1,32 +1,24 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart' as video_player;
+import 'inline_video_player.dart';
+import 'video_player.dart';
 
-class VideoData {
-  final String? localPath;
-  final String? url;
-  final String? snapshotLocalPath;
-  final String? snapshotUrl;
-  final int duration;
-  final int width;
-  final int height;
-
-  VideoData({
-    this.localPath,
-    this.url,
-    this.snapshotLocalPath,
-    this.snapshotUrl,
-    this.duration = 0,
-    this.width = 0,
-    this.height = 0,
-  });
-}
-
+/// Full-screen video player widget with controls
+/// 
+/// This widget uses InlineVideoPlayer with Flutter controls overlay,
+/// thumbnail support, and back button.
 class VideoPlayerWidget extends StatefulWidget {
   final VideoData video;
+  final VoidCallback? onClose;
+  /// Whether to show the close button (default: true)
+  final bool showCloseButton;
 
   const VideoPlayerWidget({
     super.key,
     required this.video,
+    this.onClose,
+    this.showCloseButton = true,
   });
 
   @override
@@ -34,71 +26,97 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  video_player.VideoPlayerController? _controller;
-  bool _isInitialized = false;
-  bool _isLoading = true;
-  bool _isPlaying = false;
-  Duration _currentPosition = Duration.zero;
-  Duration _totalDuration = Duration.zero;
+  late InlineVideoPlayerController _controller;
+  bool _showControls = true;
+  bool _showThumbnail = true;
+  Timer? _hideControlsTimer;
 
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
-  }
-
-  Future<void> _initializeVideo() async {
-    try {
-      final videoPath = widget.video.localPath ?? widget.video.url;
-      if (videoPath == null) {
-        throw Exception('No video path available');
-      }
-
-      _controller = video_player.VideoPlayerController.network(videoPath);
-      await _controller!.initialize();
-      
-      _totalDuration = _controller!.value.duration;
-      
-      _controller!.addListener(_videoListener);
-      
-      if (mounted) {
-        setState(() {
-          _isInitialized = true;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      debugPrint('initialize failed: $e');
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _videoListener() {
-    if (mounted) {
-      setState(() {
-        _currentPosition = _controller!.value.position;
-        _isPlaying = _controller!.value.isPlaying;
-      });
-    }
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return hours == '00' ? '$minutes:$seconds' : '$hours:$minutes:$seconds';
+    _controller = InlineVideoPlayerController(
+      videoPath: widget.video.localPath!,
+      width: widget.video.width,
+      height: widget.video.height,
+    );
+    _controller.addListener(_onPlayerUpdate);
   }
 
   @override
   void dispose() {
-    _controller?.removeListener(_videoListener);
-    _controller?.dispose();
+    _hideControlsTimer?.cancel();
+    _controller.removeListener(_onPlayerUpdate);
+    _controller.dispose();
     super.dispose();
+  }
+
+  void _onPlayerUpdate() {
+    if (!mounted) return;
+    
+    setState(() {
+      // Hide thumbnail when playing, show when paused/completed
+      if (_controller.isPlaying) {
+        _showThumbnail = false;
+      } else if (_controller.position == Duration.zero && !_controller.isPlaying) {
+        // Show thumbnail when at start and not playing (completed or initial state)
+        _showThumbnail = true;
+      }
+    });
+  }
+
+  void _togglePlayPause() {
+    _controller.togglePlayPause();
+    _showControlsTemporarily();
+  }
+
+  void _showControlsTemporarily() {
+    setState(() {
+      _showControls = true;
+    });
+    
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && _controller.isPlaying) {
+        setState(() {
+          _showControls = false;
+        });
+      }
+    });
+  }
+
+  void _onTap() {
+    setState(() {
+      _showControls = !_showControls;
+    });
+    if (_showControls && _controller.isPlaying) {
+      _hideControlsTimer?.cancel();
+      _hideControlsTimer = Timer(const Duration(seconds: 3), () {
+        if (mounted && _controller.isPlaying) {
+          setState(() {
+            _showControls = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _onClose() {
+    if (widget.onClose != null) {
+      widget.onClose!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    }
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -106,143 +124,243 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          if (_isInitialized)
-            Center(
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: video_player.VideoPlayer(_controller!),
+          // Video player - centered with padding for controls
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 50, // Space for close button
+                bottom: 80, // Space for progress bar
+              ),
+              child: InlineVideoPlayer(controller: _controller),
+            ),
+          ),
+          
+          // Thumbnail overlay (shown before playing and after completion)
+          if (_showThumbnail)
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + 50,
+                  bottom: 80,
+                ),
+                child: _buildThumbnail(),
               ),
             ),
           
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
+          // Controls overlay - handles its own tap events
+          if (_showControls)
+            Positioned.fill(child: _buildControlsOverlay()),
           
-          if (!_isLoading && !_isInitialized)
-            const Center(
-              child: Text(
-                'error',
-                style: TextStyle(color: Colors.white),
+          // Tap area when controls are hidden
+          if (!_showControls)
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: _onTap,
+                child: Container(color: Colors.transparent),
               ),
             ),
           
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.7),
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
-                ],
-              ),
-            ),
-            child: Column(
-              children: [
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
+          // Close button overlay (conditionally visible)
+          if (widget.showCloseButton)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 8,
+              left: 8,
+              child: GestureDetector(
+                onTap: _onClose,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 24,
                   ),
                 ),
-                
-                const Spacer(),
-                
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SliderTheme(
-                        data: SliderThemeData(
-                          trackHeight: 2,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-                          activeTrackColor: Colors.white,
-                          inactiveTrackColor: Colors.white.withOpacity(0.3),
-                          thumbColor: Colors.white,
-                          overlayColor: Colors.white.withOpacity(0.2),
-                        ),
-                        child: Slider(
-                          value: _currentPosition.inMilliseconds.toDouble(),
-                          min: 0,
-                          max: _totalDuration.inMilliseconds.toDouble(),
-                          onChanged: (value) {
-                            final newPosition = Duration(milliseconds: value.toInt());
-                            _controller!.seekTo(newPosition);
-                          },
-                        ),
-                      ),
-                      
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              _formatDuration(_currentPosition),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            
-                            const Spacer(),
-                            
-                            IconButton(
-                              icon: Icon(
-                                _isPlaying ? Icons.pause : Icons.play_arrow,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                              onPressed: () async {
-                                if (_controller == null) return;
-                                
-                                setState(() {
-                                  _isPlaying = !_isPlaying;
-                                });
-                                
-                                try {
-                                  if (_isPlaying) {
-                                    await _controller!.play();
-                                  } else {
-                                    await _controller!.pause();
-                                  }
-                                } catch (e) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isPlaying = !_isPlaying;
-                                    });
-                                  }
-                                  debugPrint('play/pause failed: $e');
-                                }
-                              },
-                            ),
-                            
-                            const Spacer(),
-                            
-                            Text(
-                              _formatDuration(_totalDuration),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThumbnail() {
+    // Prefer snapshot file if available
+    if (widget.video.hasSnapshotFile) {
+      return Image.file(
+        File(widget.video.snapshotLocalPath!),
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    }
+    return _buildPlaceholder();
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.black,
+      child: const Center(
+        child: Icon(
+          Icons.videocam,
+          color: Colors.grey,
+          size: 80,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlsOverlay() {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: _onTap,
+      child: Container(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(height: 50),
+            
+            // Center play/pause button
+            GestureDetector(
+              onTap: _togglePlayPause,
+              child: Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _controller.isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.white,
+                  size: 36,
+                ),
+              ),
+            ),
+            
+            // Bottom controls
+            _buildBottomControls(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomControls() {
+    return Container(
+      color: Colors.black.withOpacity(0.5),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              // Play/Pause button
+              GestureDetector(
+                onTap: _togglePlayPause,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _controller.isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              
+              // Current time
+              Text(
+                _formatDuration(_controller.position),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+              const SizedBox(width: 8),
+              
+              // Progress bar
+              Expanded(
+                child: _buildProgressBar(),
+              ),
+              const SizedBox(width: 8),
+              
+              // Total time
+              Text(
+                _formatDuration(_controller.duration),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final thumbPosition = (_controller.progress * width).clamp(0.0, width);
+        
+        return GestureDetector(
+          onTapDown: (details) {
+            final progress = (details.localPosition.dx / width).clamp(0.0, 1.0);
+            _controller.seekToProgress(progress);
+            _showControlsTemporarily();
+          },
+          onHorizontalDragUpdate: (details) {
+            final progress = (details.localPosition.dx / width).clamp(0.0, 1.0);
+            _controller.seekToProgress(progress);
+          },
+          child: Container(
+            height: 40,
+            alignment: Alignment.center,
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                // Background track
+                Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Progress track
+                Container(
+                  height: 4,
+                  width: thumbPosition,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Thumb
+                Positioned(
+                  left: (thumbPosition - 6).clamp(0.0, width - 12),
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
-} 
+}

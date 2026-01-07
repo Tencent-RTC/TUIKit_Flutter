@@ -14,11 +14,6 @@ import UIKit
 
 internal let ALBUM_PICKER_THUMBNAIL_MAX_EDGE: CGFloat = 540
 
-internal enum MessageType {
-    case image
-    case video
-}
-
 // MARK: - Transcoding Queue Management
 internal class AlbumPickerTranscodingManager: ObservableObject {
     @Published var currentTranscodingCount = 0
@@ -265,14 +260,14 @@ extension AlbumPicker {
     }
     
     internal func generateVideoOutputPath() -> String {
-        let videoPath = generateMediaPath(messageType: .video, withExtension: "mp4")
+        let videoPath = ChatUtils.generateMediaPath(messageType: .video, withExtension: "mp4")
         let directory = (videoPath as NSString).deletingLastPathComponent
         try? FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
         return videoPath
     }
     
     internal func generateThumbnailOutputPath() -> String {
-        let thumbnailPath = generateMediaPath(messageType: .image, withExtension: nil)
+        let thumbnailPath = ChatUtils.generateMediaPath(messageType: .image, withExtension: nil)
         let directory = (thumbnailPath as NSString).deletingLastPathComponent
         try? FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
         return thumbnailPath
@@ -314,7 +309,7 @@ extension AlbumPicker {
     fileprivate func saveImageToTempPath(_ image: UIImage) -> String? {
         guard let data = image.jpegData(compressionQuality: 1.0) else { return nil }
 
-        let path = generateMediaPath(messageType: .image, withExtension: "jpg")
+        let path = ChatUtils.generateMediaPath(messageType: .image, withExtension: "jpg")
         let directory = (path as NSString).deletingLastPathComponent
         try? FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
 
@@ -375,33 +370,5 @@ extension AlbumPicker {
                 }
             }
         }
-    }
-    
-    internal func getHomePath() -> String {
-        return NSHomeDirectory() + "/Documents/atomicx_core_data"
-    }
-        
-    internal func getMediaHomePath(messageType: MessageType) -> String {
-        if messageType == .image {
-            return getHomePath() + "/image/"
-        } else if messageType == .video {
-            return getHomePath() + "/video/"
-        }else {
-            return ""
-        }
-    }
-        
-    internal func generateMediaPath(messageType: MessageType, withExtension: String?) -> String {
-        let uuid = "\(Int(Date().timeIntervalSince1970))_\(arc4random() % UInt32.max)"
-        var mediaExtension = ""
-        if let withExtension = withExtension {
-            mediaExtension = ".\(withExtension)"
-        }
-        if messageType == .image {
-            return getMediaHomePath(messageType: .image) + "\(uuid)\(mediaExtension)"
-        } else if messageType == .video {
-            return getMediaHomePath(messageType: .video) + "\(uuid)\(mediaExtension)"
-        }
-        return ""
     }
 }

@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:tuikit_atomic_x/base_component/base_component.dart';
-import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-
-import '../../../audio_player/audio_player.dart';
-import '../message_status_mixin.dart';
+import 'package:tuikit_atomic_x/audio_player/audio_player.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 
 class SoundMessageWidget extends StatefulWidget {
   final MessageInfo message;
@@ -17,6 +16,13 @@ class SoundMessageWidget extends StatefulWidget {
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
   final MessageListConfigProtocol config;
+  final bool isInMergedDetailView;
+  // ASR related properties
+  final bool isConverting;
+  /// Whether the ASR text bubble is hidden in this session (default: false, meaning shown if asrText exists)
+  final bool isAsrHidden;
+  /// Callback when ASR bubble is long pressed, provides the GlobalKey for positioning popup menu
+  final void Function(GlobalKey asrBubbleKey)? onAsrBubbleLongPress;
 
   const SoundMessageWidget({
     super.key,
@@ -28,6 +34,10 @@ class SoundMessageWidget extends StatefulWidget {
     this.onLongPress,
     this.messageListStore,
     this.bubbleKey,
+    this.isInMergedDetailView = false,
+    this.isConverting = false,
+    this.isAsrHidden = false,
+    this.onAsrBubbleLongPress,
   });
 
   @override
@@ -42,17 +52,36 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
 
   late AudioPlayer _audioPlayer;
 
+  // GlobalKey for ASR text bubble positioning
+  final GlobalKey _asrBubbleKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer.createInstance();
-    _audioPlayer.positionStream.listen((position) {
-      if (mounted && _isPlaying) {
-        setState(() {
-          _currentPosition = position;
-        });
-      }
-    });
+    _audioPlayer = AudioPlayer.createInstance().setListener(_AudioPlayerListenerImpl(
+      onProgressUpdate: (currentPosition, duration) {
+        if (mounted && _isPlaying) {
+          setState(() {
+            _currentPosition = Duration(milliseconds: currentPosition);
+          });
+        }
+      },
+      onCompletion: () {
+        if (mounted) {
+          setState(() {
+            _isPlaying = false;
+          });
+        }
+      },
+      onError: (errorMessage) {
+        debugPrint('Audio player error: $errorMessage');
+        if (mounted) {
+          setState(() {
+            _isPlaying = false;
+          });
+        }
+      },
+    ));
   }
 
   @override
@@ -65,39 +94,56 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
 
-    return GestureDetector(
-      onTap: _handleTap,
-      onLongPress: widget.onLongPress,
-      child: Container(
-        key: widget.bubbleKey,
-        constraints: BoxConstraints(
-          maxWidth: widget.maxWidth * 0.7,
-        ),
-        margin: EdgeInsets.zero,
-        decoration: BoxDecoration(
-          color: _getBubbleColor(colors),
-          borderRadius: _getBubbleBorderRadius(),
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: Column(
-          crossAxisAlignment: widget.isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            _buildSoundContent(colors),
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: buildStatusAndTimeWidgets(
-                  message: widget.message,
-                  isSelf: widget.isSelf,
-                  colors: colors,
-                  isShowTimeInBubble: widget.config.isShowTimeInBubble,
-                ),
-              ),
+    final statusAndTimeWidgets = buildStatusAndTimeWidgets(
+      message: widget.message,
+      isSelf: widget.isSelf,
+      colors: colors,
+      isShowTimeInBubble: widget.config.isShowTimeInBubble,
+      enableReadReceipt: widget.config.enableReadReceipt,
+      isInMergedDetailView: widget.isInMergedDetailView,
+    );
+
+    final bool hasAsrText = widget.message.messageBody?.asrText?.isNotEmpty == true;
+    // Show ASR bubble when: converting OR (has asrText AND not hidden in this session)
+    final bool shouldShowAsrBubble = widget.isConverting || (hasAsrText && !widget.isAsrHidden);
+
+    return Column(
+      crossAxisAlignment: widget.isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        // Voice message bubble
+        GestureDetector(
+          onTap: _handleTap,
+          onLongPress: widget.onLongPress,
+          child: Container(
+            key: widget.bubbleKey,
+            constraints: BoxConstraints(
+              maxWidth: widget.maxWidth * 0.7,
             ),
-          ],
+            margin: EdgeInsets.zero,
+            decoration: BoxDecoration(
+              color: _getBubbleColor(colors),
+              borderRadius: _getBubbleBorderRadius(),
+            ),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Column(
+              crossAxisAlignment: widget.isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                _buildSoundContent(colors),
+                if (statusAndTimeWidgets.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: statusAndTimeWidgets,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+        // ASR text bubble (shown when converting or when converted and expanded)
+        if (shouldShowAsrBubble) _buildAsrTextBubble(colors),
+      ],
     );
   }
 
@@ -198,16 +244,7 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
           });
 
           try {
-            await _audioPlayer.play(
-              newSoundPath,
-              onComplete: () {
-                if (mounted) {
-                  setState(() {
-                    _isPlaying = false;
-                  });
-                }
-              },
-            );
+            await _audioPlayer.play(newSoundPath);
           } catch (e) {
             debugPrint('play sound failed: $e');
             setState(() {
@@ -241,16 +278,7 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
     });
 
     try {
-      await _audioPlayer.play(
-        soundPath,
-        onComplete: () {
-          if (mounted) {
-            setState(() {
-              _isPlaying = false;
-            });
-          }
-        },
-      );
+      await _audioPlayer.play(soundPath);
     } catch (e) {
       debugPrint('play sound failed: $e');
       setState(() {
@@ -289,5 +317,73 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
         bottomRight: Radius.circular(18),
       );
     }
+  }
+
+  /// Build the ASR text bubble widget
+  Widget _buildAsrTextBubble(SemanticColorScheme colors) {
+    return GestureDetector(
+      onLongPress: widget.isConverting ? null : () {
+        widget.onAsrBubbleLongPress?.call(_asrBubbleKey);
+      },
+      child: Container(
+        key: _asrBubbleKey,
+        margin: const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        constraints: BoxConstraints(
+          maxWidth: widget.maxWidth * 0.7,
+        ),
+        decoration: BoxDecoration(
+          color: _getBubbleColor(colors),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: widget.isConverting
+            ? SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    widget.isSelf ? colors.textColorAntiPrimary : colors.textColorPrimary,
+                  ),
+                ),
+              )
+            : Text(
+                widget.message.messageBody?.asrText ?? '',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: widget.isSelf ? colors.textColorAntiPrimary : colors.textColorPrimary,
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+class _AudioPlayerListenerImpl extends AudioPlayerListener {
+  final Function(int currentPosition, int duration)? _onProgressUpdate;
+  final VoidCallback? _onCompletion;
+  final Function(String errorMessage)? _onError;
+
+  _AudioPlayerListenerImpl({
+    Function(int currentPosition, int duration)? onProgressUpdate,
+    VoidCallback? onCompletion,
+    Function(String errorMessage)? onError,
+  })  : _onProgressUpdate = onProgressUpdate,
+        _onCompletion = onCompletion,
+        _onError = onError;
+
+  @override
+  void onProgressUpdate(int currentPosition, int duration) {
+    _onProgressUpdate?.call(currentPosition, duration);
+  }
+
+  @override
+  void onCompletion() {
+    _onCompletion?.call();
+  }
+
+  @override
+  void onError(String errorMessage) {
+    _onError?.call(errorMessage);
   }
 }

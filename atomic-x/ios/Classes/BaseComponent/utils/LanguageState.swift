@@ -41,7 +41,8 @@ public class LanguageState: ObservableObject {
 
 public class LanguageHelper {
     public class func getLocalizedString(forKey key: String, bundle bundleName: String, classType: AnyClass, frameworkName: String) -> String {
-        let currentLanguage = getCurrentLanguage()
+        let currentLanguage = normalizeLanguageCode(getCurrentLanguage())
+        
         if let bundle = BundleHelper.findLocalizableBundle(
             bundleName: bundleName,
             classType: classType,
@@ -50,6 +51,7 @@ public class LanguageHelper {
         ) {
             return bundle.localizedString(forKey: key, value: key, table: nil)
         }
+        
         return key
     }
 
@@ -69,25 +71,38 @@ public class LanguageHelper {
     }
 
     static func saveLanguage(_ languageCode: String) {
-        UserDefaults.standard.set(languageCode, forKey: AppLanguageKey)
+        let normalizedCode = normalizeLanguageCode(languageCode)
+        UserDefaults.standard.set(normalizedCode, forKey: AppLanguageKey)
         UserDefaults.standard.synchronize()
+    }
+    
+    /// 规范化语言代码，确保与资源文件夹名称匹配
+    private static func normalizeLanguageCode(_ code: String) -> String {
+        let lowercased = code.lowercased()
+        
+        if lowercased.hasPrefix("zh") {
+            if lowercased.contains("hans") {
+                return "zh-Hans"
+            } else if lowercased.contains("hant") || lowercased.contains("tw") || lowercased.contains("hk") {
+                return "zh-Hant"
+            }
+            return "zh-Hans" // 默认简体中文
+        }
+        
+        if lowercased.hasPrefix("ar") {
+            return "ar"
+        }
+        
+        if lowercased.hasPrefix("en") {
+            return "en"
+        }
+        
+        return code
     }
 
     private static func getSystemLanguage() -> String {
         let preferredLanguage = Locale.preferredLanguages.first ?? "en"
-        if preferredLanguage.hasPrefix("en") {
-            return "en"
-        } else if preferredLanguage.hasPrefix("zh") {
-            if preferredLanguage.contains("Hans") {
-                return "zh-Hans"
-            } else {
-                return "zh-Hant"
-            }
-        } else if preferredLanguage.hasPrefix("ar") {
-            return "ar"
-        } else {
-            return "en"
-        }
+        return normalizeLanguageCode(preferredLanguage)
     }
 }
 

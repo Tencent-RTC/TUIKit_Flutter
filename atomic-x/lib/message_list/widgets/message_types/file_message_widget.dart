@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
-import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+import 'package:tuikit_atomic_x/device_info/device.dart';
+import 'package:tuikit_atomic_x/file_picker/file_picker.dart';
+import 'package:tuikit_atomic_x/message_list/message_list_config.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 import 'package:tuikit_atomic_x/permission/permission.dart';
-import '../message_status_mixin.dart';
 
 class FileMessageWidget extends StatefulWidget {
   final MessageInfo message;
@@ -17,6 +17,7 @@ class FileMessageWidget extends StatefulWidget {
   final MessageListStore? messageListStore;
   final GlobalKey? bubbleKey;
   final MessageListConfigProtocol config;
+  final bool isInMergedDetailView;
 
   const FileMessageWidget({
     super.key,
@@ -27,6 +28,7 @@ class FileMessageWidget extends StatefulWidget {
     this.onLongPress,
     this.messageListStore,
     this.bubbleKey,
+    this.isInMergedDetailView = false,
   });
 
   @override
@@ -50,10 +52,12 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
       _isDownloading = true;
     });
 
-    widget.messageListStore!.downloadMessageResource(
+    widget.messageListStore!
+        .downloadMessageResource(
       message: widget.message,
       resourceType: MessageMediaFileType.file,
-    ).then((_) {
+    )
+        .then((_) {
       if (mounted) {
         setState(() {
           _isDownloading = false;
@@ -73,6 +77,15 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
 
+    final statusAndTimeWidgets = buildStatusAndTimeWidgets(
+      message: widget.message,
+      isSelf: widget.isSelf,
+      colors: colors,
+      isShowTimeInBubble: widget.config.isShowTimeInBubble,
+      enableReadReceipt: widget.config.enableReadReceipt,
+      isInMergedDetailView: widget.isInMergedDetailView,
+    );
+
     return GestureDetector(
       onTap: _handleTap,
       onLongPress: widget.onLongPress,
@@ -91,18 +104,14 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
           crossAxisAlignment: widget.isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             _buildFileContent(colors),
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: buildStatusAndTimeWidgets(
-                  message: widget.message,
-                  isSelf: widget.isSelf,
-                  colors: colors,
-                  isShowTimeInBubble: widget.config.isShowTimeInBubble,
+            if (statusAndTimeWidgets.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: statusAndTimeWidgets,
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -124,10 +133,9 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
 
     bool isGranted = false;
     if (Platform.isAndroid) {
-      final DeviceInfoPlugin packageInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await packageInfo.androidInfo;
-      if ((androidInfo.version.sdkInt) <= 32) {
-        Map<PermissionType, PermissionStatus> statusMap =  await Permission.request([PermissionType.storage]);
+      final int? sdkInt = await Device.sdkInt;
+      if (sdkInt! <= 32) {
+        Map<PermissionType, PermissionStatus> statusMap = await Permission.request([PermissionType.storage]);
         PermissionStatus status = statusMap[PermissionType.storage] ?? PermissionStatus.denied;
         if (status == PermissionStatus.granted) {
           isGranted = true;
@@ -143,12 +151,13 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
       } else {
         isGranted = true;
       }
-    } else {
-      isGranted = true;
     }
 
     if (isGranted && isFileAvailable) {
-      await OpenFile.open(filePath);
+      final bool success = await FilePicker.openFile(filePath);
+      if (!success && mounted) {
+        _showErrorDialog(context, 'Failed to open file');
+      }
     }
   }
 
@@ -176,12 +185,32 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
         false;
   }
 
+  /// Show error dialog
+  void _showErrorDialog(BuildContext context, String message) {
+    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(atomicLocal.error),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(atomicLocal.confirm),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildFileContent(SemanticColorScheme colorsTheme) {
     final String fileName = widget.message.messageBody?.fileName ?? '';
     final int fileSize = widget.message.messageBody?.fileSize ?? 0;
     final String? filePath = widget.message.messageBody?.filePath;
     final String? fileExt = _getFileExtension(fileName);
-    
+
     final bool isFileAvailable = filePath != null && filePath.isNotEmpty && File(filePath).existsSync();
 
     return Container(
@@ -234,7 +263,7 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  fileName!,
+                  fileName,
                   style: TextStyle(
                     fontSize: 14,
                     color: widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
@@ -245,10 +274,10 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _isDownloading 
-                      ? 'Downloading...' 
-                      : !isFileAvailable 
-                          ? 'Tap to download' 
+                  _isDownloading
+                      ? 'Downloading...'
+                      : !isFileAvailable
+                          ? 'Tap to download'
                           : _formatFileSize(fileSize),
                   style: TextStyle(
                     fontSize: 12,

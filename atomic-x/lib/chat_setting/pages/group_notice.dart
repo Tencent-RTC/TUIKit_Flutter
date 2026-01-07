@@ -182,7 +182,7 @@ class _GroupNoticeState extends State<GroupNotice> {
   Future<void> _saveNotice() async {
     final newNotice = _controller.text.trim();
     final result = await widget.settingStore.updateGroupProfile(
-      notification: newNotice,
+      notice: newNotice,
     );
 
     if (result.errorCode == 0) {

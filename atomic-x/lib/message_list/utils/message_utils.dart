@@ -210,7 +210,7 @@ class MessageUtil {
     return '$operator ${localizations.groupInviteMethodChangedTo} $approvalDesc';
   }
 
-  static String getMessageAbstract(MessageInfo? messageInfo, BuildContext context) {
+  static String getMessageAbstract(MessageInfo? messageInfo, BuildContext context, {bool showMergedTitle = false}) {
     if (messageInfo == null) return '';
 
     if (!context.mounted) {
@@ -264,6 +264,15 @@ class MessageUtil {
 
       case MessageType.system:
         return getSystemInfoDisplayString(messageInfo.messageBody?.systemMessage ?? [], context);
+
+      case MessageType.merged:
+        if (showMergedTitle) {
+          final title = messageInfo.messageBody?.mergedMessage?.title;
+          if (title != null && title.isNotEmpty) {
+            return title;
+          }
+        }
+        return '[${localizations.chatHistory}]';
 
       default:
         return '';

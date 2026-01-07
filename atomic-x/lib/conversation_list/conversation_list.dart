@@ -118,6 +118,28 @@ class _ConversationListState extends State<ConversationList> {
     conversationListStore.deleteConversation(conversationID: conversationInfo.conversationID);
   }
 
+  /// Marks a conversation as read by clearing unread count and removing unread mark.
+  void _handleMarkAsRead(ConversationInfo conversationInfo) async {
+    // Clear real unread count
+    conversationListStore.clearConversationUnreadCount(conversationID: conversationInfo.conversationID);
+    // Remove unread mark from markList
+    conversationListStore.markConversation(
+      conversationIDList: [conversationInfo.conversationID],
+      markType: ConversationMarkType.unread,
+      enable: false,
+    );
+  }
+
+  /// Marks a conversation as unread by adding unread mark (does not affect unreadCount).
+  void _handleMarkAsUnread(ConversationInfo conversationInfo) async {
+    // Add unread mark to markList
+    conversationListStore.markConversation(
+      conversationIDList: [conversationInfo.conversationID],
+      markType: ConversationMarkType.unread,
+      enable: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
@@ -156,7 +178,15 @@ class _ConversationListState extends State<ConversationList> {
                 onClearHistory: () {
                   _handleClearHistoryMessage(conversation);
                 },
+                onMarkAsRead: () {
+                  _handleMarkAsRead(conversation);
+                },
+                onMarkAsUnread: () {
+                  _handleMarkAsUnread(conversation);
+                },
                 onTap: () {
+                  // Clear unread status before entering conversation (same as Swift implementation)
+                  _handleMarkAsRead(conversation);
                   if (widget.onConversationClick != null) {
                     widget.onConversationClick!(conversation);
                   }

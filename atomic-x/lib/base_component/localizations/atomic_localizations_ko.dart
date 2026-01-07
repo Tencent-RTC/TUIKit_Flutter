@@ -924,6 +924,9 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get messageNum => '조각';
 
   @override
+  String get draft => '[임시저장]';
+
+  @override
   String get sendMessageFail => '보내기 실패';
 
   @override
@@ -999,4 +1002,185 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String peopleOnCall(Object number) {
     return '$number님은 현재 통화 중입니다.';
   }
+
+  @override
+  String get messageReadDetail => '메시지 읽음 상세';
+
+  @override
+  String get groupReadBy => '읽음';
+
+  @override
+  String get groupDeliveredTo => '읽지 않음';
+
+  @override
+  String get loadingMore => '더 불러오기...';
+
+  @override
+  String get unknownFile => '알 수 없는 파일';
+
+  @override
+  String get messageReadReceipt => '메시지 읽음 상태';
+
+  @override
+  String get messageReadReceiptEnabledDesc =>
+      '끄면 보내고 받는 메시지에 메시지 읽음 상태가 표시되지 않으며, 상대방이 메시지를 읽었는지 확인할 수 없고 상대방도 당신이 메시지를 읽었는지 확인할 수 없습니다.';
+
+  @override
+  String get messageReadReceiptDisabledDesc =>
+      '켜면 그룹 채팅에서 보내고 받는 메시지에 메시지 읽음 상태가 표시되며, 상대방이 메시지를 읽었는지 확인할 수 있습니다. 개인 채팅 친구도 메시지 읽음 상태를 켜면, 해당 친구와의 개인 채팅에서 보내고 받는 메시지에도 메시지 읽음 상태가 표시됩니다.';
+
+  @override
+  String get appearance => '외관';
+
+  @override
+  String get markAsRead => '읽음으로 표시';
+
+  @override
+  String get markAsUnread => '읽지 않음으로 표시';
+
+  @override
+  String get multiSelect => '다중 선택';
+
+  @override
+  String get selectChat => '채팅 선택';
+
+  @override
+  String sendCount(int count) {
+    return '보내기 ($count)';
+  }
+
+  @override
+  String selectedCount(int count) {
+    return '$count개 선택됨';
+  }
+
+  @override
+  String get forwardIndividually => '개별 전달';
+
+  @override
+  String get forwardMerged => '병합 전달';
+
+  @override
+  String get groupChatHistory => '그룹 채팅 기록';
+
+  @override
+  String c2cChatHistoryFormat(String name) {
+    return '$name의 채팅 기록';
+  }
+
+  @override
+  String chatHistoryForSomebodyFormat(String name1, String name2) {
+    return '$name1와 $name2의 채팅 기록';
+  }
+
+  @override
+  String get recentChats => '최근 채팅';
+
+  @override
+  String get forwardCompatibleText => '채팅 기록을 보려면 업그레이드하세요';
+
+  @override
+  String get forwardFailedMessageTip => '전송 실패 메시지는 전달할 수 없습니다!';
+
+  @override
+  String get forwardSeparateLimitTip => '선택한 메시지가 너무 많아 개별 전달이 지원되지 않습니다';
+
+  @override
+  String get deleteMessagesConfirmTip => '선택한 메시지를 삭제하시겠습니까?';
+
+  @override
+  String get conversationListAtAll => '[@전체]';
+
+  @override
+  String get conversationListAtMe => '[@나]';
+
+  @override
+  String get messageInputAllMembers => '전체';
+
+  @override
+  String get selectMentionMember => '멤버 선택';
+
+  @override
+  String get tapToRemove => '탭하여 제거';
+
+  @override
+  String get messageTypeSecurityStrike => '민감한 콘텐츠가 포함되어 있습니다';
+
+  @override
+  String get convertToText => '텍스트로 변환';
+
+  @override
+  String get convertToTextFailed => '변환할 수 없습니다';
+
+  @override
+  String get hide => '숨기기';
+
+  @override
+  String get copied => '복사됨';
+
+  @override
+  String get translate => '번역';
+
+  @override
+  String get translateFailed => '번역할 수 없습니다';
+
+  @override
+  String get translateDefaultTips => 'Tencent Cloud IM 번역 제공';
+
+  @override
+  String get translating => '번역 중...';
+
+  @override
+  String get translateTargetLanguage => '번역 대상 언어';
+
+  @override
+  String get translateLanguageZh => '简体中文';
+
+  @override
+  String get translateLanguageZhTW => '繁體中文';
+
+  @override
+  String get translateLanguageEn => 'English';
+
+  @override
+  String get translateLanguageJa => '日本語';
+
+  @override
+  String get translateLanguageKo => '한국어';
+
+  @override
+  String get translateLanguageFr => 'Français';
+
+  @override
+  String get translateLanguageEs => 'Español';
+
+  @override
+  String get translateLanguageIt => 'Italiano';
+
+  @override
+  String get translateLanguageDe => 'Deutsch';
+
+  @override
+  String get translateLanguageTr => 'Türkçe';
+
+  @override
+  String get translateLanguageRu => 'Русский';
+
+  @override
+  String get translateLanguagePt => 'Português';
+
+  @override
+  String get translateLanguageVi => 'Tiếng Việt';
+
+  @override
+  String get translateLanguageId => 'Bahasa Indonesia';
+
+  @override
+  String get translateLanguageTh => 'ภาษาไทย';
+
+  @override
+  String get translateLanguageMs => 'Bahasa Melayu';
+
+  @override
+  String get translateLanguageHi => 'हिन्दी';
 }

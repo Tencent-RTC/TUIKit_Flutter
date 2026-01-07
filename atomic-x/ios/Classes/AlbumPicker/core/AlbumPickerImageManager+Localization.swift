@@ -11,7 +11,21 @@ import Photos
 
 @inline(__always)
 public func LocalizedAlbumPickerString(_ key: String) -> String {
-    return LanguageHelper.getLocalizedString(forKey: key, bundle: "AlbumPickerLocalizable", classType: LanguageHelper.self, frameworkName: "tuikit_atomic_x")
+    let currentLanguage = LanguageHelper.getCurrentLanguage()
+    let result = LanguageHelper.getLocalizedString(forKey: key, bundle: "AlbumPickerLocalizable", classType: LanguageHelper.self, frameworkName: "AtomicXBundle")
+    
+    // 如果标准方法失败，尝试备用方法
+    if result == key {
+        let pluginBundle = Bundle(for: AlbumPickerImageManager.self)
+        if let bundlePath = pluginBundle.path(forResource: "AlbumPickerLocalizable", ofType: "bundle"),
+           let resourceBundle = Bundle(path: bundlePath),
+           let lprojPath = resourceBundle.path(forResource: "Localizable/\(currentLanguage)", ofType: "lproj"),
+           let lprojBundle = Bundle(path: lprojPath) {
+            return lprojBundle.localizedString(forKey: key, value: key, table: nil)
+        }
+    }
+    
+    return result
 }
 
 extension AlbumPickerImageManager {

@@ -342,6 +342,7 @@
     "setNickname": "ニックネームを編集",
     "setSignature": "署名を編集",
     "messageNum": "件",
+    "draft": "[下書き]",
     "sendMessageFail": "送信に失敗しました",
     "resendTips": "再送信してもよろしいですか?",
     "callRejectCaller": "相手が拒否しました",
@@ -366,5 +367,93 @@
     "groupCallConfirmSwitchToAudio": "動画を音声に変換することに同意する",
     "unknownCall": "不明な電話",
     "join": "参加する",
-    "peopleOnCall": "{number}は現在通話中です。"
+    "peopleOnCall": "{number}は現在通話中です。",
+    "messageReadDetail": "既読詳細",
+    "groupReadBy": "既読",
+    "groupDeliveredTo": "未読",
+    "loadingMore": "もっと読み込む...",
+    "unknownFile": "不明なファイル",
+    "messageReadReceipt": "メッセージ既読状態",
+    "messageReadReceiptEnabledDesc": "オフにすると、送受信するメッセージにはメッセージ既読状態が表示されなくなり、相手がメッセージを読んだかどうかを確認できなくなります。同様に、相手もあなたがメッセージを読んだかどうかを確認できなくなります。",
+    "messageReadReceiptDisabledDesc": "オンにすると、グループチャットで送受信するメッセージにはメッセージ既読状態が表示され、相手がメッセージを読んだかどうかを確認できます。個人チャットの友人もメッセージ既読状態をオンにしている場合、その友人との個人チャットで送受信するメッセージにもメッセージ既読状態が表示されます。",
+    "appearance": "外観",
+    "markAsRead": "既読にする",
+    "markAsUnread": "未読にする",
+    "multiSelect": "複数選択",
+    "selectChat": "チャットを選択",
+    "sendCount": "送信 ({count})",
+    "@sendCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectedCount": "{count}件選択中",
+    "@selectedCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "forwardIndividually": "個別に転送",
+    "forwardMerged": "まとめて転送",
+    "groupChatHistory": "グループチャット履歴",
+    "c2cChatHistoryFormat": "{name}のチャット履歴",
+    "@c2cChatHistoryFormat": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "chatHistoryForSomebodyFormat": "{name1}と{name2}のチャット履歴",
+    "@chatHistoryForSomebodyFormat": {
+        "placeholders": {
+            "name1": {
+                "type": "String"
+            },
+            "name2": {
+                "type": "String"
+            }
+        }
+    },
+    "recentChats": "最近のチャット",
+    "forwardCompatibleText": "チャット履歴を表示するにはアップグレードしてください",
+    "forwardFailedMessageTip": "送信失敗メッセージは転送できません！",
+    "forwardSeparateLimitTip": "選択したメッセージが多すぎます、個別転送はサポートされていません",
+    "deleteMessagesConfirmTip": "選択したメッセージを削除しますか？",
+    "conversationListAtAll": "[@全員]",
+    "conversationListAtMe": "[@自分]",
+    "messageInputAllMembers": "全員",
+    "selectMentionMember": "メンバーを選択",
+    "tapToRemove": "タップして削除",
+    "messageTypeSecurityStrike": "機密コンテンツが含まれています",
+    "convertToText": "テキストに変換",
+    "convertToTextFailed": "変換できません",
+    "hide": "非表示",
+    "copied": "コピーしました",
+    "translate": "翻訳",
+    "translateFailed": "翻訳できません",
+    "translateDefaultTips": "Tencent Cloud IMによる翻訳",
+    "translating": "翻訳中...",
+    "translateTargetLanguage": "翻訳先言語",
+    "translateLanguageZh": "简体中文",
+    "translateLanguageZhTW": "繁體中文",
+    "translateLanguageEn": "English",
+    "translateLanguageJa": "日本語",
+    "translateLanguageKo": "한국어",
+    "translateLanguageFr": "Français",
+    "translateLanguageEs": "Español",
+    "translateLanguageIt": "Italiano",
+    "translateLanguageDe": "Deutsch",
+    "translateLanguageTr": "Türkçe",
+    "translateLanguageRu": "Русский",
+    "translateLanguagePt": "Português",
+    "translateLanguageVi": "Tiếng Việt",
+    "translateLanguageId": "Bahasa Indonesia",
+    "translateLanguageTh": "ภาษาไทย",
+    "translateLanguageMs": "Bahasa Melayu",
+    "translateLanguageHi": "हिन्दी"
 }

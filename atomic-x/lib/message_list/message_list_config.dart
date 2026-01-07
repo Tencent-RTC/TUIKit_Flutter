@@ -17,6 +17,10 @@ abstract class MessageListConfigProtocol {
   bool get isSupportCopy;
   bool get isSupportDelete;
   bool get isSupportRecall;
+  bool get enableReadReceipt;
+  bool get isSupportForward;
+  bool get isSupportMultiSelect;
+  bool get isSupportReaction;
 }
 
 class ChatMessageListConfig implements MessageListConfigProtocol {
@@ -36,6 +40,10 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   final bool? _userIsSupportRecall;
   final double? _userHorizontalPadding;
   final double? _userAvatarSpacing;
+  final bool? _userEnableReadReceipt;
+  final bool _isSupportForward;
+  final bool _isSupportMultiSelect;
+  final bool _isSupportReaction;
 
   @override
   double get textBubbleCornerRadius => _userTextBubbleCornerRadius ?? 18.0;
@@ -66,7 +74,7 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   bool get isShowRightNickname => _userIsShowRightNickname ?? false;
 
   @override
-  bool get isShowTimeInBubble => _userIsShowTimeInBubble ?? true;
+  bool get isShowTimeInBubble => _userIsShowTimeInBubble ?? false;
 
   @override
   double get cellSpacing => _userCellSpacing ?? 0;
@@ -113,6 +121,24 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   @override
   double get avatarSpacing => _userAvatarSpacing ?? 8.0;
 
+  @override
+  bool get enableReadReceipt {
+    if (_userEnableReadReceipt != null) {
+      return _userEnableReadReceipt;
+    } else {
+      return AppBuilder.getInstance().messageListConfig.enableReadReceipt;
+    }
+  }
+
+  @override
+  bool get isSupportForward => _isSupportForward;
+
+  @override
+  bool get isSupportMultiSelect => _isSupportMultiSelect;
+
+  @override
+  bool get isSupportReaction => _isSupportReaction;
+
   const ChatMessageListConfig({
     double? textBubbleCornerRadius,
     String? alignment,
@@ -130,6 +156,10 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
     bool? isSupportRecall,
     double? horizontalPadding,
     double? avatarSpacing,
+    bool? enableReadReceipt,
+    bool isSupportForward = true,
+    bool isSupportMultiSelect = true,
+    bool isSupportReaction = true,
   })  : _userTextBubbleCornerRadius = textBubbleCornerRadius,
         _userAlignment = alignment,
         _userIsShowTimeMessage = isShowTimeMessage,
@@ -145,5 +175,9 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
         _userIsSupportDelete = isSupportDelete,
         _userIsSupportRecall = isSupportRecall,
         _userHorizontalPadding = horizontalPadding,
-        _userAvatarSpacing = avatarSpacing;
+        _userAvatarSpacing = avatarSpacing,
+        _userEnableReadReceipt = enableReadReceipt,
+        _isSupportForward = isSupportForward,
+        _isSupportMultiSelect = isSupportMultiSelect,
+        _isSupportReaction = isSupportReaction;
 }
