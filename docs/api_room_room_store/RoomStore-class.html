@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
   <link rel="icon" href="../static-assets/favicon.png?v1">
   
+  <link rel="stylesheet" href="../static-assets/custom-styles.css?v1">
 </head>
 
 <body data-base-href="../" data-using-base-href="false" class="light-theme">
@@ -25,7 +26,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_room_room_store/api_room_room_store-library.html">api&#47;room&#47;room_store.dart</a></li>
+    <li><a href="../api_room_room_store/index.html">api&#47;room&#47;room_store.dart</a></li>
     <li class="self-crumb">RoomStore class</li>
   </ol>
   <div class="self-name">RoomStore</div>
@@ -71,6 +72,44 @@ Room management provides complete room lifecycle management, including instant r
 <blockquote>
 <p><strong>Note</strong>: Room status updates are delivered through <a href="../api_room_room_store/RoomStore/state.html">state</a> publisher. Subscribe to it to receive real-time updates about current room and scheduled room list.</p>
 </blockquote>
+<h2 id="topics">Topics</h2>
+<h3 id="getting-instance">Getting Instance</h3>
+<ul>
+<li><a href="../api_room_room_store/RoomStore/shared.html">shared</a> : Get singleton object</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_room_room_store/RoomStore/state.html">state</a> : Reactive state containing current room and scheduled room list</li>
+<li><a href="../api_room_room_store/RoomStore/addRoomListener.html">addRoomListener</a>/<a href="../api_room_room_store/RoomStore/removeRoomListener.html">removeRoomListener</a> : Room event callback</li>
+</ul>
+<h3 id="scheduled-room-operations">Scheduled Room Operations</h3>
+<ul>
+<li><a href="../api_room_room_store/RoomStore/getScheduledRoomList.html">getScheduledRoomList</a> : Get scheduled room list</li>
+<li><a href="../api_room_room_store/RoomStore/getScheduledAttendees.html">getScheduledAttendees</a> : Get scheduled room attendees</li>
+<li><a href="../api_room_room_store/RoomStore/scheduleRoom.html">scheduleRoom</a> : Schedule a room</li>
+<li><a href="../api_room_room_store/RoomStore/updateScheduledRoom.html">updateScheduledRoom</a> : Update scheduled room</li>
+<li><a href="../api_room_room_store/RoomStore/addScheduledAttendees.html">addScheduledAttendees</a> : Add scheduled attendees</li>
+<li><a href="../api_room_room_store/RoomStore/removeScheduledAttendees.html">removeScheduledAttendees</a> : Remove scheduled attendees</li>
+<li><a href="../api_room_room_store/RoomStore/cancelScheduledRoom.html">cancelScheduledRoom</a> : Cancel scheduled room</li>
+</ul>
+<h3 id="instant-room-operations">Instant Room Operations</h3>
+<ul>
+<li><a href="../api_room_room_store/RoomStore/createAndJoinRoom.html">createAndJoinRoom</a> : Create and join room</li>
+<li><a href="../api_room_room_store/RoomStore/joinRoom.html">joinRoom</a> : Join room</li>
+<li><a href="../api_room_room_store/RoomStore/leaveRoom.html">leaveRoom</a> : Leave room</li>
+<li><a href="../api_room_room_store/RoomStore/endRoom.html">endRoom</a> : End room</li>
+<li><a href="../api_room_room_store/RoomStore/updateRoomInfo.html">updateRoomInfo</a> : Update room info</li>
+<li><a href="../api_room_room_store/RoomStore/getRoomInfo.html">getRoomInfo</a> : Get room info</li>
+</ul>
+<h3 id="room-call-operations">Room Call Operations</h3>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_room_room_store/RoomStatus.html">RoomStatus</a></li>
+<li><a href="../api_room_room_store/RoomInfo-class.html">RoomInfo</a></li>
+<li><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></li>
+<li><a href="../api_room_room_store/RoomListener-class.html">RoomListener</a></li>
+<li><a href="../api_room_room_store/RoomCall-class.html">RoomCall</a></li>
+</ul>
 </section>
 
 
@@ -426,7 +465,7 @@ Room management provides complete room lifecycle management, including instant r
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_room_room_store/api_room_room_store-library.html">room_store</a></li>
+    <li><a href="../api_room_room_store/index.html">room_store</a></li>
     <li class="self-crumb">RoomStore class</li>
 </ol>
 
@@ -448,6 +487,7 @@ Room management provides complete room lifecycle management, including instant r
 <script src="../static-assets/highlight.pack.js?v1"></script>
 <script src="../static-assets/docs.dart.js"></script>
 
+<script src="../static-assets/custom-enhancements.js?v1"></script>
 </body>
 </html>
 

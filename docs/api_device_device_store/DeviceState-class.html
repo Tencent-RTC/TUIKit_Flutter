@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
   <link rel="icon" href="../static-assets/favicon.png?v1">
   
+  <link rel="stylesheet" href="../static-assets/custom-styles.css?v1">
 </head>
 
 <body data-base-href="../" data-using-base-href="false" class="light-theme">
@@ -25,7 +26,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_device_device_store/api_device_device_store-library.html">api&#47;device&#47;device_store.dart</a></li>
+    <li><a href="../api_device_device_store/index.html">api&#47;device&#47;device_store.dart</a></li>
     <li class="self-crumb">DeviceState class</li>
   </ol>
   <div class="self-name">DeviceState</div>
@@ -59,6 +60,10 @@
     
 <section class="desc markdown">
   <p>Device state</p>
+<p>A comprehensive snapshot of device state, containing all device-related status information including microphone, camera, screen sharing and network.</p>
+<blockquote>
+<p><strong>Note</strong>: Device state is automatically updated. Subscribe to <code>deviceState</code> to receive real-time updates.</p>
+</blockquote>
 </section>
 
 
@@ -83,55 +88,55 @@
     <dl class="properties">
         <dt id="cameraLastError" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/cameraLastError.html">cameraLastError</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceError.html">DeviceError</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceError.html">DeviceError</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Camera error, used to extract error information when an error occurs. {@link DeviceError}
+  Camera error, used to extract error information when an error occurs.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="cameraStatus" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/cameraStatus.html">cameraStatus</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Camera status. {@link DeviceStatus}
+  Camera status.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="captureVolume" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/captureVolume.html">captureVolume</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Capture volume, range <code>0, 100</code>
+  Capture volume, range <code>0, 100</code>.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="currentAudioRoute" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/currentAudioRoute.html">currentAudioRoute</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/AudioRoute.html">AudioRoute</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/AudioRoute.html">AudioRoute</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Current audio route position. {@link AudioRoute}
+  Current audio route location.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="currentMicVolume" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/currentMicVolume.html">currentMicVolume</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
   
 
 </dt>
@@ -155,84 +160,84 @@
 
         <dt id="isFrontCamera" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/isFrontCamera.html">isFrontCamera</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Whether it is front camera.
+  Whether it's front camera.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="localMirrorType" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/localMirrorType.html">localMirrorType</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/MirrorType.html">MirrorType</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/MirrorType.html">MirrorType</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Mirror status. {@link MirrorType}
+  Mirror state.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="localVideoQuality" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/localVideoQuality.html">localVideoQuality</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/VideoQuality.html">VideoQuality</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/VideoQuality.html">VideoQuality</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Local video quality. {@link VideoQuality}
+  Local video quality.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="microphoneLastError" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/microphoneLastError.html">microphoneLastError</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceError.html">DeviceError</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceError.html">DeviceError</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Microphone error, used to extract error information when an error occurs. {@link DeviceError}
+  Microphone error, used to extract error information when an error occurs.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="microphoneStatus" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/microphoneStatus.html">microphoneStatus</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Microphone status. {@link DeviceStatus}
+  Microphone status.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="networkInfo" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/networkInfo.html">networkInfo</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkInfo-class.html">NetworkInfo</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkInfo-class.html">NetworkInfo</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Network information. {@link NetworkInfo}
+  Network information.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="outputVolume" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/outputVolume.html">outputVolume</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Maximum output volume, range <code>0, 100</code>
+  Maximum output volume, range <code>0, 100</code>.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -251,12 +256,12 @@
 
         <dt id="screenStatus" class="property">
   <span class="name"><a href="../api_device_device_store/DeviceState/screenStatus.html">screenStatus</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
+  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/DeviceStatus.html">DeviceStatus</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Screen sharing status. {@link DeviceStatus}
+  Screen sharing status.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -333,7 +338,7 @@
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_device_device_store/api_device_device_store-library.html">device_store</a></li>
+    <li><a href="../api_device_device_store/index.html">device_store</a></li>
     <li class="self-crumb">DeviceState class</li>
 </ol>
 
@@ -355,6 +360,7 @@
 <script src="../static-assets/highlight.pack.js?v1"></script>
 <script src="../static-assets/docs.dart.js"></script>
 
+<script src="../static-assets/custom-enhancements.js?v1"></script>
 </body>
 </html>
 

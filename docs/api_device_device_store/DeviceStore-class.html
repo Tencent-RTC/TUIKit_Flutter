@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
   <link rel="icon" href="../static-assets/favicon.png?v1">
   
+  <link rel="stylesheet" href="../static-assets/custom-styles.css?v1">
 </head>
 
 <body data-base-href="../" data-using-base-href="false" class="light-theme">
@@ -25,7 +26,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_device_device_store/api_device_device_store-library.html">api&#47;device&#47;device_store.dart</a></li>
+    <li><a href="../api_device_device_store/index.html">api&#47;device&#47;device_store.dart</a></li>
     <li class="self-crumb">DeviceStore class</li>
   </ol>
   <div class="self-name">DeviceStore</div>
@@ -58,7 +59,35 @@
 
     
 <section class="desc markdown">
-  <p>Device management class, used to handle anchor camera, microphone and other business.</p>
+  <p>Device related interfaces, operating microphone, camera, etc.</p>
+<p><code>DeviceStore</code> Device management class for handling host camera, microphone and other business.
+<code>DeviceStore</code> provides a comprehensive set of APIs to manage audio and video devices, including microphone, camera and screen sharing features.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Microphone Management</strong>：Open/close microphone, set capture volume and output volume</li>
+<li><strong>Camera Management</strong>：Open/close camera, switch front/rear camera, set mirror and video quality</li>
+<li><strong>Audio Route</strong>：Switch between speaker and earpiece</li>
+<li><strong>Screen Sharing</strong>：Start and stop screen sharing feature</li>
+<li><strong>Network Status</strong>：Real-time monitoring of network quality information</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Device state updates are delivered through the <a href="../api_device_device_store/DeviceStore/state.html">state</a> publisher. Subscribe to it to receive real-time updates about microphone, camera, network and other states.</p>
+</blockquote>
+<h2 id="topics">Topics</h2>
+<h3 id="getting-instance">Getting Instance</h3>
+<ul>
+<li><a href="../api_device_device_store/DeviceStore/shared.html">shared</a> : Singleton object</li>
+</ul>
+<h3 id="observing-state">Observing State</h3>
+<ul>
+<li><a href="../api_device_device_store/DeviceStore/state.html">state</a> : Reactive state containing microphone, camera, network and other device states</li>
+</ul>
+<h3 id="microphone-operations">Microphone Operations</h3>
+<h3 id="audio-route">Audio Route</h3>
+<h3 id="camera-operations">Camera Operations</h3>
+<h3 id="screen-sharing">Screen Sharing</h3>
+<h3 id="reset">Reset</h3>
+<h2 id="see-also">See Also</h2>
 </section>
 
 
@@ -112,7 +141,7 @@
 
 </dt>
 <dd>
-  State {@link DeviceState}
+  State
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -303,7 +332,7 @@
 
 </dt>
 <dd>
-  Switch mirror status
+  Switch mirror state
   
 
 </dd>
@@ -388,7 +417,7 @@
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_device_device_store/api_device_device_store-library.html">device_store</a></li>
+    <li><a href="../api_device_device_store/index.html">device_store</a></li>
     <li class="self-crumb">DeviceStore class</li>
 </ol>
 
@@ -410,6 +439,7 @@
 <script src="../static-assets/highlight.pack.js?v1"></script>
 <script src="../static-assets/docs.dart.js"></script>
 
+<script src="../static-assets/custom-enhancements.js?v1"></script>
 </body>
 </html>
 

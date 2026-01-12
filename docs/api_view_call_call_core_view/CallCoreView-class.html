@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the CallCoreView class from the call_core_view library, for the Dart programming language.">
+  <title>CallCoreView class - call_core_view library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+  <link rel="stylesheet" href="../static-assets/custom-styles.css?v1">
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">atomic_x_core</a></li>
+    <li><a href="../api_view_call_call_core_view/index.html">api&#47;view&#47;call&#47;call_core_view.dart</a></li>
+    <li class="self-crumb">CallCoreView class</li>
+  </ol>
+  <div class="self-name">CallCoreView</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="api_view_call_call_core_view&#47;api_view_call_call_core_view-library-sidebar.html"
+    data-below-sidebar="api_view_call_call_core_view&#47;CallCoreView-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">CallCoreView</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Core call view component responsible for video rendering and interactive display of the call interface. Supports multi-layout switching (single-person float/multi-person grid/picture-in-picture), call waiting animations, and personalized configuration of volume, network status, and user avatars.</p>
+<p><code>CallCoreView</code> Core view component for displaying call screens.
+<code>CallCoreView</code> is the main container for the call interface, providing the following core capabilities:</p>
+<ul>
+<li><strong>Multi-Layout Switching</strong>: Supports switching between single-person float, multi-person grid, and picture-in-picture layouts.</li>
+<li><strong>Call Waiting Interaction</strong>: Supports custom waiting animations before call connection.</li>
+<li><strong>Status Visualization</strong>: Supports custom icons for different volume levels and network quality states.</li>
+<li><strong>User Personalization</strong>: Supports setting participant avatars through User ID mapping.</li>
+</ul>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Multi-Layout Switching</strong>：Supports switching between single-person float, multi-person grid, and picture-in-picture layouts</li>
+<li><strong>Call Waiting Interaction</strong>：Supports custom waiting animations before call connection</li>
+<li><strong>Status Visualization</strong>：Supports custom icons for different volume levels and network quality states</li>
+<li><strong>User Personalization</strong>：Supports setting participant avatars through User ID mapping</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: This view component must be used together with <a href="../api_call_call_store/CallStore-class.html">CallStore</a> to properly display call screens and receive call state updates.</p>
+</blockquote>
+<h2 id="topics">Topics</h2>
+<h3 id="static-properties">Static Properties</h3>
+<ul>
+<li><a href="../api_view_call_call_core_view/CallCoreView/defaultAvatar.html">defaultAvatar</a> : Default placeholder avatar</li>
+<li><a href="../api_view_call_call_core_view/CallCoreView/loadingAnimation.html">loadingAnimation</a> : Call waiting animation</li>
+<li><a href="../api_view_call_call_core_view/CallCoreView/volumeIcons.html">volumeIcons</a> : Volume status icon collection</li>
+<li><a href="../api_view_call_call_core_view/CallCoreView/networkQualityIcons.html">networkQualityIcons</a> : Network signal icon collection</li>
+</ul>
+<h3 id="configuration-methods">Configuration Methods</h3>
+<ul>
+<li><a href="../api_view_call_call_core_view/CallCoreController/setLayoutTemplate.html">CallCoreController.setLayoutTemplate</a> : Multi-layout switching</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_view_call_call_core_view/CallLayoutTemplate.html">CallLayoutTemplate</a></li>
+<li><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></li>
+</ul>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="CallCoreView" class="callable">
+          <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/CallCoreView.html">CallCoreView</a></span><span class="signature">({<span class="parameter" id="-param-key"><span class="type-annotation">Key?</span> <span class="parameter-name">key</span>, </span><span class="parameter" id="-param-controller"><span>required</span> <span class="type-annotation"><a href="../api_view_call_call_core_view/CallCoreController-class.html">CallCoreController</a></span> <span class="parameter-name">controller</span>, </span><span class="parameter" id="-param-defaultAvatar"><span class="type-annotation">Widget?</span> <span class="parameter-name">defaultAvatar</span>, </span><span class="parameter" id="-param-loadingAnimation"><span class="type-annotation">Widget?</span> <span class="parameter-name">loadingAnimation</span>, </span><span class="parameter" id="-param-volumeIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span> <span class="parameter-name">volumeIcons</span> = <span class="default-value">const {}</span>, </span><span class="parameter" id="-param-networkQualityIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span> <span class="parameter-name">networkQualityIcons</span> = <span class="default-value">const {}</span></span>})</span>
+        </dt>
+        <dd>
+          Constructor and lifecycle methods for CallCoreView widget.
+            <div class="constructor-modifier features">const</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="controller" class="property">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/controller.html">controller</a></span>
+  <span class="signature">&#8594; <a href="../api_view_call_call_core_view/CallCoreController-class.html">CallCoreController</a></span>
+  
+
+</dt>
+<dd>
+  The controller for managing call view layout and state.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="defaultAvatar" class="property">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/defaultAvatar.html">defaultAvatar</a></span>
+  <span class="signature">&#8594; Widget?</span>
+  
+
+</dt>
+<dd>
+  Default placeholder avatar widget. Displayed when a participant has not set a specific avatar or when loading fails.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="key" class="property inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/key.html">key</a></span>
+  <span class="signature">&#8594; Key?</span>
+  
+
+</dt>
+<dd class="inherited">
+  Controls how one widget replaces another widget in the tree.
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="loadingAnimation" class="property">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/loadingAnimation.html">loadingAnimation</a></span>
+  <span class="signature">&#8594; Widget?</span>
+  
+
+</dt>
+<dd>
+  Loading animation widget. Used to display waiting state before call connection.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="networkQualityIcons" class="property">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/networkQualityIcons.html">networkQualityIcons</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Network signal icon collection. Defines widget resources for different network quality levels.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="volumeIcons" class="property">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/volumeIcons.html">volumeIcons</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Volume status icon collection. Defines widget resources for each volume level.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="createElement" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/createElement.html">createElement</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; StatefulElement</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a <code>StatefulElement</code> to manage this widget's location in the tree.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="createState" class="callable">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/createState.html">createState</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; State<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/CallCoreView-class.html">CallCoreView</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates the mutable state for this widget at a given location in the tree.
+  
+
+</dd>
+
+        <dt id="debugDescribeChildren" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/debugDescribeChildren.html">debugDescribeChildren</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">DiagnosticsNode</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a list of <code>DiagnosticsNode</code> objects describing this node's
+children.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="debugFillProperties" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/debugFillProperties.html">debugFillProperties</a></span><span class="signature">(<wbr><span class="parameter" id="debugFillProperties-param-properties"><span class="type-annotation">DiagnosticPropertiesBuilder</span> <span class="parameter-name">properties</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Add additional properties associated with the node.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toDiagnosticsNode" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toDiagnosticsNode.html">toDiagnosticsNode</a></span><span class="signature">(<wbr>{<span class="parameter" id="toDiagnosticsNode-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="toDiagnosticsNode-param-style"><span class="type-annotation">DiagnosticsTreeStyle?</span> <span class="parameter-name">style</span></span>})
+    <span class="returntype parameter">&#8594; DiagnosticsNode</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a debug representation of the object that is used by debugging
+tools and by <code>DiagnosticsNode.toStringDeep</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toString.html">toString</a></span><span class="signature">(<wbr>{<span class="parameter" id="toString-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.info</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toStringDeep" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringDeep.html">toStringDeep</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringDeep-param-prefixLineOne"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">prefixLineOne</span> = <span class="default-value">&#39;&#39;</span>, </span><span class="parameter" id="toStringDeep-param-prefixOtherLines"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">prefixOtherLines</span>, </span><span class="parameter" id="toStringDeep-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a string representation of this node and its descendants.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toStringShallow" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringShallow.html">toStringShallow</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringShallow-param-joiner"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">joiner</span> = <span class="default-value">&#39;, &#39;</span>, </span><span class="parameter" id="toStringShallow-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns a one-line detailed description of the object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toStringShort" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringShort.html">toStringShort</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A short, textual description of this widget.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">atomic_x_core</a></li>
+    <li><a href="../api_view_call_call_core_view/index.html">call_core_view</a></li>
+    <li class="self-crumb">CallCoreView class</li>
+</ol>
+
+    <h5>call_core_view library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    atomic_x_core
+      3.6.2
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+<script src="../static-assets/custom-enhancements.js?v1"></script>
+</body>
+</html>
+
