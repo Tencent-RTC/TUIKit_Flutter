@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the notifyListeners method from the LoginStore class, for the Dart programming language.">
+  <title>notifyListeners method - LoginStore class - login_store library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+  <link rel="stylesheet" href="../../static-assets/custom-styles.css?v1">
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">atomic_x_core</a></li>
+    <li><a href="../../api_login_login_store">api&#47;login&#47;login_store.dart</a></li>
+    <li><a href="../../api_login_login_store/LoginStore-class.html">LoginStore</a></li>
+    <li class="self-crumb">notifyListeners method</li>
+  </ol>
+  <div class="self-name">notifyListeners</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="api_login_login_store&#47;LoginStore-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">notifyListeners</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@protected</li>
+        <li>@visibleForTesting</li>
+    </ol>
+  </div>
+<span class="returntype">void</span>
+<span class="name ">notifyListeners</span>(<wbr>)
+
+      <div class="features"><span class="feature">inherited</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Call all the registered listeners.</p>
+<p>Call this method whenever the object changes, to notify any clients the
+object may have changed. Listeners that are added during this iteration
+will not be visited. Listeners that are removed during this iteration will
+not be visited after they are removed.</p>
+<p>Exceptions thrown by listeners will be caught and reported using
+<code>FlutterError.reportError</code>.</p>
+<p>This method must not be called after <code>dispose</code> has been called.</p>
+<p>Surprising behavior can result when reentrantly removing a listener (e.g.
+in response to a notification) that has been registered multiple times.
+See the discussion at <code>removeListener</code>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@protected
+@visibleForTesting
+@pragma(&#39;vm:notify-debugger-on-exception&#39;)
+void notifyListeners() {
+  assert(ChangeNotifier.debugAssertNotDisposed(this));
+  if (_count == 0) {
+    return;
+  }
+
+  &#47;&#47; To make sure that listeners removed during this iteration are not called,
+  &#47;&#47; we set them to null, but we don&#39;t shrink the list right away.
+  &#47;&#47; By doing this, we can continue to iterate on our list until it reaches
+  &#47;&#47; the last listener added before the call to this method.
+
+  &#47;&#47; To allow potential listeners to recursively call notifyListener, we track
+  &#47;&#47; the number of times this method is called in _notificationCallStackDepth.
+  &#47;&#47; Once every recursive iteration is finished (i.e. when _notificationCallStackDepth == 0),
+  &#47;&#47; we can safely shrink our list so that it will only contain not null
+  &#47;&#47; listeners.
+
+  _notificationCallStackDepth++;
+
+  final int end = _count;
+  for (int i = 0; i &lt; end; i++) {
+    try {
+      _listeners[i]?.call();
+    } catch (exception, stack) {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: exception,
+        stack: stack,
+        library: &#39;foundation library&#39;,
+        context: ErrorDescription(&#39;while dispatching notifications for $runtimeType&#39;),
+        informationCollector: () =&gt; &lt;DiagnosticsNode&gt;[
+          DiagnosticsProperty&lt;ChangeNotifier&gt;(
+            &#39;The $runtimeType sending notification was&#39;,
+            this,
+            style: DiagnosticsTreeStyle.errorProperty,
+          ),
+        ],
+      ));
+    }
+  }
+
+  _notificationCallStackDepth--;
+
+  if (_notificationCallStackDepth == 0 &amp;&amp; _reentrantlyRemovedListeners &gt; 0) {
+    &#47;&#47; We really remove the listeners when all notifications are done.
+    final int newLength = _count - _reentrantlyRemovedListeners;
+    if (newLength * 2 &lt;= _listeners.length) {
+      &#47;&#47; As in _removeAt, we only shrink the list when the real number of
+      &#47;&#47; listeners is half the length of our list.
+      final List&lt;VoidCallback?&gt; newListeners = List&lt;VoidCallback?&gt;.filled(newLength, null);
+
+      int newIndex = 0;
+      for (int i = 0; i &lt; _count; i++) {
+        final VoidCallback? listener = _listeners[i];
+        if (listener != null) {
+          newListeners[newIndex++] = listener;
+        }
+      }
+
+      _listeners = newListeners;
+    } else {
+      &#47;&#47; Otherwise we put all the null references at the end.
+      for (int i = 0; i &lt; newLength; i += 1) {
+        if (_listeners[i] == null) {
+          &#47;&#47; We swap this item with the next not null item.
+          int swapIndex = i + 1;
+          while (_listeners[swapIndex] == null) {
+            swapIndex += 1;
+          }
+          _listeners[i] = _listeners[swapIndex];
+          _listeners[swapIndex] = null;
+        }
+      }
+    }
+
+    _reentrantlyRemovedListeners = 0;
+    _count = newLength;
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">atomic_x_core</a></li>
+    <li><a href="../../api_login_login_store">login_store</a></li>
+    <li><a href="../../api_login_login_store/LoginStore-class.html">LoginStore</a></li>
+    <li class="self-crumb">notifyListeners method</li>
+</ol>
+
+    <h5>LoginStore class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    atomic_x_core
+      3.6.2
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+<script src="../../static-assets/custom-enhancements.js?v1"></script>
+</body>
+</html>
+

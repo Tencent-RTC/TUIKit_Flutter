@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../static-assets/styles.css?v1">
   <link rel="icon" href="../static-assets/favicon.png?v1">
   
+  <link rel="stylesheet" href="../static-assets/custom-styles.css?v1">
 </head>
 
 <body data-base-href="../" data-using-base-href="false" class="light-theme">
@@ -25,7 +26,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_room_room_participant_store/api_room_room_participant_store-library.html">api&#47;room&#47;room_participant_store.dart</a></li>
+    <li><a href="../api_room_room_participant_store">api&#47;room&#47;room_participant_store.dart</a></li>
     <li class="self-crumb">RoomParticipantStore class</li>
   </ol>
   <div class="self-name">RoomParticipantStore</div>
@@ -71,6 +72,62 @@ Room participant management provides complete participant lifecycle management, 
 <blockquote>
 <p><strong>Note</strong>: Participant status updates are delivered through <a href="../api_room_room_participant_store/RoomParticipantStore/state.html">state</a> publisher. Subscribe to it to receive real-time updates about participant list.</p>
 </blockquote>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/create.html">create</a>: Create object instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/state.html">state</a>: Reactive state containing participant list and device request info</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/addRoomParticipantListener.html">addRoomParticipantListener</a>/<a href="../api_room_room_participant_store/RoomParticipantStore/removeRoomParticipantListener.html">removeRoomParticipantListener</a>: Participant event callback</li>
+</ul>
+<h3 id="participant-list">Participant List</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/getParticipantList.html">getParticipantList</a>: Get participant list</li>
+</ul>
+<h3 id="permission-management">Permission Management</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/transferOwner.html">transferOwner</a>: Transfer owner</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/setAdmin.html">setAdmin</a>: Set admin</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/revokeAdmin.html">revokeAdmin</a>: Revoke admin</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/kickUser.html">kickUser</a>: Kick user</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/updateParticipantNameCard.html">updateParticipantNameCard</a>: Update participant name card</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/updateParticipantMetaData.html">updateParticipantMetaData</a>: Update participant metadata</li>
+</ul>
+<h3 id="local-microphone-control">Local Microphone Control</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/muteMicrophone.html">muteMicrophone</a>: Mute microphone</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/unmuteMicrophone.html">unmuteMicrophone</a>: Unmute microphone</li>
+</ul>
+<h3 id="device-control">Device Control</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/closeParticipantDevice.html">closeParticipantDevice</a>: Close participant device</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/disableUserMessage.html">disableUserMessage</a>: Mute user</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/disableAllDevices.html">disableAllDevices</a>: Disable all devices</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/disableAllMessages.html">disableAllMessages</a>: Mute all users</li>
+</ul>
+<h3 id="device-request-operations">Device Request Operations</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/requestToOpenDevice.html">requestToOpenDevice</a>: Request to open device</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/cancelOpenDeviceRequest.html">cancelOpenDeviceRequest</a>: Cancel open device request</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/approveOpenDeviceRequest.html">approveOpenDeviceRequest</a>: Approve open device request</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/rejectOpenDeviceRequest.html">rejectOpenDeviceRequest</a>: Reject open device request</li>
+</ul>
+<h3 id="device-invitation-operations">Device Invitation Operations</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/inviteToOpenDevice.html">inviteToOpenDevice</a>: Invite to open device</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/cancelOpenDeviceInvitation.html">cancelOpenDeviceInvitation</a>: Cancel open device invitation</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/acceptOpenDeviceInvitation.html">acceptOpenDeviceInvitation</a>: Accept open device invitation</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/declineOpenDeviceInvitation.html">declineOpenDeviceInvitation</a>: Decline open device invitation</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_room_room_participant_store/ParticipantRole.html">ParticipantRole</a></li>
+<li><a href="../api_room_room_participant_store/RoomParticipant-class.html">RoomParticipant</a></li>
+<li><a href="../api_room_room_participant_store/RoomParticipantListener-class.html">RoomParticipantListener</a></li>
+<li><a href="../api_room_room_participant_store/DeviceRequestInfo-class.html">DeviceRequestInfo</a></li>
+</ul>
 </section>
 
 
@@ -518,7 +575,7 @@ Room participant management provides complete participant lifecycle management, 
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../index.html">atomic_x_core</a></li>
-    <li><a href="../api_room_room_participant_store/api_room_room_participant_store-library.html">room_participant_store</a></li>
+    <li><a href="../api_room_room_participant_store">room_participant_store</a></li>
     <li class="self-crumb">RoomParticipantStore class</li>
 </ol>
 
@@ -540,6 +597,7 @@ Room participant management provides complete participant lifecycle management, 
 <script src="../static-assets/highlight.pack.js?v1"></script>
 <script src="../static-assets/docs.dart.js"></script>
 
+<script src="../static-assets/custom-enhancements.js?v1"></script>
 </body>
 </html>
 
