@@ -1,6 +1,5 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'call_kit_method_channel.dart';
 
 abstract class TUICallKitPlatform extends PlatformInterface {
@@ -35,5 +34,13 @@ abstract class TUICallKitPlatform extends PlatformInterface {
 
   void stopForegroundService() {
     instance.stopForegroundService();
+  }
+
+  Future<bool> isScreenLocked() {
+    return instance.isScreenLocked();
+  }
+
+  void imSDKInitSuccess() {
+    instance.imSDKInitSuccess();
   }
 }

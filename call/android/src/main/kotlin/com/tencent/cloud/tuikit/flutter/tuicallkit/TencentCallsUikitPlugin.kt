@@ -1,7 +1,10 @@
 package com.tencent.cloud.tuikit.flutter.tuicallkit
+import android.app.KeyguardManager
 import android.content.Context
 import com.tencent.cloud.tuikit.flutter.tuicallkit.view.NotificationView
 import com.tencent.cloud.tuikit.flutter.tuicallkit.utils.CallingVibrator
+import com.tencent.qcloud.tuicore.TUIConstants
+import com.tencent.qcloud.tuicore.TUICore
 import com.trtc.tuikit.common.foregroundservice.AudioForegroundService
 import com.trtc.tuikit.common.foregroundservice.VideoForegroundService
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -35,6 +38,8 @@ class TencentCallsUikitPlugin: FlutterPlugin, MethodCallHandler {
       "stopVibration" -> stopVibration(call, result)
       "startForegroundService" -> startForegroundService(call, result)
       "stopForegroundService" -> stopForegroundService(call, result)
+      "isScreenLocked" -> isScreenLocked(result)
+      "imSDKInitSuccess" -> imSDKInitSuccess()
       else -> result.notImplemented()
     }
   }
@@ -79,6 +84,15 @@ class TencentCallsUikitPlugin: FlutterPlugin, MethodCallHandler {
     VideoForegroundService.stop(appContext)
     AudioForegroundService.stop(appContext)
     result.success(null)
+  }
+
+  private fun isScreenLocked(result: MethodChannel.Result) {
+    val keyguardManager = appContext.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+    result.success(keyguardManager?.isKeyguardLocked ?: false)
+  }
+
+  private fun imSDKInitSuccess() {
+    TUICore.notifyEvent(TUIConstants.TUILogin.EVENT_IMSDK_INIT_STATE_CHANGED, TUIConstants.TUILogin.EVENT_SUB_KEY_INIT_SUCCESS, null)
   }
 
   companion object {

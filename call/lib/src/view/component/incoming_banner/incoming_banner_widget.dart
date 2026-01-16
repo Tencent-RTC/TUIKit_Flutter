@@ -83,12 +83,12 @@ class _IncomingBannerWidgetState extends State<IncomingBannerWidget> {
   }
 
   _getInviterAvatarWidget() {
-    return ValueListenableBuilder(valueListenable: CallParticipantStore.shared.state.allParticipants,
+    return ValueListenableBuilder(valueListenable: CallStore.shared.state.allParticipants,
         builder: (context, allParticipants, child) {
           final inviterId = CallStore.shared.state.activeCall.value.inviterId;
           final inviter = allParticipants.firstWhere(
                 (participant) => participant.id == inviterId,
-            orElse: () => CallParticipantStore.shared.state.selfInfo.value,
+            orElse: () => CallStore.shared.state.selfInfo.value,
           );
 
           return Container(
@@ -112,12 +112,12 @@ class _IncomingBannerWidgetState extends State<IncomingBannerWidget> {
   }
 
   _getInviterInfoWidget() {
-    return ValueListenableBuilder(valueListenable: CallParticipantStore.shared.state.allParticipants,
+    return ValueListenableBuilder(valueListenable: CallStore.shared.state.allParticipants,
         builder: (context, allParticipants, child) {
           final inviterId = CallStore.shared.state.activeCall.value.inviterId;
           final inviter = allParticipants.firstWhere(
                 (participant) => participant.id == inviterId,
-            orElse: () => CallParticipantStore.shared.state.selfInfo.value,
+            orElse: () => CallStore.shared.state.selfInfo.value,
           );
 
           var inviterName = inviter.remark.isNotEmpty ?  inviter.remark : inviter.name;

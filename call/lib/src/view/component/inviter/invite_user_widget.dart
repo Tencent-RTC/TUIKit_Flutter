@@ -118,22 +118,22 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
       return;
     }
 
-    for (var user in CallParticipantStore.shared.state.allParticipants.value) {
+    for (var user in CallStore.shared.state.allParticipants.value) {
       _defaultSelectList.add(user.id);
     }
 
     var memberInfo = GroupMemberInfo();
-    memberInfo.userId = CallParticipantStore.shared.state.selfInfo.value.id;
+    memberInfo.userId = CallStore.shared.state.selfInfo.value.id;
     memberInfo.userName =
-    '${StringStream.makeNull(CallParticipantStore.shared.state.selfInfo.value.name,
-        CallParticipantStore.shared.state.selfInfo.value.id)} (${getI18nString("yourself")})';
+    '${StringStream.makeNull(CallStore.shared.state.selfInfo.value.name,
+        CallStore.shared.state.selfInfo.value.id)} (${getI18nString("yourself")})';
     memberInfo.avatar =
-        StringStream.makeNull(CallParticipantStore.shared.state.selfInfo.value.avatarURL, Constants.defaultAvatar);
+        StringStream.makeNull(CallStore.shared.state.selfInfo.value.avatarURL, Constants.defaultAvatar);
     memberInfo.isSelected = true;
     _groupMemberList.add(memberInfo);
 
     for (var info in memberInfoResult.data!.memberInfoList!) {
-      if (info == null || info.userID == CallParticipantStore.shared.state.selfInfo.value.id) {
+      if (info == null || info.userID == CallStore.shared.state.selfInfo.value.id) {
         continue;
       }
       var memberInfo = GroupMemberInfo();
@@ -177,7 +177,7 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
   }
 
   bool _isUserAlreadyInRoom(String userId) {
-    for (var user in CallParticipantStore.shared.state.allParticipants.value) {
+    for (var user in CallStore.shared.state.allParticipants.value) {
       if (user.id == userId) {
         return true;
       }

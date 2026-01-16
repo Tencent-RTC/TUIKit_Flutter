@@ -4,10 +4,19 @@ import 'package:flutter/material.dart';
 import '../../common/call_colors.dart';
 
 class TimerWidget extends StatelessWidget {
+  final double? fontSize;
+  final FontWeight? fontWeight;
+
+  const TimerWidget({
+    super.key,
+    this.fontSize,
+    this.fontWeight,
+  });
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: CallParticipantStore.shared.state.selfInfo,
+        valueListenable: CallStore.shared.state.selfInfo,
         builder: (context, info, child) {
           if (info.status == CallParticipantStatus.accept) {
             return ValueListenableBuilder(
@@ -16,6 +25,8 @@ class TimerWidget extends StatelessWidget {
                 return Text(
                   formatDuration(activeCall.duration.toInt()),
                   style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
                     color: CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
                         ? CallColors.colorG7
                         : CallColors.colorWhite,

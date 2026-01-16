@@ -215,7 +215,7 @@ class _AISubtitleState extends State<AISubtitle> {
 
   Future<String?> _getUserDisplayName(String userId) async {
     try {
-      final allParticipants = CallParticipantStore.shared.state.allParticipants.value;
+      final allParticipants = CallStore.shared.state.allParticipants.value;
       for (final participant in allParticipants) {
         if (participant.id == userId) {
           return _getDisplayName(participant);

@@ -69,6 +69,24 @@ class MethodChannelTUICallKit extends TUICallKitPlatform {
     }
   }
 
+  @override
+  Future<bool> isScreenLocked() async {
+    if (kIsWeb) return false;
+    if (Platform.isAndroid) {
+      final result = await methodChannel.invokeMethod<bool>('isScreenLocked');
+      return result ?? false;
+    }
+    return false;
+  }
+
+  @override
+  void imSDKInitSuccess() {
+    if (kIsWeb) return;
+    if (Platform.isAndroid) {
+      methodChannel.invokeMethod<bool>('imSDKInitSuccess');
+    }
+  }
+
 
   void _handleNativeCall(MethodCall call) {
     switch (call.method) {

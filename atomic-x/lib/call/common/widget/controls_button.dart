@@ -55,7 +55,8 @@ class ControlsButton extends StatelessWidget {
     if (isDisabled) {
       return const SizedBox();
     }
-    return InkWell(
+    return GestureDetector(
+      behavior: HitTestBehavior.deferToChild,
       onTap: () {
         onTap?.call();
       },

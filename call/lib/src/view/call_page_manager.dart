@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
+import '../common/metrics/key_metrics.dart';
 import 'call_main_widget.dart';
 import 'component/incoming_banner/incoming_banner_widget.dart';
 import 'component/inviter/invite_user_widget.dart';
@@ -113,6 +114,8 @@ class CallPageManager {
   }
 
   void _showPage(CallPageType pageType, {bool isManualSwitch = false, bool cacheCurrentPage = false}) {
+    KeyMetrics.instance.countUV(EventId.wakeup);
+
     final overlay = _navigatorGetter()?.overlay;
     if (overlay == null) return;
     if (AppLifecycle.instance.currentState.value == AppLifecycleState.detached) return;

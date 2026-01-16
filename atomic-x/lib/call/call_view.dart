@@ -1,19 +1,15 @@
-import 'package:tuikit_atomic_x/call/component/aisubtitle/ai_subtitle.dart';
-import 'package:tuikit_atomic_x/call/component/controls/multi_call_controls_widget.dart';
-import 'package:tuikit_atomic_x/call/component/controls/single_call_controls_widget.dart';
-import 'package:tuikit_atomic_x/call/component/hint/timer_widget.dart';
-import 'package:tuikit_atomic_x/call/component/stream_widget/multi_call_stream_widget.dart';
-import 'package:tuikit_atomic_x/call/component/stream_widget/single_call_stream_widget.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tuikit_atomic_x/call/component/widgets/float/call_float_widget.dart';
+import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_widget.dart';
+import 'package:tuikit_atomic_x/call/component/widgets/pip/call_pip_widget.dart';
 
 class CallView extends StatefulWidget {
-  final List<CallFeature> disableFeatures;
+  final bool isPipMode;
 
   const CallView({
     super.key,
-    this.disableFeatures = const [],
+    this.isPipMode = false,
   });
 
   @override
@@ -21,21 +17,26 @@ class CallView extends StatefulWidget {
 }
 
 class _CallViewState extends State<CallView> {
-  bool isMultiPerson = false;
+  late final CallCoreController controller;
 
   @override
   void initState() {
+    controller = CallCoreController.create();
     DeviceStore.shared.openLocalMicrophone();
     DeviceStore.shared.setAudioRoute(
       CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
           ? AudioRoute.earpiece
           : AudioRoute.speakerphone
     );
+    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
+      DeviceStore.shared.openLocalCamera(true);
+    }
     super.initState();
   }
 
   @override
   void dispose() {
+    controller.dispose();
     DeviceStore.shared.closeLocalMicrophone();
     super.dispose();
   }
@@ -43,89 +44,33 @@ class _CallViewState extends State<CallView> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: ValueListenableBuilder(
             valueListenable: CallStore.shared.state.activeCall,
             builder: (context, activeCall, child) {
-              return ValueListenableBuilder(
-                  valueListenable: CallParticipantStore.shared.state.allParticipants,
-                  builder: (context, allParticipants, child) {
-                    Widget streamWidget = SingleCallStreamWidget(disableFeatures: widget.disableFeatures,);
-                    Widget controlsWidget = SingleCallControlsWidget(disableFeatures: widget.disableFeatures,);
-                    if (activeCall.chatGroupId.isNotEmpty || isMultiPerson || activeCall.inviteeIds.length >= 2) {
-                      isMultiPerson = true;
-                      streamWidget = MultiCallStreamWidget(disableFeatures: widget.disableFeatures,);
-                      controlsWidget = MultiCallControlsWidget(disableFeatures: widget.disableFeatures,);
-                    }
+              if (widget.isPipMode) {
+                controller.setLayoutTemplate(CallLayoutTemplate.pip);
+                return CallPipWidget(
+                  controller: controller,
+                );
+              }
 
-                    final isTwoRowsButtons = activeCall.mediaType == CallMediaType.video || isMultiPerson;
-                    return Stack(
-                      children: [
-                        streamWidget,
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: isTwoRowsButtons ? 240 : 120,
-                          child: Container(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.9,
-                              maxHeight: MediaQuery.of(context).size.height * 0.3,
-                            ),
-                            child: AISubtitle(userId: CallParticipantStore.shared.state.selfInfo.value.id),
-                          ),
-                        ),
-                        if (!widget.disableFeatures.contains(CallFeature.all)
-                            && !widget.disableFeatures.contains(CallFeature.timer))
-                          getTimerWidget(),
-                        Positioned(
-                          right: 0,
-                          left: 0,
-                          bottom: isMultiPerson ? 0 : 40,
-                          child: widget.disableFeatures.contains(CallFeature.all)
-                              ? Container()
-                              : controlsWidget,
-                        ),
-                      ],
-                    );
-                  }
+              if (activeCall.chatGroupId.isNotEmpty || activeCall.inviteeIds.length > 1) {
+                controller.setLayoutTemplate(CallLayoutTemplate.grid);
+                return CallGridWidget(
+                  controller: controller,
+                );
+              }
+
+              controller.setLayoutTemplate(CallLayoutTemplate.float);
+              return CallFloatWidget(
+                controller: controller,
               );
             }
         ),
       ),
     );
   }
-
-  Widget getTimerWidget() {
-    return ValueListenableBuilder(
-      valueListenable: SingleCallUserWidgetData.isOnlyShowVideoView,
-      builder: (context, value, child) {
-        if (value) {
-          return Container();
-        }
-        return Positioned(
-          top: 20,
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          child: Center(child: TimerWidget(),),
-        );
-      },
-    );
-  }
-}
-
-enum CallFeature {
-  timer,
-  networkQuality,
-  openFloatWindow,
-  invite,
-  accept,
-  hangup,
-  toggleMicrophone,
-  toggleCamera,
-  selectAudioRoute,
-  switchCamera,
-  virtualBackground,
-  all,
 }

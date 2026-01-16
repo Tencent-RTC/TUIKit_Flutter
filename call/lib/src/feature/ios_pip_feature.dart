@@ -209,14 +209,14 @@ class IosPipFeature {
     _allParticipantsListener = () => _handleParticipantsChange();
     _selfInfoListener = () => _handleParticipantsChange();
 
-    CallParticipantStore.shared.state.allParticipants
+    CallStore.shared.state.allParticipants
         .addListener(_allParticipantsListener);
-    CallParticipantStore.shared.state.selfInfo.addListener(_selfInfoListener);
+    CallStore.shared.state.selfInfo.addListener(_selfInfoListener);
   }
 
   void _handleParticipantsChange() {
     final participants =
-        CallParticipantStore.shared.state.allParticipants.value;
+        CallStore.shared.state.allParticipants.value;
 
     if (participants.isEmpty) {
       if (_currentRequest?.params.enable == true) {
@@ -235,16 +235,16 @@ class IosPipFeature {
   }
 
   void _unregisterObservers() {
-    CallParticipantStore.shared.state.allParticipants
+    CallStore.shared.state.allParticipants
         .removeListener(_allParticipantsListener);
-    CallParticipantStore.shared.state.selfInfo
+    CallStore.shared.state.selfInfo
         .removeListener(_selfInfoListener);
   }
 
   Future<void> updatePictureInPicture(
       List<CallParticipantInfo> participants) async {
     final userList = List<CallParticipantInfo>.from(participants);
-    final selfInfo = CallParticipantStore.shared.state.selfInfo.value;
+    final selfInfo = CallStore.shared.state.selfInfo.value;
 
     if (!userList.any((p) => p.id == selfInfo.id)) {
       userList.add(selfInfo);
@@ -374,7 +374,7 @@ class IosPipFeature {
 
   List<IosPipRegion> _createTwoParticipantsLayout(
       List<CallParticipantInfo> participants) {
-    final selfUserId = CallParticipantStore.shared.state.selfInfo.value.id;
+    final selfUserId = CallStore.shared.state.selfInfo.value.id;
     final regions = <IosPipRegion>[];
 
     for (final participant in participants) {
@@ -386,7 +386,7 @@ class IosPipFeature {
     }
 
     regions.add(_createRegion(
-      CallParticipantStore.shared.state.selfInfo.value,
+      CallStore.shared.state.selfInfo.value,
       _IosPipConfiguration.smallWindowSize,
       _IosPipConfiguration.smallWindowSize,
       _IosPipConfiguration.smallWindowX,

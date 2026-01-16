@@ -1,5 +1,3 @@
-import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-
 class SettingsConfig {
   static const defaultAvatar =
       "https://imgcache.qq.com/qcloud/public/static//avatar3_100.20191230.png";

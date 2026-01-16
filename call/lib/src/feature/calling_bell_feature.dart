@@ -89,7 +89,7 @@ class CallingBellFeature {
   }
 
   bool _isCalled() {
-    final userId = CallParticipantStore.shared.state.selfInfo.value.id;
+    final userId = CallStore.shared.state.selfInfo.value.id;
     final inviterId = CallStore.shared.state.activeCall.value.inviterId;
     return userId != inviterId;
   }

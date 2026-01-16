@@ -6,6 +6,25 @@ import 'package:flutter/material.dart';
 
 import '../../common/call_colors.dart';
 
+class _HintDisplayTracker {
+  static String? _currentCallId;
+  static bool _hadShowAcceptText = false;
+  
+  static bool shouldShowAcceptText(String callId) {
+    if (_currentCallId != callId) {
+      _currentCallId = callId;
+      _hadShowAcceptText = false;
+    }
+    return !_hadShowAcceptText;
+  }
+  
+  static void markAcceptTextShown(String callId) {
+    if (_currentCallId == callId) {
+      _hadShowAcceptText = true;
+    }
+  }
+}
+
 class HintWidget extends StatefulWidget {
   const HintWidget({super.key});
 
@@ -16,7 +35,6 @@ class HintWidget extends StatefulWidget {
 class _HintWidgetState extends State<HintWidget> {
   final _acceptTextDisplayDuration = const Duration(seconds: 1);
   Timer? _acceptTextTimer;
-  bool _hadShowAcceptText = false;
 
   @override
   void dispose() {
@@ -27,7 +45,7 @@ class _HintWidgetState extends State<HintWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: CallParticipantStore.shared.state.selfInfo,
+      valueListenable: CallStore.shared.state.selfInfo,
       builder: (context, selfInfo, child) {
         return _buildConnectionHint(selfInfo) ??
             _buildStatusHint(selfInfo) ??
@@ -38,14 +56,19 @@ class _HintWidgetState extends State<HintWidget> {
   }
 
   Widget? _buildConnectionHint(CallParticipantInfo selfInfo) {
-    if (selfInfo.status != CallParticipantStatus.accept || _hadShowAcceptText) {
+    final activeCall = CallStore.shared.state.activeCall.value;
+    final callId = activeCall.callId;
+    
+    if (selfInfo.status != CallParticipantStatus.accept || 
+        !_HintDisplayTracker.shouldShowAcceptText(callId)) {
       return null;
     }
 
     _acceptTextTimer?.cancel();
     _acceptTextTimer = Timer(_acceptTextDisplayDuration, () {
       if (mounted) {
-        setState(() => _hadShowAcceptText = true);
+        _HintDisplayTracker.markAcceptTextShown(callId);
+        setState(() {});
       }
     });
 
@@ -64,7 +87,9 @@ class _HintWidgetState extends State<HintWidget> {
       return null;
     }
 
-    if (selfInfo.id == CallStore.shared.state.activeCall.value.inviterId) {
+    final activeCall = CallStore.shared.state.activeCall.value;
+    
+    if (selfInfo.id == activeCall.inviterId) {
       return Text(
         CallKit_t('waitingForInvitationAcceptance'),
         style: TextStyle(
@@ -73,11 +98,8 @@ class _HintWidgetState extends State<HintWidget> {
           color: _getHintTextColor(),
         ),
       );
-    }
-
-    if (selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
-      final mediaType = CallStore.shared.state.activeCall.value.mediaType;
-      final hintText = mediaType == CallMediaType.audio
+    } else {
+      final hintText = activeCall.mediaType == CallMediaType.audio
           ? CallKit_t("invitedToAudioCall")
           : CallKit_t("invitedToVideoCall");
 
@@ -90,13 +112,11 @@ class _HintWidgetState extends State<HintWidget> {
         ),
       );
     }
-
-    return null;
   }
 
   Widget? _buildNetworkQualityHint(CallParticipantInfo selfInfo) {
     return ValueListenableBuilder(
-      valueListenable: CallParticipantStore.shared.state.networkQualities,
+      valueListenable: CallStore.shared.state.networkQualities,
       builder: (context, networkQualities, child) {
         final hintText = _getNetworkQualityHintText(selfInfo, networkQualities);
         return hintText.isNotEmpty

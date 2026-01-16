@@ -23,6 +23,7 @@ class Bootloader extends NavigatorObserver {
   };
 
   ITUINotificationCallback imSDKInitSuccessCallBack = (arg) {
+    TUICallKitPlatform.instance.imSDKInitSuccess();
   };
 
   _bootstrap() {

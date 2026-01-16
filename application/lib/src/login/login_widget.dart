@@ -185,8 +185,8 @@ class _LoginWidgetState extends State<LoginWidget> {
         _enterMainWidget();
       }
     } else {
-      LiveKitLogger.error("TUILogin login fail, {code:$result.errorCode, message:$result.errorMessage}");
-      makeToast(msg: "code:$result.errorCode message:$result.errorMessage");
+      LiveKitLogger.error("TUILogin login fail, {code:${result.errorCode}, message:${result.errorMessage}");
+      makeToast(msg: "code:${result.errorCode} message:${result.errorMessage}");
     }
     _isButtonEnabled = true;
   }

@@ -139,7 +139,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
                     alignment: Alignment.center,
                     child: CallView(
                       key: _callViewKey,
-                      disableFeatures: const [CallFeature.all],
+                      isPipMode: true,
                     ),
                   ),
                 ),
@@ -161,24 +161,45 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
           right: _floatViewRight,
           child: Stack(
             children: [
-              SizedBox(
-                width: 120,
-                height: 180,
-                child: Container(
-                  width: 120,
-                  height: 180,
-                  decoration: const BoxDecoration(color: Colors.transparent),
-                  child: ClipRect(
-                    child: Transform.scale(
-                      scale: scale,
-                      alignment: Alignment.center,
-                      child: OverflowBox(
-                        maxWidth: screenWidth,
-                        maxHeight: 180 / scale,
+              Container(
+                width: 120 + 1,
+                height: 180 + 1,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 8.0,
+                      spreadRadius: 2.0,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Container(
+                    width: 120,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.6),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Transform.scale(
+                        scale: scale,
                         alignment: Alignment.center,
-                        child: CallView(
-                          key: _callViewKey,
-                          disableFeatures: const [CallFeature.all],
+                        child: OverflowBox(
+                          maxWidth: screenWidth,
+                          maxHeight: 180 / scale,
+                          alignment: Alignment.center,
+                          child: CallView(
+                            key: _callViewKey,
+                            isPipMode: true,
+                          ),
                         ),
                       ),
                     ),

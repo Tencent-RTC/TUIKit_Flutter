@@ -1,6 +1,6 @@
 name: tencent_calls_uikit
 description: "TUICallKit is a UIKit about audio&video calls launched by Tencent Cloud."
-version: 4.0.0
+version: 4.0.2
 homepage:
 
 environment:
@@ -13,17 +13,19 @@ dependencies:
   tuikit_atomic_x:
     path: ../atomic-x
 
-  tencent_cloud_uikit_core: ^1.7.4
+  tencent_cloud_uikit_core: ^1.7.6
   plugin_platform_interface: ^2.1.8
   shared_preferences: ^2.5.3
   path_provider: ^2.1.5
   crypto: ^3.0.1
   http: ^1.6.0
   file: any
-  rtc_room_engine: any
   tencent_cloud_chat_sdk: any
   tencent_rtc_sdk: any
-  atomic_x_core: any
+
+#  发布的时候需要打开下面的注释
+#  atomic_x_core: any
+#  rtc_room_engine: any
 
 dev_dependencies:
   flutter_test:

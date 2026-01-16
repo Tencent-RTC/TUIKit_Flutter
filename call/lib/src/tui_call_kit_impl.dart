@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:tencent_calls_uikit/src/common/metrics/key_metrics.dart';
 import 'package:tuikit_atomic_x/permission/permission.dart';
-import 'package:flutter/material.dart' as material;
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
@@ -29,13 +29,16 @@ class TUICallKitImpl implements TUICallKit {
   final contactListStore = ContactListStore.create();
   bool isNotificationPreparing = false;
   late CallEventListener callEventListener = CallEventListener(
+    onCallReceived: (String callId, CallMediaType mediaType, String userData) {
+      KeyMetrics.instance.countUV(EventId.received);
+    },
     onCallEnded: (callId, mediaType, reason, userId) {
       _closePage();
       _stopRing();
       ForegroundService.stop();
       if (CallStore.shared.state.activeCall.value.inviteeIds.length > 1
           || CallStore.shared.state.activeCall.value.chatGroupId.isNotEmpty
-          || CallParticipantStore.shared.state.selfInfo.value.id == userId) {
+          || CallStore.shared.state.selfInfo.value.id == userId) {
         return;
       }
       switch (reason) {
@@ -69,7 +72,6 @@ class TUICallKitImpl implements TUICallKit {
 
   TUICallKitImpl() {
     CallStore.shared;
-    CallParticipantStore.shared;
     voIPDataSyncHandler = VoIPDataSyncHandler();
     fcmDataSyncHandler = FcmDataSyncHandler();
     pageManager = CallPageManager(navigatorGetter: () => Bootloader.instance.navigator);
@@ -226,7 +228,7 @@ class TUICallKitImpl implements TUICallKit {
   void _subscribeState() {
     contactListStore.addListener(() async {
       final activeCall = CallStore.shared.state.activeCall.value;
-      final selfInfo = CallParticipantStore.shared.state.selfInfo.value;
+      final selfInfo = CallStore.shared.state.selfInfo.value;
       if (isNotificationPreparing && activeCall.inviterId.isNotEmpty) {
         if (contactListStore.contactListState.addFriendInfo?.contactID == activeCall.inviterId
             && activeCall.inviterId != selfInfo.id && activeCall.mediaType != null) {
@@ -239,9 +241,9 @@ class TUICallKitImpl implements TUICallKit {
       }
     });
 
-    CallParticipantStore.shared.state.selfInfo.addListener(() async {
+    CallStore.shared.state.selfInfo.addListener(() async {
       final activeCall = CallStore.shared.state.activeCall.value;
-      final isCalled = CallParticipantStore.shared.state.selfInfo.value.id != activeCall.inviterId;
+      final isCalled = CallStore.shared.state.selfInfo.value.id != activeCall.inviterId;
       final isGroupCall = activeCall.inviteeIds.length > 1 || activeCall.chatGroupId.isNotEmpty;
 
       if (activeCall.mediaType == null) {
@@ -253,7 +255,7 @@ class TUICallKitImpl implements TUICallKit {
         return;
       }
 
-      final callStatus = CallParticipantStore.shared.state.selfInfo.value.status;
+      final callStatus = CallStore.shared.state.selfInfo.value.status;
 
       if (callStatus == CallParticipantStatus.waiting) {
         _showPage();
@@ -313,8 +315,9 @@ class TUICallKitImpl implements TUICallKit {
     }
 
     if (GlobalState.instance.enableIncomingBanner &&
-        CallParticipantStore.shared.state.selfInfo.value.id !=
-            CallStore.shared.state.activeCall.value.inviterId) {
+        CallStore.shared.state.selfInfo.value.id !=
+            CallStore.shared.state.activeCall.value.inviterId &&
+        CallStore.shared.state.selfInfo.value.status == CallParticipantStatus.waiting) {
       pageManager.showIncomingBanner();
     } else {
       pageManager.showCallingPage();

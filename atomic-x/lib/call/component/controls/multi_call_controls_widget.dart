@@ -7,11 +7,9 @@ import 'package:tuikit_atomic_x/call/call_view.dart';
 import '../../common/call_colors.dart';
 
 class MultiCallControlsWidget extends StatefulWidget {
-  final List<CallFeature> disableFeatures;
 
   const MultiCallControlsWidget({
     super.key,
-    required this.disableFeatures,
   });
 
   @override
@@ -36,7 +34,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: CallParticipantStore.shared.state.selfInfo,
+        valueListenable: CallStore.shared.state.selfInfo,
         builder: (context, selfInfo, child) {
           if (selfInfo.status == CallParticipantStatus.waiting &&
               selfInfo.id != CallStore.shared.state.activeCall.value.inviterId) {
@@ -57,6 +55,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             _getAcceptButton(),
           ],
         ),
+        const SizedBox(height: 40,),
       ],
     );
   }
@@ -148,7 +147,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
 
   Widget _getRejectButton() {
     return ControlsButton(
-      isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       tips: CallKit_t("hangUp"),
       textColor: CallColors.colorG7,
@@ -161,7 +159,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
 
   Widget _getAcceptButton() {
     return ControlsButton(
-      isDisabled: _isWidgetDisabled(CallFeature.accept),
       imgUrl: "call_assets/dialing.png",
       tips: CallKit_t("accept"),
       textColor: CallColors.colorG7,
@@ -177,7 +174,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
         valueListenable: DeviceStore.shared.state.microphoneStatus,
         builder: (context, value, child) {
           return ControlsButton(
-            isDisabled: _isWidgetDisabled(CallFeature.toggleMicrophone),
             imgUrl: value == DeviceStatus.on ? "call_assets/mute.png" : "call_assets/mute_on.png",
             tips: isFunctionExpand
                 ? (value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"))
@@ -202,7 +198,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
         valueListenable: DeviceStore.shared.state.currentAudioRoute,
         builder: (context, value, child) {
           return ControlsButton(
-            isDisabled: _isWidgetDisabled(CallFeature.selectAudioRoute),
             imgUrl: value == AudioRoute.speakerphone ? "call_assets/handsfree_on.png" : "call_assets/handsfree.png",
             tips: isFunctionExpand
                 ? (value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"))
@@ -227,7 +222,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
         valueListenable: DeviceStore.shared.state.cameraStatus,
         builder: (context, value, child) {
           return ControlsButton(
-            isDisabled: _isWidgetDisabled(CallFeature.toggleCamera),
             imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
             tips:
                 isFunctionExpand ? (value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff")) : '',
@@ -248,7 +242,6 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
 
   Widget _getAnimatedHangupButton(bool isFunctionExpand) {
     return ControlsButton(
-      isDisabled: _isWidgetDisabled(CallFeature.hangup),
       imgUrl: "call_assets/hangup.png",
       textColor: CallColors.colorG7,
       imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
@@ -258,9 +251,5 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       useAnimation: true,
       duration: Duration(milliseconds: duration),
     );
-  }
-
-  bool _isWidgetDisabled(CallFeature feature) {
-    return widget.disableFeatures.contains(CallFeature.all) || widget.disableFeatures.contains(feature);
   }
 }
