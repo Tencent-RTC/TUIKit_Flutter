@@ -1,20 +1,18 @@
-import 'package:atomic_x_core/api/live/co_guest_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/api/room/tui_room_define.dart';
 import 'package:tencent_live_uikit/common/constants/index.dart';
 import 'package:tencent_live_uikit/common/resources/colors.dart';
 import 'package:tencent_live_uikit/common/resources/images.dart';
 import 'package:tencent_live_uikit/common/screen/index.dart';
 
 class CoGuestForegroundWidget extends StatefulWidget {
-  final SeatFullInfo userInfo;
+  final SeatInfo seatInfo;
   final ValueListenable<bool> isFloatWindowMode;
 
   const CoGuestForegroundWidget({
     super.key,
-    required this.userInfo,
+    required this.seatInfo,
     required this.isFloatWindowMode,
   });
 
@@ -30,15 +28,17 @@ class _CoGuestWidgetState extends State<CoGuestForegroundWidget> {
         builder: (context, isFloatWindowMode, child) {
           return Visibility(
             visible: !isFloatWindowMode,
-            child: Container(
-                child: LayoutBuilder(builder: (context, constraint) {
-                  return SizedBox(width: constraint.maxWidth, height: constraint.maxHeight, child: Stack(
+            child: Container(child: LayoutBuilder(builder: (context, constraint) {
+              return SizedBox(
+                  width: constraint.maxWidth,
+                  height: constraint.maxHeight,
+                  child: Stack(
                     alignment: Alignment.center,
                     children: [
                       _buildMicAndNameWidget(),
                     ],
                   ));
-                })),
+            })),
           );
         });
   }
@@ -61,7 +61,7 @@ class _CoGuestWidgetState extends State<CoGuestForegroundWidget> {
           child: Row(
             children: [
               Visibility(
-                visible: widget.userInfo.userMicrophoneStatus != DeviceStatus.opened,
+                visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
                 child: SizedBox(
                   width: 12.width,
                   height: 12.width,
@@ -75,7 +75,9 @@ class _CoGuestWidgetState extends State<CoGuestForegroundWidget> {
                 width: 2.width,
               ),
               Text(
-                (widget.userInfo.userName.isNotEmpty) ? widget.userInfo.userName : widget.userInfo.userId,
+                (widget.seatInfo.userInfo.userName.isNotEmpty)
+                    ? widget.seatInfo.userInfo.userName
+                    : widget.seatInfo.userInfo.userID,
                 style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
               )
             ],

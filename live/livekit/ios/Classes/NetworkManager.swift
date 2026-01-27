@@ -35,10 +35,12 @@ extension NetworkManager {
             guard let self = self else { return }
             self.currentPath = path
             let isConnected = path.status == .satisfied
-            if let sink = eventSink {
-                sink(isConnected ? connected : disconnected)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if let sink = self.eventSink {
+                    sink(isConnected ? self.connected : self.disconnected)
+                }
             }
-            
         }
         monitor.start(queue: queue)
     }

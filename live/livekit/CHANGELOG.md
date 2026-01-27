@@ -1,5 +1,11 @@
 # TUILiveKit
 
+## 3.6.4
+
+- atomic_x_core upgraded to 3.6.4, adapt to LiveCoreWidget.
+- LiveKit disabled the floating window feature by default. It is enabled in the example.
+- Optimize network status component & temperature monitoring component thread issues.
+
 ## 3.6.0
 
 - Architecture adjusted: the underlying dependency has been changed from live_stream_core to

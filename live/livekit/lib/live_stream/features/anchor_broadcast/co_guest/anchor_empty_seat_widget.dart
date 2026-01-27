@@ -1,3 +1,4 @@
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../common/resources/colors.dart';
@@ -5,10 +6,10 @@ import '../../../../tencent_live_uikit.dart';
 import '../../../manager/live_stream_manager.dart';
 
 class AnchorEmptySeatWidget extends StatelessWidget {
-  final SeatFullInfo seatFullInfo;
+  final SeatInfo seatInfo;
   final LiveStreamManager liveStreamManager;
 
-  const AnchorEmptySeatWidget({super.key, required this.seatFullInfo, required this.liveStreamManager});
+  const AnchorEmptySeatWidget({super.key, required this.seatInfo, required this.liveStreamManager});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class AnchorEmptySeatWidget extends StatelessWidget {
               children: [
                 const Spacer(flex: 1),
                 Text(
-                  seatFullInfo.seatIndex.toString(),
+                  seatInfo.index.toString(),
                   style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 18),
                 ),
                 const Spacer(flex: 1),

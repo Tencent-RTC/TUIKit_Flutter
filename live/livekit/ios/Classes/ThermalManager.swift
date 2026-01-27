@@ -13,7 +13,10 @@ class ThermalManager: NSObject, FlutterStreamHandler {
             object: nil
         )
         // initial state
-        events(ProcessInfo.processInfo.thermalState.rawValue)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            events(ProcessInfo.processInfo.thermalState.rawValue)
+        }
         return nil
     }
 
@@ -24,8 +27,11 @@ class ThermalManager: NSObject, FlutterStreamHandler {
     }
 
     @objc private func thermalStateDidChange() {
-        if let sink = eventSink {
-            sink(ProcessInfo.processInfo.thermalState.rawValue)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if let sink = eventSink {
+                sink(ProcessInfo.processInfo.thermalState.rawValue)
+            }
         }
     }
 }

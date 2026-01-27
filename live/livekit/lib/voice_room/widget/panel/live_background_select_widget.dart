@@ -111,6 +111,7 @@ class _LiveBackgroundSelectPanelWidgetState extends State<LiveBackgroundSelectPa
                                   return Image.asset(
                                     LiveImages.defaultBackground,
                                     package: Constants.pluginName,
+                                    fit: BoxFit.cover,
                                   );
                                 }),
                           );

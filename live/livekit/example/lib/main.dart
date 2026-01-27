@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/common/widget/global.dart';
+import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/view/index.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);
     super.initState();
   }
 
@@ -57,9 +59,13 @@ class _MyAppState extends State<MyApp> {
             ),
         home: Navigator(
           key: Global.secondaryNavigatorKey,
-          onGenerateRoute: (settings) => MaterialPageRoute(builder: (BuildContext context) {
-            return const LoginWidget();
-          }),
+          initialRoute: '/login_widget',
+          onGenerateRoute: (settings) {
+            if (settings.name == '/login_widget') {
+              return MaterialPageRoute(builder: (BuildContext context) => const LoginWidget());
+            }
+            return null;
+          },
         )
     );
   }

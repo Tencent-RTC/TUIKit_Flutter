@@ -104,39 +104,38 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
         borderRadius: isFloatWindowMode ? BorderRadius.zero : BorderRadius.circular(16.radius),
         child: LiveCoreWidget(
           controller: liveCoreController,
-          videoWidgetBuilder: VideoWidgetBuilder(coGuestWidgetBuilder: (context, seatFullInfo, viewLayer) {
-            if (seatFullInfo.userId.isEmpty) {
+          videoWidgetBuilder: VideoWidgetBuilder(coGuestWidgetBuilder: (context, seatInfo, viewLayer) {
+            if (seatInfo.userInfo.userID.isEmpty) {
               if (viewLayer == ViewLayer.background) {
-                return AnchorEmptySeatWidget(seatFullInfo: seatFullInfo, liveStreamManager: liveStreamManager);
+                return AnchorEmptySeatWidget(seatInfo: seatInfo, liveStreamManager: liveStreamManager);
               } else {
                 return Container();
               }
             }
             if (viewLayer == ViewLayer.background) {
               return CoGuestBackgroundWidget(
-                  userInfo: seatFullInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
+                  seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
             } else {
               return GestureDetector(
-                  onTap: () => _onTapCoGuestForegroundWidget(seatFullInfo),
+                  onTap: () => _onTapCoGuestForegroundWidget(seatInfo),
                   child: Container(
                       color: Colors.transparent,
                       child: CoGuestForegroundWidget(
-                          userInfo: seatFullInfo,
+                          seatInfo: seatInfo,
                           isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode)));
             }
-          }, coHostWidgetBuilder: (context, seatFullInfo, viewLayer) {
+          }, coHostWidgetBuilder: (context, seatInfo, viewLayer) {
             if (viewLayer == ViewLayer.background) {
               return CoHostBackgroundWidget(
-                  userInfo: seatFullInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
+                  seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
             } else {
               return CoHostForegroundWidget(
-                  userInfo: seatFullInfo,
-                  isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                  seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
             }
-          }, battleWidgetBuilder: (context, battleUserInfo) {
+          }, battleWidgetBuilder: (context, seatInfo) {
             return BattleMemberInfoWidget(
                 liveStreamManager: liveStreamManager,
-                battleUserId: battleUserInfo.userId,
+                battleUserId: seatInfo.userInfo.userID,
                 isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
           }, battleContainerWidgetBuilder: (context) {
             return BattleInfoWidget(
@@ -385,10 +384,10 @@ extension on _AnchorBroadcastWidgetState {
     }
   }
 
-  void _onTapCoGuestForegroundWidget(SeatFullInfo seatFullInfo) {
-    final isSelf = TUIRoomEngine.getSelfInfo().userId == seatFullInfo.userId;
-    final user =
-        LiveUserInfo(userID: seatFullInfo.userId, userName: seatFullInfo.userName, avatarURL: seatFullInfo.userAvatar);
+  void _onTapCoGuestForegroundWidget(SeatInfo seatInfo) {
+    final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
+    final user = LiveUserInfo(
+        userID: seatInfo.userInfo.userID, userName: seatInfo.userInfo.userName, avatarURL: seatInfo.userInfo.avatarURL);
     _userManagementPanelSheetHandler = popupWidget(AnchorUserManagementPanelWidget(
       panelType: isSelf ? AnchorUserManagementPanelType.pureMedia : AnchorUserManagementPanelType.mediaAndSeat,
       user: user,

@@ -20,22 +20,36 @@ class TUILiveRoomAudienceOverlayState extends State<TUILiveRoomAudienceOverlay> 
   @override
   void initState() {
     super.initState();
+    LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
+    LiveKitLogger.info("TUILiveRoomAudienceOverlay initState");
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (GlobalFloatWindowManager.instance.isFloating()) {
-        makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip);
-        Navigator.pop(context);
+      if (!GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
+        String error = "Error: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!\n"
+            "You need to enable the floating window feature first.\n"
+            "It is recommended to execute the following in main.dart first: GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
+        LiveKitLogger.error(error);
+        makeToast(msg: "Tip: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!");
+        if (mounted) Navigator.pop(context);
         return;
       }
       if (Global.secondaryNavigatorKey.currentState == null) {
-        Navigator.pop(context);
-        LiveKitLogger.error("TUILiveRoomAudienceOverlay error: Global.secondaryNavigatorKey is invalid!");
+        String error = "Error: Global.secondaryNavigatorKey is invalid!\n"
+            "Please refer to the home parameter of MaterialApp in example's main.dart.\n"
+            "You need to wrap the home page with a Navigator and use Global.secondaryNavigatorKey as the key for this Navigator.";
+        LiveKitLogger.error(error);
+        makeToast(msg: "Tip: Global.secondaryNavigatorKey is invalid!");
+        if (mounted) Navigator.pop(context);
+        return;
+      }
+      if (GlobalFloatWindowManager.instance.isFloating()) {
+        makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip);
+        if (mounted) Navigator.pop(context);
         return;
       }
       final overlayEntry = OverlayEntry(builder: (context) => buildOverlayContent());
-      Global.secondaryNavigatorKey.currentState!.overlay!.insert(overlayEntry);
       GlobalFloatWindowManager.instance.setRoomId(widget.roomId);
       GlobalFloatWindowManager.instance.overlayManager.showOverlayEntry(overlayEntry);
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     });
   }
 

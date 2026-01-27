@@ -1,18 +1,18 @@
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/api/room/tui_room_define.dart';
 import 'package:tencent_live_uikit/common/constants/index.dart';
 import 'package:tencent_live_uikit/common/resources/colors.dart';
 import 'package:tencent_live_uikit/common/resources/images.dart';
 import 'package:tencent_live_uikit/common/screen/index.dart';
 
 class CoGuestBackgroundWidget extends StatefulWidget {
-  final SeatFullInfo userInfo;
+  final SeatInfo seatInfo;
   final ValueListenable<bool> isFloatWindowMode;
 
   const CoGuestBackgroundWidget({
     super.key,
-    required this.userInfo,
+    required this.seatInfo,
     required this.isFloatWindowMode,
   });
 
@@ -52,7 +52,7 @@ class _CoGuestWidgetState extends State<CoGuestBackgroundWidget> {
         height: 45.width,
         child: ClipOval(
           child: Image.network(
-            widget.userInfo.userAvatar,
+            widget.seatInfo.userInfo.avatarURL,
             errorBuilder: (context, error, stackTrace) {
               return Image.asset(
                 LiveImages.defaultAvatar,
