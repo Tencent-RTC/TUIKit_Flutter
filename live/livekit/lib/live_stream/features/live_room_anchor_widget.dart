@@ -35,7 +35,7 @@ class TUILiveRoomAnchorWidget extends StatefulWidget {
 }
 
 class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
-  final LiveCoreController _liveCoreController = LiveCoreController.create();
+  final LiveCoreController _liveCoreController = LiveCoreController.create(CoreViewType.pushView);
   final LiveStreamManager _liveStreamManager = LiveStreamManager();
   final ValueNotifier<bool> _isShowingPreviewWidget = ValueNotifier(false);
   late final VoidCallback _onFloatWindowModeChangedListener = _onFloatWindowModeChanged;
@@ -51,6 +51,17 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
     _addObserver();
     _startForegroundService();
     _startWakeLock();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() && widget.floatWindowController == null) {
+        String error = "You have enabled the floating window feature,"
+            "but you are using TUILiveRoomAnchorWidget, Please switch to TUILiveRoomAnchorOverlay."
+            "Or disable the floating window feature in the app's main.dart: "
+            "GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
+        LiveKitLogger.error(error);
+        makeToast(msg: "Tip: Please use TUILiveRoomAnchorOverlay");
+        if (mounted) Navigator.pop(context);
+      }
+    });
   }
 
   @override

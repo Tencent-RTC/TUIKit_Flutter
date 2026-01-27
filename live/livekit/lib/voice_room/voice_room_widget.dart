@@ -70,6 +70,19 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
     _needToPrepare.value = behavior == RoomBehavior.prepareCreate;
     DeviceStore.shared.setFocus(DeviceFocusOwner.live);
     widget.floatWindowController?.isFullScreen.addListener(_onFullScreenChangedListener);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() &&
+          Global.secondaryNavigatorKey.currentState != null
+          && widget.floatWindowController == null) {
+        String error = "You have enabled the floating window feature,"
+            "but you are using TUIVoiceRoomWidget, Please switch to TUIVoiceRoomOverlay."
+            "Or disable the floating window feature in the app's main.dart: "
+            "GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
+        LiveKitLogger.error(error);
+        makeToast(msg: "Tip: Please use TUIVoiceRoomOverlay");
+        if (mounted) Navigator.pop(context);
+      }
+    });
   }
 
   @override

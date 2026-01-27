@@ -5,7 +5,6 @@ import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/view/live/live_core_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
-import 'package:live_uikit_gift/live_uikit_gift.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
@@ -69,26 +68,26 @@ class _AudienceWidgetState extends State<AudienceWidget> {
               _buildBackgroundImageWidget(),
               LiveCoreWidget(
                 controller: widget.liveCoreController,
-                videoWidgetBuilder: VideoWidgetBuilder(coGuestWidgetBuilder: (context, seatFullInfo, viewLayer) {
-                  if (seatFullInfo.userId.isEmpty) {
+                videoWidgetBuilder: VideoWidgetBuilder(coGuestWidgetBuilder: (context, seatInfo, viewLayer) {
+                  if (seatInfo.userInfo.userID.isEmpty) {
                     if (viewLayer == ViewLayer.background) {
                       return AudienceEmptySeatWidget(
-                          seatFullInfo: seatFullInfo, liveStreamManager: widget.liveStreamManager);
+                          seatInfo: seatInfo, liveStreamManager: widget.liveStreamManager);
                     }
                     return Container();
                   }
                   if (viewLayer == ViewLayer.background) {
                     return CoGuestBackgroundWidget(
-                        userInfo: seatFullInfo,
+                        seatInfo: seatInfo,
                         isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
                   } else {
                     return GestureDetector(
                       onTap: () {
-                        final isSelf = TUIRoomEngine.getSelfInfo().userId == seatFullInfo.userId;
+                        final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
                         final user = LiveUserInfo(
-                            userID: seatFullInfo.userId,
-                            userName: seatFullInfo.userName,
-                            avatarURL: seatFullInfo.userAvatar);
+                            userID: seatInfo.userInfo.userID,
+                            userName: seatInfo.userInfo.userName,
+                            avatarURL: seatInfo.userInfo.avatarURL);
                         if (!isSelf) {
                           _audienceUserInfoPanelHandler = popupWidget(
                               AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
@@ -101,25 +100,25 @@ class _AudienceWidgetState extends State<AudienceWidget> {
                       child: Container(
                         color: Colors.transparent,
                         child: CoGuestForegroundWidget(
-                            userInfo: seatFullInfo,
+                            seatInfo: seatInfo,
                             isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode),
                       ),
                     );
                   }
-                }, coHostWidgetBuilder: (context, seatFullInfo, viewLayer) {
+                }, coHostWidgetBuilder: (context, seatInfo, viewLayer) {
                   if (viewLayer == ViewLayer.background) {
                     return CoHostBackgroundWidget(
-                        userInfo: seatFullInfo,
+                        seatInfo: seatInfo,
                         isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
                   } else {
                     return CoHostForegroundWidget(
-                        userInfo: seatFullInfo,
+                        seatInfo: seatInfo,
                         isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
                   }
-                }, battleWidgetBuilder: (context, battleUser) {
+                }, battleWidgetBuilder: (context, seatInfo) {
                   return BattleMemberInfoWidget(
                       liveStreamManager: widget.liveStreamManager,
-                      battleUserId: battleUser.userId,
+                      battleUserId: seatInfo.userInfo.userID,
                       isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
                 }, battleContainerWidgetBuilder: (context) {
                   return BattleInfoWidget(

@@ -1,16 +1,16 @@
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
 
-import '../../../../tencent_live_uikit.dart';
 import '../panel/co_guest_type_select_panel_widget.dart';
 
 class AudienceEmptySeatWidget extends StatelessWidget {
-  final SeatFullInfo seatFullInfo;
+  final SeatInfo seatInfo;
   final LiveStreamManager liveStreamManager;
 
-  const AudienceEmptySeatWidget({super.key, required this.seatFullInfo, required this.liveStreamManager});
+  const AudienceEmptySeatWidget({super.key, required this.seatInfo, required this.liveStreamManager});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class AudienceEmptySeatWidget extends StatelessWidget {
             visible: !isFloatWindowMode,
             child: GestureDetector(
               onTap: () {
-                _showCoGuestPanelWidget(seatFullInfo.seatIndex);
+                _showCoGuestPanelWidget(seatInfo.index);
               },
               child: Container(
                 alignment: Alignment.center,

@@ -1,9 +1,6 @@
-import 'package:atomic_x_core/api/live/battle_store.dart';
-import 'package:atomic_x_core/api/live/co_host_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/api/room/tui_room_define.dart';
 import 'package:tencent_live_uikit/common/constants/index.dart';
 import 'package:tencent_live_uikit/common/resources/colors.dart';
 import 'package:tencent_live_uikit/common/resources/images.dart';
@@ -13,12 +10,12 @@ import '../../../../common/language/index.dart';
 import '../../../../common/widget/index.dart';
 
 class CoHostForegroundWidget extends StatefulWidget {
-  final SeatFullInfo userInfo;
+  final SeatInfo seatInfo;
   final ValueListenable<bool> isFloatWindowMode;
 
   const CoHostForegroundWidget({
     super.key,
-    required this.userInfo,
+    required this.seatInfo,
     required this.isFloatWindowMode,
   });
 
@@ -35,13 +32,17 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
           return Visibility(
             visible: !isFloatWindowMode,
             child: LayoutBuilder(builder: (context, constraint) {
-              return SizedBox(width: constraint.maxWidth, height: constraint.maxHeight, child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  _buildConnectionStatusWidget(),
-                  _buildMicAndNameWidget(),
-                ],
-              ),);
+              return SizedBox(
+                width: constraint.maxWidth,
+                height: constraint.maxHeight,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    _buildConnectionStatusWidget(),
+                    _buildMicAndNameWidget(),
+                  ],
+                ),
+              );
             }),
           );
         });
@@ -65,7 +66,7 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
           child: Row(
             children: [
               Visibility(
-                visible: widget.userInfo.userMicrophoneStatus != DeviceStatus.opened,
+                visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
                 child: SizedBox(
                   width: 12.width,
                   height: 12.width,
@@ -79,7 +80,9 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
                 width: 2.width,
               ),
               Text(
-                (widget.userInfo.userName.isNotEmpty) ? widget.userInfo.userName : widget.userInfo.userId,
+                (widget.seatInfo.userInfo.userName.isNotEmpty)
+                    ? widget.seatInfo.userInfo.userName
+                    : widget.seatInfo.userInfo.userID,
                 style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
               )
             ],
@@ -125,7 +128,8 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
 extension on _CoHostForegroundWidgetState {
   bool _isConnectionStatusVisible(BattleStore battleStore) {
     if (battleStore.battleState.currentBattleInfo.value != null &&
-        !battleStore.battleState.battleUsers.value.any((battleUser) => battleUser.userID == widget.userInfo.userId)) {
+        !battleStore.battleState.battleUsers.value
+            .any((battleUser) => battleUser.userID == widget.seatInfo.userInfo.userID)) {
       return true;
     }
     return false;

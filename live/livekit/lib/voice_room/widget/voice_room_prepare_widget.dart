@@ -18,7 +18,6 @@ class VoiceRoomPrepareWidget extends StatefulWidget {
 }
 
 class _VoiceRoomPrepareWidgetState extends State<VoiceRoomPrepareWidget> {
-  late double _screenWidth;
 
   @override
   void initState() {
@@ -27,11 +26,10 @@ class _VoiceRoomPrepareWidgetState extends State<VoiceRoomPrepareWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenWidth = MediaQuery.sizeOf(context).width;
     return PopScope(
       canPop: false,
       child: SizedBox(
-        width: _screenWidth,
+        width: 1.screenWidth,
         child: Stack(
           children: [
             _initBackgroundWidget(),
@@ -39,7 +37,7 @@ class _VoiceRoomPrepareWidgetState extends State<VoiceRoomPrepareWidget> {
             _initSeatPreviewWidget(),
             _initFunctionWidget(),
             _initBackWidget(),
-            _initStartLiveWidget()
+            _initStartLiveWidget(),
           ],
         ),
       ),
@@ -48,12 +46,13 @@ class _VoiceRoomPrepareWidgetState extends State<VoiceRoomPrepareWidget> {
 
   Widget _initBackgroundWidget() {
     return SizedBox(
-      width: _screenWidth,
+      width: 1.screenWidth,
+      height: 1.screenHeight,
       child: ValueListenableBuilder(
           valueListenable: ValueSelector(widget.prepareStore.state.liveInfo, (liveInfo) => liveInfo.backgroundURL),
           builder: (context, backgroundURL, _) {
             final defaultImage =
-                Image.asset(LiveImages.defaultBackground, fit: BoxFit.fill, package: Constants.pluginName);
+                Image.asset(LiveImages.defaultBackground, fit: BoxFit.cover, package: Constants.pluginName);
             return CachedNetworkImage(
               imageUrl: backgroundURL,
               fit: BoxFit.cover,
