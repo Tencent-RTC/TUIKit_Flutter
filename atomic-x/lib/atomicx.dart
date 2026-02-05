@@ -22,3 +22,4 @@ export 'user_picker/user_picker.dart';
 export 'call/call_view.dart';
 export 'pip/android_pip_feature.dart';
 export 'permission/permission.dart';
+export 'ai/ai_transcriber.dart';

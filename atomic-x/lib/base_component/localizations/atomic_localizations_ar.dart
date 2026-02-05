@@ -267,20 +267,16 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get createCommunity => 'إنشاء مجتمع';
 
   @override
-  String get groupIDInvalid =>
-      'معرف المجموعة غير صالح، يرجى التحقق من صحة معرف المجموعة';
+  String get groupIDInvalid => 'معرف المجموعة غير صالح، يرجى التحقق من صحة معرف المجموعة';
 
   @override
-  String get communityIDEditFormatTips =>
-      'يجب أن يكون معرف المجتمع مسبوقًا بـ @TGS#_!';
+  String get communityIDEditFormatTips => 'يجب أن يكون معرف المجتمع مسبوقًا بـ @TGS#_!';
 
   @override
-  String get groupIDEditFormatTips =>
-      'ا يمكن أن يكون بادئة معرف المجموعة @TGS# !';
+  String get groupIDEditFormatTips => 'ا يمكن أن يكون بادئة معرف المجموعة @TGS# !';
 
   @override
-  String get groupIDEditExceedTips =>
-      'يجب أن يكون معرف المجموعة أقل من 48 بايت!';
+  String get groupIDEditExceedTips => 'يجب أن يكون معرف المجموعة أقل من 48 بايت!';
 
   @override
   String get productDocumentation => 'عرض دليل المنتج';
@@ -313,20 +309,16 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get groupCommunityType => 'مجتمع (Community)';
 
   @override
-  String get groupWorkDesc =>
-      'مجموعة عمل الأصدقاء (Work): تشبه محادثات WeChat العادية، بعد الإنشاء، يمكن للأصدقاء الموجودين في المجموعة دعوة أصدقائهم للانضمام دون الحاجة إلى موافقة المضافين أو الموافقة من قبل مالك المجموعة.';
+  String get groupWorkDesc => 'مجموعة عمل الأصدقاء (Work): تشبه محادثات WeChat العادية، بعد الإنشاء، يمكن للأصدقاء الموجودين في المجموعة دعوة أصدقائهم للانضمام دون الحاجة إلى موافقة المضافين أو الموافقة من قبل مالك المجموعة.';
 
   @override
-  String get groupPublicDesc =>
-      'مجموعة تواصل الغرباء (Public): تشبه مجموعات QQ، بعد الإنشاء، يمكن لمالك المجموعة تعيين مشرفين للمجموعة، عندما يبحث المستخدمون عن معرف المجموعة ويطلبون الانضمام، يجب عليهم الحصول على موافقة من مالك المجموعة أو المشرفين قبل الانضمام إلى المجموعة.';
+  String get groupPublicDesc => 'مجموعة تواصل الغرباء (Public): تشبه مجموعات QQ، بعد الإنشاء، يمكن لمالك المجموعة تعيين مشرفين للمجموعة، عندما يبحث المستخدمون عن معرف المجموعة ويطلبون الانضمام، يجب عليهم الحصول على موافقة من مالك المجموعة أو المشرفين قبل الانضمام إلى المجموعة.';
 
   @override
-  String get groupMeetingDesc =>
-      'مجموعة اجتماعات مؤقتة (Meeting): بعد الإنشاء، يمكن للمستخدمين الانضمام والخروج من المجموعة بحرية، ويمكنهم عرض الرسائل قبل الانضمام إلى المجموعة. تستخدم هذه المجموعات في سيناريوهات الاجتماعات الصوتية والمرئية والتعليم عبر الإنترنت وغيرها من السيناريوهات التي تتطلب منتجات الصوت والفيديو الفورية.';
+  String get groupMeetingDesc => 'مجموعة اجتماعات مؤقتة (Meeting): بعد الإنشاء، يمكن للمستخدمين الانضمام والخروج من المجموعة بحرية، ويمكنهم عرض الرسائل قبل الانضمام إلى المجموعة. تستخدم هذه المجموعات في سيناريوهات الاجتماعات الصوتية والمرئية والتعليم عبر الإنترنت وغيرها من السيناريوهات التي تتطلب منتجات الصوت والفيديو الفورية.';
 
   @override
-  String get groupCommunityDesc =>
-      ' المجتمع (Community): بعد الإنشاء يمكن الدخول والخروج بحرية، يدعم حتى 100000 شخص، يدعم تخزين الرسائل السابقة، بعد البحث عن معرف المجموعة وإرسال طلب الانضمام، يمكن الانضمام إلى المجموعة دون حاجة لموافقة المشرف.';
+  String get groupCommunityDesc => ' المجتمع (Community): بعد الإنشاء يمكن الدخول والخروج بحرية، يدعم حتى 100000 شخص، يدعم تخزين الرسائل السابقة، بعد البحث عن معرف المجموعة وإرسال طلب الانضمام، يمكن الانضمام إلى المجموعة دون حاجة لموافقة المشرف.';
 
   @override
   String get groupDetail => 'تفاصيل المحادثة الجماعية';
@@ -638,8 +630,7 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get invite => 'دعوة';
 
   @override
-  String get groupApplicationAllReadyBeenProcessed =>
-      'تم معالجة هذا الطلب أو الدعوة بالفعل';
+  String get groupApplicationAllReadyBeenProcessed => 'تم معالجة هذا الطلب أو الدعوة بالفعل';
 
   @override
   String get accepted => 'تمت الموافقة';
@@ -765,8 +756,7 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get addMuteMemberTip => 'إضافة أعضاء المجموعة الذين يجب كتمهم';
 
   @override
-  String get groupMuteTip =>
-      'بعد تفعيل كتم الجميع، سيتم السماح فقط للمدير والمشرفين بالتحدث.';
+  String get groupMuteTip => 'بعد تفعيل كتم الجميع، سيتم السماح فقط للمدير والمشرفين بالتحدث.';
 
   @override
   String get deleteFriendTip => 'هل تريد بالتأكيد حذف جهة الاتصال؟';
@@ -820,8 +810,7 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get permissionNeeded => 'الأذونات المطلوبة';
 
   @override
-  String get permissionDeniedContent =>
-      'يرجى الذهاب إلى الإعدادات وتفعيل أذونات الصور.';
+  String get permissionDeniedContent => 'يرجى الذهاب إلى الإعدادات وتفعيل أذونات الصور.';
 
   @override
   String maxCountFile(Object maxCount) {
@@ -859,15 +848,13 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get friendLimit => 'لقد وصلت إلى الحد الأقصى لعدد الأصدقاء في النظام';
 
   @override
-  String get otherFriendLimit =>
-      'لقد وصل الشخص المطلوب إلى الحد الأقصى لعدد الأصدقاء في النظام';
+  String get otherFriendLimit => 'لقد وصل الشخص المطلوب إلى الحد الأقصى لعدد الأصدقاء في النظام';
 
   @override
   String get inBlacklist => 'الشخص المطلوب موجود في القائمة السوداء الخاصة بك';
 
   @override
-  String get setInBlacklist =>
-      'لقد تم إضافتك إلى القائمة السوداء من قبل الشخص المطلوب';
+  String get setInBlacklist => 'لقد تم إضافتك إلى القائمة السوداء من قبل الشخص المطلوب';
 
   @override
   String get forbidAddFriend => 'الشخص المطلوب قد منع إضافة الأصدقاء';
@@ -1030,12 +1017,10 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get messageReadReceipt => 'حالة قراءة الرسالة';
 
   @override
-  String get messageReadReceiptEnabledDesc =>
-      'عند الإغلاق، لن تظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها، ولن تتمكن من معرفة ما إذا قرأ الطرف الآخر الرسالة أم لا، وبالمثل، الطرف الآخر لن يتمكن من معرفة ما إذا قرأت الرسالة أم لا.';
+  String get messageReadReceiptEnabledDesc => 'عند الإغلاق، لن تظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها، ولن تتمكن من معرفة ما إذا قرأ الطرف الآخر الرسالة أم لا، وبالمثل، الطرف الآخر لن يتمكن من معرفة ما إذا قرأت الرسالة أم لا.';
 
   @override
-  String get messageReadReceiptDisabledDesc =>
-      'عند الفتح، ستظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها في المحادثات الجماعية، ويمكنك رؤية ما إذا قرأ الطرف الآخر الرسالة أم لا. إذا قام أصدقاؤك في المحادثات الفردية بتفعيل حالة قراءة الرسائل، ستظهر حالة قراءة الرسائل في المحادثات الفردية التي تتبادلها معهم.';
+  String get messageReadReceiptDisabledDesc => 'عند الفتح، ستظهر حالة قراءة الرسائل في الرسائل التي تستلمها أو ترسلها في المحادثات الجماعية، ويمكنك رؤية ما إذا قرأ الطرف الآخر الرسالة أم لا. إذا قام أصدقاؤك في المحادثات الفردية بتفعيل حالة قراءة الرسائل، ستظهر حالة قراءة الرسائل في المحادثات الفردية التي تتبادلها معهم.';
 
   @override
   String get appearance => 'مظهر';
@@ -1091,8 +1076,7 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get forwardFailedMessageTip => 'لا يمكن إعادة توجيه الرسائل الفاشلة!';
 
   @override
-  String get forwardSeparateLimitTip =>
-      'عدد الرسائل كبير جدًا، إعادة التوجيه الفردية غير مدعومة';
+  String get forwardSeparateLimitTip => 'عدد الرسائل كبير جدًا، إعادة التوجيه الفردية غير مدعومة';
 
   @override
   String get deleteMessagesConfirmTip => 'هل أنت متأكد من حذف الرسائل المحددة؟';
@@ -1192,4 +1176,85 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
 
   @override
   String get translateLanguageHi => 'हिन्दी';
+
+  @override
+  String get aiSubtitleSettings => 'إعدادات ترجمة AI';
+
+  @override
+  String get aiSubtitleRecognitionAndTranslation => 'إعدادات التعرف والترجمة';
+
+  @override
+  String get aiSubtitleRecognitionLanguage => 'لغة التعرف';
+
+  @override
+  String get aiSubtitleTranslationLanguage => 'لغة الترجمة';
+
+  @override
+  String get aiSubtitleShowBilingual => 'عرض الترجمة ثنائية اللغة';
+
+  @override
+  String get aiSubtitleSelectRecognitionLanguage => 'اختر لغة التعرف';
+
+  @override
+  String get aiSubtitleSelectTranslationLanguage => 'اختر لغة الترجمة';
+
+  @override
+  String get aiSubtitleNoTranslation => 'بدون ترجمة';
+
+  @override
+  String get aiSubtitleAutoDetectChineseEnglish => 'التعرف التلقائي (صينية/إنجليزية)';
+
+  @override
+  String get aiSubtitleSpeakChinese => 'تتحدث بالصينية';
+
+  @override
+  String get aiSubtitleSpeakEnglish => 'تتحدث بالإنجليزية';
+
+  @override
+  String get aiSubtitleMe => '(أنا)';
+
+  @override
+  String get aiSubtitleLanguageChinese => '简体中文 (صينية)';
+
+  @override
+  String get aiSubtitleLanguageEnglish => 'English (إنجليزية)';
+
+  @override
+  String get aiSubtitleLanguageJapanese => '日本語 (يابانية)';
+
+  @override
+  String get aiSubtitleLanguageKorean => '한국어 (كورية)';
+
+  @override
+  String get aiSubtitleLanguageVietnamese => 'Tiếng Việt (فيتنامية)';
+
+  @override
+  String get aiSubtitleLanguageIndonesian => 'Bahasa Indonesia (إندونيسية)';
+
+  @override
+  String get aiSubtitleLanguageThai => 'ภาษาไทย (تايلاندية)';
+
+  @override
+  String get aiSubtitleLanguagePortuguese => 'Português (برتغالية)';
+
+  @override
+  String get aiSubtitleLanguageArabic => 'العربية';
+
+  @override
+  String get aiSubtitleLanguageSpanish => 'Español (إسبانية)';
+
+  @override
+  String get aiSubtitleLanguageFrench => 'Français (فرنسية)';
+
+  @override
+  String get aiSubtitleLanguageMalay => 'Bahasa Melayu (ملايو)';
+
+  @override
+  String get aiSubtitleLanguageGerman => 'Deutsch (ألمانية)';
+
+  @override
+  String get aiSubtitleLanguageItalian => 'Italiano (إيطالية)';
+
+  @override
+  String get aiSubtitleLanguageRussian => 'Русский (روسية)';
 }

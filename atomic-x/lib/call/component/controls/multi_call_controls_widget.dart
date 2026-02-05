@@ -7,9 +7,11 @@ import 'package:tuikit_atomic_x/call/call_view.dart';
 import '../../common/call_colors.dart';
 
 class MultiCallControlsWidget extends StatefulWidget {
+  final ValueChanged<double>? onHeightChanged;
 
   const MultiCallControlsWidget({
     super.key,
+    this.onHeightChanged,
   });
 
   @override
@@ -17,10 +19,11 @@ class MultiCallControlsWidget extends StatefulWidget {
 }
 
 class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
-  final double bigBtnHeight = 52;
-  final double smallBtnHeight = 35;
+  final double bigBtnHeight = 56;
+  final double smallBtnHeight = 42;
   final double edge = 40;
-  final double bottomEdge = 10;
+  final double bottomEdge = 16;
+  final double collapsedBottomEdge = 28;
   final int duration = 300;
   final int btnWidth = 100;
 
@@ -71,7 +74,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             onVerticalDragUpdate: (details) => _functionWidgetVerticalDragUpdate(details),
             child: AnimatedContainer(
                 curve: curve,
-                height: isFunctionExpand ? 200 : 90,
+                height: isFunctionExpand ? 210 : 115,
                 duration: Duration(milliseconds: duration),
                 color: const Color.fromRGBO(52, 56, 66, 1.0),
                 child: Stack(
@@ -82,7 +85,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? ((MediaQuery.of(context).size.width / 4) - (btnWidth / 2))
                           : (MediaQuery.of(context).size.width * 2 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : collapsedBottomEdge,
                       child: _getAnimatedMicButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -91,7 +94,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? (MediaQuery.of(context).size.width / 2 - btnWidth / 2)
                           : (MediaQuery.of(context).size.width * 3 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : collapsedBottomEdge,
                       child: _getAnimatedSpeakerPhoneButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -100,7 +103,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? (MediaQuery.of(context).size.width * 3 / 4 - btnWidth / 2)
                           : (MediaQuery.of(context).size.width * 4 / 6 - btnWidth / 2),
-                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge + bigBtnHeight + edge : collapsedBottomEdge,
                       child: _getAnimatedCameraButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
@@ -109,17 +112,18 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                       left: isFunctionExpand
                           ? (MediaQuery.of(context).size.width / 2 - btnWidth / 2)
                           : (MediaQuery.of(context).size.width * 5 / 6 - btnWidth / 2),
-                      bottom: bottomEdge,
+                      bottom: isFunctionExpand ? bottomEdge : collapsedBottomEdge,
                       child: _getAnimatedHangupButton(isFunctionExpand),
                     ),
                     AnimatedPositioned(
                         curve: curve,
                         duration: Duration(milliseconds: duration),
                         left: (MediaQuery.of(context).size.width / 6 - smallBtnHeight / 2),
-                        bottom: isFunctionExpand ? bottomEdge + smallBtnHeight / 4 + 22 : bottomEdge + 22,
+                        bottom: isFunctionExpand ? bottomEdge + smallBtnHeight / 4 + 22 : bottomEdge + 35,
                         child: InkWell(
                           onTap: () {
                             isFunctionExpand = !isFunctionExpand;
+                            widget.onHeightChanged?.call(isFunctionExpand ? 210 : 115);
                             setState(() {});
                           },
                           child: Transform(
@@ -139,8 +143,10 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
   _functionWidgetVerticalDragUpdate(DragUpdateDetails details) {
     if (details.delta.dy < 0 && !isFunctionExpand) {
       isFunctionExpand = true;
+      widget.onHeightChanged?.call(210);
     } else if (details.delta.dy > 0 && isFunctionExpand) {
       isFunctionExpand = false;
+      widget.onHeightChanged?.call(115);
     }
     setState(() {});
   }

@@ -7,12 +7,14 @@ class GlobalState {
   bool _enableFloatWindow = false;
   bool _enableBlurBackground = false;
   bool _enableIncomingBanner = false;
+  bool _enableAITranscriber = false;
   String? _callingBellAssetName;
 
   bool get enableMuteMode => _enableMuteMode;
   bool get enableFloatWindow => _enableFloatWindow;
   bool get enableBlurBackground => _enableBlurBackground;
   bool get enableIncomingBanner => _enableIncomingBanner;
+  bool get enableAITranscriber => _enableAITranscriber;
   String? get callingBellAssetName => _callingBellAssetName;
 
   void setEnableMuteMode(bool enable) {
@@ -29,6 +31,10 @@ class GlobalState {
 
   void setEnableIncomingBanner(bool enable) {
     _enableIncomingBanner = enable;
+  }
+
+  void setEnableAITranscriber(bool enable) {
+    _enableAITranscriber = enable;
   }
 
   void setCallingBellAssetName(String assetName) {

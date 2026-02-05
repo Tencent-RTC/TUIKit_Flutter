@@ -1,6 +1,6 @@
 name: tencent_calls_uikit
 description: "TUICallKit is a UIKit about audio&video calls launched by Tencent Cloud."
-version: 4.0.2
+version: 4.0.6
 homepage:
 
 environment:

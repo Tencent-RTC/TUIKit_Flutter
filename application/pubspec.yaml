@@ -47,6 +47,8 @@ dependencies:
     path: ../room
   tencent_calls_uikit:
     path: ../call
+  tencent_chat_uikit:
+    path: ../chat/uikit
 
 dev_dependencies:
   flutter_test:

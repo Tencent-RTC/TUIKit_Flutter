@@ -367,6 +367,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable Mute Mode'**
   String get app_call_enable_mute_mode;
+
+  /// No description provided for @app_call_enable_ai_transcriber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI Transcriber'**
+  String get app_call_enable_ai_transcriber;
+
+  /// No description provided for @app_call_error_call_self.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot call yourself, please use a different user ID'**
+  String get app_call_error_call_self;
+
+  /// No description provided for @app_call_error_user_not_exist.
+  ///
+  /// In en, this message translates to:
+  /// **'Call failed, invalid user ID, please confirm the user is registered'**
+  String get app_call_error_user_not_exist;
+
+  /// No description provided for @app_chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get app_chat;
+
+  /// No description provided for @app_chat_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Group chat/Contacts/Audio chat/Data sync'**
+  String get app_chat_description;
 }
 
 class _AppLocalizationsDelegate

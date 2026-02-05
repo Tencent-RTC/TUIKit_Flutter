@@ -1,20 +1,23 @@
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
+import '../../../../ai/ai_transcriber.dart';
 import '../../../common/call_colors.dart';
 import '../../../common/constants.dart';
-import '../../../common/utils/utils.dart';
 import '../../aisubtitle/ai_subtitle.dart';
+import '../../../common/utils/utils.dart';
 import '../../controls/single_call_controls_widget.dart';
 import '../../hint/hint_widget.dart';
 import '../../hint/timer_widget.dart';
 
 class CallFloatWidget extends StatefulWidget {
   final CallCoreController controller;
+  final bool enableAITranscriber;
 
   const CallFloatWidget({
     super.key,
     required this.controller,
+    this.enableAITranscriber = false,
   });
 
   @override
@@ -22,13 +25,30 @@ class CallFloatWidget extends StatefulWidget {
 }
 
 class _CallFloatWidgetState extends State<CallFloatWidget> {
+  final GlobalKey _controlsKey = GlobalKey();
+  double _controlsHeight = 120;
+
+  void _measureControlsHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final renderBox = _controlsKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null && mounted) {
+        final height = renderBox.size.height;
+        if (height != _controlsHeight) {
+          setState(() {
+            _controlsHeight = height;
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    _measureControlsHeight();
+    var activeCall = CallStore.shared.state.activeCall.value;
     return ValueListenableBuilder(
       valueListenable: CallStore.shared.state.selfInfo,
       builder: (context, self, child) {
-        var activeCall = CallStore.shared.state.activeCall.value;
         return Stack(
           children: [
             CallCoreView(
@@ -53,13 +73,18 @@ class _CallFloatWidgetState extends State<CallFloatWidget> {
                 child: AISubtitle(userId: CallStore.shared.state.selfInfo.value.id),
               ),
             ),
+
+            if (widget.enableAITranscriber && self.status == CallParticipantStatus.accept)
+              AITranscriberPanel(bottomOffset: _controlsHeight + 48),
+
             Positioned(
               right: 0,
               left: 0,
               bottom: 40,
-              child: SingleCallControlsWidget(),
+              child: SingleCallControlsWidget(key: _controlsKey),
             ),
             _getTimerWidget(),
+            _buildAITranscriberBtnWidget(),
           ],
         );
       },
@@ -148,5 +173,23 @@ class _CallFloatWidgetState extends State<CallFloatWidget> {
     return CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
         ? CallColors.colorG7
         : CallColors.colorWhite;
+  }
+
+  _buildAITranscriberBtnWidget() {
+    return ValueListenableBuilder(
+      valueListenable: CallStore.shared.state.selfInfo,
+      builder: (context, selfInfo, child) {
+        if (selfInfo.status != CallParticipantStatus.accept || !widget.enableAITranscriber) {
+          return const SizedBox();
+        }
+        return const Positioned(
+          left: 52,
+          top: 52,
+          width: 40,
+          height: 40,
+          child: AITranscriberButton(),
+        );
+      },
+    );
   }
 }

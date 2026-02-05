@@ -9,6 +9,7 @@ import 'package:tencent_calls_uikit/src/common/utils/foreground_service.dart';
 import 'package:tencent_calls_uikit/src/state/global_state.dart';
 import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
 
+
 class CallMainWidget extends StatefulWidget {
   final CallPageCallbacks? callbacks;
   final CallPageType? callPageType;
@@ -140,6 +141,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
                     child: CallView(
                       key: _callViewKey,
                       isPipMode: true,
+                      enableAITranscriber: GlobalState.instance.enableAITranscriber,
                     ),
                   ),
                 ),
@@ -199,6 +201,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
                           child: CallView(
                             key: _callViewKey,
                             isPipMode: true,
+                            enableAITranscriber: GlobalState.instance.enableAITranscriber,
                           ),
                         ),
                       ),
@@ -247,6 +250,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
       height: MediaQuery.of(context).size.height,
       child: CallView(
         key: _callViewKey,
+        enableAITranscriber: GlobalState.instance.enableAITranscriber,
       ),
     );
   }

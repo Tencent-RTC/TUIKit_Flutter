@@ -1,6 +1,6 @@
 name: tuikit_atomic_x
 description: "tuikit_atomic_x is a public UI library for Tencent components."
-version: 3.6.2
+version: 3.6.5
 homepage: https://trtc.io
 
 environment:
@@ -31,7 +31,7 @@ dependencies:
   tencent_rtc_sdk: any
   scrollable_positioned_list: ^0.2.3
 
-  atomic_x_core: ^3.6.2
+  atomic_x_core: ^3.6.7
   
 dev_dependencies:
   flutter_test:

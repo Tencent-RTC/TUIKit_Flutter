@@ -65,8 +65,7 @@ import 'atomic_localizations_zh.dart';
 /// be consistent with the languages listed in the AtomicLocalizations.supportedLocales
 /// property.
 abstract class AtomicLocalizations {
-  AtomicLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AtomicLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -74,8 +73,7 @@ abstract class AtomicLocalizations {
     return Localizations.of<AtomicLocalizations>(context, AtomicLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AtomicLocalizations> delegate =
-      _AtomicLocalizationsDelegate();
+  static const LocalizationsDelegate<AtomicLocalizations> delegate = _AtomicLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -87,8 +85,7 @@ abstract class AtomicLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -2378,56 +2375,210 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'हिन्दी'**
   String get translateLanguageHi;
+
+  /// No description provided for @aiSubtitleSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Subtitle Settings'**
+  String get aiSubtitleSettings;
+
+  /// No description provided for @aiSubtitleRecognitionAndTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition & Translation Settings'**
+  String get aiSubtitleRecognitionAndTranslation;
+
+  /// No description provided for @aiSubtitleRecognitionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Original audio'**
+  String get aiSubtitleRecognitionLanguage;
+
+  /// No description provided for @aiSubtitleTranslationLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate display'**
+  String get aiSubtitleTranslationLanguage;
+
+  /// No description provided for @aiSubtitleShowBilingual.
+  ///
+  /// In en, this message translates to:
+  /// **'Bilingual captions'**
+  String get aiSubtitleShowBilingual;
+
+  /// No description provided for @aiSubtitleSelectRecognitionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Recognition Language'**
+  String get aiSubtitleSelectRecognitionLanguage;
+
+  /// No description provided for @aiSubtitleSelectTranslationLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Translation Language'**
+  String get aiSubtitleSelectTranslationLanguage;
+
+  /// No description provided for @aiSubtitleNoTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'No Translation'**
+  String get aiSubtitleNoTranslation;
+
+  /// No description provided for @aiSubtitleAutoDetectChineseEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Detect (Chinese/English)'**
+  String get aiSubtitleAutoDetectChineseEnglish;
+
+  /// No description provided for @aiSubtitleSpeakChinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Chinese'**
+  String get aiSubtitleSpeakChinese;
+
+  /// No description provided for @aiSubtitleSpeakEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking English'**
+  String get aiSubtitleSpeakEnglish;
+
+  /// No description provided for @aiSubtitleMe.
+  ///
+  /// In en, this message translates to:
+  /// **'(Me)'**
+  String get aiSubtitleMe;
+
+  /// No description provided for @aiSubtitleLanguageChinese.
+  ///
+  /// In en, this message translates to:
+  /// **'简体中文 (Chinese)'**
+  String get aiSubtitleLanguageChinese;
+
+  /// No description provided for @aiSubtitleLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get aiSubtitleLanguageEnglish;
+
+  /// No description provided for @aiSubtitleLanguageJapanese.
+  ///
+  /// In en, this message translates to:
+  /// **'日本語 (Japanese)'**
+  String get aiSubtitleLanguageJapanese;
+
+  /// No description provided for @aiSubtitleLanguageKorean.
+  ///
+  /// In en, this message translates to:
+  /// **'한국어 (Korean)'**
+  String get aiSubtitleLanguageKorean;
+
+  /// No description provided for @aiSubtitleLanguageVietnamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiếng Việt (Vietnamese)'**
+  String get aiSubtitleLanguageVietnamese;
+
+  /// No description provided for @aiSubtitleLanguageIndonesian.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Indonesia (Indonesian)'**
+  String get aiSubtitleLanguageIndonesian;
+
+  /// No description provided for @aiSubtitleLanguageThai.
+  ///
+  /// In en, this message translates to:
+  /// **'ภาษาไทย (Thai)'**
+  String get aiSubtitleLanguageThai;
+
+  /// No description provided for @aiSubtitleLanguagePortuguese.
+  ///
+  /// In en, this message translates to:
+  /// **'Português (Portuguese)'**
+  String get aiSubtitleLanguagePortuguese;
+
+  /// No description provided for @aiSubtitleLanguageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية (Arabic)'**
+  String get aiSubtitleLanguageArabic;
+
+  /// No description provided for @aiSubtitleLanguageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español (Spanish)'**
+  String get aiSubtitleLanguageSpanish;
+
+  /// No description provided for @aiSubtitleLanguageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français (French)'**
+  String get aiSubtitleLanguageFrench;
+
+  /// No description provided for @aiSubtitleLanguageMalay.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Melayu (Malay)'**
+  String get aiSubtitleLanguageMalay;
+
+  /// No description provided for @aiSubtitleLanguageGerman.
+  ///
+  /// In en, this message translates to:
+  /// **'Deutsch (German)'**
+  String get aiSubtitleLanguageGerman;
+
+  /// No description provided for @aiSubtitleLanguageItalian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano (Italian)'**
+  String get aiSubtitleLanguageItalian;
+
+  /// No description provided for @aiSubtitleLanguageRussian.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский (Russian)'**
+  String get aiSubtitleLanguageRussian;
 }
 
-class _AtomicLocalizationsDelegate
-    extends LocalizationsDelegate<AtomicLocalizations> {
+class _AtomicLocalizationsDelegate extends LocalizationsDelegate<AtomicLocalizations> {
   const _AtomicLocalizationsDelegate();
 
   @override
   Future<AtomicLocalizations> load(Locale locale) {
-    return SynchronousFuture<AtomicLocalizations>(
-        lookupAtomicLocalizations(locale));
+    return SynchronousFuture<AtomicLocalizations>(lookupAtomicLocalizations(locale));
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AtomicLocalizationsDelegate old) => false;
 }
 
 AtomicLocalizations lookupAtomicLocalizations(Locale locale) {
+
   // Lookup logic when language+script codes are specified.
   switch (locale.languageCode) {
-    case 'zh':
-      {
-        switch (locale.scriptCode) {
-          case 'Hant':
-            return AtomicLocalizationsZhHant();
-        }
-        break;
-      }
+    case 'zh': {
+  switch (locale.scriptCode) {
+    case 'Hant': return AtomicLocalizationsZhHant();
+   }
+  break;
+   }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar':
-      return AtomicLocalizationsAr();
-    case 'en':
-      return AtomicLocalizationsEn();
-    case 'ja':
-      return AtomicLocalizationsJa();
-    case 'ko':
-      return AtomicLocalizationsKo();
-    case 'zh':
-      return AtomicLocalizationsZh();
+    case 'ar': return AtomicLocalizationsAr();
+    case 'en': return AtomicLocalizationsEn();
+    case 'ja': return AtomicLocalizationsJa();
+    case 'ko': return AtomicLocalizationsKo();
+    case 'zh': return AtomicLocalizationsZh();
   }
 
   throw FlutterError(
-      'AtomicLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AtomicLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

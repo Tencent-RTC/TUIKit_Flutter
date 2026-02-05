@@ -1,7 +1,9 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_waiting_widget.dart';
 
+import '../../../../ai/ai_transcriber.dart';
 import '../../../common/constants.dart';
 import '../../../common/utils/utils.dart';
 import '../../aisubtitle/ai_subtitle.dart';
@@ -10,10 +12,12 @@ import '../../hint/timer_widget.dart';
 
 class CallGridWidget extends StatefulWidget {
   final CallCoreController controller;
+  final bool enableAITranscriber;
 
   const CallGridWidget({
     super.key,
     required this.controller,
+    this.enableAITranscriber = false,
   });
 
   @override
@@ -21,6 +25,8 @@ class CallGridWidget extends StatefulWidget {
 }
 
 class _CallGridWidgetState extends State<CallGridWidget> {
+  double _controlsHeight = 115;
+  static const int _animationDuration = 300;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +62,10 @@ class _CallGridWidgetState extends State<CallGridWidget> {
               width: MediaQuery.of(context).size.width,
               height: 100,
               child: const Center(
-                child: TimerWidget(),
+                child: TimerWidget(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             Positioned(
@@ -71,12 +80,24 @@ class _CallGridWidgetState extends State<CallGridWidget> {
                 child: AISubtitle(userId: CallStore.shared.state.selfInfo.value.id),
               ),
             ),
-            const Positioned(
+            
+            if (widget.enableAITranscriber && selfInfo.status == CallParticipantStatus.accept)
+              AITranscriberPanel(
+                bottomOffset: _controlsHeight + 8,
+                animationDuration: const Duration(milliseconds: _animationDuration),
+              ),
+              
+            Positioned(
               right: 0,
               left: 0,
               bottom: 0,
-              child: MultiCallControlsWidget(),
+              child: MultiCallControlsWidget(
+                onHeightChanged: (height) {
+                  setState(() => _controlsHeight = height);
+                },
+              ),
             ),
+            _buildAITranscriberBtnWidget(),
           ],
         );
       },
@@ -102,6 +123,24 @@ class _CallGridWidgetState extends State<CallGridWidget> {
       left: 0,
       width: MediaQuery.of(context).size.width,
       child: const CallGridWaitingWidget(),
+    );
+  }
+
+  _buildAITranscriberBtnWidget() {
+    return ValueListenableBuilder(
+      valueListenable: CallStore.shared.state.selfInfo,
+      builder: (context, selfInfo, child) {
+        if (selfInfo.status != CallParticipantStatus.accept || !widget.enableAITranscriber) {
+          return const SizedBox();
+        }
+        return const Positioned(
+          left: 52,
+          top: 52,
+          width: 40,
+          height: 40,
+          child: AITranscriberButton(),
+        );
+      },
     );
   }
 }

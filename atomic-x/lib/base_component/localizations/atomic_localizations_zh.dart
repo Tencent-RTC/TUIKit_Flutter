@@ -309,20 +309,16 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
   String get groupCommunityType => '社群(Community)';
 
   @override
-  String get groupWorkDesc =>
-      '好友工作群(Work）：类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批。';
+  String get groupWorkDesc => '好友工作群(Work）：类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批。';
 
   @override
-  String get groupPublicDesc =>
-      '陌生人社交群(Public）：类似 QQ 群，创建后群主可以指定群管理员，用户搜索群 ID 发起加群申请后，需要群主或管理员审批通过才能入群。';
+  String get groupPublicDesc => '陌生人社交群(Public）：类似 QQ 群，创建后群主可以指定群管理员，用户搜索群 ID 发起加群申请后，需要群主或管理员审批通过才能入群。';
 
   @override
-  String get groupMeetingDesc =>
-      '临时会议群(Meeting）：创建后可以随意进出，且支持查看入群前消息；适用于音视频会议场景、在线教育场景等与实时音视频产品结合的场景。';
+  String get groupMeetingDesc => '临时会议群(Meeting）：创建后可以随意进出，且支持查看入群前消息；适用于音视频会议场景、在线教育场景等与实时音视频产品结合的场景。';
 
   @override
-  String get groupCommunityDesc =>
-      '社群(Community)：创建后可以随意进出，最多支持100000人，支持历史消息存储，用户搜索群 ID 发起加群申请后，无需管理员审批即可进群。';
+  String get groupCommunityDesc => '社群(Community)：创建后可以随意进出，最多支持100000人，支持历史消息存储，用户搜索群 ID 发起加群申请后，无需管理员审批即可进群。';
 
   @override
   String get groupDetail => '群聊详情';
@@ -1021,12 +1017,10 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
   String get messageReadReceipt => '消息阅读状态';
 
   @override
-  String get messageReadReceiptEnabledDesc =>
-      '关闭后，您收发的消息均不带消息阅读状态，您将无法看到对方是否已读，同时对方也无法看到您是否已读。';
+  String get messageReadReceiptEnabledDesc => '关闭后，您收发的消息均不带消息阅读状态，您将无法看到对方是否已读，同时对方也无法看到您是否已读。';
 
   @override
-  String get messageReadReceiptDisabledDesc =>
-      '开启后，您在群聊中收发的消息均带有消息阅读状态，并且可以看到对方是否已读。与您单聊的好友若也开启了消息阅读状态，您与好友在单聊中收发的消息也将带有消息阅读状态。';
+  String get messageReadReceiptDisabledDesc => '开启后，您在群聊中收发的消息均带有消息阅读状态，并且可以看到对方是否已读。与您单聊的好友若也开启了消息阅读状态，您与好友在单聊中收发的消息也将带有消息阅读状态。';
 
   @override
   String get appearance => '外观';
@@ -1182,11 +1176,92 @@ class AtomicLocalizationsZh extends AtomicLocalizations {
 
   @override
   String get translateLanguageHi => 'हिन्दी';
+
+  @override
+  String get aiSubtitleSettings => 'AI 字幕设定';
+
+  @override
+  String get aiSubtitleRecognitionAndTranslation => '识别与翻译设定';
+
+  @override
+  String get aiSubtitleRecognitionLanguage => '识别语言';
+
+  @override
+  String get aiSubtitleTranslationLanguage => '翻译语言';
+
+  @override
+  String get aiSubtitleShowBilingual => '显示双语字幕';
+
+  @override
+  String get aiSubtitleSelectRecognitionLanguage => '选择识别语言';
+
+  @override
+  String get aiSubtitleSelectTranslationLanguage => '选择翻译语言';
+
+  @override
+  String get aiSubtitleNoTranslation => '不翻译';
+
+  @override
+  String get aiSubtitleAutoDetectChineseEnglish => '自动识别 (中英)';
+
+  @override
+  String get aiSubtitleSpeakChinese => '说中文';
+
+  @override
+  String get aiSubtitleSpeakEnglish => '说英语';
+
+  @override
+  String get aiSubtitleMe => '(我)';
+
+  @override
+  String get aiSubtitleLanguageChinese => '简体中文';
+
+  @override
+  String get aiSubtitleLanguageEnglish => 'English (英语)';
+
+  @override
+  String get aiSubtitleLanguageJapanese => '日本語 (日语)';
+
+  @override
+  String get aiSubtitleLanguageKorean => '한국어 (韩语)';
+
+  @override
+  String get aiSubtitleLanguageVietnamese => 'Tiếng Việt (越南语)';
+
+  @override
+  String get aiSubtitleLanguageIndonesian => 'Bahasa Indonesia (印尼语)';
+
+  @override
+  String get aiSubtitleLanguageThai => 'ภาษาไทย (泰语)';
+
+  @override
+  String get aiSubtitleLanguagePortuguese => 'Português (葡萄牙语)';
+
+  @override
+  String get aiSubtitleLanguageArabic => 'العربية (阿拉伯语)';
+
+  @override
+  String get aiSubtitleLanguageSpanish => 'Español (西班牙语)';
+
+  @override
+  String get aiSubtitleLanguageFrench => 'Français (法语)';
+
+  @override
+  String get aiSubtitleLanguageMalay => 'Bahasa Melayu (马来语)';
+
+  @override
+  String get aiSubtitleLanguageGerman => 'Deutsch (德语)';
+
+  @override
+  String get aiSubtitleLanguageItalian => 'Italiano (意大利语)';
+
+  @override
+  String get aiSubtitleLanguageRussian => 'Русский (俄语)';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
-  AtomicLocalizationsZhHant() : super('zh_Hant');
+  AtomicLocalizationsZhHant(): super('zh_Hant');
 
   @override
   String get login => '登录';
@@ -1489,20 +1564,16 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
   String get groupCommunityType => '社群(Community)';
 
   @override
-  String get groupWorkDesc =>
-      '好友工作群(Work）：類似普通微信群，創建後僅支持已在群內的好友邀請加群，且無需被邀請方同意或群主審批。';
+  String get groupWorkDesc => '好友工作群(Work）：類似普通微信群，創建後僅支持已在群內的好友邀請加群，且無需被邀請方同意或群主審批。';
 
   @override
-  String get groupPublicDesc =>
-      '陌生人社交群(Public）：類似 QQ 群，創建後群主可以指定群管理員，用戶搜索群 ID 發起加群申請後，需要群主或管理員審批通過才能入群。';
+  String get groupPublicDesc => '陌生人社交群(Public）：類似 QQ 群，創建後群主可以指定群管理員，用戶搜索群 ID 發起加群申請後，需要群主或管理員審批通過才能入群。';
 
   @override
-  String get groupMeetingDesc =>
-      '臨時會議群(Meeting）：創建後可以隨意進出，且支持查看入群前消息；適用於音視頻會議場景、在線教育場景等與實時音視頻產品結合的場景。';
+  String get groupMeetingDesc => '臨時會議群(Meeting）：創建後可以隨意進出，且支持查看入群前消息；適用於音視頻會議場景、在線教育場景等與實時音視頻產品結合的場景。';
 
   @override
-  String get groupCommunityDesc =>
-      '社群(Community)：創建後可以隨意進出，最多支持100000人，支持歷史消息存儲，用戶搜索群 ID 發起加群申請後，無需管理員審批即可進群。';
+  String get groupCommunityDesc => '社群(Community)：創建後可以隨意進出，最多支持100000人，支持歷史消息存儲，用戶搜索群 ID 發起加群申請後，無需管理員審批即可進群。';
 
   @override
   String get groupDetail => '群聊詳情';
@@ -2201,12 +2272,10 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
   String get messageReadReceipt => '消息閱讀狀態';
 
   @override
-  String get messageReadReceiptEnabledDesc =>
-      '關閉後，您收發的消息均不帶消息閱讀狀態，您將無法看到對方是否已讀，同時對方也無法看到您是否已讀。';
+  String get messageReadReceiptEnabledDesc => '關閉後，您收發的消息均不帶消息閱讀狀態，您將無法看到對方是否已讀，同時對方也無法看到您是否已讀。';
 
   @override
-  String get messageReadReceiptDisabledDesc =>
-      '開啟後，您在群聊中收發的消息均帶有消息閱讀狀態，並且可以看到對方是否已讀。與您單聊的好友若也開啟了消息閱讀狀態，您與好友在單聊中收發的消息也將帶有消息閱讀狀態。';
+  String get messageReadReceiptDisabledDesc => '開啟後，您在群聊中收發的消息均帶有消息閱讀狀態，並且可以看到對方是否已讀。與您單聊的好友若也開啟了消息閱讀狀態，您與好友在單聊中收發的消息也將帶有消息閱讀狀態。';
 
   @override
   String get appearance => '外觀';
@@ -2362,4 +2431,85 @@ class AtomicLocalizationsZhHant extends AtomicLocalizationsZh {
 
   @override
   String get translateLanguageHi => 'हिन्दी';
+
+  @override
+  String get aiSubtitleSettings => 'AI 字幕設定';
+
+  @override
+  String get aiSubtitleRecognitionAndTranslation => '識別與翻譯設定';
+
+  @override
+  String get aiSubtitleRecognitionLanguage => '識別語言';
+
+  @override
+  String get aiSubtitleTranslationLanguage => '翻譯語言';
+
+  @override
+  String get aiSubtitleShowBilingual => '字幕顯示雙語';
+
+  @override
+  String get aiSubtitleSelectRecognitionLanguage => '請選擇識別語言';
+
+  @override
+  String get aiSubtitleSelectTranslationLanguage => '請選擇翻譯語言';
+
+  @override
+  String get aiSubtitleNoTranslation => '不翻譯';
+
+  @override
+  String get aiSubtitleAutoDetectChineseEnglish => '自動識別 (中英)';
+
+  @override
+  String get aiSubtitleSpeakChinese => '說中文';
+
+  @override
+  String get aiSubtitleSpeakEnglish => '說英語';
+
+  @override
+  String get aiSubtitleMe => '(我)';
+
+  @override
+  String get aiSubtitleLanguageChinese => '簡體中文';
+
+  @override
+  String get aiSubtitleLanguageEnglish => 'English (英語)';
+
+  @override
+  String get aiSubtitleLanguageJapanese => '日本語 (日語)';
+
+  @override
+  String get aiSubtitleLanguageKorean => '한국어 (韓語)';
+
+  @override
+  String get aiSubtitleLanguageVietnamese => 'Tiếng Việt (越南語)';
+
+  @override
+  String get aiSubtitleLanguageIndonesian => 'Bahasa Indonesia (印尼語)';
+
+  @override
+  String get aiSubtitleLanguageThai => 'ภาษาไทย (泰語)';
+
+  @override
+  String get aiSubtitleLanguagePortuguese => 'Português (葡萄牙語)';
+
+  @override
+  String get aiSubtitleLanguageArabic => 'العربية (阿拉伯語)';
+
+  @override
+  String get aiSubtitleLanguageSpanish => 'Español (西班牙語)';
+
+  @override
+  String get aiSubtitleLanguageFrench => 'Français (法語)';
+
+  @override
+  String get aiSubtitleLanguageMalay => 'Bahasa Melayu (馬來語)';
+
+  @override
+  String get aiSubtitleLanguageGerman => 'Deutsch (德語)';
+
+  @override
+  String get aiSubtitleLanguageItalian => 'Italiano (意大利語)';
+
+  @override
+  String get aiSubtitleLanguageRussian => 'Русский (俄語)';
 }

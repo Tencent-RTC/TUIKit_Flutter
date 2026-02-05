@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import '../utils/index.dart';
 
 class CallMainWidget extends StatefulWidget {
@@ -17,9 +17,10 @@ class _CallMainWidgetState extends State<CallMainWidget> {
   String _userIDsStr = '';
   List<String> _userIDs = [];
   bool _isAudioCall = true;
-  bool _enableFloatingWindow = false;
+  bool _enableFloatingWindow = true;
   bool _enableIncomingBanner = false;
   bool _enableMuteMode = false;
+  bool _enableAITranscriber = true;
   SharedPreferences? _prefs;
 
   @override
@@ -31,10 +32,13 @@ class _CallMainWidgetState extends State<CallMainWidget> {
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _enableFloatingWindow = _prefs?.getBool('enable_floating_window') ?? false;
+      _enableFloatingWindow = _prefs?.getBool('enable_floating_window') ?? true;
       _enableIncomingBanner = _prefs?.getBool('enable_incoming_banner') ?? false;
       _enableMuteMode = _prefs?.getBool('enable_mute_mode') ?? false;
+      _enableAITranscriber = _prefs?.getBool('enable_ai_transcriber') ?? true;
     });
+    TUICallKit.instance.enableFloatWindow(_enableFloatingWindow);
+    TUICallKit.instance.enableAITranscriber(_enableAITranscriber);
   }
 
   Future<void> _saveSetting(String key, bool value) async {
@@ -209,6 +213,17 @@ class _CallMainWidgetState extends State<CallMainWidget> {
               },
             ),
             _buildSwitchItem(
+              AppLocalizations.of(context)!.app_call_enable_ai_transcriber,
+              _enableAITranscriber,
+              (value) {
+                setState(() {
+                  _enableAITranscriber = value;
+                });
+                _saveSetting('enable_ai_transcriber', value);
+                TUICallKit.instance.enableAITranscriber(value);
+              },
+            ),
+            _buildSwitchItem(
               AppLocalizations.of(context)!.app_call_enable_mute_mode,
               _enableMuteMode,
               (value) {
@@ -291,9 +306,31 @@ class _CallMainWidgetState extends State<CallMainWidget> {
   }
 
   _call() {
-    _userIDs = _userIDsStr.split(',');
+    _userIDs = _userIDsStr.split(',').where((id) => id.trim().isNotEmpty).toList();
+    if (_userIDs.isEmpty) {
+      return;
+    }
     TUICallKit.instance.calls(_userIDs,
-        _isAudioCall ? CallMediaType.audio : CallMediaType.video);
+        _isAudioCall ? CallMediaType.audio : CallMediaType.video).then((handler) {
+          if (!handler.isSuccess) {
+            final errorMessage = _getCallErrorMessage(handler.errorCode);
+            if (errorMessage != null) {
+              TUIToast.show(content: errorMessage);
+            }
+          }
+    });
+  }
+
+  String? _getCallErrorMessage(int? errorCode) {
+    if (errorCode == null) return null;
+    switch (errorCode) {
+      case -1202:
+        return AppLocalizations.of(context)!.app_call_error_call_self;
+      case 6017:
+        return AppLocalizations.of(context)!.app_call_error_user_not_exist;
+      default:
+        return null;
+    }
   }
 
 

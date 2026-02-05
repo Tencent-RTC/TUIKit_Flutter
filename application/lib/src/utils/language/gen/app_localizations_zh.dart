@@ -144,4 +144,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get app_call_enable_mute_mode => '开启静音模式';
+
+  @override
+  String get app_call_enable_ai_transcriber => '开启 AI 字幕';
+
+  @override
+  String get app_call_error_call_self => '您无法向自己发起通话，请您更换新的用户 ID';
+
+  @override
+  String get app_call_error_user_not_exist => '发起通话失败，用户 ID 无效，请确认该用户已注册';
+
+  @override
+  String get app_chat => '聊天';
+
+  @override
+  String get app_chat_description => '群组聊天·好友通讯录·语音消息·资料多端同步';
 }

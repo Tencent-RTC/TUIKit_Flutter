@@ -270,8 +270,7 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get groupIDInvalid => 'グループIDが無効です。グループIDが正しく入力されているか確認してください。';
 
   @override
-  String get communityIDEditFormatTips =>
-      'コミュニティ ID には接頭辞として @TGS#_ を付ける必要があります。';
+  String get communityIDEditFormatTips => 'コミュニティ ID には接頭辞として @TGS#_ を付ける必要があります。';
 
   @override
   String get groupIDEditFormatTips => 'グループ ID プレフィックスを @TGS# にすることはできません。';
@@ -310,20 +309,16 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get groupCommunityType => 'コミュニティ';
 
   @override
-  String get groupWorkDesc =>
-      '友達ワークグループ（Work）：通常のWeChatグループと同様に、作成後はすでにグループに参加している友達のみをグループに招待でき、招待された側の同意やグループの承認は必要ありません。所有者。';
+  String get groupWorkDesc => '友達ワークグループ（Work）：通常のWeChatグループと同様に、作成後はすでにグループに参加している友達のみをグループに招待でき、招待された側の同意やグループの承認は必要ありません。所有者。';
 
   @override
-  String get groupPublicDesc =>
-      '見知らぬソーシャル グループ (パブリック): QQ グループと同様に、グループ所有者は作成後にグループ管理者を指定できます。ユーザーがグループ ID を検索してグループへの参加申請を開始した後、グループに参加する前にグループ所有者または管理者の承認が必要です。 。';
+  String get groupPublicDesc => '見知らぬソーシャル グループ (パブリック): QQ グループと同様に、グループ所有者は作成後にグループ管理者を指定できます。ユーザーがグループ ID を検索してグループへの参加申請を開始した後、グループに参加する前にグループ所有者または管理者の承認が必要です。 。';
 
   @override
-  String get groupMeetingDesc =>
-      '一時的な会議グループ (会議): 作成後は自由に出入りでき、グループに参加する前にメッセージの表示をサポートするため、音声会議やビデオ会議のシナリオ、オンライン教育のシナリオ、およびリアルタイム音声と組み合わせたその他のシナリオに適しています。そしてビデオ製品。';
+  String get groupMeetingDesc => '一時的な会議グループ (会議): 作成後は自由に出入りでき、グループに参加する前にメッセージの表示をサポートするため、音声会議やビデオ会議のシナリオ、オンライン教育のシナリオ、およびリアルタイム音声と組み合わせたその他のシナリオに適しています。そしてビデオ製品。';
 
   @override
-  String get groupCommunityDesc =>
-      'コミュニティ: 作成後は自由に参加および退出でき、最大 100,000 人のユーザーがグループ ID を検索してグループ アプリケーションを開始すると、管理者の承認なしでグループに参加できます。';
+  String get groupCommunityDesc => 'コミュニティ: 作成後は自由に参加および退出でき、最大 100,000 人のユーザーがグループ ID を検索してグループ アプリケーションを開始すると、管理者の承認なしでグループに参加できます。';
 
   @override
   String get groupDetail => 'グループチャットの詳細';
@@ -635,8 +630,7 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get invite => '招待する';
 
   @override
-  String get groupApplicationAllReadyBeenProcessed =>
-      'この招待または申請リクエストはすでに処理されています。';
+  String get groupApplicationAllReadyBeenProcessed => 'この招待または申請リクエストはすでに処理されています。';
 
   @override
   String get accepted => '同意します';
@@ -1023,12 +1017,10 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get messageReadReceipt => 'メッセージ既読状態';
 
   @override
-  String get messageReadReceiptEnabledDesc =>
-      'オフにすると、送受信するメッセージにはメッセージ既読状態が表示されなくなり、相手がメッセージを読んだかどうかを確認できなくなります。同様に、相手もあなたがメッセージを読んだかどうかを確認できなくなります。';
+  String get messageReadReceiptEnabledDesc => 'オフにすると、送受信するメッセージにはメッセージ既読状態が表示されなくなり、相手がメッセージを読んだかどうかを確認できなくなります。同様に、相手もあなたがメッセージを読んだかどうかを確認できなくなります。';
 
   @override
-  String get messageReadReceiptDisabledDesc =>
-      'オンにすると、グループチャットで送受信するメッセージにはメッセージ既読状態が表示され、相手がメッセージを読んだかどうかを確認できます。個人チャットの友人もメッセージ既読状態をオンにしている場合、その友人との個人チャットで送受信するメッセージにもメッセージ既読状態が表示されます。';
+  String get messageReadReceiptDisabledDesc => 'オンにすると、グループチャットで送受信するメッセージにはメッセージ既読状態が表示され、相手がメッセージを読んだかどうかを確認できます。個人チャットの友人もメッセージ既読状態をオンにしている場合、その友人との個人チャットで送受信するメッセージにもメッセージ既読状態が表示されます。';
 
   @override
   String get appearance => '外観';
@@ -1184,4 +1176,85 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
 
   @override
   String get translateLanguageHi => 'हिन्दी';
+
+  @override
+  String get aiSubtitleSettings => 'AI字幕設定';
+
+  @override
+  String get aiSubtitleRecognitionAndTranslation => '認識と翻訳設定';
+
+  @override
+  String get aiSubtitleRecognitionLanguage => '認識言語';
+
+  @override
+  String get aiSubtitleTranslationLanguage => '翻訳言語';
+
+  @override
+  String get aiSubtitleShowBilingual => '字幕を二言語で表示';
+
+  @override
+  String get aiSubtitleSelectRecognitionLanguage => '認識言語を選択';
+
+  @override
+  String get aiSubtitleSelectTranslationLanguage => '翻訳言語を選択';
+
+  @override
+  String get aiSubtitleNoTranslation => '翻訳なし';
+
+  @override
+  String get aiSubtitleAutoDetectChineseEnglish => '自動認識（中国語/英語）';
+
+  @override
+  String get aiSubtitleSpeakChinese => '中国語を話す';
+
+  @override
+  String get aiSubtitleSpeakEnglish => '英語を話す';
+
+  @override
+  String get aiSubtitleMe => '（自分）';
+
+  @override
+  String get aiSubtitleLanguageChinese => '简体中文（中国語）';
+
+  @override
+  String get aiSubtitleLanguageEnglish => 'English（英語）';
+
+  @override
+  String get aiSubtitleLanguageJapanese => '日本語';
+
+  @override
+  String get aiSubtitleLanguageKorean => '한국어（韓国語）';
+
+  @override
+  String get aiSubtitleLanguageVietnamese => 'Tiếng Việt（ベトナム語）';
+
+  @override
+  String get aiSubtitleLanguageIndonesian => 'Bahasa Indonesia（インドネシア語）';
+
+  @override
+  String get aiSubtitleLanguageThai => 'ภาษาไทย（タイ語）';
+
+  @override
+  String get aiSubtitleLanguagePortuguese => 'Português（ポルトガル語）';
+
+  @override
+  String get aiSubtitleLanguageArabic => 'العربية（アラビア語）';
+
+  @override
+  String get aiSubtitleLanguageSpanish => 'Español（スペイン語）';
+
+  @override
+  String get aiSubtitleLanguageFrench => 'Français（フランス語）';
+
+  @override
+  String get aiSubtitleLanguageMalay => 'Bahasa Melayu（マレー語）';
+
+  @override
+  String get aiSubtitleLanguageGerman => 'Deutsch（ドイツ語）';
+
+  @override
+  String get aiSubtitleLanguageItalian => 'Italiano（イタリア語）';
+
+  @override
+  String get aiSubtitleLanguageRussian => 'Русский（ロシア語）';
 }

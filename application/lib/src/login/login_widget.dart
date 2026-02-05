@@ -6,7 +6,7 @@ import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
-// import 'package:flutter_effect_player/ftceffect_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../debug/generate_test_user_sig.dart';
 import '../app_store/index.dart';
@@ -26,7 +26,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   final _loginStore = LoginStore.shared;
 
   bool _isButtonEnabled = true;
-  bool _isTestEnvironment = false;
 
   @override
   Widget build(BuildContext context) {
@@ -142,33 +141,11 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Test Environment'),
-              const SizedBox(width: 24),
-              Switch(
-                  value: _isTestEnvironment,
-                  onChanged: (value) {
-                    if (value == _isTestEnvironment) {
-                      return;
-                    }
-                    setState(() {
-                      _isTestEnvironment = value;
-                    });
-                  }),
-              const SizedBox(width: 24)
-            ],
-          )
         ]));
   }
 
   void _login() async {
     _isButtonEnabled = false;
-
-    if (_isTestEnvironment) {
-      await _switchTestEnvironment();
-    }
 
     TUICallKit.instance.login(GenerateTestUserSig.sdkAppId, _userId, GenerateTestUserSig.genTestSig(_userId));
     final result = await _loginStore.login(
@@ -185,34 +162,27 @@ class _LoginWidgetState extends State<LoginWidget> {
         _enterMainWidget();
       }
     } else {
-      LiveKitLogger.error("TUILogin login fail, {code:${result.errorCode}, message:${result.errorMessage}");
+      LiveKitLogger.error("TUILogin login fail, code:${result.errorCode}, message:${result.errorMessage}");
       makeToast(msg: "code:${result.errorCode} message:${result.errorMessage}");
     }
     _isButtonEnabled = true;
   }
 
   void _onLoginSuccess() {
-    _setTencentEffectPlayerLicense();
+    _initCallKitSettings();
   }
 
-  void _setTencentEffectPlayerLicense() {
-    // FTCMediaXBase.instance.setLicense(tencentEffectLicenseURL, tencentEffectLicenseKey, (code, msg) {
-    //   debugPrint("TCMediax setLicense code:$code | msg:$msg");
-    // });
-  }
-
-  Future<void> _switchTestEnvironment() async {
-    final Map<String, dynamic> params = {'enableRoomTestEnv': true};
-
-    final Map<String, dynamic> jsonObject = {'api': 'setTestEnvironment', 'params': params};
-
-    final jsonString = jsonEncode(jsonObject);
-    TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
-
-    final result = await TencentImSDKPlugin.v2TIMManager.callExperimentalAPI(api: 'setTestEnvironment', param: true);
-    if (result.code == 0) {
-      debugPrint('switchTestEnvironment success');
-    }
+  Future<void> _initCallKitSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final enableFloatingWindow = prefs.getBool('enable_floating_window') ?? true;
+    final enableIncomingBanner = prefs.getBool('enable_incoming_banner') ?? false;
+    final enableMuteMode = prefs.getBool('enable_mute_mode') ?? false;
+    final enableAITranscriber = prefs.getBool('enable_ai_transcriber') ?? true;
+    
+    TUICallKit.instance.enableFloatWindow(enableFloatingWindow);
+    TUICallKit.instance.enableIncomingBanner(enableIncomingBanner);
+    TUICallKit.instance.enableMuteMode(enableMuteMode);
+    TUICallKit.instance.enableAITranscriber(enableAITranscriber);
   }
 
   void _enterProfileWidget() {

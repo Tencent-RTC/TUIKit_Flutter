@@ -83,6 +83,12 @@ abstract class TUICallKit {
     throw UnimplementedError();
   }
 
+  /// Enable AI Transcriber
+  Future<void> enableAITranscriber(bool enable) async {
+    // TODO: implement enableAITranscriber
+    throw UnimplementedError();
+  }
+
   void enableIncomingBanner(bool enable) ;
 
   /// Call experimental interface

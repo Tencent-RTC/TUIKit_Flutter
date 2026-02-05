@@ -29,6 +29,11 @@ class TUICallKitImpl implements TUICallKit {
   final contactListStore = ContactListStore.create();
   bool isNotificationPreparing = false;
   late CallEventListener callEventListener = CallEventListener(
+    onCallStarted: (callId, mediaType) {
+      if (GlobalState.instance.enableAITranscriber) {
+        aiTranscriberConfigManager.start();
+      }
+    },
     onCallReceived: (String callId, CallMediaType mediaType, String userData) {
       KeyMetrics.instance.countUV(EventId.received);
     },
@@ -192,6 +197,11 @@ class TUICallKitImpl implements TUICallKit {
   @override
   Future<void> enableVirtualBackground(bool enable) async {
     GlobalState.instance.setEnableBlurBackground(enable);
+  }
+
+  @override
+  Future<void> enableAITranscriber(bool enable) async {
+    GlobalState.instance.setEnableAITranscriber(enable);
   }
 
   @override

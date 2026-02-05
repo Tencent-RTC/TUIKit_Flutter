@@ -42,7 +42,7 @@ dependencies:
   shared_preferences: ^2.5.0
 
   flutter_svg: ^2.0.9
-  atomic_x_chat:
+  tencent_chat_uikit:
     path: ../uikit/
 
   tencent_calls_uikit:

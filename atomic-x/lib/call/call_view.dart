@@ -4,11 +4,15 @@ import 'package:tuikit_atomic_x/call/component/widgets/float/call_float_widget.d
 import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_widget.dart';
 import 'package:tuikit_atomic_x/call/component/widgets/pip/call_pip_widget.dart';
 
+import '../ai/ai_transcriber.dart';
+
 class CallView extends StatefulWidget {
   final bool isPipMode;
+  final bool enableAITranscriber;
 
   const CallView({
     super.key,
+    this.enableAITranscriber = false,
     this.isPipMode = false,
   });
 
@@ -36,6 +40,7 @@ class _CallViewState extends State<CallView> {
 
   @override
   void dispose() {
+    aiTranscriberConfigManager.reset(preserveSettings: false);
     controller.dispose();
     DeviceStore.shared.closeLocalMicrophone();
     super.dispose();
@@ -61,12 +66,14 @@ class _CallViewState extends State<CallView> {
                 controller.setLayoutTemplate(CallLayoutTemplate.grid);
                 return CallGridWidget(
                   controller: controller,
+                  enableAITranscriber: widget.enableAITranscriber,
                 );
               }
 
               controller.setLayoutTemplate(CallLayoutTemplate.float);
               return CallFloatWidget(
                 controller: controller,
+                enableAITranscriber: widget.enableAITranscriber,
               );
             }
         ),

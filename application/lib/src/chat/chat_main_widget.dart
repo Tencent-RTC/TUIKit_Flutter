@@ -2,40 +2,47 @@ import 'package:tuikit_atomic_x/atomicx.dart' hide Badge;
 import 'package:tencent_chat_uikit/contacts_page.dart';
 import 'package:tencent_chat_uikit/conversations_page.dart';
 import 'package:flutter/material.dart';
-import 'package:uikit_next/pages/settings_page.dart';
-import 'package:uikit_next/widgets/tab_icon.dart';
+import 'package:application/src/chat/settings_page.dart';
+import 'package:application/src/chat/tab_widget.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class ChatMainWidget extends StatefulWidget {
+  const ChatMainWidget({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ChatMainWidget> createState() => _ChatMainWidgetState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ChatMainWidgetState extends State<ChatMainWidget> {
   late ConversationListStore conversationListStore;
   late AtomicLocalizations atomicLocale;
   int _currentIndex = 0;
   late List<_NavItem> _navItems;
   int totalUnreadCount = 0;
-
-  final List<Widget> _pages = [
-    const _KeepAlivePage(child: ConversationsPage()),
-    const _KeepAlivePage(child: ContactsPage()),
-    const _KeepAlivePage(child: SettingsPage()),
-  ];
+  late List<Widget> _pages;
+  late final VoidCallback _conversationListChangedListener;
 
   @override
   void initState() {
     super.initState();
+    _conversationListChangedListener = _onConversationListChanged;
     conversationListStore = ConversationListStore.create();
-    conversationListStore.addListener(_onConversationListChanged);
+    conversationListStore.addListener(_conversationListChangedListener);
     conversationListStore.getConversationTotalUnreadCount();
+    
+    _pages = [
+      _KeepAlivePage(child: ConversationsPage(onBackPressed: _onBackPressed)),
+      _KeepAlivePage(child: ContactsPage(onBackPressed: _onBackPressed)),
+      _KeepAlivePage(child: SettingsPage(onBackPressed: _onBackPressed)),
+    ];
+  }
+
+  void _onBackPressed() {
+    Navigator.of(context).pop();
   }
 
   @override
   void dispose() {
-    conversationListStore.removeListener(_onConversationListChanged);
+    conversationListStore.removeListener(_conversationListChangedListener);
     super.dispose();
   }
 
@@ -67,8 +74,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
@@ -147,7 +154,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
             smallSize: 16,
             largeSize: 20,
-            child: TabIcon(
+            child: TabWidget(
               iconType: item.iconType,
               isActive: isActive,
               activeColor: colors.textColorLink,
@@ -163,7 +170,7 @@ class _HomePageState extends State<HomePage> {
     return BottomNavigationBarItem(
       icon: Padding(
         padding: const EdgeInsets.only(bottom: 2.0, top: 8.0),
-        child: TabIcon(
+        child: TabWidget(
           iconType: item.iconType,
           isActive: isActive,
           activeColor: colors.buttonColorPrimaryDefault,

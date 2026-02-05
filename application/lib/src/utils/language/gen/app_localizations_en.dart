@@ -148,4 +148,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get app_call_enable_mute_mode => 'Enable Mute Mode';
+
+  @override
+  String get app_call_enable_ai_transcriber => 'Enable AI Transcriber';
+
+  @override
+  String get app_call_error_call_self =>
+      'You cannot call yourself, please use a different user ID';
+
+  @override
+  String get app_call_error_user_not_exist =>
+      'Call failed, invalid user ID, please confirm the user is registered';
+
+  @override
+  String get app_chat => 'Chat';
+
+  @override
+  String get app_chat_description => 'Group chat/Contacts/Audio chat/Data sync';
 }

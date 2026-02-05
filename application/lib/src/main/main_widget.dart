@@ -4,9 +4,11 @@ import 'package:tencent_live_uikit/common/index.dart';
 
 import '../app_store/index.dart';
 import '../call/call_main_widget.dart';
+import '../chat/index.dart';
 import '../live/index.dart';
 import '../mine/me_widget.dart';
 import '../utils/language/index.dart';
+import '../utils/constant.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({super.key});
@@ -29,7 +31,7 @@ class _MainWidgetState extends State<MainWidget> {
           title: Row(
             children: [
               Image.asset(
-                'assets/app_tencent_cloud.png',
+                Constant.appTencentCloud,
                 width: 30.radius,
                 height: 30.radius,
                 fit: BoxFit.fitWidth,
@@ -75,7 +77,7 @@ class _MainWidgetState extends State<MainWidget> {
                         width: cardWidth,
                         height: cardHeight,
                         child: MenuItemWidget(
-                          iconUrl: 'assets/app_call.png',
+                          iconUrl: Constant.appCall,
                           title: AppLocalizations.of(context)!.app_call,
                           description: AppLocalizations.of(context)!.app_call_description,
                           onTap: () => _enterCallWidget(),
@@ -89,7 +91,7 @@ class _MainWidgetState extends State<MainWidget> {
                         width: cardWidth,
                         height: cardHeight,
                         child: MenuItemWidget(
-                          iconUrl: 'assets/app_video_live.png',
+                          iconUrl: Constant.appVideoLive,
                           title: AppLocalizations.of(context)!.app_live,
                           description: AppLocalizations.of(context)!.app_video_description,
                           onTap: () => _enterLiveWidget(),
@@ -112,10 +114,24 @@ class _MainWidgetState extends State<MainWidget> {
                         width: cardWidth,
                         height: cardHeight,
                         child: MenuItemWidget(
-                          iconUrl: 'assets/app_conference.png',
+                          iconUrl: Constant.appConference,
                           title: AppLocalizations.of(context)!.app_conference,
                           description: AppLocalizations.of(context)!.app_conference_description,
                           onTap: () => _enterRoomWidget(),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: SizedBox()),
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: SizedBox(
+                        width: cardWidth,
+                        height: cardHeight,
+                        child: MenuItemWidget(
+                          iconUrl: Constant.appChat,
+                          title: AppLocalizations.of(context)!.app_chat,
+                          description: AppLocalizations.of(context)!.app_chat_description,
+                          onTap: () => _enterChatWidget(),
                         ),
                       ),
                     ),
@@ -155,6 +171,14 @@ class _MainWidgetState extends State<MainWidget> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const CallMainWidget();
+      },
+    ));
+  }
+
+  void _enterChatWidget() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const ChatMainWidget();
       },
     ));
   }
@@ -210,7 +234,7 @@ class MenuItemWidget extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 16.height, right: 16.width),
                       child: Image.asset(
-                        'assets/app_arrow.png',
+                        Constant.appArrow,
                         width: 16.radius,
                         height: 16.radius,
                       ),
