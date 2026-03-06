@@ -69,23 +69,25 @@ class CallingBellFeature {
   }
 
   Future<String> _getRingFilePath() async {
-    final customFilePath = await PreferenceUtils.getInstance().getString(_keyRingPath);
-    if (customFilePath.isNotEmpty && _shouldUseCustomRing()) {
-      return customFilePath;
-    }
-    
-    final String ringName;
-    
     if (_isCalled()) {
       if (GlobalState.instance.enableMuteMode) {
         return "";
       }
-      ringName = _calledRingName;
+      
+      final customAssetName = GlobalState.instance.callingBellAssetName;
+      if (customAssetName != null && customAssetName.isNotEmpty) {
+        return await getAssetsFilePath(customAssetName);
+      }
+      
+      final customFilePath = await PreferenceUtils.getInstance().getString(_keyRingPath);
+      if (customFilePath.isNotEmpty) {
+        return customFilePath;
+      }
+      
+      return await _getAssetsFilePath(_calledRingName);
     } else {
-      ringName = _callerRingName;
+      return await _getAssetsFilePath(_callerRingName);
     }
-    
-    return await _getAssetsFilePath(ringName);
   }
 
   bool _isCalled() {
@@ -94,10 +96,7 @@ class CallingBellFeature {
     return userId != inviterId;
   }
 
-  bool _shouldUseCustomRing() {
-    return _isCalled() &&
-           !GlobalState.instance.enableMuteMode;
-  }
+
 
   Future<String> getAssetsFilePath(String assetName) async {
     if (assetName.isEmpty) {
