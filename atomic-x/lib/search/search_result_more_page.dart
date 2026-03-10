@@ -160,6 +160,7 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
     }
 
     return Scaffold(
+      backgroundColor: _colorScheme.bgColorOperate,
       appBar: AppBar(
         backgroundColor: _colorScheme.bgColorOperate,
         elevation: 0,

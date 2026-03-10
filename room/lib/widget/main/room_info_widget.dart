@@ -1,4 +1,3 @@
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_conference_uikit/base/index.dart';

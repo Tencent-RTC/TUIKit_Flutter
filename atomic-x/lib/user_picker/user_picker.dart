@@ -285,6 +285,7 @@ class _UserPickerState extends State<UserPicker> {
     return Scaffold(
       backgroundColor: colorsTheme.bgColorOperate,
       appBar: AppBar(
+        backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: atomicx.IconButton.buttonContent(
           content: atomicx.IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),

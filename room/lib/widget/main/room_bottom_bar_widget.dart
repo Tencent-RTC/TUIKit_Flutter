@@ -32,6 +32,10 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    return widget.roomId.isWebinar ? _buildWebinarContent() : _buildStandardContent();
+  }
+
+  Widget _buildStandardContent() {
     return Stack(
       children: [
         Positioned(
@@ -50,68 +54,9 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ValueListenableBuilder(
-                      valueListenable: _roomStore.state.currentRoom,
-                      builder: (context, currentRoom, _) {
-                        return RoomButtonItemWidget(
-                          iconPath: RoomImages.roomMember,
-                          text: RoomLocalizations.of(
-                            context,
-                          )!
-                              .roomkit_member_count
-                              .replaceAll("xxx", (currentRoom?.participantCount ?? 0).toString()),
-                          onPressed: _handleMembersPressed,
-                        );
-                      },
-                    ),
-                    ListenableBuilder(
-                      listenable: Listenable.merge([
-                        _roomParticipantStore.state.localParticipant,
-                        _roomStore.state.currentRoom,
-                      ]),
-                      builder: (context, _) {
-                        final localParticipant = _roomParticipantStore.state.localParticipant.value;
-                        final isAllMicrophoneDisabled = _roomStore.state.currentRoom.value?.isAllMicrophoneDisabled;
-                        return RoomButtonItemWidget(
-                          iconPath: RoomImages.roomMicOff,
-                          selectedIconPath: RoomImages.roomMicOnEmpty,
-                          text: localParticipant?.microphoneStatus == DeviceStatus.on
-                              ? RoomLocalizations.of(context)!.roomkit_mute
-                              : RoomLocalizations.of(context)!.roomkit_unmute,
-                          isSelected: ValueNotifier(localParticipant?.microphoneStatus == DeviceStatus.on),
-                          onPressed: _handleMicToggle,
-                          opacity: isAllMicrophoneDisabled == true &&
-                                  localParticipant?.role == ParticipantRole.generalUser &&
-                                  localParticipant?.microphoneStatus == DeviceStatus.off
-                              ? 0.5
-                              : 1,
-                        );
-                      },
-                    ),
-                    ListenableBuilder(
-                      listenable: Listenable.merge([
-                        _roomParticipantStore.state.localParticipant,
-                        _roomStore.state.currentRoom,
-                      ]),
-                      builder: (context, _) {
-                        final localParticipant = _roomParticipantStore.state.localParticipant.value;
-                        final isAllCameraDisabled = _roomStore.state.currentRoom.value?.isAllCameraDisabled;
-                        return RoomButtonItemWidget(
-                          iconPath: RoomImages.roomCameraOff,
-                          selectedIconPath: RoomImages.roomCameraOn,
-                          text: localParticipant?.cameraStatus == DeviceStatus.on
-                              ? RoomLocalizations.of(context)!.roomkit_stop_video
-                              : RoomLocalizations.of(context)!.roomkit_start_video,
-                          isSelected: ValueNotifier(localParticipant?.cameraStatus == DeviceStatus.on),
-                          onPressed: _handleCameraToggle,
-                          opacity: isAllCameraDisabled == true &&
-                                  localParticipant?.role == ParticipantRole.generalUser &&
-                                  localParticipant?.cameraStatus == DeviceStatus.off
-                              ? 0.5
-                              : 1,
-                        );
-                      },
-                    ),
+                    _buildMemberButton(),
+                    _buildMicrophoneButton(),
+                    _buildCameraButton(),
                   ],
                 ),
               ),
@@ -120,6 +65,98 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWebinarContent() {
+    final localUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
+    return Row(
+      children: [
+        ValueListenableBuilder(
+            valueListenable: _roomParticipantStore.state.participantList,
+            builder: (context, participantList, child) {
+              final isSelfInList = participantList.any((p) => p.userID == localUserId);
+              if (isSelfInList) {
+                return _buildMicrophoneButton();
+              }
+              return const SizedBox.shrink();
+            }),
+        SizedBox(width: 8.width),
+        _buildMemberButton(),
+      ],
+    );
+  }
+
+  Widget _buildMemberButton() {
+    return ValueListenableBuilder(
+      valueListenable: _roomStore.state.currentRoom,
+      builder: (context, currentRoom, _) {
+        return RoomButtonItemWidget(
+          iconPath: RoomImages.roomMember,
+          text: widget.roomId.isWebinar
+              ? RoomLocalizations.of(context)!.roomkit_member
+              : RoomLocalizations.of(context)!
+                  .roomkit_member_count
+                  .replaceAll("xxx", (currentRoom?.participantCount ?? 0).toString()),
+          onPressed: _handleMembersPressed,
+          isWebinar: widget.roomId.isWebinar,
+        );
+      },
+    );
+  }
+
+  Widget _buildMicrophoneButton() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _roomParticipantStore.state.localParticipant,
+        _roomStore.state.currentRoom,
+      ]),
+      builder: (context, _) {
+        final localParticipant = _roomParticipantStore.state.localParticipant.value;
+        final isAllMicrophoneDisabled = _roomStore.state.currentRoom.value?.isAllMicrophoneDisabled;
+        return RoomButtonItemWidget(
+          iconPath: RoomImages.roomMicOff,
+          selectedIconPath: RoomImages.roomMicOnEmpty,
+          text: localParticipant?.microphoneStatus == DeviceStatus.on
+              ? RoomLocalizations.of(context)!.roomkit_mute
+              : RoomLocalizations.of(context)!.roomkit_unmute,
+          isSelected: ValueNotifier(localParticipant?.microphoneStatus == DeviceStatus.on),
+          onPressed: _handleMicToggle,
+          opacity: isAllMicrophoneDisabled == true &&
+                  localParticipant?.role == ParticipantRole.generalUser &&
+                  localParticipant?.microphoneStatus == DeviceStatus.off
+              ? 0.5
+              : 1,
+          isWebinar: widget.roomId.isWebinar,
+        );
+      },
+    );
+  }
+
+  Widget _buildCameraButton() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _roomParticipantStore.state.localParticipant,
+        _roomStore.state.currentRoom,
+      ]),
+      builder: (context, _) {
+        final localParticipant = _roomParticipantStore.state.localParticipant.value;
+        final isAllCameraDisabled = _roomStore.state.currentRoom.value?.isAllCameraDisabled;
+        return RoomButtonItemWidget(
+          iconPath: RoomImages.roomCameraOff,
+          selectedIconPath: RoomImages.roomCameraOn,
+          text: localParticipant?.cameraStatus == DeviceStatus.on
+              ? RoomLocalizations.of(context)!.roomkit_stop_video
+              : RoomLocalizations.of(context)!.roomkit_start_video,
+          isSelected: ValueNotifier(localParticipant?.cameraStatus == DeviceStatus.on),
+          onPressed: _handleCameraToggle,
+          opacity: isAllCameraDisabled == true &&
+                  localParticipant?.role == ParticipantRole.generalUser &&
+                  localParticipant?.cameraStatus == DeviceStatus.off
+              ? 0.5
+              : 1,
+        );
+      },
     );
   }
 

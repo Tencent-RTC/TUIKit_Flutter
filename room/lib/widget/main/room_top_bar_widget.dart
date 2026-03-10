@@ -53,13 +53,27 @@ class _RoomTopBarWidgetState extends State<RoomTopBarWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  _buildSpeakerButton(),
-                  const SizedBox(width: 24),
-                  _buildSwitchCameraButton(),
-                  const Spacer(),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        if (!widget.roomId.isWebinar) ...[
+                          _buildSpeakerButton(),
+                          const SizedBox(width: 24),
+                          _buildSwitchCameraButton(),
+                        ],
+                      ],
+                    ),
+                  ),
                   widget.orientation == Orientation.portrait ? _buildPortraitTitle() : _buildLandscapeTitle(),
-                  const Spacer(),
-                  _buildExitButton(),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _buildExitButton(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -147,7 +161,7 @@ extension _RoomTopBarWidgetStatePrivate on _RoomTopBarWidgetState {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 5.height),
           ValueListenableBuilder(
             valueListenable: _timerText,
             builder: (context, timerText, _) {

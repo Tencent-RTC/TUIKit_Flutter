@@ -1,7 +1,7 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tencent_conference_uikit/base/index.dart';
 
 import 'room_main_widget.dart';
@@ -22,7 +22,6 @@ class _RoomJoinWidgetState extends State<RoomJoinWidget> {
   @override
   void initState() {
     super.initState();
-    RoomStore.shared;
   }
 
   @override
@@ -106,7 +105,8 @@ class _RoomJoinWidgetState extends State<RoomJoinWidget> {
                   child: TextField(
                     controller: _roomIdController,
                     textAlign: TextAlign.left,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.visiblePassword,
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9a-zA-Z_]'))],
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: RoomColors.g2),
                     decoration: InputDecoration(
                       hintText: RoomLocalizations.of(context)!.roomkit_enter_room_id,
@@ -243,7 +243,7 @@ class _RoomJoinWidgetState extends State<RoomJoinWidget> {
   void _handleJoinRoomButtonTapped() async {
     final roomID = _roomIdController.text;
     if (roomID.isEmpty) {
-      Toast.error(context, RoomLocalizations.of(context)!.roomkit_input_can_not_empty);
+      Toast.warning(context, RoomLocalizations.of(context)!.roomkit_input_can_not_empty);
       return;
     }
     final behavior = RoomBehavior.enter();

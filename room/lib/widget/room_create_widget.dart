@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:tuikit_atomic_x/atomicx.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_conference_uikit/base/index.dart';
@@ -24,7 +23,6 @@ class _RoomCreateWidgetState extends State<RoomCreateWidget> {
   @override
   void initState() {
     super.initState();
-    RoomStore.shared;
   }
 
   @override

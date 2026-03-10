@@ -1,9 +1,10 @@
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:tuikit_atomic_x/atomicx.dart' hide IconButton;
 import 'package:tencent_conference_uikit/base/index.dart';
 
 import 'participant_list/room_member_item_widget.dart';
+
+enum ParticipantTab { participant, audience }
 
 class RoomParticipantListWidget extends StatefulWidget {
   final String roomId;
@@ -17,8 +18,7 @@ class RoomParticipantListWidget extends StatefulWidget {
 class _RoomParticipantListWidgetState extends State<RoomParticipantListWidget> {
   late final RoomParticipantStore _participantStore;
   late final RoomStore _roomStore;
-  final TextEditingController _searchController = TextEditingController();
-  final ValueNotifier<String> _searchKeyword = ValueNotifier('');
+  final ValueNotifier<ParticipantTab> _currentTab = ValueNotifier(ParticipantTab.participant);
 
   @override
   void initState() {
@@ -29,8 +29,7 @@ class _RoomParticipantListWidgetState extends State<RoomParticipantListWidget> {
 
   @override
   void dispose() {
-    _searchController.dispose();
-    _searchKeyword.dispose();
+    _currentTab.dispose();
     super.dispose();
   }
 
@@ -55,27 +54,26 @@ extension _RoomMemberListWidgetStatePrivate on _RoomParticipantListWidgetState {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.radius)),
       ),
       child: ValueListenableBuilder(
-        valueListenable: _participantStore.state.participantList,
-        builder: (context, participantList, _) {
-          return ValueListenableBuilder(
-            valueListenable: _participantStore.state.localParticipant,
-            builder: (context, localParticipant, _) {
-              final isOwner = localParticipant?.role == ParticipantRole.owner;
-              final isAdmin = localParticipant?.role == ParticipantRole.admin;
+        valueListenable: _participantStore.state.localParticipant,
+        builder: (context, localParticipant, _) {
+          final isOwner = localParticipant?.role == ParticipantRole.owner;
+          final isAdmin = localParticipant?.role == ParticipantRole.admin;
 
-              return Column(
-                children: [
-                  _buildDropDownButton(),
-                  SizedBox(height: 10.height),
-                  _buildTitle(participantList.length),
-                  SizedBox(height: 15.height),
-                  _buildMemberList(participantList),
-                  SizedBox(height: 15.height),
-                  if (isOwner || isAdmin) _buildBottomButtons(isOwner),
-                  SizedBox(height: orientation == Orientation.portrait ? 34.height : 22.height),
-                ],
-              );
-            },
+          return Column(
+            children: [
+              _buildDropDownButton(),
+              SizedBox(height: 10.height),
+              if (widget.roomId.isWebinar) ...[
+                _buildTabBar(),
+              ] else ...[
+                _buildTitle(),
+              ],
+              SizedBox(height: 15.height),
+              _buildMemberList(),
+              SizedBox(height: 15.height),
+              if ((isOwner || isAdmin) && !widget.roomId.isWebinar) _buildBottomButtons(isOwner),
+              SizedBox(height: orientation == Orientation.portrait ? 34.height : 22.height),
+            ],
           );
         },
       ),
@@ -93,7 +91,7 @@ extension _RoomMemberListWidgetStatePrivate on _RoomParticipantListWidgetState {
     );
   }
 
-  Widget _buildTitle(int memberCount) {
+  Widget _buildTitle() {
     return ValueListenableBuilder(
       valueListenable: _roomStore.state.currentRoom,
       builder: (context, currentRoom, _) {
@@ -112,29 +110,213 @@ extension _RoomMemberListWidgetStatePrivate on _RoomParticipantListWidgetState {
     );
   }
 
-  Widget _buildMemberList(List<RoomParticipant> participantList) {
+  Widget _buildTabBar() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _currentTab,
+        _roomStore.state.currentRoom,
+      ]),
+      builder: (context, _) {
+        final currentTab = _currentTab.value;
+        final participantCount = _roomStore.state.currentRoom.value?.participantCount ?? 0;
+        final audienceCount = _roomStore.state.currentRoom.value?.audienceCount ?? 0;
+
+        return Container(
+          height: 36.height,
+          margin: EdgeInsets.symmetric(horizontal: 16.width),
+          padding: EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: RoomColors.dividerGrey,
+            borderRadius: BorderRadius.circular(6.radius),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildTabItem(
+                  title: RoomLocalizations.of(context)!.roomkit_participant.replaceAll('xxx', '$participantCount'),
+                  isSelected: currentTab == ParticipantTab.participant,
+                  onTap: () => _currentTab.value = ParticipantTab.participant,
+                ),
+              ),
+              Expanded(
+                child: _buildTabItem(
+                  title: RoomLocalizations.of(context)!.roomkit_audience.replaceAll('xxx', '$audienceCount'),
+                  isSelected: currentTab == ParticipantTab.audience,
+                  onTap: () => _currentTab.value = ParticipantTab.audience,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTabItem({required String title, required bool isSelected, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? RoomColors.g3 : Colors.transparent,
+          borderRadius: BorderRadius.circular(6.radius),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            color: isSelected ? Colors.white : RoomColors.g6,
+            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberList() {
     return Expanded(
       child: ValueListenableBuilder(
-        valueListenable: _searchKeyword,
-        builder: (context, keyword, _) {
-          final filteredList = keyword.isEmpty
-              ? participantList
-              : participantList.where((p) {
-                  return p.displayName.toLowerCase().contains(keyword.toLowerCase());
-                }).toList();
-
-          return ListView.separated(
-            padding: EdgeInsets.zero,
-            itemCount: filteredList.length,
-            separatorBuilder: (context, index) =>
-                Divider(height: 1, color: RoomColors.dividerGrey, indent: 66.width, endIndent: 16.width),
-            itemBuilder: (context, index) {
-              return RoomMemberItemWidget(roomId: widget.roomId, participant: filteredList[index]);
-            },
-          );
+        valueListenable: _currentTab,
+        builder: (context, currentTab, _) {
+          if (currentTab == ParticipantTab.participant) {
+            return _buildParticipantListView();
+          } else {
+            return _buildAudienceListView();
+          }
         },
       ),
     );
+  }
+
+  Widget _buildParticipantListView() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _participantStore.state.participantList,
+        _participantStore.state.localParticipant,
+      ]),
+      builder: (context, _) {
+        final participantList = _participantStore.state.participantList.value;
+        final localParticipant = _participantStore.state.localParticipant.value;
+        final sortedList = _sortParticipantList(participantList, localParticipant);
+
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: sortedList.length,
+          separatorBuilder: (context, index) =>
+              Divider(height: 1, color: RoomColors.dividerGrey, indent: 66.width, endIndent: 16.width),
+          itemBuilder: (context, index) {
+            return RoomMemberItemWidget.participant(roomId: widget.roomId, participant: sortedList[index]);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildAudienceListView() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _participantStore.state.audienceList,
+        _participantStore.state.adminList,
+        _participantStore.state.localParticipant,
+      ]),
+      builder: (context, _) {
+        final audienceList = _participantStore.state.audienceList.value;
+        final adminList = _participantStore.state.adminList.value;
+        final localParticipant = _participantStore.state.localParticipant.value;
+        final sortedList = _sortAudienceList(audienceList, adminList, localParticipant);
+
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: sortedList.length,
+          separatorBuilder: (context, index) =>
+              Divider(height: 1, color: RoomColors.dividerGrey, indent: 66.width, endIndent: 16.width),
+          itemBuilder: (context, index) {
+            return RoomMemberItemWidget.audience(roomId: widget.roomId, audience: sortedList[index]);
+          },
+        );
+      },
+    );
+  }
+
+  List<RoomParticipant> _sortParticipantList(List<RoomParticipant> list, RoomParticipant? localParticipant) {
+    final sortedList = List<RoomParticipant>.from(list);
+    sortedList.sort((a, b) => _compareParticipants(a, b, localParticipant));
+    return sortedList;
+  }
+
+  int _compareParticipants(RoomParticipant a, RoomParticipant b, RoomParticipant? localParticipant) {
+    int result;
+
+    result = _compareBool(
+      localParticipant != null && a.userID == localParticipant.userID,
+      localParticipant != null && b.userID == localParticipant.userID,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.role == ParticipantRole.owner,
+      b.role == ParticipantRole.owner,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.role == ParticipantRole.admin,
+      b.role == ParticipantRole.admin,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.screenShareStatus == DeviceStatus.on,
+      b.screenShareStatus == DeviceStatus.on,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.cameraStatus == DeviceStatus.on && a.microphoneStatus == DeviceStatus.on,
+      b.cameraStatus == DeviceStatus.on && b.microphoneStatus == DeviceStatus.on,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.cameraStatus == DeviceStatus.on && a.microphoneStatus != DeviceStatus.on,
+      b.cameraStatus == DeviceStatus.on && b.microphoneStatus != DeviceStatus.on,
+    );
+    if (result != 0) return result;
+
+    result = _compareBool(
+      a.cameraStatus != DeviceStatus.on && a.microphoneStatus == DeviceStatus.on,
+      b.cameraStatus != DeviceStatus.on && b.microphoneStatus == DeviceStatus.on,
+    );
+    if (result != 0) return result;
+
+    return a.userName.compareTo(b.userName);
+  }
+
+  List<RoomUser> _sortAudienceList(List<RoomUser> list, List<RoomUser> adminList, RoomParticipant? localParticipant) {
+    final adminIds = adminList.map((e) => e.userID).toSet();
+    final sortedList = List<RoomUser>.from(list);
+    sortedList.sort((a, b) => _compareAudience(a, b, adminIds, localParticipant));
+    return sortedList;
+  }
+
+  int _compareAudience(RoomUser a, RoomUser b, Set<String> adminIds, RoomParticipant? localParticipant) {
+    final localUserId = localParticipant?.userID;
+
+    if (a.userID == localUserId) return -1;
+    if (b.userID == localUserId) return 1;
+
+    final result = _compareBool(
+      adminIds.contains(a.userID),
+      adminIds.contains(b.userID),
+    );
+    if (result != 0) return result;
+
+    return a.userName.compareTo(b.userName);
+  }
+
+  int _compareBool(bool a, bool b) {
+    if (a == b) return 0;
+    return a ? -1 : 1;
   }
 
   Widget _buildBottomButtons(bool isOwner) {

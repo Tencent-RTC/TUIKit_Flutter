@@ -65,6 +65,7 @@ class AppBuilder {
 
   static Future<void> init({required String path}) async {
     final instance = getInstance();
+    await StorageUtil.init();
     await instance._loadConfig(path: path);
   }
 
@@ -136,23 +137,31 @@ class MessageListConfig {
   final String alignment;
   final List<String> messageActionList;
   final bool _jsonEnableReadReceipt;
+  bool? _cachedEnableReadReceipt;
 
   MessageListConfig({
     required this.alignment,
     required this.messageActionList,
     required bool jsonEnableReadReceipt,
-  }) : _jsonEnableReadReceipt = jsonEnableReadReceipt;
-
-  bool get enableReadReceipt {
-    final value = StorageUtil.get(_enableReadReceiptKey);
-    if (value is bool) {
-      return value;
-    }
-
-    return _jsonEnableReadReceipt;
+  }) : _jsonEnableReadReceipt = jsonEnableReadReceipt {
+    // Load cached value asynchronously
+    _loadEnableReadReceipt();
   }
 
-  Future<bool> setEnableReadReceipt(bool value) {
+  void _loadEnableReadReceipt() {
+    StorageUtil.get(_enableReadReceiptKey).then((value) {
+      if (value is bool) {
+        _cachedEnableReadReceipt = value;
+      }
+    });
+  }
+
+  bool get enableReadReceipt {
+    return _cachedEnableReadReceipt ?? _jsonEnableReadReceipt;
+  }
+
+  Future<bool> setEnableReadReceipt(bool value) async {
+    _cachedEnableReadReceipt = value;
     return StorageUtil.set(_enableReadReceiptKey, value);
   }
 
@@ -285,20 +294,34 @@ class AvatarConfig {
 
 class TranslateConfig {
   static const String _translateTargetLanguageKey = 'atomic_translate_target_language';
+  String? _cachedTargetLanguage;
+
+  TranslateConfig() {
+    // Load cached value asynchronously
+    _loadTargetLanguage();
+  }
+
+  void _loadTargetLanguage() {
+    StorageUtil.get(_translateTargetLanguageKey).then((value) {
+      if (value is String && value.isNotEmpty) {
+        _cachedTargetLanguage = value;
+      }
+    });
+  }
 
   /// Get translate target language
   /// Returns saved language or device language as default
   String get targetLanguage {
-    final saved = StorageUtil.get(_translateTargetLanguageKey);
-    if (saved is String && saved.isNotEmpty) {
-      return saved;
+    if (_cachedTargetLanguage != null && _cachedTargetLanguage!.isNotEmpty) {
+      return _cachedTargetLanguage!;
     }
     // Return device language as default
     return PlatformDispatcher.instance.locale.languageCode;
   }
 
   /// Set translate target language
-  Future<bool> setTargetLanguage(String languageCode) {
+  Future<bool> setTargetLanguage(String languageCode) async {
+    _cachedTargetLanguage = languageCode;
     return StorageUtil.set(_translateTargetLanguageKey, languageCode);
   }
 }

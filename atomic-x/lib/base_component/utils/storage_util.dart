@@ -10,11 +10,8 @@ class StorageUtil {
     _preferences = await SharedPreferences.getInstance();
   }
 
-  static Future<bool> set<T>(String key, T value) {
-    if (_preferences == null) {
-      debugPrint('StorageUtil, need call await init() first');
-      return Future.value(false);
-    }
+  static Future<bool> set<T>(String key, T value) async {
+    _preferences ??= await SharedPreferences.getInstance();
 
     String type = value.runtimeType.toString();
     switch (type) {
@@ -31,25 +28,19 @@ class StorageUtil {
       case "_InternalLinkedHashMap<String, String>":
         return _preferences!.setString(key, json.encode(value));
       default:
-        return Future.value(false);
+        return false;
     }
   }
 
-  static Object? get(String key) {
-    if (_preferences == null) {
-      debugPrint('StorageUtil, need call await init() first');
-      return null;
-    }
+  static Future<Object?> get(String key) async {
+    _preferences ??= await SharedPreferences.getInstance();
 
     Object? value = _preferences!.get(key);
     return value;
   }
 
-  static Future<bool> remove(String key) {
-    if (_preferences == null) {
-      debugPrint('StorageUtil, need call await init() first');
-      return Future.value(false);
-    }
+  static Future<bool> remove(String key) async {
+    _preferences ??= await SharedPreferences.getInstance();
 
     return _preferences!.remove(key);
   }

@@ -31,10 +31,13 @@ class _ReactionEmojiPickerState extends State<ReactionEmojiPicker> {
     }
   }
 
-  void _loadQuickEmojis() {
-    setState(() {
-      _quickEmojis = RecentEmojiManager.getQuickEmojis(context);
-    });
+  Future<void> _loadQuickEmojis() async {
+    final emojis = await RecentEmojiManager.getQuickEmojis(context);
+    if (mounted) {
+      setState(() {
+        _quickEmojis = emojis;
+      });
+    }
   }
 
   @override

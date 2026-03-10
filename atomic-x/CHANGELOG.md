@@ -1,3 +1,6 @@
+## 4.0.0
+* Adapted for atomic_x_core 4.0.0.
+
 ## 3.6.6
 * Fixed the conflict issue on the iOS platform after using the third-party library file_picker.
 * Removed dependencies on certain third-party libraries.

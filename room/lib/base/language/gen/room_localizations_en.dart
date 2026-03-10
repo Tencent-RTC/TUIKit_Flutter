@@ -63,6 +63,9 @@ class RoomLocalizationsEn extends RoomLocalizations {
   String get roomkit_member_count => 'Members(xxx)';
 
   @override
+  String get roomkit_member => 'Members';
+
+  @override
   String get roomkit_expand => 'Expansion';
 
   @override
@@ -313,7 +316,34 @@ class RoomLocalizationsEn extends RoomLocalizations {
   String get roomkit_room_name => 'Room name';
 
   @override
-  String get roomkit_room_running => 'Running';
+  String get roomkit_participant => 'Participant(xxx)';
+
+  @override
+  String get roomkit_audience => 'Audience(xxx)';
+
+  @override
+  String get roomkit_entered_room => 'Entered room';
+
+  @override
+  String get roomkit_switch_to_participant =>
+      'xxx has been set as a participant';
+
+  @override
+  String get roomkit_switch_to_audience => 'xxx has been set as an audience';
+
+  @override
+  String get roomkit_switch_to_participant_byself =>
+      'You have been set as a participant';
+
+  @override
+  String get roomkit_switch_to_audience_byself =>
+      'You have been set as an audience';
+
+  @override
+  String get roomkit_set_participant => 'Set as participant';
+
+  @override
+  String get roomkit_set_audience => 'Set as audience';
 
   @override
   String get roomkit_err_0_success => 'Operation successful';
@@ -576,7 +606,7 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_err_100020_admin_limit_exceeded =>
-      'The admin quantity exceeds the upper limit';
+      'The administrator list is full';
 
   @override
   String get roomkit_err_100102_signal_request_conflict =>
@@ -602,10 +632,11 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_err_100205_all_seats_are_full =>
-      'The seats are all taken.';
+      'The participant list is full.';
 
   @override
-  String get roomkit_err_100206_not_on_seat => 'Not on the seat';
+  String get roomkit_err_100206_not_on_seat =>
+      'Please become a participant first';
 
   @override
   String get roomkit_err_100210_user_already_on_seat =>
@@ -640,4 +671,7 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_err_7002_invalid_user_id => 'Invalid userid';
+
+  @override
+  String get roomkit_room_running => 'Running';
 }

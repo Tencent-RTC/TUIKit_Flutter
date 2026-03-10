@@ -4,9 +4,26 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 class LocaleProvider extends ChangeNotifier {
   String? _locale;
 
+  LocaleProvider() {
+    // Load cached locale value asynchronously
+    _loadLocale();
+  }
+
+  void _loadLocale() {
+    StorageUtil.get('locale').then((value) {
+      if (value is String) {
+        _locale = value;
+      } else {
+        _locale = "system";
+      }
+
+      notifyListeners();
+    });
+  }
+
   Locale? get locale {
-    _locale = (StorageUtil.get('locale') as String?) ?? "system";
-    switch (_locale) {
+    final localeValue = _locale ?? "system";
+    switch (localeValue) {
       case 'ar':
         return const Locale('ar');
       case 'en':

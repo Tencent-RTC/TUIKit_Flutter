@@ -1,7 +1,6 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_conference_uikit/base/index.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
 
 import 'participant_user_info_widget.dart';
 
@@ -31,9 +30,12 @@ class _ParticipantVideoItemWidgetState extends State<ParticipantVideoItemWidget>
   late final RoomParticipantController _controller;
   late final RoomParticipantStore _participantStore;
 
+  RoomParticipant _participant = RoomParticipant();
+
   @override
   void initState() {
     super.initState();
+    _participant = widget.participant;
     _participantStore = RoomParticipantStore.create(widget.roomId);
     _controller = RoomParticipantController.create(
       streamType: widget.isScreenStream ? VideoStreamType.screen : VideoStreamType.camera,
@@ -63,7 +65,12 @@ class _ParticipantVideoItemWidgetState extends State<ParticipantVideoItemWidget>
           (p) => p.userID == widget.participant.userID,
           orElse: () => widget.participant,
         );
-        _controller.updateParticipant(currentParticipant);
+        if (_participant.cameraStatus != currentParticipant.cameraStatus ||
+            _participant.screenShareStatus != currentParticipant.screenShareStatus) {
+          _controller.updateParticipant(currentParticipant);
+          _participant.cameraStatus = currentParticipant.cameraStatus;
+          _participant.screenShareStatus = currentParticipant.screenShareStatus;
+        }
         return _buildContent(currentParticipant);
       },
     );
@@ -94,27 +101,16 @@ extension _ParticipantVideoItemWidgetStatePrivate on _ParticipantVideoItemWidget
             fit: StackFit.expand,
             children: [
               RoomParticipantWidget(controller: _controller),
-              Visibility(
-                visible: !hasVideo && !widget.isScreenStream,
-                child: Container(color: const Color(0x8022262E)),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Visibility(
-                    visible: !widget.isScreenStream && !hasVideo,
-                    child: Avatar.image(
-                      url: currentParticipant.avatarURL,
-                      shape: AvatarShape.round,
-                      size: AvatarSize.xxl,
-                    ),
+              if (!hasVideo && !widget.isScreenStream) ...[
+                Container(color: const Color(0x8022262E)),
+                Center(
+                  child: Avatar.image(
+                    url: currentParticipant.avatarURL,
+                    shape: AvatarShape.round,
+                    size: AvatarSize.xxl,
                   ),
                 ),
-              ),
+              ],
               ValueListenableBuilder(
                 valueListenable: _participantStore.state.speakingUsers,
                 builder: (context, speakingUsers, _) {

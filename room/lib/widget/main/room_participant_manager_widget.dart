@@ -1,4 +1,3 @@
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:tencent_conference_uikit/base/index.dart';
 import 'package:tuikit_atomic_x/atomicx.dart' hide IconButton;
@@ -7,10 +6,23 @@ import 'participant_manager/name_card_input_sheet.dart';
 
 class RoomParticipantManagerWidget extends StatefulWidget {
   final String roomId;
-  final RoomParticipant participant;
+  final RoomParticipant? participant;
+  final RoomUser? audience;
   final BuildContext? parentContext;
 
-  const RoomParticipantManagerWidget({super.key, required this.roomId, required this.participant, this.parentContext});
+  const RoomParticipantManagerWidget({
+    super.key,
+    required this.roomId,
+    required RoomParticipant this.participant,
+    this.parentContext,
+  }) : audience = null;
+
+  const RoomParticipantManagerWidget.audience({
+    super.key,
+    required this.roomId,
+    required RoomUser this.audience,
+    this.parentContext,
+  }) : participant = null;
 
   @override
   State<RoomParticipantManagerWidget> createState() => _RoomParticipantManagerWidgetState();
@@ -19,6 +31,8 @@ class RoomParticipantManagerWidget extends StatefulWidget {
 class _RoomParticipantManagerWidgetState extends State<RoomParticipantManagerWidget> {
   late final RoomParticipantStore _participantStore;
   final _timeout = 30;
+
+  bool get _isParticipant => widget.participant != null;
 
   @override
   void initState() {
@@ -30,40 +44,55 @@ class _RoomParticipantManagerWidgetState extends State<RoomParticipantManagerWid
   Widget build(BuildContext context) {
     return OrientationBuilder(
       builder: (context, orientation) {
-        return _buildContent(orientation);
+        return Container(
+          height: orientation == Orientation.portrait ? null : MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: RoomColors.g2,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.radius)),
+          ),
+          child: _isParticipant ? _buildParticipantContent(orientation) : _buildAudienceContent(orientation),
+        );
       },
     );
   }
 }
 
 extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetState {
-  Widget _buildContent(Orientation orientation) {
-    return Container(
-      height: orientation == Orientation.portrait ? null : MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        color: RoomColors.g2,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.radius)),
-      ),
-      child: ValueListenableBuilder(
-        valueListenable: _participantStore.state.participantList,
-        builder: (context, participants, _) {
-          final currentParticipant = participants.firstWhere(
-            (p) => p.userID == widget.participant.userID,
-            orElse: () => widget.participant,
-          );
-
-          return ValueListenableBuilder(
-            valueListenable: _participantStore.state.localParticipant,
-            builder: (context, localParticipant, _) {
-              return _buildControlPanel(currentParticipant, localParticipant, orientation);
-            },
-          );
-        },
-      ),
+  Widget _buildParticipantContent(Orientation orientation) {
+    return ValueListenableBuilder(
+      valueListenable: _participantStore.state.participantList,
+      builder: (context, participants, _) {
+        final participant = participants.firstWhere(
+          (p) => p.userID == widget.participant!.userID,
+          orElse: () => widget.participant!,
+        );
+        return ValueListenableBuilder(
+          valueListenable: _participantStore.state.localParticipant,
+          builder: (context, localParticipant, _) {
+            return _buildParticipantControlPanel(participant, localParticipant, orientation);
+          },
+        );
+      },
     );
   }
 
-  Widget _buildControlPanel(RoomParticipant participant, RoomParticipant? localParticipant, Orientation orientation) {
+  Widget _buildAudienceContent(Orientation orientation) {
+    return ValueListenableBuilder(
+      valueListenable: _participantStore.state.adminList,
+      builder: (context, adminList, _) {
+        final isAdmin = adminList.any((admin) => admin.userID == widget.audience!.userID);
+        return ValueListenableBuilder(
+          valueListenable: _participantStore.state.localParticipant,
+          builder: (context, localParticipant, _) {
+            return _buildAudienceControlPanel(isAdmin, localParticipant, orientation);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildParticipantControlPanel(
+      RoomParticipant participant, RoomParticipant? localParticipant, Orientation orientation) {
     final isLocal = localParticipant?.userID == participant.userID;
     final isOwner = localParticipant?.role == ParticipantRole.owner;
     final isAdmin = localParticipant?.role == ParticipantRole.admin;
@@ -74,33 +103,71 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
       children: [
         SizedBox(height: orientation == Orientation.landscape ? 20.height : 10.height),
         _buildDropDownButton(),
-        _buildUserHeader(participant, isLocal),
+        _buildUserHeader(
+            displayName: participant.displayName,
+            avatarURL: participant.avatarURL,
+            isLocal: isLocal,
+            role: participant.role),
         SizedBox(height: 10.height),
         SizedBox(
           height: orientation == Orientation.landscape ? 295.height : null,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // if (isLocal) _buildModifyNameCardControl(),
+                if (widget.roomId.isWebinar) ...[
+                  _buildSetParticipantControl(userID: participant.userID, isParticipant: true),
+                  _buildDivider(),
+                ],
                 if (!isLocal) ...[
                   _buildAudioControl(participant),
-                  Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16),
-                  _buildVideoControl(participant),
-                  Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16),
+                  _buildDivider(),
+                  Visibility(
+                    visible: !widget.roomId.isWebinar,
+                    child: _buildVideoControl(participant),
+                  ),
+                  _buildDivider(),
                 ],
                 if (isOwner && !isLocal) ...[
-                  _buildTransferOwnerControl(),
-                  Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16),
-                  _buildAdministratorControl(participant),
-                  Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16),
+                  _buildTransferOwnerControl(participant),
+                  _buildDivider(),
+                  _buildAdminControl(
+                      userID: participant.userID,
+                      displayName: participant.displayName,
+                      isAdmin: participant.role == ParticipantRole.admin),
+                  _buildDivider(),
                 ],
-                if (canManage && !isLocal) ...[
-                  // _buildModifyNameCardControl(),
-                  // Divider(height: 3, thickness: 3, color: RoomColors.dividerGreyWith20Alpha),
-                  // _buildMessageControl(participant),
-                  // Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16),
-                  _buildKickControl(),
-                ],
+                if (canManage && !isLocal)
+                  _buildKickControl(userID: participant.userID, displayName: participant.displayName),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 20.height),
+      ],
+    );
+  }
+
+  Widget _buildAudienceControlPanel(bool isAdmin, RoomParticipant? localParticipant, Orientation orientation) {
+    final audience = widget.audience!;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: orientation == Orientation.landscape ? 20.height : 10.height),
+        _buildDropDownButton(),
+        _buildUserHeader(
+            displayName: audience.displayName,
+            avatarURL: audience.avatarURL,
+            role: isAdmin ? ParticipantRole.admin : null),
+        SizedBox(height: 10.height),
+        SizedBox(
+          height: orientation == Orientation.landscape ? 295.height : null,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildSetParticipantControl(userID: audience.userID, isParticipant: false),
+                _buildDivider(),
+                _buildKickControl(userID: audience.userID, displayName: audience.displayName),
               ],
             ),
           ),
@@ -121,7 +188,12 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
     );
   }
 
-  Widget _buildUserHeader(RoomParticipant participant, bool isLocal) {
+  Widget _buildDivider() {
+    return Divider(height: 1, color: RoomColors.dividerGreyWith10Alpha, indent: 16, endIndent: 16);
+  }
+
+  Widget _buildUserHeader(
+      {required String displayName, required String avatarURL, bool isLocal = false, ParticipantRole? role}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.width),
       child: Row(
@@ -131,11 +203,10 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
               width: 40.radius,
               height: 40.radius,
               child: Image.network(
-                participant.avatarURL,
+                avatarURL,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(RoomImages.roomDefaultAvatar, package: RoomConstants.pluginName);
-                },
+                errorBuilder: (_, __, ___) =>
+                    Image.asset(RoomImages.roomDefaultAvatar, package: RoomConstants.pluginName),
               ),
             ),
           ),
@@ -148,7 +219,7 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
                   children: [
                     Flexible(
                       child: Text(
-                        participant.displayName,
+                        displayName,
                         style: TextStyle(fontSize: 16.width, color: RoomColors.g7, fontWeight: FontWeight.w500),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -156,16 +227,14 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
                     ),
                     if (isLocal) ...[
                       SizedBox(width: 4.width),
-                      Text(
-                        '(${RoomLocalizations.of(context)!.roomkit_me})',
-                        style: TextStyle(fontSize: 14.width, color: RoomColors.g7),
-                      ),
+                      Text('(${RoomLocalizations.of(context)!.roomkit_me})',
+                          style: TextStyle(fontSize: 14.width, color: RoomColors.g7)),
                     ],
                   ],
                 ),
-                if (participant.role != ParticipantRole.generalUser) ...[
+                if (role != null && role != ParticipantRole.generalUser) ...[
                   SizedBox(height: 4.height),
-                  _buildRoleBadge(participant.role),
+                  _buildRoleBadge(role),
                 ],
               ],
             ),
@@ -176,22 +245,22 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
   }
 
   Widget _buildRoleBadge(ParticipantRole role) {
-    final text = role == ParticipantRole.owner
-        ? RoomLocalizations.of(context)!.roomkit_role_owner
-        : RoomLocalizations.of(context)!.roomkit_role_admin;
-    final icon = role == ParticipantRole.owner ? RoomImages.ownerIcon : RoomImages.adminIcon;
-
+    final isOwner = role == ParticipantRole.owner;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(icon, package: RoomConstants.pluginName, width: 14.width, height: 14.height),
+        Image.asset(
+          isOwner ? RoomImages.ownerIcon : RoomImages.adminIcon,
+          package: RoomConstants.pluginName,
+          width: 14.width,
+          height: 14.height,
+        ),
         SizedBox(width: 2.width),
         Text(
-          text,
-          style: TextStyle(
-            fontSize: 12.width,
-            color: role == ParticipantRole.owner ? RoomColors.b1d : RoomColors.adminOrange,
-          ),
+          isOwner
+              ? RoomLocalizations.of(context)!.roomkit_role_owner
+              : RoomLocalizations.of(context)!.roomkit_role_admin,
+          style: TextStyle(fontSize: 12.width, color: isOwner ? RoomColors.b1d : RoomColors.adminOrange),
         ),
       ],
     );
@@ -221,10 +290,7 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
               Image.asset(displayIcon, package: RoomConstants.pluginName, width: 20.width, height: 20.height),
               SizedBox(width: 12.width),
             ],
-            Text(
-              displayText,
-              style: textStyle ?? TextStyle(fontSize: 16.width, color: RoomColors.white),
-            ),
+            Text(displayText, style: textStyle ?? TextStyle(fontSize: 16.width, color: RoomColors.white)),
           ],
         ),
       ),
@@ -259,47 +325,32 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
     );
   }
 
-  Widget _buildTransferOwnerControl() {
+  Widget _buildTransferOwnerControl(RoomParticipant participant) {
     return _buildControlItem(
       text: RoomLocalizations.of(context)!.roomkit_transfer_owner,
       icon: RoomImages.transferOwner,
       isSelected: false,
       onPressed: () {
         Navigator.of(context).pop();
-        _handleTransferOwner();
+        _handleTransferOwner(participant);
       },
     );
   }
 
-  Widget _buildAdministratorControl(RoomParticipant participant) {
+  Widget _buildAdminControl({required String userID, required String displayName, required bool isAdmin}) {
     return _buildControlItem(
       text: RoomLocalizations.of(context)!.roomkit_set_admin,
       selectedText: RoomLocalizations.of(context)!.roomkit_revoke_admin,
       icon: RoomImages.setAdmin,
-      isSelected: participant.role == ParticipantRole.admin,
+      isSelected: isAdmin,
       onPressed: () {
         Navigator.of(context).pop();
-        _handleAdministratorControl(participant);
+        _handleAdminControl(userID: userID, displayName: displayName, isAdmin: isAdmin);
       },
     );
   }
 
-  // ignore: unused_element
-  Widget _buildMessageControl(RoomParticipant participant) {
-    return _buildControlItem(
-      text: RoomLocalizations.of(context)!.roomkit_unmute_text_chat,
-      selectedText: RoomLocalizations.of(context)!.roomkit_mute_text_chat,
-      icon: RoomImages.roomEnableMessage,
-      selectedIcon: RoomImages.roomDisableMessage,
-      isSelected: !participant.isMessageDisabled,
-      onPressed: () {
-        Navigator.of(context).pop();
-        _handleMessageControl(participant);
-      },
-    );
-  }
-
-  Widget _buildKickControl() {
+  Widget _buildKickControl({required String userID, required String displayName}) {
     return _buildControlItem(
       text: RoomLocalizations.of(context)!.roomkit_remove_member,
       icon: RoomImages.roomKickOut,
@@ -307,7 +358,20 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
       textStyle: TextStyle(fontSize: 16.width, color: RoomColors.exitRed),
       onPressed: () {
         Navigator.of(context).pop();
-        _handleKick();
+        _handleKick(userID: userID, displayName: displayName);
+      },
+    );
+  }
+
+  Widget _buildSetParticipantControl({required String userID, required bool isParticipant}) {
+    return _buildControlItem(
+      text: RoomLocalizations.of(context)!.roomkit_set_participant,
+      selectedText: RoomLocalizations.of(context)!.roomkit_set_audience,
+      icon: RoomImages.setAdmin,
+      isSelected: isParticipant,
+      onPressed: () {
+        Navigator.of(context).pop();
+        _handleSetParticipant(userID: userID, isParticipant: isParticipant);
       },
     );
   }
@@ -329,22 +393,15 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
     if (participant.microphoneStatus == DeviceStatus.on) {
       await _participantStore.closeParticipantDevice(userID: participant.userID, device: DeviceType.microphone);
     } else {
-      Toast.info(
-        widget.parentContext ?? context,
-        RoomLocalizations.of(widget.parentContext ?? context)!.roomkit_toast_audio_invite_sent,
-        useRootOverlay: true,
-      );
+      Toast.info(widget.parentContext ?? context,
+          RoomLocalizations.of(widget.parentContext ?? context)!.roomkit_toast_audio_invite_sent,
+          useRootOverlay: true);
       final result = await _participantStore.inviteToOpenDevice(
-        userID: participant.userID,
-        device: DeviceType.microphone,
-        timeout: 30,
-      );
+          userID: participant.userID, device: DeviceType.microphone, timeout: _timeout);
       if (!result.isSuccess) {
-        Toast.info(
-          widget.parentContext ?? context,
-          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
-          useRootOverlay: true,
-        );
+        Toast.info(widget.parentContext ?? context,
+            ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+            useRootOverlay: true);
       }
     }
   }
@@ -353,107 +410,94 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
     if (participant.cameraStatus == DeviceStatus.on) {
       await _participantStore.closeParticipantDevice(userID: participant.userID, device: DeviceType.camera);
     } else {
-      Toast.info(
-        widget.parentContext ?? context,
-        RoomLocalizations.of(widget.parentContext ?? context)!.roomkit_toast_video_invite_sent,
-        useRootOverlay: true,
-      );
+      Toast.info(widget.parentContext ?? context,
+          RoomLocalizations.of(widget.parentContext ?? context)!.roomkit_toast_video_invite_sent,
+          useRootOverlay: true);
       final result = await _participantStore.inviteToOpenDevice(
-        userID: participant.userID,
-        device: DeviceType.camera,
-        timeout: _timeout,
-      );
+          userID: participant.userID, device: DeviceType.camera, timeout: _timeout);
       if (!result.isSuccess) {
-        Toast.info(
-          widget.parentContext ?? context,
-          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
-          useRootOverlay: true,
-        );
+        Toast.info(widget.parentContext ?? context,
+            ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+            useRootOverlay: true);
       }
     }
   }
 
-  void _handleTransferOwner() async {
+  void _handleTransferOwner(RoomParticipant participant) {
     AtomicAlertDialog.show(
       context,
-      title: RoomLocalizations.of(
-        context,
-      )!
-          .roomkit_msg_transfer_owner_to
-          .replaceAll('xxx', widget.participant.displayName),
+      title: RoomLocalizations.of(context)!.roomkit_msg_transfer_owner_to.replaceAll('xxx', participant.displayName),
       content: '${RoomLocalizations.of(context)!.roomkit_msg_transfer_owner_tip}？',
       confirmText: RoomLocalizations.of(context)!.roomkit_confirm,
       cancelText: RoomLocalizations.of(context)!.roomkit_cancel,
       onConfirm: () async {
-        final result = await _participantStore.transferOwner(widget.participant.userID);
+        final result = await _participantStore.transferOwner(participant.userID);
         if (result.isSuccess) {
-          Toast.info(
-            widget.parentContext ?? context,
-            RoomLocalizations.of(
+          Toast.success(
               widget.parentContext ?? context,
-            )!
-                .roomkit_toast_owner_transferred
-                .replaceAll('xxx', widget.participant.displayName),
-            useRootOverlay: true,
-          );
+              RoomLocalizations.of(widget.parentContext ?? context)!
+                  .roomkit_toast_owner_transferred
+                  .replaceAll('xxx', participant.displayName),
+              useRootOverlay: true);
         }
       },
     );
   }
 
-  void _handleAdministratorControl(RoomParticipant participant) async {
-    if (participant.role == ParticipantRole.admin) {
-      final result = await _participantStore.revokeAdmin(participant.userID);
+  void _handleAdminControl({required String userID, required String displayName, required bool isAdmin}) async {
+    if (isAdmin) {
+      final result = await _participantStore.revokeAdmin(userID);
       if (result.isSuccess) {
-        Toast.info(
-          widget.parentContext ?? context,
-          RoomLocalizations.of(
+        Toast.success(
             widget.parentContext ?? context,
-          )!
-              .roomkit_toast_admin_revoked
-              .replaceAll('xxx', participant.displayName),
-          useRootOverlay: true,
-        );
+            RoomLocalizations.of(widget.parentContext ?? context)!
+                .roomkit_toast_admin_revoked
+                .replaceAll('xxx', displayName),
+            useRootOverlay: true);
       }
     } else {
-      final result = await _participantStore.setAdmin(participant.userID);
+      final result = await _participantStore.setAdmin(userID);
       if (result.isSuccess) {
-        Toast.info(
-          widget.parentContext ?? context,
-          RoomLocalizations.of(
+        Toast.success(
             widget.parentContext ?? context,
-          )!
-              .roomkit_toast_admin_set
-              .replaceAll('xxx', participant.displayName),
-          useRootOverlay: true,
-        );
+            RoomLocalizations.of(widget.parentContext ?? context)!
+                .roomkit_toast_admin_set
+                .replaceAll('xxx', displayName),
+            useRootOverlay: true);
       }
     }
   }
 
-  void _handleMessageControl(RoomParticipant participant) async {
-    await _participantStore.disableUserMessage(userID: participant.userID, disable: !participant.isMessageDisabled);
-  }
-
-  void _handleKick() {
+  void _handleKick({required String userID, required String displayName}) {
     AtomicAlertDialog.show(
       context,
       title: RoomLocalizations.of(context)!.roomkit_remove_member,
-      content: RoomLocalizations.of(
-        context,
-      )!
-          .roomkit_confirm_remove_member
-          .replaceAll('xxx', widget.participant.displayName),
+      content: RoomLocalizations.of(context)!.roomkit_confirm_remove_member.replaceAll('xxx', displayName),
       confirmText: RoomLocalizations.of(context)!.roomkit_confirm,
       cancelText: RoomLocalizations.of(context)!.roomkit_cancel,
       onConfirm: () async {
-        await _participantStore.kickUser(widget.participant.userID);
+        await _participantStore.kickUser(userID);
       },
     );
   }
 
+  void _handleSetParticipant({required String userID, required bool isParticipant}) async {
+    CompletionHandler result;
+    if (isParticipant) {
+      result = await _participantStore.demoteParticipantToAudience(userID);
+    } else {
+      result = await _participantStore.promoteAudienceToParticipant(userID);
+    }
+
+    if (!result.isSuccess && mounted) {
+      Toast.error(context, ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+          useRootOverlay: true);
+    }
+  }
+
   void _handleModifyNameCard() {
-    final currentName = widget.participant.nameCard.isEmpty ? widget.participant.userName : widget.participant.nameCard;
+    final currentName =
+        widget.participant!.nameCard.isEmpty ? widget.participant!.userName : widget.participant!.nameCard;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -461,10 +505,8 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
       builder: (context) => NameCardInputSheet(currentNameCard: currentName),
     ).then((nameCard) async {
       if (nameCard != null && nameCard is String && nameCard.isNotEmpty) {
-        final result = await _participantStore.updateParticipantNameCard(
-          userID: widget.participant.userID,
-          nameCard: nameCard,
-        );
+        final result =
+            await _participantStore.updateParticipantNameCard(userID: widget.participant!.userID, nameCard: nameCard);
         if (!result.isSuccess && mounted) {
           Toast.error(context, ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage));
         }

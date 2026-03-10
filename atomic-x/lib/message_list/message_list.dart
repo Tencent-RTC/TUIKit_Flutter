@@ -36,6 +36,11 @@ typedef OnUserClick = void Function(String userID);
 /// [displayName] is the display name of the message sender
 typedef OnUserLongPress = void Function(String userID, String displayName);
 
+/// Callback when call message is clicked in C2C conversation
+/// [userID] is the user ID of the other party
+/// [isVideoCall] is true for video call, false for voice call
+typedef OnCallMessageClick = void Function(String userID, bool isVideoCall);
+
 /// Multi-select mode state callback
 typedef OnMultiSelectModeChanged = void Function(bool isMultiSelectMode, int selectedCount);
 
@@ -92,6 +97,8 @@ class MessageList extends StatefulWidget {
   final OnUserClick? onUserClick;
   /// Callback when user long presses on avatar (for @ mention feature in group chat)
   final OnUserLongPress? onUserLongPress;
+  /// Callback when call message is clicked in C2C conversation
+  final OnCallMessageClick? onCallMessageClick;
   final List<MessageCustomAction> customActions;
   /// Multi-select mode change callback
   final OnMultiSelectModeChanged? onMultiSelectModeChanged;
@@ -105,6 +112,7 @@ class MessageList extends StatefulWidget {
     this.locateMessage,
     this.onUserClick,
     this.onUserLongPress,
+    this.onCallMessageClick,
     this.customActions = const [],
     this.onMultiSelectModeChanged,
     this.onMultiSelectStateChanged,
@@ -150,6 +158,11 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   // Translation display manager for text translation feature
   late TranslationDisplayManager _translationDisplayManager;
 
+  // Listener references for proper removal
+  late final VoidCallback _messageListStateChangedListener;
+  late final VoidCallback _scrollListenerCallback;
+  late final VoidCallback _groupSettingStateChangedListener;
+
   // AutomaticKeepAliveClientMixin requires this method to be implemented
   // Returning true indicates that the state is maintained even if the Widget is not in the view.
   @override
@@ -172,16 +185,21 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     _asrDisplayManager = AsrDisplayManager();
     _translationDisplayManager = TranslationDisplayManager();
 
+    // Initialize listener references
+    _messageListStateChangedListener = _onMessageListStateChanged;
+    _scrollListenerCallback = _scrollListener;
+    _groupSettingStateChangedListener = _onGroupSettingStateChanged;
+
     _messageListStore =
         MessageListStore.create(conversationID: widget.conversationID, messageListType: MessageListType.history);
-    _messageListStore.addListener(_onMessageListStateChanged);
+    _messageListStore.addListener(_messageListStateChangedListener);
     _messageEventSubscription = _messageListStore.messageEventStream.listen(_onMessageEvent);
-    _itemPositionsListener.itemPositions.addListener(_scrollListener);
+    _itemPositionsListener.itemPositions.addListener(_scrollListenerCallback);
 
     if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
       final groupId = widget.conversationID.replaceFirst(groupConversationIDPrefix, '');
       _groupSettingStore = GroupSettingStore.create(groupID: groupId);
-      _groupSettingStore!.addListener(_onGroupSettingStateChanged);
+      _groupSettingStore!.addListener(_groupSettingStateChangedListener);
       _loadGroupAttributes();
     }
 
@@ -219,9 +237,10 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   @override
   void dispose() {
-    _messageListStore.removeListener(_onMessageListStateChanged);
+    _messageListStore.removeListener(_messageListStateChangedListener);
     _messageEventSubscription?.cancel();
-    _itemPositionsListener.itemPositions.removeListener(_scrollListener);
+    _itemPositionsListener.itemPositions.removeListener(_scrollListenerCallback);
+    _groupSettingStore?.removeListener(_groupSettingStateChangedListener);
     _receiptTimer?.cancel();
     _asrDisplayManager.dispose();
     _translationDisplayManager.dispose();
@@ -484,6 +503,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             },
             onUserClick: widget.onUserClick,
             onUserLongPress: isGroup ? widget.onUserLongPress : null,
+            onCallMessageClick: widget.onCallMessageClick,
             customActions: widget.customActions,
             config: widget.config,
             isMultiSelectMode: _isMultiSelectMode,

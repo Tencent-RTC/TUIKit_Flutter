@@ -1,7 +1,7 @@
 name: tencent_conference_uikit
 description: tencent_conference_uikit is a UIKit about audio&video room launched by Tencent Cloud.
-version: 4.0.0
-repository: https://github.com/Tencent-RTC/TUIKit_Flutter
+version: 4.0.1
+repository: https://github.com/Tencent-RTC/TUIKit_Flutter/tree/main/room
 homepage: https://trtc.io/
 
 environment:
@@ -17,7 +17,9 @@ dependencies:
   plugin_platform_interface: ^2.0.2
   tuikit_atomic_x:
     path: ../atomic-x
-  atomic_x_core: ^3.6.2
+  atomic_x_core: ^4.0.0
+  rtc_room_engine: ^4.0.0
+  live_uikit_barrage: ^2.0.1
 
 dev_dependencies:
   flutter_test:

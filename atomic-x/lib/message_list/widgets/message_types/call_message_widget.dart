@@ -13,17 +13,14 @@ class CallMessageWidget extends StatefulWidget {
   final MessageInfo message;
   final bool isSelf;
   final double maxWidth;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
   final MessageListStore? messageListStore;
-  final VoidCallback? onStartVoiceCall;
-  final VoidCallback? onStartVideoCall;
   final GlobalKey? bubbleKey;
   final BackgroundBuilder? backgroundBuilder;
   final String alignment;
   final VoidCallback? onResendTap;
   final MessageListConfigProtocol config;
   final bool isInMergedDetailView;
+  final void Function(String userID, bool isVideoCall)? onCallMessageClick;
 
   const CallMessageWidget({
     super.key,
@@ -31,16 +28,13 @@ class CallMessageWidget extends StatefulWidget {
     required this.isSelf,
     required this.maxWidth,
     required this.config,
-    this.onTap,
-    this.onLongPress,
     this.messageListStore,
-    this.onStartVoiceCall,
-    this.onStartVideoCall,
     this.bubbleKey,
     this.backgroundBuilder,
     this.alignment = AppBuilder.MESSAGE_ALIGNMENT_TWO_SIDED,
     this.onResendTap,
     this.isInMergedDetailView = false,
+    this.onCallMessageClick,
   });
 
   @override
@@ -87,14 +81,17 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
 
     return GestureDetector(
       onTap: () {
-        if (provider.streamMediaType == CallStreamMediaType.audio) {
-          widget.onStartVoiceCall?.call();
-        } else {
-          widget.onStartVideoCall?.call();
+        final isVideoCall = provider.streamMediaType == CallStreamMediaType.video;
+        
+        // Get the userID of the other party from the message
+        final userID = widget.message.isSelf
+            ? widget.message.rawMessage?.userID ?? ''
+            : widget.message.rawMessage?.sender ?? '';
+        
+        if (widget.onCallMessageClick != null && userID.isNotEmpty) {
+          widget.onCallMessageClick!(userID, isVideoCall);
         }
-        widget.onTap?.call();
       },
-      onLongPress: widget.onLongPress,
       child: bubble,
     );
   }

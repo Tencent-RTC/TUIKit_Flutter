@@ -27,27 +27,29 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final atomicLocale = AtomicLocalizations.of(context);
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SearchPage(
-                    onContactSelect: onContactSelect,
-                    onGroupSelect: onGroupSelect,
-                    onConversationSelect: onConversationSelect,
-                    onMessageSelect: onMessageSelect,
-                  )),
-        );
-      },
-      child: Container(
-        height: 36,
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: colorsTheme.bgColorInput,
-          borderRadius: BorderRadius.circular(10),
-        ),
+    return Container(
+      color: colorsTheme.bgColorOperate,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SearchPage(
+                      onContactSelect: onContactSelect,
+                      onGroupSelect: onGroupSelect,
+                      onConversationSelect: onConversationSelect,
+                      onMessageSelect: onMessageSelect,
+                    )),
+          );
+        },
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: colorsTheme.bgColorInput,
+            borderRadius: BorderRadius.circular(10),
+          ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -66,6 +68,7 @@ class SearchBar extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -160,7 +160,7 @@ You can follow the steps below to activate the TRTC Conference product service a
 
 - Step 4: User `tencent_conference_uikit` plugin
 
-  - Configure Routing and Internationalization
+    - Configure Routing and Internationalization
     Wrap your app with `ComponentTheme` and set up routing and internationalization. Refer to the following code:
     ```dart
     import 'package:tuikit_atomic_x/atomicx.dart';

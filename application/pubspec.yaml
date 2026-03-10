@@ -50,6 +50,11 @@ dependencies:
   tencent_chat_uikit:
     path: ../chat/uikit
 
+# Temporary solution, to be removed after the release of chat/live
+dependency_overrides: 
+  atomic_x_core: 4.0.0
+  rtc_room_engine: 4.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

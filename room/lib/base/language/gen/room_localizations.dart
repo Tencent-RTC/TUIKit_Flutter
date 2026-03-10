@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'room_localizations_ar.dart';
 import 'room_localizations_en.dart';
+import 'room_localizations_ja.dart';
 import 'room_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -94,7 +96,9 @@ abstract class RoomLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('en'),
+    Locale('ja'),
     Locale('zh')
   ];
 
@@ -205,6 +209,12 @@ abstract class RoomLocalizations {
   /// In en, this message translates to:
   /// **'Members(xxx)'**
   String get roomkit_member_count;
+
+  /// No description provided for @roomkit_member.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get roomkit_member;
 
   /// No description provided for @roomkit_expand.
   ///
@@ -656,11 +666,59 @@ abstract class RoomLocalizations {
   /// **'Room name'**
   String get roomkit_room_name;
 
-  /// No description provided for @roomkit_room_running.
+  /// No description provided for @roomkit_participant.
   ///
   /// In en, this message translates to:
-  /// **'Running'**
-  String get roomkit_room_running;
+  /// **'Participant(xxx)'**
+  String get roomkit_participant;
+
+  /// No description provided for @roomkit_audience.
+  ///
+  /// In en, this message translates to:
+  /// **'Audience(xxx)'**
+  String get roomkit_audience;
+
+  /// No description provided for @roomkit_entered_room.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered room'**
+  String get roomkit_entered_room;
+
+  /// No description provided for @roomkit_switch_to_participant.
+  ///
+  /// In en, this message translates to:
+  /// **'xxx has been set as a participant'**
+  String get roomkit_switch_to_participant;
+
+  /// No description provided for @roomkit_switch_to_audience.
+  ///
+  /// In en, this message translates to:
+  /// **'xxx has been set as an audience'**
+  String get roomkit_switch_to_audience;
+
+  /// No description provided for @roomkit_switch_to_participant_byself.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been set as a participant'**
+  String get roomkit_switch_to_participant_byself;
+
+  /// No description provided for @roomkit_switch_to_audience_byself.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been set as an audience'**
+  String get roomkit_switch_to_audience_byself;
+
+  /// No description provided for @roomkit_set_participant.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as participant'**
+  String get roomkit_set_participant;
+
+  /// No description provided for @roomkit_set_audience.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as audience'**
+  String get roomkit_set_audience;
 
   /// No description provided for @roomkit_err_0_success.
   ///
@@ -1067,7 +1125,7 @@ abstract class RoomLocalizations {
   /// No description provided for @roomkit_err_100020_admin_limit_exceeded.
   ///
   /// In en, this message translates to:
-  /// **'The admin quantity exceeds the upper limit'**
+  /// **'The administrator list is full'**
   String get roomkit_err_100020_admin_limit_exceeded;
 
   /// No description provided for @roomkit_err_100102_signal_request_conflict.
@@ -1109,13 +1167,13 @@ abstract class RoomLocalizations {
   /// No description provided for @roomkit_err_100205_all_seats_are_full.
   ///
   /// In en, this message translates to:
-  /// **'The seats are all taken.'**
+  /// **'The participant list is full.'**
   String get roomkit_err_100205_all_seats_are_full;
 
   /// No description provided for @roomkit_err_100206_not_on_seat.
   ///
   /// In en, this message translates to:
-  /// **'Not on the seat'**
+  /// **'Please become a participant first'**
   String get roomkit_err_100206_not_on_seat;
 
   /// No description provided for @roomkit_err_100210_user_already_on_seat.
@@ -1171,6 +1229,12 @@ abstract class RoomLocalizations {
   /// In en, this message translates to:
   /// **'Invalid userid'**
   String get roomkit_err_7002_invalid_user_id;
+
+  /// No description provided for @roomkit_room_running.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get roomkit_room_running;
 }
 
 class _RoomLocalizationsDelegate
@@ -1185,7 +1249,7 @@ class _RoomLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+      <String>['ar', 'en', 'ja', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_RoomLocalizationsDelegate old) => false;
@@ -1194,8 +1258,12 @@ class _RoomLocalizationsDelegate
 RoomLocalizations lookupRoomLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return RoomLocalizationsAr();
     case 'en':
       return RoomLocalizationsEn();
+    case 'ja':
+      return RoomLocalizationsJa();
     case 'zh':
       return RoomLocalizationsZh();
   }

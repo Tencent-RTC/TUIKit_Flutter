@@ -44,6 +44,7 @@ class _BlacklistState extends State<Blacklist> {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     return Scaffold(
+      backgroundColor: colorsTheme.bgColorOperate,
       appBar: AppBar(
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,

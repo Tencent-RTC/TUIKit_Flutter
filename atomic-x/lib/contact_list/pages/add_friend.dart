@@ -117,7 +117,7 @@ class _AddFriendState extends State<AddFriend> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_showAddFriendDetail ? atomicLocale.addFriend : atomicLocale.addFriend),
+        title: Text(atomicLocale.addFriend, style: TextStyle(color: colorsTheme.textColorPrimary)),
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(

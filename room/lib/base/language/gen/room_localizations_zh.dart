@@ -63,6 +63,9 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_member_count => '成员(xxx)';
 
   @override
+  String get roomkit_member => '成员';
+
+  @override
   String get roomkit_expand => '展开';
 
   @override
@@ -288,7 +291,31 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_room_name => '房间名称';
 
   @override
-  String get roomkit_room_running => '运行中';
+  String get roomkit_participant => '嘉宾(xxx)';
+
+  @override
+  String get roomkit_audience => '观众(xxx)';
+
+  @override
+  String get roomkit_entered_room => '进入房间';
+
+  @override
+  String get roomkit_switch_to_participant => 'xxx已被设为嘉宾';
+
+  @override
+  String get roomkit_switch_to_audience => 'xxx已被设为观众';
+
+  @override
+  String get roomkit_switch_to_participant_byself => '您已被设为嘉宾';
+
+  @override
+  String get roomkit_switch_to_audience_byself => '您已被设为观众';
+
+  @override
+  String get roomkit_set_participant => '设为嘉宾';
+
+  @override
+  String get roomkit_set_audience => '设为观众';
 
   @override
   String get roomkit_err_0_success => '操作成功';
@@ -513,7 +540,7 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_err_100019_room_password_incorrect => '进房密码错误';
 
   @override
-  String get roomkit_err_100020_admin_limit_exceeded => '管理员数量超过上限';
+  String get roomkit_err_100020_admin_limit_exceeded => '管理员数量已达上限';
 
   @override
   String get roomkit_err_100102_signal_request_conflict => '信令请求冲突';
@@ -534,10 +561,10 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_err_100204_not_in_seat_queue => '没有在排麦列表中';
 
   @override
-  String get roomkit_err_100205_all_seats_are_full => '麦位已满';
+  String get roomkit_err_100205_all_seats_are_full => '嘉宾数量已达上限';
 
   @override
-  String get roomkit_err_100206_not_on_seat => '未在麦上';
+  String get roomkit_err_100206_not_on_seat => '请先成为嘉宾';
 
   @override
   String get roomkit_err_100210_user_already_on_seat => '已经有用户在麦位上';
@@ -570,4 +597,7 @@ class RoomLocalizationsZh extends RoomLocalizations {
 
   @override
   String get roomkit_err_7002_invalid_user_id => '非法的userId';
+
+  @override
+  String get roomkit_room_running => '运行中';
 }

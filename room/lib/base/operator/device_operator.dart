@@ -15,11 +15,19 @@ class DeviceOperator {
 
     final result = await deviceStore.openLocalCamera(deviceStore.state.isFrontCamera.value);
     if (!result.isSuccess && context.mounted) {
-      Toast.error(
-        context,
-        ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
-        useRootOverlay: true,
-      );
+      if (result.errorCode == RoomError.openCameraNeedPermissionFromAdmin.code) {
+        Toast.warning(
+          context,
+          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+          useRootOverlay: true,
+        );
+      } else {
+        Toast.error(
+          context,
+          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+          useRootOverlay: true,
+        );
+      }
     }
   }
 
@@ -33,33 +41,47 @@ class DeviceOperator {
   }) async {
     final deviceStore = DeviceStore.shared;
 
-    if (deviceStore.state.microphoneStatus.value == DeviceStatus.off) {
-      final hasPermission = await _checkAndRequestPermission(
-        context: context,
-        permissionType: PermissionType.microphone,
-        deniedMessage: RoomLocalizations.of(context)!.roomkit_err_n1105_mic_no_permission,
-      );
+    final hasPermission = await _checkAndRequestPermission(
+      context: context,
+      permissionType: PermissionType.microphone,
+      deniedMessage: RoomLocalizations.of(context)!.roomkit_err_n1105_mic_no_permission,
+    );
 
-      if (!hasPermission) return;
+    if (!hasPermission) return;
 
-      final deviceResult = await deviceStore.openLocalMicrophone();
-      if (!deviceResult.isSuccess && context.mounted) {
+    final deviceResult = await deviceStore.openLocalMicrophone();
+    if (!deviceResult.isSuccess && context.mounted) {
+      if (deviceResult.errorCode == RoomError.openMicrophoneNeedPermissionFromAdmin.code) {
+        Toast.warning(
+          context,
+          ErrorLocalized.convertToErrorMessage(deviceResult.errorCode, deviceResult.errorMessage),
+          useRootOverlay: true,
+        );
+      } else {
         Toast.error(
           context,
           ErrorLocalized.convertToErrorMessage(deviceResult.errorCode, deviceResult.errorMessage),
           useRootOverlay: true,
         );
-        return;
       }
+      return;
     }
 
     final result = await participantStore.unmuteMicrophone();
     if (!result.isSuccess && context.mounted) {
-      Toast.error(
-        context,
-        ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
-        useRootOverlay: true,
-      );
+      if (result.errorCode == RoomError.openMicrophoneNeedPermissionFromAdmin.code) {
+        Toast.warning(
+          context,
+          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+          useRootOverlay: true,
+        );
+      } else {
+        Toast.error(
+          context,
+          ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage),
+          useRootOverlay: true,
+        );
+      }
     }
   }
 

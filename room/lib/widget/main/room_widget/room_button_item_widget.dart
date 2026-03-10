@@ -20,6 +20,8 @@ class RoomButtonItemWidget extends StatelessWidget {
 
   final double opacity;
 
+  final bool isWebinar;
+
   const RoomButtonItemWidget({
     super.key,
     required this.iconPath,
@@ -31,6 +33,7 @@ class RoomButtonItemWidget extends StatelessWidget {
     this.width = 52,
     this.height = 52,
     this.opacity = 1,
+    this.isWebinar = false,
   });
 
   @override
@@ -40,8 +43,8 @@ class RoomButtonItemWidget extends StatelessWidget {
       child: Opacity(
         opacity: opacity,
         child: Container(
-          width: width,
-          height: height,
+          width: isWebinar ? 40.radius : width,
+          height: isWebinar ? 40.radius : height,
           decoration: BoxDecoration(color: RoomColors.lightGrey, borderRadius: BorderRadius.circular(10)),
           child: isSelected != null
               ? ValueListenableBuilder(
@@ -64,16 +67,16 @@ class RoomButtonItemWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 24,
-          height: 24,
+          width: isWebinar ? 20.radius : 24.radius,
+          height: isWebinar ? 20.radius : 24.radius,
           child: Image.asset(displayIconPath, package: RoomConstants.pluginName, fit: BoxFit.contain),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: isWebinar ? 3 : 5),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             displayText,
-            style: const TextStyle(fontSize: 10, color: RoomColors.white, fontWeight: FontWeight.w400),
+            style: TextStyle(fontSize: isWebinar ? 8 : 10, color: RoomColors.white, fontWeight: FontWeight.w400),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

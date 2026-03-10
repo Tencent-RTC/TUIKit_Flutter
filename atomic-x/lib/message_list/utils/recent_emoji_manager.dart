@@ -11,8 +11,8 @@ class RecentEmojiManager {
   static const int _quickEmojiCount = 6;
 
   /// Get recent emoji IDs (reactionIDs)
-  static List<String> getRecentEmojiIds() {
-    final result = StorageUtil.get(_recentEmojiKey);
+  static Future<List<String>> getRecentEmojiIds() async {
+    final result = await StorageUtil.get(_recentEmojiKey);
     if (result is List) {
       return result.cast<String>();
     }
@@ -21,7 +21,7 @@ class RecentEmojiManager {
 
   /// Add emoji to recent list
   static Future<void> addRecentEmoji(String emojiId) async {
-    final recent = getRecentEmojiIds().toList();
+    final recent = (await getRecentEmojiIds()).toList();
     recent.remove(emojiId);
     recent.insert(0, emojiId);
     if (recent.length > _maxRecentCount) {
@@ -31,12 +31,12 @@ class RecentEmojiManager {
   }
 
   /// Get quick emojis for reaction picker (6 recent + fill with defaults)
-  static List<EmojiPickerModelItem> getQuickEmojis(BuildContext context) {
+  static Future<List<EmojiPickerModelItem>> getQuickEmojis(BuildContext context) async {
     final allEmojis = _getAllEmojis(context);
     if (allEmojis.isEmpty) return [];
 
     final result = <EmojiPickerModelItem>[];
-    final recentIds = getRecentEmojiIds();
+    final recentIds = await getRecentEmojiIds();
 
     // Add recent emojis first
     for (final id in recentIds.take(_quickEmojiCount)) {

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
+import 'package:live_uikit_barrage/live_uikit_barrage.dart';
 import 'package:tencent_conference_uikit/base/index.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
 
 import 'main/room_widget.dart';
 import 'main/room_widget/room_exit_widget.dart';
@@ -60,6 +60,11 @@ class _RoomMainWidgetState extends State<RoomMainWidget> {
   String? _inviteCameraAlertId;
   String? _inviteMicAlertId;
 
+  BarrageDisplayController? _barrageDisplayController;
+  BarrageSendController? _barrageSendController;
+
+  final double scale = 9 / 16;
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +101,7 @@ class _RoomMainWidgetState extends State<RoomMainWidget> {
       },
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1014),
+        resizeToAvoidBottomInset: false,
         body: OrientationBuilder(
           builder: (context, orientation) {
             return _buildContent(orientation);
@@ -108,18 +114,21 @@ class _RoomMainWidgetState extends State<RoomMainWidget> {
 
 extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
   Widget _buildContent(Orientation orientation) {
+    final roomWidgetHeight = orientation == Orientation.portrait
+        ? (widget.roomID.isWebinar ? MediaQuery.of(context).size.width * scale : 621.height)
+        : MediaQuery.of(context).size.height;
     return Stack(
       children: [
         Column(
           children: [
             Visibility(
               visible: orientation == Orientation.portrait,
-              child: SizedBox(height: 105.height),
+              child: SizedBox(height: widget.roomID.isWebinar ? 135.height : 105.height),
             ),
             Center(
               child: SizedBox(
                 width: orientation == Orientation.portrait ? MediaQuery.of(context).size.width : 648.width,
-                height: orientation == Orientation.portrait ? 621.height : MediaQuery.of(context).size.height,
+                height: roomWidgetHeight,
                 child: RoomWidget(roomId: widget.roomID),
               ),
             ),
@@ -129,18 +138,110 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
         Column(
           children: [
             const Expanded(child: SizedBox()),
-            RoomBottomBarWidget(roomId: widget.roomID, orientation: orientation),
+            Visibility(
+              visible: !widget.roomID.isWebinar,
+              child: RoomBottomBarWidget(roomId: widget.roomID, orientation: orientation),
+            ),
+            Visibility(
+              visible: widget.roomID.isWebinar,
+              child: _buildBarrageWidget(roomWidgetHeight),
+            ),
           ],
         ),
       ],
     );
   }
 
+  Widget _buildBarrageWidget(double roomWidgetHeight) {
+    final localParticipant = LoginStore.shared.loginState.loginUserInfo;
+    _barrageDisplayController ??= BarrageDisplayController(
+      roomId: widget.roomID,
+      ownerId: _roomStore.state.currentRoom.value?.roomOwner.userID ?? '',
+      selfUserId: localParticipant?.userID ?? '',
+      selfName: localParticipant?.nickname,
+      onError: (code, message) {
+        Toast.error(context, ErrorLocalized.convertToErrorMessage(code, message));
+      },
+    );
+    _barrageSendController ??= BarrageSendController(
+      roomId: widget.roomID,
+      ownerId: _roomStore.state.currentRoom.value?.roomOwner.userID ?? '',
+      selfUserId: localParticipant?.userID ?? '',
+      selfName: localParticipant?.nickname,
+    );
+    return Padding(
+      padding: EdgeInsets.only(left: 10.width, bottom: 21.height),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 586.height - roomWidgetHeight,
+            width: 240.width,
+            child: ListenableBuilder(
+              listenable: Listenable.merge([
+                _roomStore.state.currentRoom,
+                _participantStore.state.adminList,
+              ]),
+              builder: (context, _) => BarrageDisplayWidget(
+                controller: _barrageDisplayController!,
+                itemSenderTagProvider: _createRoleProvider(),
+              ),
+            ),
+          ),
+          SizedBox(height: 10.height),
+          Padding(
+            padding: EdgeInsets.only(left: 6.width),
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 40.height,
+                  width: 240.width,
+                  child: BarrageSendWidget(
+                    controller: _barrageSendController!,
+                    parentContext: Global.appContext(),
+                    sceneType: BarrageSceneType.room,
+                  ),
+                ),
+                Expanded(child: SizedBox()),
+                RoomBottomBarWidget(roomId: widget.roomID, orientation: Orientation.portrait),
+                SizedBox(width: 11.width)
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SenderTagProvider _createRoleProvider() {
+    return (String userId) {
+      final ownerId = _roomStore.state.currentRoom.value?.roomOwner.userID;
+      if (userId == ownerId) {
+        return SenderTagConfig(
+          backgroundColor: const Color(0xFF4086FF),
+          text: RoomLocalizations.of(Global.appContext())!.roomkit_role_owner,
+        );
+      }
+
+      final adminList = _participantStore.state.adminList.value;
+      if (adminList.any((admin) => admin.userID == userId)) {
+        return SenderTagConfig(
+          backgroundColor: Color(0xFFE37F32),
+          text: RoomLocalizations.of(Global.appContext())!.roomkit_role_admin,
+        );
+      }
+
+      return null;
+    };
+  }
+
   void _createOrEnterRoom() async {
+    RoomDataReporter.reportComponent();
     switch (widget.behavior) {
       case CreateRoom(:final options):
-        final result = await _roomStore.createAndJoinRoom(roomID: widget.roomID, options: options);
-        _initMediaState();
+        final result =
+            await _roomStore.createAndJoinRoom(roomID: widget.roomID, roomType: RoomType.standard, options: options);
         if (!result.isSuccess && mounted) {
           Toast.error(context, ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage));
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -148,9 +249,10 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
           });
           return;
         }
+        _initMediaState();
       case EnterRoom():
-        final result = await _roomStore.joinRoom(roomID: widget.roomID);
-        _initMediaState();
+        final result = await _roomStore.joinRoom(
+            roomID: widget.roomID, roomType: widget.roomID.isWebinar ? RoomType.webinar : RoomType.standard);
         if (!result.isSuccess && mounted) {
           Toast.error(context, ErrorLocalized.convertToErrorMessage(result.errorCode, result.errorMessage));
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -158,8 +260,10 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
           });
           return;
         }
+        _initMediaState();
     }
     _participantStore.getParticipantList(null);
+    _participantStore.getAudienceList(null);
   }
 
   void _setAudioRoute(AudioRoute route) async {
@@ -178,11 +282,14 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
       onAllDevicesDisabled: _onAllDevicesDisabled,
       onDeviceInvitationReceived: _onDeviceInvitationReceived,
       onDeviceInvitationCancelled: _onDeviceInvitationCancelled,
+      onAudiencePromotedToParticipant: _onAudiencePromotedToParticipant,
+      onParticipantDemotedToAudience: _onParticipantDemotedToAudience,
     );
     _roomListener = RoomListener(onRoomEnded: _onRoomEnded);
   }
 
   Future<void> _initMediaState() async {
+    if (widget.roomID.isWebinar) return;
     if (widget.config.autoEnableCamera) await DeviceOperator.openCamera(context);
     if (widget.config.autoEnableMicrophone) {
       // ignore: use_build_context_synchronously
@@ -192,19 +299,19 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
   }
 
   void _onOwnerChanged(RoomUser newOwner, RoomUser oldOwner) {
-    if (mounted && newOwner.userID == _participantStore.state.localParticipant.value?.userID) {
+    if (mounted && isSelf(newOwner)) {
       Toast.info(context, RoomLocalizations.of(context)!.roomkit_toast_you_are_owner, useRootOverlay: true);
     }
   }
 
   void _onAdminSet(RoomUser userInfo) {
-    if (mounted && userInfo.userID == _participantStore.state.localParticipant.value?.userID) {
+    if (mounted && isSelf(userInfo)) {
       Toast.info(context, RoomLocalizations.of(context)!.roomkit_toast_you_are_admin, useRootOverlay: true);
     }
   }
 
   void _onAdminRevoked(RoomUser userInfo) {
-    if (mounted && userInfo.userID == _participantStore.state.localParticipant.value?.userID) {
+    if (mounted && isSelf(userInfo)) {
       Toast.info(context, RoomLocalizations.of(context)!.roomkit_toast_you_are_no_longer_admin, useRootOverlay: true);
     }
   }
@@ -235,14 +342,13 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
       default:
         break;
     }
-    Toast.info(context, message, useRootOverlay: true);
+    Toast.warning(context, message, useRootOverlay: true);
   }
 
   void _onUserMessageDisabled(bool disable, RoomUser operator) {
-    String message = disable
-        ? RoomLocalizations.of(context)!.roomkit_toast_text_chat_disabled
-        : RoomLocalizations.of(context)!.roomkit_toast_text_chat_enabled;
-    Toast.info(context, message, useRootOverlay: true);
+    disable
+        ? Toast.warning(context, RoomLocalizations.of(context)!.roomkit_toast_text_chat_disabled, useRootOverlay: true)
+        : Toast.info(context, RoomLocalizations.of(context)!.roomkit_toast_text_chat_enabled, useRootOverlay: true);
   }
 
   void _onAllDevicesDisabled(DeviceType device, bool disable, RoomUser operator) {
@@ -259,7 +365,9 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
       default:
         break;
     }
-    Toast.info(context, message, useRootOverlay: true);
+    disable
+        ? Toast.warning(context, message, useRootOverlay: true)
+        : Toast.info(context, message, useRootOverlay: true);
   }
 
   void _onDeviceInvitationReceived(DeviceRequestInfo invitation) {
@@ -318,6 +426,19 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
     }
   }
 
+  void _onAudiencePromotedToParticipant(RoomUser userInfo) {
+    final toastMsg = isSelf(userInfo)
+        ? RoomLocalizations.of(context)!.roomkit_switch_to_participant_byself
+        : RoomLocalizations.of(context)!.roomkit_switch_to_participant.replaceAll('xxx', userInfo.displayName);
+    Toast.info(context, toastMsg, useRootOverlay: true);
+  }
+
+  void _onParticipantDemotedToAudience(RoomUser userInfo) {
+    if (isSelf(userInfo)) {
+      _deviceStore.closeLocalMicrophone();
+    }
+  }
+
   void _onRoomEnded(RoomInfo info) {
     if (mounted) {
       AtomicAlertDialog.show(
@@ -333,11 +454,11 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
   }
 
   void _routeToRoomMainWidget() {
-    final navigator = Navigator.of(context, rootNavigator: true);
-    while (navigator.canPop()) {
-      navigator.pop();
-    }
     AtomicAlertDialog.dismissAll();
+    final observerNavigator = RoomNavigatorObserver.instance.navigator;
+    if (observerNavigator != null) {
+      observerNavigator.popUntil((route) => route is! PopupRoute);
+    }
   }
 
   void _enableWakeLock() async {
@@ -412,5 +533,9 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
       default:
         break;
     }
+  }
+
+  bool isSelf(RoomUser user) {
+    return user.userID == LoginStore.shared.loginState.loginUserInfo?.userID;
   }
 }

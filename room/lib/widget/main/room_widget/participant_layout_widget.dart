@@ -140,38 +140,32 @@ extension _ParticipantLayoutWidgetStatePrivate on _ParticipantLayoutWidgetState 
   }
 
   Widget _buildScreenShareLayout(Orientation orientation) {
-    return ValueListenableBuilder(
-      valueListenable: _isDraggableVisible,
-      builder: (context, isDraggableVisible, _) {
-        return ValueListenableBuilder(
-          valueListenable: _speakingParticipant,
-          builder: (context, speakingParticipant, _) {
-            return ValueListenableBuilder(
-              valueListenable: widget.isScrolling,
-              builder: (context, isScrolling, _) {
-                final shouldShowDraggable = isDraggableVisible &&
-                    isScrolling &&
-                    speakingParticipant != null &&
-                    speakingParticipant.cameraStatus == DeviceStatus.on;
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        _isDraggableVisible,
+        _speakingParticipant,
+        widget.isScrolling,
+      ]),
+      builder: (context, _) {
+        final isDraggableVisible = _isDraggableVisible.value;
+        final speakingParticipant = _speakingParticipant.value;
+        final isScrolling = widget.isScrolling.value;
 
-                final draggableHeight =
-                    (orientation == Orientation.portrait && shouldShowDraggable) ? 180.height : 100.height;
+        final shouldShowDraggable = isDraggableVisible &&
+            isScrolling &&
+            speakingParticipant != null &&
+            speakingParticipant.cameraStatus == DeviceStatus.on;
+        final draggableHeight = (orientation == Orientation.portrait && shouldShowDraggable) ? 180.height : 100.height;
+        final draggableWidth = (orientation == Orientation.landscape && shouldShowDraggable) ? 180.width : 100.width;
 
-                final draggableWidth =
-                    (orientation == Orientation.landscape && shouldShowDraggable) ? 180.width : 100.width;
-
-                return DraggableWindowWidget(
-                  roomId: widget.roomId,
-                  mainParticipant: widget.screenParticipant!,
-                  isMainScreenStream: true,
-                  draggableParticipant: shouldShowDraggable ? speakingParticipant : null,
-                  draggableHeight: draggableHeight,
-                  draggableWidth: draggableWidth,
-                  orientation: orientation,
-                );
-              },
-            );
-          },
+        return DraggableWindowWidget(
+          roomId: widget.roomId,
+          mainParticipant: widget.screenParticipant!,
+          isMainScreenStream: true,
+          draggableParticipant: shouldShowDraggable ? speakingParticipant : null,
+          draggableHeight: draggableHeight,
+          draggableWidth: draggableWidth,
+          orientation: orientation,
         );
       },
     );

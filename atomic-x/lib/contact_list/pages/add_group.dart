@@ -118,7 +118,7 @@ class _AddGroupState extends State<AddGroup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_showJoinGroupDetail ? atomicLocale.addGroup : atomicLocale.addGroup),
+        title: Text(atomicLocale.addGroup, style: TextStyle(color: colorsTheme.textColorPrimary)),
         backgroundColor: colorsTheme.bgColorOperate,
         elevation: 0,
         leading: IconButton.buttonContent(

@@ -42,6 +42,7 @@ class _GroupListState extends State<GroupList> {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     return Scaffold(
+      backgroundColor: colorsTheme.bgColorOperate,
       appBar: AppBar(
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,

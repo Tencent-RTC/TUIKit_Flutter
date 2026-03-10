@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
           ...RoomLocalizations.localizationsDelegates,
+          ...BarrageLocalizations.localizationsDelegates,
         ],
         supportedLocales: const [Locale('en'), Locale('zh')],
         builder: (context, child) => Scaffold(

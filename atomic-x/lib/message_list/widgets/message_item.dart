@@ -20,6 +20,8 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
   final OnUserClick? onUserClick;
   /// Callback when user long presses on avatar (for @ mention feature)
   final OnUserLongPress? onUserLongPress;
+  /// Callback when call message is clicked in C2C conversation
+  final OnCallMessageClick? onCallMessageClick;
   final List<MessageCustomAction> customActions;
   final MessageListConfigProtocol config;
 
@@ -53,6 +55,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     this.onHighlightComplete,
     this.onUserClick,
     this.onUserLongPress,
+    this.onCallMessageClick,
     this.customActions = const [],
     required this.config,
     this.isMultiSelectMode = false,
@@ -100,6 +103,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
       onAsrBubbleLongPress: onAsrBubbleLongPress,
       translationDisplayManager: translationDisplayManager,
       onTranslationBubbleLongPress: onTranslationBubbleLongPress,
+      onCallMessageClick: onCallMessageClick,
     );
 
     if (message.messageType == MessageType.system || MessageUtil.isSystemStyleCustomMessage(message, context)) {
@@ -245,6 +249,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
       onAsrBubbleLongPress: onAsrBubbleLongPress,
       translationDisplayManager: translationDisplayManager,
       onTranslationBubbleLongPress: onTranslationBubbleLongPress,
+      onCallMessageClick: onCallMessageClick,
     );
 
     if (message.messageType == MessageType.system || MessageUtil.isSystemStyleCustomMessage(message, context)) {

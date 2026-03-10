@@ -40,22 +40,31 @@ class _ConversationListState extends State<ConversationList> {
   bool isLoading = false;
   bool hasMoreConversations = true;
 
+  // Listener references for proper removal
+  late final VoidCallback _conversationListChangedListener;
+  late final VoidCallback _scrollListenerCallback;
+
   @override
   void initState() {
     super.initState();
+
+    // Initialize listener references
+    _conversationListChangedListener = _onConversationListChanged;
+    _scrollListenerCallback = _scrollListener;
+
     conversationListStore = ConversationListStore.create();
 
-    conversationListStore.addListener(_onConversationListChanged);
+    conversationListStore.addListener(_conversationListChangedListener);
 
-    _scrollController.addListener(_scrollListener);
+    _scrollController.addListener(_scrollListenerCallback);
 
     _loadConversations();
   }
 
   @override
   void dispose() {
-    conversationListStore.removeListener(_onConversationListChanged);
-    _scrollController.removeListener(_scrollListener);
+    conversationListStore.removeListener(_conversationListChangedListener);
+    _scrollController.removeListener(_scrollListenerCallback);
     _scrollController.dispose();
     super.dispose();
   }

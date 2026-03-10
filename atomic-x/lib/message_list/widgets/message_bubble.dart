@@ -106,6 +106,8 @@ class MessageBubble extends StatefulWidget {
   final TranslationDisplayManager? translationDisplayManager;
   // Callback when translation bubble is long pressed, provides message and GlobalKey for positioning popup menu
   final void Function(MessageInfo message, GlobalKey translationBubbleKey)? onTranslationBubbleLongPress;
+  // Callback when call message is clicked in C2C conversation
+  final void Function(String userID, bool isVideoCall)? onCallMessageClick;
 
   const MessageBubble({
     super.key,
@@ -125,6 +127,7 @@ class MessageBubble extends StatefulWidget {
     this.onAsrBubbleLongPress,
     this.translationDisplayManager,
     this.onTranslationBubbleLongPress,
+    this.onCallMessageClick,
   });
 
   @override
@@ -354,6 +357,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
             maxWidth: widget.maxWidth,
             isInMergedDetailView: widget.isInMergedDetailView,
             config: widget.config,
+            onCallMessageClick: widget.onCallMessageClick,
           );
         } else {
           messageWidget = CustomMessageWidget(
