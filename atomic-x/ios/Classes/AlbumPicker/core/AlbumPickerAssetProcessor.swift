@@ -74,7 +74,7 @@ extension AlbumPicker {
                 completion(pickModel)
                 return
             }
-            
+
             self.generateInitialThumbnailForVideo(videoUrl: preUrl, pickModel: pickModel) {
                 if self.isSelectOriginalPhoto {
                     print("Original video selected, skipping transcoding")
@@ -289,18 +289,31 @@ extension AlbumPicker {
             DispatchQueue.main.async { self.onProgress?(pickModel, index, 1.0) }
         } else {
             onProgress?(pickModel, index, 0.3)
+
+            let maxAllowedWidth: CGFloat = 4096
+            let targetWidth = isSelectOriginalPhoto ? maxAllowedWidth : min(imageManager.photoPreviewMaxWidth, maxAllowedWidth)
+
+            let progressCallback = self.onProgress
             
-            let targetWidth = isSelectOriginalPhoto ? CGFloat.greatestFiniteMagnitude : imageManager.photoPreviewMaxWidth
             imageManager.getPhoto(with: asset, photoWidth: targetWidth) { image, info, isDegraded in
                 let shouldProcess = !isDegraded || (info?[PHImageResultIsDegradedKey] as? Bool == false)
                 
                 if shouldProcess {
                     guard let image = image else {
+                        print("[AlbumPicker] Failed to get image for asset: \(asset.localIdentifier)")
+                        DispatchQueue.main.async { progressCallback?(pickModel, index, 1.0) }
                         return
                     }
-                    pickModel.setMediaPath(saveImageToTempPath(image))
-                    pickModel.mediaType = .image
-                    DispatchQueue.main.async { self.onProgress?(pickModel, index, 1.0) }
+
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        if let path = saveImageToTempPath(image) {
+                            pickModel.setMediaPath(path)
+                            pickModel.mediaType = .image
+                        } else {
+                            print("[AlbumPicker] Failed to save image to temp path")
+                        }
+                        DispatchQueue.main.async { progressCallback?(pickModel, index, 1.0) }
+                    }
                 }
             }
         }

@@ -6,47 +6,47 @@ import 'package:flutter/material.dart' hide IconButton;
 
 class ChatSettingPage extends StatelessWidget {
   final ConversationInfo conversation;
+  final ConversationInfo conversationOfChatPage;
   final VoidCallback? onDestroyCallback;
-  final bool isFromChatPage;
 
   const ChatSettingPage({
     super.key,
     required this.conversation,
+    required this.conversationOfChatPage,
     this.onDestroyCallback,
-    this.isFromChatPage = false,
   });
 
   void _onSendMessageClick({required BuildContext context, String? userID, String? groupID}) async {
+    ConversationListStore conversationListStore = ConversationListStore.create();
     ConversationInfo conversation;
-    if (isFromChatPage) {
-      Navigator.of(context).pop();
+    if (userID != null) {
+      String conversationID = '$c2cConversationIDPrefix$userID';
+      await conversationListStore.fetchConversationInfo(conversationID: conversationID);
+      conversation = conversationListStore.conversationListState.conversationList
+          .firstWhere((item) => item.conversationID == conversationID,
+          orElse: () => ConversationInfo(
+            conversationID: conversationID,
+            title: userID,
+            type: ConversationType.c2c,
+          ));
+    } else if (groupID != null) {
+      String conversationID = '$groupConversationIDPrefix$groupID';
+      await conversationListStore.fetchConversationInfo(conversationID: conversationID);
+      conversation = conversationListStore.conversationListState.conversationList
+          .firstWhere((item) => item.conversationID == conversationID,
+          orElse: () => ConversationInfo(
+            conversationID: conversationID,
+            title: groupID,
+            type: ConversationType.group,
+          ));
     } else {
-      ConversationListStore conversationListStore = ConversationListStore.create();
-      if (userID != null) {
-        String conversationID = '$c2cConversationIDPrefix$userID';
-        await conversationListStore.fetchConversationInfo(conversationID: conversationID);
-        conversation = conversationListStore.conversationListState.conversationList
-            .firstWhere((item) => item.conversationID == conversationID,
-                orElse: () => ConversationInfo(
-                      conversationID: conversationID,
-                      title: userID,
-                      type: ConversationType.c2c,
-                    ));
-      } else if (groupID != null) {
-        String conversationID = '$groupConversationIDPrefix$groupID';
-        await conversationListStore.fetchConversationInfo(conversationID: conversationID);
-        conversation = conversationListStore.conversationListState.conversationList
-            .firstWhere((item) => item.conversationID == conversationID,
-                orElse: () => ConversationInfo(
-                      conversationID: conversationID,
-                      title: groupID,
-                      type: ConversationType.group,
-                    ));
-      } else {
-        return;
-      }
+      return;
+    }
 
-      if (context.mounted) {
+    if (context.mounted) {
+      if (conversationOfChatPage.conversationID == conversation.conversationID) {
+        Navigator.of(context).pop();
+      } else {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -113,10 +113,10 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   late SemanticColorScheme colorsTheme;
   late AtomicLocalizations atomicLocale;
-  
+
   // Multi-select mode state
   MultiSelectState? _multiSelectState;
-  
+
   // MessageInput key for @ mention feature
   final GlobalKey<MessageInputState> _messageInputKey = GlobalKey();
 
@@ -163,8 +163,8 @@ class _ChatPageState extends State<ChatPage> {
         MaterialPageRoute<void>(
           builder: (context) => ChatSettingPage(
             conversation: widget.conversation,
+            conversationOfChatPage: widget.conversation,
             onDestroyCallback: _onDestroyCallback,
-            isFromChatPage: true,
           ),
         ),
       );
@@ -196,18 +196,13 @@ class _ChatPageState extends State<ChatPage> {
                   type: ConversationType.c2c,
                 ));
 
-    bool isFromChatPage = false;
-    if (ChatUtil.getUserID(widget.conversation.conversationID) == userID) {
-      isFromChatPage = true;
-    }
-
     if (mounted) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (context) => ChatSettingPage(
             conversation: conversation,
+            conversationOfChatPage: widget.conversation,
             onDestroyCallback: _onDestroyCallback,
-            isFromChatPage: isFromChatPage,
           ),
         ),
       );
@@ -273,6 +268,18 @@ class _ChatPageState extends State<ChatPage> {
     TUIEventBus.shared.publish("call.startCall", null, params);
   }
 
+  void _onCallMessageClick(String userID, bool isVideoCall) {
+    PublishParams params = PublishParams();
+    params.isSticky = false;
+    params.data = {
+      "participantIds": [userID],
+      "mediaType": isVideoCall ? CallMediaType.video : CallMediaType.audio,
+      "chatGroupId": null,
+      "timeout": 30,
+    };
+    TUIEventBus.shared.publish("call.startCall", null, params);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -324,37 +331,47 @@ class _ChatPageState extends State<ChatPage> {
               onClick: _onVideoCallClick,
             ),
           ]),
-      body: Column(
-        children: [
-          MessageList(
-            conversationID: widget.conversation.conversationID,
-            locateMessage: widget.message,
-            onUserClick: (String userID) => _onUserClick(userID),
-            onUserLongPress: (String userID, String displayName) {
-              _messageInputKey.currentState?.insertMention(
-                userID: userID,
-                displayName: displayName,
-              );
-            },
-            onMultiSelectStateChanged: (state) {
-              setState(() {
-                _multiSelectState = state;
-              });
-            },
-          ),
-          if (_multiSelectState != null && _multiSelectState!.isActive)
-            MultiSelectBottomBar(
-              selectedCount: _multiSelectState!.selectedCount,
-              onCancel: _multiSelectState!.onCancel,
-              onDelete: _multiSelectState!.onDelete,
-              onForward: () => _multiSelectState!.onForward(context),
-            )
-          else
-            MessageInput(
-              key: _messageInputKey,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          _messageInputKey.currentState?.collapseAllPanels();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Column(
+          children: [
+            MessageList(
               conversationID: widget.conversation.conversationID,
+              locateMessage: widget.message,
+              onUserClick: (String userID) => _onUserClick(userID),
+              onUserLongPress: (String userID, String displayName) {
+                _messageInputKey.currentState?.insertMention(
+                  userID: userID,
+                  displayName: displayName,
+                );
+              },
+              onCallMessageClick: _onCallMessageClick,
+              onMultiSelectStateChanged: (state) {
+                setState(() {
+                  _multiSelectState = state;
+                });
+              },
+              groupAtInfoList: widget.conversation.groupAtInfoList,
+              initialUnreadCount: widget.conversation.unreadCount,
             ),
-        ],
+            if (_multiSelectState != null && _multiSelectState!.isActive)
+              MultiSelectBottomBar(
+                selectedCount: _multiSelectState!.selectedCount,
+                onCancel: _multiSelectState!.onCancel,
+                onDelete: _multiSelectState!.onDelete,
+                onForward: () => _multiSelectState!.onForward(context),
+              )
+            else
+              MessageInput(
+                key: _messageInputKey,
+                conversationID: widget.conversation.conversationID,
+              ),
+          ],
+        ),
       ),
     );
   }

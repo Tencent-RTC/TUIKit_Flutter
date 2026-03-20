@@ -34,13 +34,13 @@ class Permission {
     case "openAppSettings":
       result(handler.openAppSettings())
 
-    case "getPermissionStatus":
+    case "checkPermissionStatus":
       guard let args = call.arguments as? [String: Any],
             let permission = args["permission"] as? String else {
         result(FlutterError(code: "INVALID_ARGUMENT", message: "Permission is required", details: nil))
         return
       }
-      result(handler.getPermissionStatus(permission))
+      result(handler.checkPermissionStatus(permission))
 
     default:
       result(FlutterMethodNotImplemented)

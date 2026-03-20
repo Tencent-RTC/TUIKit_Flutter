@@ -10,12 +10,21 @@ class ImageViewer {
     required EventHandler onEventTriggered,
   }) async {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ImageViewerWidget(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) => ImageViewerWidget(
           imageElements: imageElements,
           initialIndex: initialIndex,
           onEventTriggered: onEventTriggered,
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 200),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
       ),
     );
   }

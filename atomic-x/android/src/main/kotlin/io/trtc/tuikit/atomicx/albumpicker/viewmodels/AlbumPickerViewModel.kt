@@ -244,6 +244,9 @@ class AlbumPickerViewModel(private val albumPickerConfig: AlbumPickerConfig) : V
         if (selectedMediaList.contains(baseBean)) {
             selectedMediaList.remove(baseBean)
         } else {
+            if (selectedMediaList.size >= albumPickerConfig.maxCount) {
+                return
+            }
             selectedMediaList.add(baseBean)
         }
         _selectedMediaListFlow.value = selectedMediaList

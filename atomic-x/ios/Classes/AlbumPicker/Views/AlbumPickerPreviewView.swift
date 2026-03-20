@@ -438,6 +438,7 @@ struct EnhancedAlbumPickerMediaView: View {
     
     @State private var image: UIImage?
     @State private var isLoading = true
+    @State private var currentRequestID: PHImageRequestID?
     
     var body: some View {
         ZStack {
@@ -486,6 +487,12 @@ struct EnhancedAlbumPickerMediaView: View {
         .onAppear {
             loadMedia()
         }
+        .onDisappear {
+            if let requestID = currentRequestID {
+                AlbumPickerImageManager.shared.cachingImageManager.cancelImageRequest(requestID)
+                currentRequestID = nil
+            }
+        }
         .onReceive(assetModel.$editImage) { _ in
             if assetModel.type != .video {
                 loadMedia()
@@ -518,42 +525,61 @@ struct EnhancedAlbumPickerMediaView: View {
     }
     
     private func loadHighQualityImage(asset: PHAsset) {
+        if let requestID = currentRequestID {
+            AlbumPickerImageManager.shared.cachingImageManager.cancelImageRequest(requestID)
+            currentRequestID = nil
+        }
+        
         if let editImage = assetModel.editImage {
-            DispatchQueue.main.async {
-                self.image = editImage
-                self.isLoading = false
-            }
+            self.image = editImage
+            self.isLoading = false
             return
         }
         
         let options = PHImageRequestOptions()
-        options.deliveryMode = .opportunistic
-        options.resizeMode = .none
+        options.deliveryMode = .highQualityFormat
+        options.resizeMode = .exact
         options.isNetworkAccessAllowed = true
         options.isSynchronous = false
         
         let screenSize = UIScreen.main.bounds.size
         let scale = UIScreen.main.scale
         let targetSize = CGSize(
-            width: screenSize.width * scale * 0.3,
-            height: screenSize.height * scale * 0.3
+            width: screenSize.width * scale,
+            height: screenSize.height * scale
         )
-        
+
+        let fastOptions = PHImageRequestOptions()
+        fastOptions.deliveryMode = .fastFormat
+        fastOptions.resizeMode = .fast
+        fastOptions.isNetworkAccessAllowed = false
+        fastOptions.isSynchronous = false
+
         AlbumPickerImageManager.shared.cachingImageManager.requestImage(
+            for: asset,
+            targetSize: CGSize(width: 300, height: 300),
+            contentMode: .aspectFit,
+            options: fastOptions
+        ) { image, _ in
+            DispatchQueue.main.async {
+                if self.image == nil, let image = image {
+                    self.image = image
+                    self.isLoading = false
+                }
+            }
+        }
+
+        currentRequestID = AlbumPickerImageManager.shared.cachingImageManager.requestImage(
             for: asset,
             targetSize: targetSize,
             contentMode: .aspectFit,
             options: options
         ) { image, info in
             DispatchQueue.main.async {
-                let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool ?? false
-                if !isDegraded, let image = image {
+                if let image = image {
                     self.image = image
                     self.isLoading = false
-                } else if isDegraded {
-                    if self.image == nil, let image = image {
-                        self.image = image
-                    }
+                    self.currentRequestID = nil
                 }
             }
         }

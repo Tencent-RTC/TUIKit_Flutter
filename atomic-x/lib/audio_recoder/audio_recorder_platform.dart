@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'audio_recorder.dart';
 
@@ -76,7 +77,7 @@ class AudioRecorderPlatform {
           }
         },
         onError: (error) {
-          print('AudioRecorderPlatform event error: $error');
+          debugPrint('AudioRecorderPlatform EventChannel error: $error');
         },
       );
 
@@ -106,7 +107,7 @@ class AudioRecorderPlatform {
         durationMs: resultMap['durationMs'] as int? ?? 0,
       );
     } catch (e) {
-      print('AudioRecorderPlatform.startRecordNative error: $e');
+      debugPrint('AudioRecorderPlatform.startRecordNative error: $e');
       rethrow;
     } finally {
       await dispose();
@@ -118,7 +119,7 @@ class AudioRecorderPlatform {
     try {
       await _methodChannel.invokeMethod('stopRecord');
     } catch (e) {
-      print('AudioRecorderPlatform.stopRecordNative error: $e');
+      debugPrint('AudioRecorderPlatform.stopRecordNative error: $e');
       return null;
     }
   }
@@ -128,7 +129,7 @@ class AudioRecorderPlatform {
     try {
       await _methodChannel.invokeMethod('cancelRecord');
     } catch (e) {
-      print('AudioRecorderPlatform.cancelRecordNative error: $e');
+      debugPrint('AudioRecorderPlatform.cancelRecordNative error: $e');
     }
   }
 

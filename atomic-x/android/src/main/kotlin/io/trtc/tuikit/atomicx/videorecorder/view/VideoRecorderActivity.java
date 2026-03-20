@@ -1,5 +1,9 @@
+// Copyright (c) 2022 Tencent. All rights reserved.
+// Author: eddardliu
+
 package io.trtc.tuikit.atomicx.videorecorder.view;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +25,7 @@ public class VideoRecorderActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate");
         VideoRecorderResourceUtils.setContext(this);
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initStatusBar();
         setContentView(R.layout.video_recorder_activity);
         VideoRecorderFragment fragment = new VideoRecorderFragment(this);

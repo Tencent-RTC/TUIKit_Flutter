@@ -89,7 +89,6 @@ class MessageBubble extends StatefulWidget {
   final String conversationID;
   final bool isSelf;
   final double maxWidth;
-  final ValueChanged<String>? onLinkTapped;
   final MessageListStore messageListStore;
   final MessageMenuCallbacks? menuCallbacks;
   final bool isHighlighted;
@@ -116,7 +115,6 @@ class MessageBubble extends StatefulWidget {
     required this.isSelf,
     required this.maxWidth,
     required this.config,
-    this.onLinkTapped,
     required this.messageListStore,
     this.menuCallbacks,
     this.isHighlighted = false,
@@ -193,11 +191,11 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
 
   @override
   void dispose() {
-    super.dispose();
+    _highlightAnimationController.dispose();
     if (tooltip?.isOpen ?? false) {
       tooltip?.close();
     }
-    _highlightAnimationController.dispose();
+    super.dispose();
   }
 
   void _showResendConfirmDialog() {
@@ -263,22 +261,22 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     switch (widget.message.messageType) {
       case MessageType.text:
         final messageID = widget.message.msgID ?? '';
-        final isTranslating = widget.translationDisplayManager?.isTranslating(messageID) ?? false;
-        final isTranslationHidden = widget.translationDisplayManager?.isHidden(messageID) ?? false;
+        final isSupportTranslate = widget.config.isSupportTranslate;
+        final isTranslating = isSupportTranslate ? (widget.translationDisplayManager?.isTranslating(messageID) ?? false) : false;
+        final isTranslationHidden = isSupportTranslate ? (widget.translationDisplayManager?.isHidden(messageID) ?? false) : true;
         messageWidget = TextMessageWidget(
           message: widget.message,
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
           config: widget.config,
           onLongPress: _longPressCallback,
-          onLinkTapped: widget.onLinkTapped,
           bubbleKey: _messageKey,
           backgroundBuilder: backgroundBuilder,
           onResendTap: widget.message.status == MessageStatus.sendFail ? _showResendConfirmDialog : null,
           isInMergedDetailView: widget.isInMergedDetailView,
           isTranslating: isTranslating,
           isTranslationHidden: isTranslationHidden,
-          onTranslationBubbleLongPress: (translationBubbleKey) => widget.onTranslationBubbleLongPress?.call(widget.message, translationBubbleKey),
+          onTranslationBubbleLongPress: isSupportTranslate ? (translationBubbleKey) => widget.onTranslationBubbleLongPress?.call(widget.message, translationBubbleKey) : null,
         );
         break;
 
@@ -611,6 +609,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
 
   /// Check if "Translate" menu item should be shown
   bool _shouldShowTranslateMenuItem() {
+    // Check if translate feature is enabled in config
+    if (!widget.config.isSupportTranslate) return false;
+
     // Only for text messages
     if (widget.message.messageType != MessageType.text) return false;
     

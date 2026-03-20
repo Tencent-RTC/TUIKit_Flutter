@@ -267,10 +267,12 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get createCommunity => 'Create Community';
 
   @override
-  String get groupIDInvalid => 'Invalid group ID. Check whether the group ID is correct.';
+  String get groupIDInvalid =>
+      'Invalid group ID. Check whether the group ID is correct.';
 
   @override
-  String get communityIDEditFormatTips => 'Community ID prefix must be @TGS#_ !';
+  String get communityIDEditFormatTips =>
+      'Community ID prefix must be @TGS#_ !';
 
   @override
   String get groupIDEditFormatTips => 'Group ID prefix cannot be @TGS# !';
@@ -309,16 +311,20 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get groupCommunityType => 'Community(Community)';
 
   @override
-  String get groupWorkDesc => 'Friends work group (Work): Similar to ordinary WeChat groups, after creation, only friends who are already in the group can be invited to join the group, and there is no need for the approval of the invitee or the approval of the group owner.';
+  String get groupWorkDesc =>
+      'Friends work group (Work): Similar to ordinary WeChat groups, after creation, only friends who are already in the group can be invited to join the group, and there is no need for the approval of the invitee or the approval of the group owner.';
 
   @override
-  String get groupPublicDesc => 'Stranger social group (Public): Similar to QQ group, the group owner can designate the group administrator after creation. After the user searches for the group ID and initiates a group application, the group owner or administrator must approve it before joining the group.';
+  String get groupPublicDesc =>
+      'Stranger social group (Public): Similar to QQ group, the group owner can designate the group administrator after creation. After the user searches for the group ID and initiates a group application, the group owner or administrator must approve it before joining the group.';
 
   @override
-  String get groupMeetingDesc => 'Temporary meeting group (Meeting): After creation, you can enter and leave at will, and support viewing of messages before joining the group; it is suitable for audio and video conference scenarios, online education scenarios, and other scenarios that are combined with real-time audio and video products.';
+  String get groupMeetingDesc =>
+      'Temporary meeting group (Meeting): After creation, you can enter and leave at will, and support viewing of messages before joining the group; it is suitable for audio and video conference scenarios, online education scenarios, and other scenarios that are combined with real-time audio and video products.';
 
   @override
-  String get groupCommunityDesc => 'Community(Community)：After creation, you can enter and leave at will, support up to 100,000 people, support historical message storage, and after users search for group ID and initiate a group application, they can join the group without administrator approval.';
+  String get groupCommunityDesc =>
+      'Community(Community)：After creation, you can enter and leave at will, support up to 100,000 people, support historical message storage, and after users search for group ID and initiate a group application, they can join the group without administrator approval.';
 
   @override
   String get groupDetail => 'Group Chat Details';
@@ -630,7 +636,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get invite => 'invite';
 
   @override
-  String get groupApplicationAllReadyBeenProcessed => 'This invitation or request has been processed.';
+  String get groupApplicationAllReadyBeenProcessed =>
+      'This invitation or request has been processed.';
 
   @override
   String get accepted => 'Agreed';
@@ -681,7 +688,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get searchError => 'Search error';
 
   @override
-  String get fillInTheVerificationInformation => 'Fill in verification information';
+  String get fillInTheVerificationInformation =>
+      'Fill in verification information';
 
   @override
   String get joinedGroupSuccessfully => 'success';
@@ -756,7 +764,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get addMuteMemberTip => 'Add members to mute';
 
   @override
-  String get groupMuteTip => 'When Mute All is enabled, only the group owner and admins are allowed to send messages.';
+  String get groupMuteTip =>
+      'When Mute All is enabled, only the group owner and admins are allowed to send messages.';
 
   @override
   String get deleteFriendTip => 'Are you sure you want to delete the contact?';
@@ -810,7 +819,28 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get permissionNeeded => 'Required permissions';
 
   @override
-  String get permissionDeniedContent => 'Please go to Settings and enable the Photos permission.';
+  String get permissionDeniedContent =>
+      'Please go to Settings and enable the required permission.';
+
+  @override
+  String get permissionDeniedCamera =>
+      'Please go to Settings and enable the Camera permission.';
+
+  @override
+  String get permissionDeniedMicrophone =>
+      'Please go to Settings and enable the Microphone permission.';
+
+  @override
+  String get permissionDeniedPhotos =>
+      'Please go to Settings and enable the Photos permission.';
+
+  @override
+  String get permissionDeniedStorage =>
+      'Please go to Settings and enable the Storage permission.';
+
+  @override
+  String get permissionDeniedNotification =>
+      'Please go to Settings and enable the Notification permission.';
 
   @override
   String maxCountFile(Object maxCount) {
@@ -848,7 +878,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get friendLimit => 'The number of your contacts exceeds the limit.';
 
   @override
-  String get otherFriendLimit => 'The number of the other user\'s contacts exceeds the limit.';
+  String get otherFriendLimit =>
+      'The number of the other user\'s contacts exceeds the limit.';
 
   @override
   String get inBlacklist => 'You have blocked this user.';
@@ -875,7 +906,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get addGroupNotFound => 'The group does not exist';
 
   @override
-  String get addGroupFullMember => 'The number of group members has reached the limit';
+  String get addGroupFullMember =>
+      'The number of group members has reached the limit';
 
   @override
   String chatRecords(Object count) {
@@ -1017,10 +1049,12 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get messageReadReceipt => 'Message Read Receipt';
 
   @override
-  String get messageReadReceiptEnabledDesc => 'If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.';
+  String get messageReadReceiptEnabledDesc =>
+      'If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.';
 
   @override
-  String get messageReadReceiptDisabledDesc => 'If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.';
+  String get messageReadReceiptDisabledDesc =>
+      'If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.';
 
   @override
   String get appearance => 'Appearance';
@@ -1076,10 +1110,12 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get forwardFailedMessageTip => 'Failed messages cannot be forwarded!';
 
   @override
-  String get forwardSeparateLimitTip => 'Too many messages selected, individual forwarding is not supported';
+  String get forwardSeparateLimitTip =>
+      'Too many messages selected, individual forwarding is not supported';
 
   @override
-  String get deleteMessagesConfirmTip => 'Are you sure you want to delete the selected messages?';
+  String get deleteMessagesConfirmTip =>
+      'Are you sure you want to delete the selected messages?';
 
   @override
   String get conversationListAtAll => '[@All]';
@@ -1181,7 +1217,8 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get aiSubtitleSettings => 'AI Subtitle Settings';
 
   @override
-  String get aiSubtitleRecognitionAndTranslation => 'Recognition & Translation Settings';
+  String get aiSubtitleRecognitionAndTranslation =>
+      'Recognition & Translation Settings';
 
   @override
   String get aiSubtitleRecognitionLanguage => 'Original audio';
@@ -1193,16 +1230,19 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get aiSubtitleShowBilingual => 'Bilingual captions';
 
   @override
-  String get aiSubtitleSelectRecognitionLanguage => 'Select Recognition Language';
+  String get aiSubtitleSelectRecognitionLanguage =>
+      'Select Recognition Language';
 
   @override
-  String get aiSubtitleSelectTranslationLanguage => 'Select Translation Language';
+  String get aiSubtitleSelectTranslationLanguage =>
+      'Select Translation Language';
 
   @override
   String get aiSubtitleNoTranslation => 'No Translation';
 
   @override
-  String get aiSubtitleAutoDetectChineseEnglish => 'Auto Detect (Chinese/English)';
+  String get aiSubtitleAutoDetectChineseEnglish =>
+      'Auto Detect (Chinese/English)';
 
   @override
   String get aiSubtitleSpeakChinese => 'Speaking Chinese';
@@ -1257,4 +1297,12 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
 
   @override
   String get aiSubtitleLanguageRussian => 'Русский (Russian)';
+
+  @override
+  String get backToLatest => 'Back to Latest';
+
+  @override
+  String newMessageCount(int count) {
+    return '$count new messages';
+  }
 }

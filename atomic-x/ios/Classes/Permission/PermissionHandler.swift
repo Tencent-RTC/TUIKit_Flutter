@@ -35,7 +35,7 @@ class PermissionHandler {
     return false
   }
 
-  func getPermissionStatus(_ permission: String) -> String {
+  func checkPermissionStatus(_ permission: String) -> String {
     switch permission {
     case "camera":
       return getCameraPermissionStatus()

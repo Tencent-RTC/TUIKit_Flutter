@@ -1,0 +1,3 @@
+NSCameraUsageDescription = "需要存取您的相機權限";
+NSMicrophoneUsageDescription = "需要存取您的麥克風權限";
+NSPhotoLibraryUsageDescription = "需要存取您的相簿";

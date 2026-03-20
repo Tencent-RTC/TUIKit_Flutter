@@ -1,9 +1,6 @@
 package io.trtc.tuikit.atomicx.audiorecorder
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import io.trtc.tuikit.atomicx.audiorecorder.audiorecorderimpl.AudioRecorderImpl
-import kotlinx.coroutines.flow.StateFlow
 
 enum class ResultCode(val code: Int) {
     SUCCESS_EXCEED_MAX_DURATION(1),
@@ -23,8 +20,13 @@ interface AudioRecorderListener {
 object AudioRecorder {
     private val instance = AudioRecorderImpl()
 
-    val currentPower: StateFlow<Int> = instance.currentPowerFlow
-    val currentTimeMs: StateFlow<Int> = instance.recordTimeMsFlow
+    var onRecordTime: ((timeMs: Int) -> Unit)?
+        get() = instance.onRecordTime
+        set(value) { instance.onRecordTime = value }
+
+    var onPowerLevel: ((powerLevel: Int) -> Unit)?
+        get() = instance.onPowerLevel
+        set(value) { instance.onPowerLevel = value }
 
     // To use AI noise reduction, the app must depend on LiteAVSDK_Professional v12.7+ and have the feature enabled.
     // Dependency: Add to app module's build.gradle dependencies: implementation("com.tencent.liteav:LiteAVSDK_Professional:12.7.0.xxxxx")

@@ -70,6 +70,7 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
         if (mounted) {
           setState(() {
             _isPlaying = false;
+            _currentPosition = Duration.zero;
           });
         }
       },

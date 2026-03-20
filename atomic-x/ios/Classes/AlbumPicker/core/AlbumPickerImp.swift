@@ -52,12 +52,12 @@ internal class PreviewState: ObservableObject {
         self.fromGrid = true
         self.showing = true
     }
-    
+
     func showPreviewFromButton() {
         self.fromGrid = false
         self.showing = true
     }
-    
+
     func hidePreview() {
         self.showing = false
         self.fromGrid = false
@@ -270,7 +270,7 @@ extension AlbumPicker {
     internal func handleAssetTap(at index: Int) {
         previewState.showPreviewFromGrid(at: index)
     }
-    
+
     internal func handleAssetSelection(_ assetModel: AlbumPickerAssetModel) {
         if let existingIndex = selectedAssets.firstIndex(where: { $0.asset?.localIdentifier == assetModel.asset?.localIdentifier }) {
             selectedAssets.remove(at: existingIndex)
@@ -318,6 +318,7 @@ internal struct AlbumPickerAssetCell: View {
     let onSelect: () -> Void
     
     @State private var image: UIImage?
+    @State private var currentRequestID: PHImageRequestID?
     
     var body: some View {
         ZStack {
@@ -405,33 +406,41 @@ internal struct AlbumPickerAssetCell: View {
         .onAppear {
             loadImage()
         }
-        .onReceive(assetModel.$editImage) { _ in
-            DispatchQueue.main.async {
-                self.image = nil
-                self.loadImage()
+        .onDisappear {
+            if let requestID = currentRequestID {
+                AlbumPickerImageManager.shared.cachingImageManager.cancelImageRequest(requestID)
+                currentRequestID = nil
             }
         }
+        .onReceive(assetModel.$editImage) { _ in
+            self.image = nil
+            self.loadImage()
+        }
         .onChange(of: refreshTrigger) { _ in
-            DispatchQueue.main.async {
-                self.image = nil
-                self.loadImage()
-            }
+            self.image = nil
+            self.loadImage()
         }
     }
     
     private func loadImage() {
+        if let requestID = currentRequestID {
+            AlbumPickerImageManager.shared.cachingImageManager.cancelImageRequest(requestID)
+            currentRequestID = nil
+        }
+        
         if let editImage = assetModel.editImage {
-            DispatchQueue.main.async {
-                self.image = editImage
-            }
+            self.image = editImage
             return
         }
         
         guard let asset = assetModel.asset else { return }
         
-        AlbumPickerImageManager.shared.getPhoto(with: asset, photoWidth: itemSize * 2) { image, _, _ in
+        let thumbnailSize = min(itemSize * 2, 300)
+        
+        currentRequestID = AlbumPickerImageManager.shared.getPhoto(with: asset, photoWidth: thumbnailSize) { image, _, _ in
             DispatchQueue.main.async {
                 self.image = image
+                self.currentRequestID = nil
             }
         }
     }

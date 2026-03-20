@@ -80,8 +80,8 @@ class AudioRecorder {
     }
 
     try {
-      _isRecording = true;
       _recordingDuration = 0;
+      _isRecording = true;
 
       onStateChanged?.call(_isRecording);
 
@@ -93,7 +93,6 @@ class AudioRecorder {
 
       AudioRecorderPlatform.setOnPowerLevel((powerLevel) {
         // Power level can be used for UI visualization if needed
-        debugPrint('Power level: $powerLevel');
       });
 
       // Start native recording asynchronously
@@ -130,7 +129,7 @@ class AudioRecorder {
         recordInfo = RecordInfo(
           duration: (result.durationMs / 1000).floor(),
           path: result.filePath!,
-        )..errorCode = AudioRecordResultCode.success;
+        )..errorCode = result.resultCode;
       } else if (result.resultCode == AudioRecordResultCode.errorLessThanMinDuration) {
         recordInfo = RecordInfo(
           duration: result.durationMs,
@@ -178,11 +177,6 @@ class AudioRecorder {
       debugPrint('Cancel record failed: $e');
       _cleanup();
     }
-  }
-
-  bool isMaxDurationReached() {
-    final adjustMaxDuration = maxDuration - 800;
-    return _recordingDuration >= adjustMaxDuration;
   }
 
   void _cleanup() {

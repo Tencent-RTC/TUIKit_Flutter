@@ -16,6 +16,11 @@ class AudioPlayerPlatform {
   static Function()? _onResume;
   static Function(String errorMessage)? _onError;
 
+  /// Track the current playing file path to detect switching between different audio files.
+  static String? _currentPlayingPath;
+  /// Store the previous onComplete callback so we can notify the old widget when switching.
+  static Function()? _previousOnComplete;
+
   /// Play audio file
   static Future<void> play({
     required String filePath,
@@ -32,6 +37,16 @@ class AudioPlayerPlatform {
     }
 
     try {
+      // If switching to a different audio file, notify the previous widget via its onComplete callback
+      // so it can reset its playing state and progress.
+      if (_currentPlayingPath != null && _currentPlayingPath != filePath) {
+        _previousOnComplete?.call();
+      }
+
+      // Remember current path and callback for next switch detection
+      _currentPlayingPath = filePath;
+      _previousOnComplete = onComplete;
+
       // Setup callbacks
       _onComplete = onComplete;
       _onProgressUpdate = onProgressUpdate;
@@ -51,6 +66,8 @@ class AudioPlayerPlatform {
             switch (eventType) {
               case 'onComplete':
                 _onComplete?.call();
+                _currentPlayingPath = null;
+                _previousOnComplete = null;
                 break;
               case 'onProgressUpdate':
                 final currentPosition = event['currentPosition'] as int? ?? 0;
@@ -110,6 +127,12 @@ class AudioPlayerPlatform {
   /// Stop playback
   static Future<void> stop() async {
     try {
+      // Notify the current listener before disposing, so the playing widget
+      // (e.g. SoundMessageWidget) can reset its UI state properly.
+      final onComplete = _onComplete;
+      _onComplete = null;
+      onComplete?.call();
+
       await _methodChannel.invokeMethod('stop');
       await dispose();
     } catch (e) {
@@ -171,5 +194,7 @@ class AudioPlayerPlatform {
     _onPause = null;
     _onResume = null;
     _onError = null;
+    _currentPlayingPath = null;
+    _previousOnComplete = null;
   }
 }

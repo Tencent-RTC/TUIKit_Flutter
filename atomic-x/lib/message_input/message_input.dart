@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +12,8 @@ import 'package:tuikit_atomic_x/emoji_picker/emoji_manager.dart';
 import 'package:tuikit_atomic_x/emoji_picker/emoji_picker.dart';
 import 'package:tuikit_atomic_x/file_picker/file_picker.dart';
 import 'package:tuikit_atomic_x/message_input/src/chat_special_text_span_builder.dart';
-import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:tuikit_atomic_x/third_party/extended_text_field/extended_text_field.dart';
+import 'package:tuikit_atomic_x/audio_player/audio_player_platform.dart';
 import 'package:tuikit_atomic_x/video_recorder/video_recorder.dart';
 
 import 'mention/mention_info.dart';
@@ -62,7 +61,11 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   final GlobalKey _moreButtonKey = GlobalKey();
   final GlobalKey<AudioRecordWidgetState> _recordingWidgetKey = GlobalKey();
 
-  double? _bottomPadding;
+  double _bottomPadding = 0.0;
+
+  /// Flag to indicate we are actively switching to emoji/more panel.
+  /// When true, _onFocusChanged should NOT collapse panels.
+  bool _isSwitchingPanel = false;
 
   final GlobalKey<TooltipState> _micTooltipKey = GlobalKey<TooltipState>();
   bool _isRecording = false;
@@ -87,6 +90,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     _conversationListStore = ConversationListStore.create();
     _textEditingController = _MentionTextEditingController();
     _textEditingController.addListener(_onTextChanged);
+    _textEditingFocusNode.addListener(_onFocusChanged);
     _loadDraft();
     _extractGroupID();
     _fetchConversationInfo();
@@ -99,6 +103,43 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   bool get _isGroupChat => _groupID != null;
+
+  void _onFocusChanged() {
+    if (!_textEditingFocusNode.hasFocus) {
+      // If we are actively switching to emoji/more panel, do NOT collapse panels.
+      if (_isSwitchingPanel) {
+        _isSwitchingPanel = false;
+        return;
+      }
+      // When focus is truly lost (e.g., tapping outside), collapse emoji and more panels
+      if (_showEmojiPanel || _showMorePanel) {
+        setState(() {
+          _showEmojiPanel = false;
+          if (_showMorePanel) {
+            _showMorePanel = false;
+            _removeOverlay();
+          }
+        });
+      }
+    }
+  }
+
+  /// Collapse all panels (emoji, more). Called externally when user taps blank area.
+  void collapseAllPanels() {
+    bool needsRebuild = false;
+    if (_showEmojiPanel) {
+      _showEmojiPanel = false;
+      needsRebuild = true;
+    }
+    if (_showMorePanel) {
+      _showMorePanel = false;
+      _removeOverlay();
+      needsRebuild = true;
+    }
+    if (needsRebuild) {
+      setState(() {});
+    }
+  }
 
   /// Insert a mention into the input field from external source (e.g., long press on avatar)
   /// This is called when user long presses on another member's avatar in the message list
@@ -173,6 +214,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   @override
   void dispose() {
     _textEditingController.removeListener(_onTextChanged);
+    _textEditingFocusNode.removeListener(_onFocusChanged);
     _draftSaveTimer?.cancel();
     // Save draft immediately on dispose (fallback mechanism)
     _saveDraftImmediately();
@@ -450,7 +492,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     if (_showMorePanel) {
       _removeOverlay();
     } else {
-      // hide keyboard
+      // Set flag so _onFocusChanged won't collapse panels when we unfocus
+      _isSwitchingPanel = true;
       _textEditingFocusNode.unfocus();
       // hide emoji panel
       if (_showEmojiPanel) {
@@ -515,7 +558,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   void _onPickAlbum() async {
-    AlbumPickerConfig config = AlbumPickerConfig();
+    AlbumPickerConfig config = const AlbumPickerConfig();
     await AlbumPicker.pickMedia(
       context: context,
       config: config,
@@ -723,12 +766,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   void _onTakeVideo() async {
-    _requestCameraPermission(context);
     try {
       VideoRecorderResult result = await VideoRecorder.startRecord(
         context: context,
         config: const VideoRecorderConfig(
           recordMode: RecordMode.mixed,
+          minDurationMs: 500
         ),
       );
 
@@ -737,11 +780,19 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       }
 
       final messageInfo = MessageInfo();
-      messageInfo.messageType = MessageType.video;
       MessageBody messageBody = MessageBody();
-      messageBody.videoPath = result.filePath;
-      messageBody.videoSnapshotPath = result.thumbnailPath;
-      messageBody.videoType = result.filePath.split('.').last;
+
+      if (result.mediaType == RecordMediaType.photo) {
+        messageInfo.messageType = MessageType.image;
+        messageBody.originalImagePath = result.filePath;
+      } else {
+        messageInfo.messageType = MessageType.video;
+        messageBody.videoPath = result.filePath;
+        messageBody.videoSnapshotPath = result.thumbnailPath;
+        messageBody.videoType = result.filePath.split('.').last;
+        messageBody.videoDuration = (result.durationMs != null) ? (result.durationMs! / 1000).round() : 0;
+      }
+
       messageInfo.messageBody = messageBody;
       final sendResult = await _sendMessage(messageInfo);
       if (!sendResult.isSuccess) {
@@ -749,53 +800,6 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       }
     } catch (e) {
       debugPrint("_onTakeVideo error: $e");
-    }
-  }
-
-  static Future<bool> _showPermissionDialog(BuildContext context) async {
-    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
-    return await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(atomicLocal.permissionNeeded),
-              content: Text(atomicLocal.permissionDeniedContent),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(atomicLocal.cancel),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(atomicLocal.confirm),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-  }
-
-  static _requestCameraPermission(BuildContext context) async {
-    if (kIsWeb) {
-      return;
-    }
-
-    PermissionType permissionType = PermissionType.camera;
-    Map<PermissionType, PermissionStatus> statusMap = await Permission.request([permissionType]);
-    PermissionStatus status = statusMap[permissionType] ?? PermissionStatus.denied;
-
-    if (status == PermissionStatus.granted) {
-      return;
-    }
-
-    if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
-      if (context.mounted) {
-        final bool shouldOpenSettings = await _showPermissionDialog(context);
-        if (shouldOpenSettings) {
-          await Permission.openAppSettings();
-        }
-      }
     }
   }
 
@@ -827,8 +831,9 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   void _onAudioRecorderFinished(RecordInfo recordInfo) async {
-    if (recordInfo.errorCode != AudioRecordResultCode.success) {
-      debugPrint("_onAudioRecorderFinished, errorCode:$recordInfo.errorCode");
+    if (recordInfo.errorCode != AudioRecordResultCode.success &&
+        recordInfo.errorCode != AudioRecordResultCode.successExceedMaxDuration) {
+      debugPrint("_onAudioRecorderFinished, errorCode:${recordInfo.errorCode}");
       return;
     }
 
@@ -846,6 +851,10 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   void _onStartRecording(PointerDownEvent event) {
+    // Stop any currently playing audio to prevent it from being captured
+    // by the microphone during recording.
+    AudioPlayerPlatform.stop();
+
     setState(() {
       _isRecording = true;
     });
@@ -893,6 +902,28 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       } else {
         _recordingWidgetKey.currentState?.stopRecord();
       }
+    }
+  }
+
+  /// Handle pointer cancel events (e.g. system gesture interception on Android
+  /// such as edge-swipe for payment shortcuts or back navigation).
+  /// When the system steals the pointer, we need to gracefully stop/cancel
+  /// the ongoing recording to avoid leaving it in a stuck state.
+  void _onRecordingPointerCancel(PointerCancelEvent event) {
+    if (_isWaitingToStartRecord) {
+      _recordingStarter?.cancel();
+      _recordingStarter = null;
+      _isWaitingToStartRecord = false;
+    } else {
+      // System cancelled the gesture — treat as user cancellation
+      // (don't send the recording) since the pointer position is unreliable.
+      _recordingWidgetKey.currentState?.cancelRecord();
+    }
+
+    if (mounted) {
+      setState(() {
+        _isRecording = false;
+      });
     }
   }
 
@@ -1057,6 +1088,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                   color: colorsTheme.textColorLink,
                   fontSize: 17,
                   fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.none,
                 ),
               ),
             ),
@@ -1075,7 +1107,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    _bottomPadding ??= MediaQuery.of(context).padding.bottom;
+    _bottomPadding = MediaQuery.of(context).padding.bottom;
     atomicLocale = AtomicLocalizations.of(context);
     localeProvider = Provider.of<LocaleProvider>(context);
 
@@ -1131,87 +1163,109 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: 50,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 50),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (widget.config.isShowMore) _buildAddButton(colorsTheme),
+                if (widget.config.isShowMore)
+                  SizedBox(
+                    height: 50,
+                    child: Center(child: _buildAddButton(colorsTheme)),
+                  ),
                 if (widget.config.isShowMore) const SizedBox(width: 8),
                 Expanded(
                   child: Container(
+                    constraints: const BoxConstraints(minHeight: 50),
                     decoration: BoxDecoration(
                       color: colorsTheme.bgColorBubbleReciprocal,
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildInputTextField(colorsTheme: colorsTheme),
                         ),
                         if (_isEmojiPickerExist)
-                          GestureDetector(
-                            onTap: () {
-                              if (!_showEmojiPanel) {
-                                _textEditingFocusNode.unfocus();
-                              } else {
-                                _textEditingFocusNode.requestFocus();
-                              }
-                              setState(() {
-                                _showEmojiPanel = !_showEmojiPanel;
-                              });
-                            },
-                            child: _showEmojiPanel
-                                ? Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                                    child: const Icon(Icons.keyboard_alt_outlined),
-                                  )
-                                : _buildInputButton(
-                                    icon: 'chat_assets/icon/emoji.svg',
-                                    isActive: _showEmojiPanel,
-                                    colorsTheme: colorsTheme,
-                                  ),
+                          SizedBox(
+                            height: 50,
+                            child: Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (!_showEmojiPanel) {
+                                    // Switching to emoji panel: hide keyboard.
+                                    // Set flag so _onFocusChanged won't collapse the panel.
+                                    _isSwitchingPanel = true;
+                                    _textEditingFocusNode.unfocus();
+                                  } else {
+                                    // Switching back from emoji panel to keyboard.
+                                    _textEditingFocusNode.requestFocus();
+                                  }
+                                  setState(() {
+                                    _showEmojiPanel = !_showEmojiPanel;
+                                  });
+                                },
+                                child: _showEmojiPanel
+                                    ? Container(
+                                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: const Icon(Icons.keyboard_alt_outlined),
+                                      )
+                                    : _buildInputButton(
+                                        icon: 'chat_assets/icon/emoji.svg',
+                                        isActive: _showEmojiPanel,
+                                        colorsTheme: colorsTheme,
+                                      ),
+                              ),
+                            ),
                           ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                Row(
-                  children: [
-                    if (_showSendButton)
-                      _buildSendButton(colorsTheme)
-                    else if (!_showSendButton && widget.config.isShowAudioRecorder)
-                      Tooltip(
-                        preferBelow: false,
-                        verticalOffset: 36,
-                        message: atomicLocale.sendSoundTips,
-                        child: Listener(
-                          onPointerDown: _onStartRecording,
-                          onPointerUp: _onStopRecording,
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: colorsTheme.buttonColorSecondaryDefault,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'chat_assets/icon/mic.svg',
-                                package: 'tuikit_atomic_x',
-                                colorFilter: ColorFilter.mode(
-                                  colorsTheme.textColorLink,
-                                  BlendMode.srcIn,
+                SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: Row(
+                      children: [
+                        if (_showSendButton)
+                          _buildSendButton(colorsTheme)
+                        else if (!_showSendButton && widget.config.isShowAudioRecorder)
+                          Tooltip(
+                            preferBelow: false,
+                            verticalOffset: 36,
+                            message: atomicLocale.sendSoundTips,
+                            child: Listener(
+                              onPointerDown: _onStartRecording,
+                              onPointerUp: _onStopRecording,
+                              onPointerCancel: _onRecordingPointerCancel,
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: colorsTheme.buttonColorSecondaryDefault,
+                                  shape: BoxShape.circle,
                                 ),
-                                width: 24,
-                                height: 24,
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'chat_assets/icon/mic.svg',
+                                    package: 'tuikit_atomic_x',
+                                    colorFilter: ColorFilter.mode(
+                                      colorsTheme.textColorLink,
+                                      BlendMode.srcIn,
+                                    ),
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1308,7 +1362,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       return 280;
     }
 
-    return _bottomPadding ?? 0.0;
+    return _bottomPadding;
   }
 
   Widget _buildAudioRecordWidget() {
@@ -1564,7 +1618,7 @@ class _MentionTextFieldState extends State<_MentionTextField> {
       focusNode: widget.focusNode,
       controller: widget.controller,
       minLines: 1,
-      maxLines: 4,
+      maxLines: 5,
       style: TextStyle(
         color: widget.colorsTheme.textColorPrimary,
         fontSize: 14,

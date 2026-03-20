@@ -1,0 +1,3 @@
+NSCameraUsageDescription = "يلزم الوصول إلى الكاميرا.";
+NSMicrophoneUsageDescription = "يلزم الوصول إلى الميكروفون.";
+NSPhotoLibraryUsageDescription = "يلزم الوصول إلى ألبوم الصور.";

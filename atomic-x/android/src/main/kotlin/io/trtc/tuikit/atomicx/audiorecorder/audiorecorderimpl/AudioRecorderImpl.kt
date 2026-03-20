@@ -13,8 +13,6 @@ import io.trtc.tuikit.atomicx.audiorecorder.audiorecordercore.AudioRecorderTXUGC
 import io.trtc.tuikit.atomicx.basecomponent.utils.ContextProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -34,16 +32,15 @@ class AudioRecorderImpl() {
 
     private var recorder: AudioRecorderInternalInterface? = null
     private val mainCoroutineScope = CoroutineScope(Dispatchers.Main)
-    private val _currentPower = MutableStateFlow(0)
-    private val _recordTimeMs = MutableStateFlow(0)
-    internal val currentPowerFlow = _currentPower.asStateFlow()
-    internal val recordTimeMsFlow = _recordTimeMs.asStateFlow()
     private var isRecording = false
     private var isCancelRecord = false
     private var audioFilePath: String? = null
 
     private var enableAIDeNoise: Boolean = false
     private var listener: AudioRecorderListener? = null
+
+    var onRecordTime: ((timeMs: Int) -> Unit)? = null
+    var onPowerLevel: ((powerLevel: Int) -> Unit)? = null
 
     init {
         val context = ContextProvider.appContext
@@ -55,14 +52,6 @@ class AudioRecorderImpl() {
             recorder = AudioRecorderSystem(context)
         }
         recorder?.setListener(RecorderListenerImpl())
-    }
-
-    private fun setCurrentPower(value: Int) {
-        _currentPower.value = value
-    }
-
-    private fun setCurrentTime(value: Int) {
-        _recordTimeMs.value = value
     }
 
     fun startRecord(
@@ -96,6 +85,7 @@ class AudioRecorderImpl() {
             onRecordingComplete(ResultCode.ERROR_RECORDING, "", 0)
             return
         }
+
         isRecording = true
         isCancelRecord = false
 
@@ -114,7 +104,6 @@ class AudioRecorderImpl() {
     }
 
     fun stopRecord() {
-        Log.i(TAG, "stop record")
         runOnMainThread {
             if (isRecording) {
                 recorder?.stopRecord()
@@ -157,7 +146,7 @@ class AudioRecorderImpl() {
         }
     }
 
-    private fun runOnMainThread(action: () -> Unit?) {
+    private fun runOnMainThread(action: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             action()
         } else {
@@ -174,13 +163,13 @@ class AudioRecorderImpl() {
             Log.i(TAG, "onRecordProcess time:$time")
             this@AudioRecorderImpl.runOnMainThread {
                 recordTimeMs = time
-                this@AudioRecorderImpl.setCurrentTime(recordTimeMs)
+                this@AudioRecorderImpl.onRecordTime?.invoke(recordTimeMs)
             }
         }
 
         override fun onAmplitudeChanged(db: Int) {
             this@AudioRecorderImpl.runOnMainThread {
-                this@AudioRecorderImpl.setCurrentPower(db)
+                this@AudioRecorderImpl.onPowerLevel?.invoke(db)
             }
         }
 

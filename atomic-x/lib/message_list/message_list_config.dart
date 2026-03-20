@@ -21,6 +21,8 @@ abstract class MessageListConfigProtocol {
   bool get isSupportForward;
   bool get isSupportMultiSelect;
   bool get isSupportReaction;
+  bool get isSupportTranslate;
+  bool get isSupportTongue;
 }
 
 class ChatMessageListConfig implements MessageListConfigProtocol {
@@ -44,6 +46,8 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   final bool _isSupportForward;
   final bool _isSupportMultiSelect;
   final bool _isSupportReaction;
+  final bool _isSupportTranslate;
+  final bool _isSupportTongue;
 
   @override
   double get textBubbleCornerRadius => _userTextBubbleCornerRadius ?? 18.0;
@@ -139,6 +143,12 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   @override
   bool get isSupportReaction => _isSupportReaction;
 
+  @override
+  bool get isSupportTranslate => _isSupportTranslate;
+
+  @override
+  bool get isSupportTongue => _isSupportTongue;
+
   const ChatMessageListConfig({
     double? textBubbleCornerRadius,
     String? alignment,
@@ -160,6 +170,8 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
     bool isSupportForward = true,
     bool isSupportMultiSelect = true,
     bool isSupportReaction = true,
+    bool isSupportTranslate = true,
+    bool isSupportTongue = true,
   })  : _userTextBubbleCornerRadius = textBubbleCornerRadius,
         _userAlignment = alignment,
         _userIsShowTimeMessage = isShowTimeMessage,
@@ -179,5 +191,7 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
         _userEnableReadReceipt = enableReadReceipt,
         _isSupportForward = isSupportForward,
         _isSupportMultiSelect = isSupportMultiSelect,
-        _isSupportReaction = isSupportReaction;
+        _isSupportReaction = isSupportReaction,
+        _isSupportTranslate = isSupportTranslate,
+        _isSupportTongue = isSupportTongue;
 }

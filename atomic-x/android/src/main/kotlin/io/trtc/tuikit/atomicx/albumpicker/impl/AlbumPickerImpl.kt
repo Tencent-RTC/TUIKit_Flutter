@@ -2,6 +2,8 @@ package io.trtc.tuikit.atomicx.albumpicker.impl
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import com.tencent.qcloud.tuicore.TUICore
@@ -16,6 +18,7 @@ import io.trtc.tuikit.atomicx.albumpicker.util.AlbumPickerUtil
 import io.trtc.tuikit.atomicx.basecomponent.utils.ContextProvider
 import io.trtc.tuikit.atomicx.messageinput.utils.FileUtils
 import java.util.UUID
+import java.util.concurrent.Executors
 
 class AlbumPickerImpl : AbstractAlbumPicker {
     companion object {
@@ -39,22 +42,27 @@ class AlbumPickerImpl : AbstractAlbumPicker {
                 return@ITUINotification
             }
             listener.onFinishedSelect(dataList.size)
-            val context = ContextProvider.appContext
-            dataList.forEachIndexed { index, any ->
-                val uri = any as? Uri ?: return@forEachIndexed
-                val path = uri.toString()
-                var mediaType = getPickMediaType(uri)
-                val thumbPath = if (mediaType == PickMediaType.VIDEO) {
-                    AlbumPickerUtil.ensureVideoThumbnailPath(context, uri)
-                } else null
-                val model = AlbumPickerModel(
-                    id = AlbumPickerUtil.generateId(path),
-                    mediaPath = path,
-                    mediaType = mediaType,
-                    videoThumbnailPath = thumbPath,
-                    isOrigin = true
-                )
-                listener.onProgress(model, index, 1.0)
+            val mainHandler = Handler(Looper.getMainLooper())
+            Executors.newSingleThreadExecutor().execute {
+                val context = ContextProvider.appContext
+                dataList.forEachIndexed { index, any ->
+                    val uri = any as? Uri ?: return@forEachIndexed
+                    val path = uri.toString()
+                    var mediaType = getPickMediaType(uri)
+                    val thumbPath = if (mediaType == PickMediaType.VIDEO) {
+                        AlbumPickerUtil.ensureVideoThumbnailPath(context, uri)
+                    } else null
+                    val model = AlbumPickerModel(
+                        id = AlbumPickerUtil.generateId(path),
+                        mediaPath = path,
+                        mediaType = mediaType,
+                        videoThumbnailPath = thumbPath,
+                        isOrigin = true
+                    )
+                    mainHandler.post {
+                        listener.onProgress(model, index, 1.0)
+                    }
+                }
             }
         }
         TUICore.registerEvent(eventKey, eventSubKey, notificationListener)

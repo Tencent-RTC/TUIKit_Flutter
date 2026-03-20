@@ -38,9 +38,9 @@ class Permission(
                 } ?: result.error("INVALID_ARGUMENT", "Permissions are required", null)
             }
             "openAppSettings" -> result.success(handler.openAppSettings())
-            "getPermissionStatus" -> {
+            "checkPermissionStatus" -> {
                 call.argument<String>("permission")?.let {
-                    result.success(handler.getPermissionStatus(it))
+                    result.success(handler.checkPermissionStatus(it))
                 } ?: result.error("INVALID_ARGUMENT", "Permission is required", null)
             }
             else -> result.notImplemented()

@@ -60,12 +60,6 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
         _recordingDuration = duration;
         _recordingProgress = progress;
       });
-
-      if (_audioRecorder.isMaxDurationReached()) {
-        AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
-        stopRecord();
-        Toast.warning(context, atomicLocalizations.recordLimitTips);
-      }
     }
   }
 
@@ -95,6 +89,10 @@ class AudioRecordWidgetState extends State<AudioRecordWidget> with SingleTickerP
           if (recordInfo.errorCode == AudioRecordResultCode.errorLessThanMinDuration && mounted) {
             AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
             Toast.warning(context, atomicLocalizations.sayTimeShort);
+          }
+          if (recordInfo.errorCode == AudioRecordResultCode.successExceedMaxDuration && mounted) {
+            AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
+            Toast.warning(context, atomicLocalizations.recordLimitTips);
           }
           widget.onRecordFinish(recordInfo);
         }

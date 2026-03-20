@@ -1,3 +1,14 @@
+## 4.0.1
+* Added floating button features to the chat page: "Jump to Latest Position," "X Unread Messages," and "Someone @-ed Me".
+* Text message links now support opening in a browser.
+* Fixed issues with photo album selection.
+* Fixed failure to send messages after using camera or taking photos.
+* Improved alert experience for denied permission requests.
+* Enhanced voice recording experience.
+* Optimized keyboard interaction.
+* Restricted camera and video recording to portrait mode.
+* Fixed other known issues.
+
 ## 4.0.0
 * Adapted for atomic_x_core 4.0.0.
 

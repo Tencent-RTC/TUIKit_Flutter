@@ -131,29 +131,16 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
       return;
     }
 
-    bool isGranted = false;
     if (Platform.isAndroid) {
       final int? sdkInt = await Device.sdkInt;
-      if (sdkInt! <= 32) {
-        Map<PermissionType, PermissionStatus> statusMap = await Permission.request([PermissionType.storage]);
-        PermissionStatus status = statusMap[PermissionType.storage] ?? PermissionStatus.denied;
-        if (status == PermissionStatus.granted) {
-          isGranted = true;
-        } else if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
-          if (mounted) {
-            final bool shouldOpenSettings = await _showPermissionDialog(context);
-            if (shouldOpenSettings) {
-              await Permission.openAppSettings();
-              return;
-            }
-          }
-        }
-      } else {
-        isGranted = true;
+      if (sdkInt != null && sdkInt <= 32) {
+        if (!mounted) return;
+        final bool granted = await Permission.checkAndRequest(context, [PermissionType.storage]);
+        if (!granted) return;
       }
     }
 
-    if (isGranted && isFileAvailable) {
+    if (isFileAvailable) {
       final bool success = await FilePicker.openFile(filePath);
       if (!success && mounted) {
         _showErrorDialog(context, 'Failed to open file');
@@ -161,29 +148,6 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
     }
   }
 
-  static Future<bool> _showPermissionDialog(BuildContext context) async {
-    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
-    return await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(atomicLocal.permissionNeeded),
-              content: Text(atomicLocal.permissionDeniedContent),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(atomicLocal.cancel),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(atomicLocal.confirm),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-  }
 
   /// Show error dialog
   void _showErrorDialog(BuildContext context, String message) {

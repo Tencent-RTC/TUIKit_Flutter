@@ -63,6 +63,14 @@ class AlbumPicker {
     AlbumPickerConfig? config,
     required Function(AlbumPickerModel model, int index, double progress) onProgress,
   }) async {
+    if (!await Permission.checkAndRequest(context, [PermissionType.photos])) {
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final themeState = BaseThemeProvider.of(context);
     return AlbumPickerPlatform.pickMediaNative(

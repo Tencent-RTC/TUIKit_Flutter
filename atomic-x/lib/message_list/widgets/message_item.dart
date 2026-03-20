@@ -469,7 +469,14 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
       onResendTap: message.status == MessageStatus.sendFail ? () => _showResendConfirmDialog(context) : null,
     );
 
+    // When the other side's left avatar is shown, add a left spacer for self messages
+    // so the bubble's left edge aligns with other-message bubble's left edge
+    // and doesn't overlap with the other side's avatar.
+    final needLeftSpacer = config.isShowLeftAvatar;
+    final leftSpacerWidth = needLeftSpacer ? AvatarSize.m.value + config.avatarSpacing : 0.0;
+
     return [
+      if (needLeftSpacer) SizedBox(width: leftSpacerWidth),
       Flexible(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -564,6 +571,10 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
           ],
         ),
       ),
+      // When self's right avatar is shown, add a right spacer for other messages
+      // so the bubble's right edge aligns with self-message bubble's right edge
+      // and doesn't overlap with self's avatar.
+      if (config.isShowRightAvatar) SizedBox(width: AvatarSize.m.value + config.avatarSpacing),
     ];
   }
 

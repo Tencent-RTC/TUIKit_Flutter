@@ -28,7 +28,7 @@ data class AlbumPickerModel(
 @Parcelize
 data class AlbumPickerConfig(
     var pickMode: PickMode = PickMode.ALL,
-    var maxCount: Int = 99,
+    var maxCount: Int = 9,
     var gridCount: Int = 4,
     var primaryColor: Int = -1
 ) : Parcelable

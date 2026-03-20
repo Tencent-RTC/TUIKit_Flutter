@@ -71,6 +71,14 @@ class VideoRecorder {
     required BuildContext context,
     VideoRecorderConfig? config,
   }) async {
+    if (!await Permission.checkAndRequest(context, [PermissionType.camera])) {
+      throw Exception('Camera permission denied');
+    }
+
+    if (!context.mounted) {
+      throw Exception('Context is no longer mounted');
+    }
+
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final themeState = BaseThemeProvider.of(context);
     return VideoRecorderPlatform.startRecordNative(

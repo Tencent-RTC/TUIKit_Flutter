@@ -60,7 +60,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeApp() async {
-    await StorageUtil.init();
     await AppBuilder.init(path: 'assets/appConfig.json');
 
     if (mounted) {
@@ -74,6 +73,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (!_isInitialized) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorObservers: [TUICallKit.navigatorObserver],
         home: Scaffold(
           body: Center(
@@ -95,6 +95,7 @@ class _MyAppState extends State<MyApp> {
           final localeProvider = Provider.of<LocaleProvider>(context);
 
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'TUIKit Next Demo',
             navigatorObservers: [TUICallKit.navigatorObserver],
             localizationsDelegates: const [

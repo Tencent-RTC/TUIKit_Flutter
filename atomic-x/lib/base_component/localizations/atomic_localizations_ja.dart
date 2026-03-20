@@ -270,7 +270,8 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get groupIDInvalid => 'グループIDが無効です。グループIDが正しく入力されているか確認してください。';
 
   @override
-  String get communityIDEditFormatTips => 'コミュニティ ID には接頭辞として @TGS#_ を付ける必要があります。';
+  String get communityIDEditFormatTips =>
+      'コミュニティ ID には接頭辞として @TGS#_ を付ける必要があります。';
 
   @override
   String get groupIDEditFormatTips => 'グループ ID プレフィックスを @TGS# にすることはできません。';
@@ -309,16 +310,20 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get groupCommunityType => 'コミュニティ';
 
   @override
-  String get groupWorkDesc => '友達ワークグループ（Work）：通常のWeChatグループと同様に、作成後はすでにグループに参加している友達のみをグループに招待でき、招待された側の同意やグループの承認は必要ありません。所有者。';
+  String get groupWorkDesc =>
+      '友達ワークグループ（Work）：通常のWeChatグループと同様に、作成後はすでにグループに参加している友達のみをグループに招待でき、招待された側の同意やグループの承認は必要ありません。所有者。';
 
   @override
-  String get groupPublicDesc => '見知らぬソーシャル グループ (パブリック): QQ グループと同様に、グループ所有者は作成後にグループ管理者を指定できます。ユーザーがグループ ID を検索してグループへの参加申請を開始した後、グループに参加する前にグループ所有者または管理者の承認が必要です。 。';
+  String get groupPublicDesc =>
+      '見知らぬソーシャル グループ (パブリック): QQ グループと同様に、グループ所有者は作成後にグループ管理者を指定できます。ユーザーがグループ ID を検索してグループへの参加申請を開始した後、グループに参加する前にグループ所有者または管理者の承認が必要です。 。';
 
   @override
-  String get groupMeetingDesc => '一時的な会議グループ (会議): 作成後は自由に出入りでき、グループに参加する前にメッセージの表示をサポートするため、音声会議やビデオ会議のシナリオ、オンライン教育のシナリオ、およびリアルタイム音声と組み合わせたその他のシナリオに適しています。そしてビデオ製品。';
+  String get groupMeetingDesc =>
+      '一時的な会議グループ (会議): 作成後は自由に出入りでき、グループに参加する前にメッセージの表示をサポートするため、音声会議やビデオ会議のシナリオ、オンライン教育のシナリオ、およびリアルタイム音声と組み合わせたその他のシナリオに適しています。そしてビデオ製品。';
 
   @override
-  String get groupCommunityDesc => 'コミュニティ: 作成後は自由に参加および退出でき、最大 100,000 人のユーザーがグループ ID を検索してグループ アプリケーションを開始すると、管理者の承認なしでグループに参加できます。';
+  String get groupCommunityDesc =>
+      'コミュニティ: 作成後は自由に参加および退出でき、最大 100,000 人のユーザーがグループ ID を検索してグループ アプリケーションを開始すると、管理者の承認なしでグループに参加できます。';
 
   @override
   String get groupDetail => 'グループチャットの詳細';
@@ -630,7 +635,8 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get invite => '招待する';
 
   @override
-  String get groupApplicationAllReadyBeenProcessed => 'この招待または申請リクエストはすでに処理されています。';
+  String get groupApplicationAllReadyBeenProcessed =>
+      'この招待または申請リクエストはすでに処理されています。';
 
   @override
   String get accepted => '同意します';
@@ -810,7 +816,22 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get permissionNeeded => '必要な権限';
 
   @override
-  String get permissionDeniedContent => '「設定」に移動して写真の権限を有効にしてください。';
+  String get permissionDeniedContent => '「設定」に移動して必要な権限を有効にしてください。';
+
+  @override
+  String get permissionDeniedCamera => '「設定」に移動してカメラの権限を有効にしてください。';
+
+  @override
+  String get permissionDeniedMicrophone => '「設定」に移動してマイクの権限を有効にしてください。';
+
+  @override
+  String get permissionDeniedPhotos => '「設定」に移動して写真の権限を有効にしてください。';
+
+  @override
+  String get permissionDeniedStorage => '「設定」に移動してストレージの権限を有効にしてください。';
+
+  @override
+  String get permissionDeniedNotification => '「設定」に移動して通知の権限を有効にしてください。';
 
   @override
   String maxCountFile(Object maxCount) {
@@ -1017,10 +1038,12 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get messageReadReceipt => 'メッセージ既読状態';
 
   @override
-  String get messageReadReceiptEnabledDesc => 'オフにすると、送受信するメッセージにはメッセージ既読状態が表示されなくなり、相手がメッセージを読んだかどうかを確認できなくなります。同様に、相手もあなたがメッセージを読んだかどうかを確認できなくなります。';
+  String get messageReadReceiptEnabledDesc =>
+      'オフにすると、送受信するメッセージにはメッセージ既読状態が表示されなくなり、相手がメッセージを読んだかどうかを確認できなくなります。同様に、相手もあなたがメッセージを読んだかどうかを確認できなくなります。';
 
   @override
-  String get messageReadReceiptDisabledDesc => 'オンにすると、グループチャットで送受信するメッセージにはメッセージ既読状態が表示され、相手がメッセージを読んだかどうかを確認できます。個人チャットの友人もメッセージ既読状態をオンにしている場合、その友人との個人チャットで送受信するメッセージにもメッセージ既読状態が表示されます。';
+  String get messageReadReceiptDisabledDesc =>
+      'オンにすると、グループチャットで送受信するメッセージにはメッセージ既読状態が表示され、相手がメッセージを読んだかどうかを確認できます。個人チャットの友人もメッセージ既読状態をオンにしている場合、その友人との個人チャットで送受信するメッセージにもメッセージ既読状態が表示されます。';
 
   @override
   String get appearance => '外観';
@@ -1257,4 +1280,12 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
 
   @override
   String get aiSubtitleLanguageRussian => 'Русский（ロシア語）';
+
+  @override
+  String get backToLatest => '最新の位置に戻る';
+
+  @override
+  String newMessageCount(int count) {
+    return '$count 件の新しいメッセージ';
+  }
 }

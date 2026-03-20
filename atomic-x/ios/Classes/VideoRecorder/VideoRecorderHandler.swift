@@ -134,9 +134,9 @@ class VideoRecorderHandler: NSObject {
             )
             .environmentObject(self.themeState)
             
-            let hostingController = UIHostingController(rootView: videoRecorderView)
+            let hostingController = PortraitHostingController(rootView: videoRecorderView)
             hostingController.modalPresentationStyle = .fullScreen
-            
+
             viewController.present(hostingController, animated: true)
         }
     }
@@ -177,5 +177,15 @@ class VideoRecorderHandler: NSObject {
         
         pendingResult?(resultMap)
         pendingResult = nil
+    }
+}
+
+class PortraitHostingController<Content: View>: UIHostingController<Content> {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+
+    override var shouldAutorotate: Bool {
+        return false
     }
 }

@@ -1,0 +1,3 @@
+NSCameraUsageDescription = "カメラへのアクセス権限が必要です。";
+NSMicrophoneUsageDescription = "マイクへのアクセス権限が必要です。";
+NSPhotoLibraryUsageDescription = "写真ライブラリへのアクセス権限が必要です。";

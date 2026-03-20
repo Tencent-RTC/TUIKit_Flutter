@@ -6,6 +6,7 @@ import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
 import 'package:tuikit_atomic_x/third_party/extended_text/extended_text.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 typedef BackgroundBuilder = Widget Function(Widget child);
 
@@ -15,7 +16,6 @@ class TextMessageWidget extends StatefulWidget {
   final double maxWidth;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
-  final ValueChanged<String>? onLinkTapped;
   final GlobalKey? bubbleKey;
   final BackgroundBuilder? backgroundBuilder;
   final VoidCallback? onResendTap;
@@ -36,7 +36,6 @@ class TextMessageWidget extends StatefulWidget {
     required this.config,
     this.onTap,
     this.onLongPress,
-    this.onLinkTapped,
     this.bubbleKey,
     this.backgroundBuilder,
     this.onResendTap,
@@ -226,14 +225,9 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
           // Translated text content
           ExtendedText(
             _getContentSpan(translatedDisplayText, colors),
-            onSpecialTextTap: (dynamic parameter) {
-              if (parameter.toString().startsWith('\$')) {
-                widget.onLinkTapped?.call((parameter.toString()).replaceAll('\$', ''));
-              }
-            },
             specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
               colorScheme: colors,
-              onTapUrl: widget.onLinkTapped ?? (_) {},
+              onTapUrl: _launchUrl,
               showAtBackground: true,
             ),
             style: TextStyle(
@@ -323,14 +317,9 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
 
     return ExtendedText(
       _getContentSpan(text, colorsTheme),
-      onSpecialTextTap: (dynamic parameter) {
-        if (parameter.toString().startsWith('\$')) {
-          widget.onLinkTapped?.call((parameter.toString()).replaceAll('\$', ''));
-        }
-      },
       specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
         colorScheme: colorsTheme,
-        onTapUrl: widget.onLinkTapped ?? (_) {},
+        onTapUrl: _launchUrl,
         showAtBackground: true,
       ),
       style: TextStyle(
@@ -340,6 +329,15 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
         height: 1.4,
       ),
     );
+  }
+
+  void _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      debugPrint('cannot open url: $url');
+    }
   }
 
   String _getContentSpan(String text, SemanticColorScheme colors) {

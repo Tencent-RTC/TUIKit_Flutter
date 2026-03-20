@@ -1,3 +1,9 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
+
 import 'permission_method_channel.dart';
 
 /// Permission types supported by the plugin.
@@ -97,7 +103,7 @@ class Permission {
   static Future<PermissionStatus> check(PermissionType permission) async {
     try {
       final result = await _channel.invokeMethod<String>(
-        'getPermissionStatus',
+        'checkPermissionStatus',
         {'permission': permission.platformValue},
       );
       return PermissionStatus.fromString(result ?? 'denied');
@@ -111,8 +117,7 @@ class Permission {
     List<PermissionType> permissions,
   ) async {
     try {
-      final permissionStrings =
-          permissions.map((p) => p.platformValue).toList();
+      final permissionStrings = permissions.map((p) => p.platformValue).toList();
       final result = await _channel.invokeMethod<Map>(
         'requestPermissions',
         {'permissions': permissionStrings},
@@ -140,6 +145,145 @@ class Permission {
       return result ?? false;
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Request permissions with smart dialog behavior.
+  ///
+  /// Returns `true` if all requested permissions are granted or limited.
+  /// Returns `false` if any permission is not granted.
+  ///
+  /// Behavior:
+  /// 1. **Check** the current status of each permission via `checkPermissionStatus`
+  ///    on the native side, which uses `!isGranted && !shouldShowRationale` without
+  ///    relying on `requestedAndroidPermissions`. This may produce false positives
+  ///    for "never asked" permissions (since `shouldShowRationale` returns false
+  ///    for both "never asked" and "permanently denied").
+  /// 2. **Request** permissions via the normal flow, which on the native side uses
+  ///    `getPermissionTypeStatus` with `requestedAndroidPermissions` — only
+  ///    permissions that were actually requested can be reported as
+  ///    `permanentlyDenied`.
+  /// 3. Show settings dialog **only when BOTH** `check` and `request` return
+  ///    `permanentlyDenied`. This filters out:
+  ///    - "Never asked" false positives: check → permanentlyDenied (false positive),
+  ///      request → granted/denied (user made a choice) → no dialog.
+  ///    - "User just chose Don't Ask Again": check → denied (shouldShow was true),
+  ///      request → permanentlyDenied → no dialog (respects user's immediate choice).
+  ///
+  /// [context] is required for showing the permission dialog.
+  /// [permissionTypes] is the list of permissions to request.
+  static Future<bool> checkAndRequest(
+    BuildContext context,
+    List<PermissionType> permissionTypes,
+  ) async {
+    if (kIsWeb) {
+      return true;
+    }
+
+    // Step 1: Check current status.
+    bool checkReturnedPermanentlyDenied = false;
+    for (final type in permissionTypes) {
+      final status = await Permission.check(type);
+      if (status == PermissionStatus.permanentlyDenied) {
+        checkReturnedPermanentlyDenied = true;
+        break;
+      }
+    }
+
+    // Step 2: Always request — this serves as either the normal permission
+    // request or a probe to verify a real permanentlyDenied.
+    Map<PermissionType, PermissionStatus> statusMap = await Permission.request(permissionTypes);
+
+    bool allGranted = permissionTypes.every((type) {
+      final status = statusMap[type] ?? PermissionStatus.denied;
+      return status == PermissionStatus.granted || status == PermissionStatus.limited;
+    });
+
+    if (allGranted) {
+      return true;
+    }
+
+    // Step 3: Show settings dialog only when BOTH conditions are met:
+    //   a) check() returned permanentlyDenied (pre-request signal)
+    //   b) request() also returned permanentlyDenied (post-request confirmation)
+    // This filters out the false-positive "never asked" case: if the permission
+    // was truly never asked, request() will trigger the system dialog and return
+    // granted/denied (not permanentlyDenied), so condition (b) won't be met.
+    //
+    // It also handles the "user just chose Don't Ask Again" case: check()
+    // returned denied (shouldShow was true), so condition (a) won't be met,
+    // and we return silently — respecting the user's immediate choice.
+    if (checkReturnedPermanentlyDenied) {
+      bool requestReturnedPermanentlyDenied = permissionTypes.any((type) {
+        final status = statusMap[type] ?? PermissionStatus.denied;
+        return status == PermissionStatus.permanentlyDenied;
+      });
+
+      if (requestReturnedPermanentlyDenied && context.mounted) {
+        // Find the first permanently denied permission type for the dialog message.
+        final permanentlyDeniedType = permissionTypes.firstWhere(
+          (type) => (statusMap[type] ?? PermissionStatus.denied) == PermissionStatus.permanentlyDenied,
+          orElse: () => permissionTypes.first,
+        );
+        final bool shouldOpenSettings = await showPermissionDialog(context, permanentlyDeniedType);
+        if (shouldOpenSettings) {
+          await Permission.openAppSettings();
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /// Show a dialog informing the user that permission is needed,
+  /// with options to cancel or go to app settings.
+  ///
+  /// The dialog content varies based on [permissionType] to show
+  /// a specific message for each permission (camera, microphone, etc.).
+  ///
+  /// Returns `true` if the user chooses to open settings, `false` otherwise.
+  static Future<bool> showPermissionDialog(BuildContext context, PermissionType permissionType) {
+    final completer = Completer<bool>();
+    final atomicLocal = AtomicLocalizations.of(context);
+
+    AtomicAlertDialog.show(
+      context,
+      title: atomicLocal.permissionNeeded,
+      content: _getPermissionDeniedText(atomicLocal, permissionType),
+      cancelText: atomicLocal.cancel,
+      confirmText: atomicLocal.confirm,
+      barrierDismissible: false,
+      onConfirm: () {
+        if (!completer.isCompleted) {
+          completer.complete(true);
+        }
+      },
+      onCancel: () {
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
+      },
+    );
+
+    return completer.future;
+  }
+
+  /// Returns the localized permission-denied text for the given [permissionType].
+  static String _getPermissionDeniedText(AtomicLocalizations l10n, PermissionType permissionType) {
+    switch (permissionType) {
+      case PermissionType.camera:
+        return l10n.permissionDeniedCamera;
+      case PermissionType.microphone:
+        return l10n.permissionDeniedMicrophone;
+      case PermissionType.photos:
+        return l10n.permissionDeniedPhotos;
+      case PermissionType.storage:
+        return l10n.permissionDeniedStorage;
+      case PermissionType.notification:
+        return l10n.permissionDeniedNotification;
+      case PermissionType.systemAlertWindow:
+      case PermissionType.displayOverOtherApps:
+        return l10n.permissionDeniedContent;
     }
   }
 }

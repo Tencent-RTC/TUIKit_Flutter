@@ -13,7 +13,7 @@ class AlbumPickerHandler: NSObject {
     private var eventSink: ((Any) -> Void)?
     private let languageState = LanguageState()
     private let themeState = ThemeState()
-    
+
     init(viewController: UIViewController?, eventSink: @escaping (Any) -> Void) {
         self.viewController = viewController
         self.eventSink = eventSink
@@ -189,21 +189,40 @@ class AlbumPickerHandler: NSObject {
     }
     
     private func checkPhotoLibraryPermission(completion: @escaping (Bool) -> Void) {
-        let status = PHPhotoLibrary.authorizationStatus()
-        
-        switch status {
-        case .authorized, .limited:
-            completion(true)
-        case .notDetermined:
-            PHPhotoLibrary.requestAuthorization { newStatus in
-                DispatchQueue.main.async {
-                    completion(newStatus == .authorized || newStatus == .limited)
+        if #available(iOS 14, *) {
+            // Use iOS 14+ API for accurate permission status
+            let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+            switch status {
+            case .authorized, .limited:
+                completion(true)
+            case .notDetermined:
+                PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
+                    DispatchQueue.main.async {
+                        completion(newStatus == .authorized || newStatus == .limited)
+                    }
                 }
+            case .denied, .restricted:
+                completion(false)
+            @unknown default:
+                completion(false)
             }
-        case .denied, .restricted:
-            completion(false)
-        @unknown default:
-            completion(false)
+        } else {
+            // Fallback for iOS 13 and earlier
+            let status = PHPhotoLibrary.authorizationStatus()
+            switch status {
+            case .authorized, .limited:
+                completion(true)
+            case .notDetermined:
+                PHPhotoLibrary.requestAuthorization { newStatus in
+                    DispatchQueue.main.async {
+                        completion(newStatus == .authorized || newStatus == .limited)
+                    }
+                }
+            case .denied, .restricted:
+                completion(false)
+            @unknown default:
+                completion(false)
+            }
         }
     }
     
@@ -292,7 +311,7 @@ class AlbumPickerHandler: NSObject {
         }
         
         print("[AlbumPickerHandler] Processed file: path=\(mediaPath), size=\(fileSize), type=\(mediaType)")
-        
+
         // 构建数据字典
         var dataDict: [String: Any] = [
             "id": model.id,
@@ -319,7 +338,7 @@ class AlbumPickerHandler: NSObject {
         
         eventSink?(event)
     }
-    
+
 
 }
 

@@ -1,0 +1,3 @@
+NSCameraUsageDescription = "Camera access is required.";
+NSMicrophoneUsageDescription = "Microphone access is required.";
+NSPhotoLibraryUsageDescription = "Photo library access is required.";

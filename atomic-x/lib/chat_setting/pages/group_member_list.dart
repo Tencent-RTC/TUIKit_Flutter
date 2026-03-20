@@ -73,6 +73,12 @@ class _GroupMemberListState extends State<GroupMemberList> {
   }
 
   bool _canSetAdmin(GroupMember member) {
+    // Work group cannot set admin
+    final groupType = widget.settingStore.groupSettingState.groupType;
+    if (groupType == GroupType.work) {
+      return false;
+    }
+
     if (widget.settingStore.groupSettingState.currentUserRole != GroupMemberRole.owner) {
       return false;
     }

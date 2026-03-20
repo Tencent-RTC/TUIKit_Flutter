@@ -193,18 +193,30 @@ class AlbumPickerImageManager: NSObject, ObservableObject {
         let options = PHImageRequestOptions()
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
+        options.isSynchronous = false
         options.deliveryMode = .opportunistic
+        options.progressHandler = { progress, error, stop, info in
+            if let error = error {
+                print("[AlbumPickerImageManager] iCloud download error: \(error.localizedDescription)")
+            }
+        }
         
         let targetSize: CGSize
         if photoWidth == CGFloat.greatestFiniteMagnitude {
-            targetSize = PHImageManagerMaximumSize
+            targetSize = CGSize(width: 4096, height: 4096)
         } else {
             targetSize = CGSize(width: photoWidth, height: photoWidth)
         }
         
         return cachingImageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: options) { image, info in
             let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool ?? false
-            completion(image, info, isDegraded)
+            if Thread.isMainThread {
+                completion(image, info, isDegraded)
+            } else {
+                DispatchQueue.main.async {
+                    completion(image, info, isDegraded)
+                }
+            }
         }
     }
     
@@ -213,19 +225,26 @@ class AlbumPickerImageManager: NSObject, ObservableObject {
         let options = PHImageRequestOptions()
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = networkAccessAllowed
+        options.isSynchronous = false
         options.deliveryMode = .opportunistic
         options.progressHandler = progressHandler
         
         let targetSize: CGSize
         if photoWidth == CGFloat.greatestFiniteMagnitude {
-            targetSize = PHImageManagerMaximumSize
+            targetSize = CGSize(width: 4096, height: 4096)
         } else {
             targetSize = CGSize(width: photoWidth, height: photoWidth)
         }
         
         return cachingImageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: options) { image, info in
             let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool ?? false
-            completion(image, info, isDegraded)
+            if Thread.isMainThread {
+                completion(image, info, isDegraded)
+            } else {
+                DispatchQueue.main.async {
+                    completion(image, info, isDegraded)
+                }
+            }
         }
     }
     

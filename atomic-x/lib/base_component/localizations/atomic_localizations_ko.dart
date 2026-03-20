@@ -309,16 +309,20 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get groupCommunityType => '지역 사회';
 
   @override
-  String get groupWorkDesc => '친구 작업 그룹(Work) : 일반 위챗 그룹과 유사하게 생성 후, 이미 그룹에 속한 친구만 그룹에 초대할 수 있으며, 초대한 당사자의 동의나 그룹의 승인이 필요하지 않습니다. 소유자.';
+  String get groupWorkDesc =>
+      '친구 작업 그룹(Work) : 일반 위챗 그룹과 유사하게 생성 후, 이미 그룹에 속한 친구만 그룹에 초대할 수 있으며, 초대한 당사자의 동의나 그룹의 승인이 필요하지 않습니다. 소유자.';
 
   @override
-  String get groupPublicDesc => '낯선 소셜 그룹(공개): QQ 그룹과 마찬가지로 그룹 생성 후 그룹 소유자가 그룹 관리자를 지정할 수 있습니다. 사용자가 그룹 ID를 검색하고 그룹 가입 신청을 시작한 후 그룹에 가입하기 전에 그룹 소유자 또는 관리자의 승인이 필요합니다. .';
+  String get groupPublicDesc =>
+      '낯선 소셜 그룹(공개): QQ 그룹과 마찬가지로 그룹 생성 후 그룹 소유자가 그룹 관리자를 지정할 수 있습니다. 사용자가 그룹 ID를 검색하고 그룹 가입 신청을 시작한 후 그룹에 가입하기 전에 그룹 소유자 또는 관리자의 승인이 필요합니다. .';
 
   @override
-  String get groupMeetingDesc => '임시 회의 그룹(Meeting): 생성 후 마음대로 입장 및 퇴장할 수 있으며, 그룹에 참여하기 전 메시지 보기를 지원합니다. 음성 및 영상 회의 시나리오, 온라인 교육 시나리오 및 실시간 오디오와 결합된 기타 시나리오에 적합합니다. 그리고 비디오 제품.';
+  String get groupMeetingDesc =>
+      '임시 회의 그룹(Meeting): 생성 후 마음대로 입장 및 퇴장할 수 있으며, 그룹에 참여하기 전 메시지 보기를 지원합니다. 음성 및 영상 회의 시나리오, 온라인 교육 시나리오 및 실시간 오디오와 결합된 기타 시나리오에 적합합니다. 그리고 비디오 제품.';
 
   @override
-  String get groupCommunityDesc => '커뮤니티: 생성 후 자유롭게 입장 및 탈퇴가 가능하며, 기록 메시지 저장을 지원하며, 사용자가 그룹 ID를 검색하고 그룹 신청을 한 후 관리자 승인 없이 그룹에 가입할 수 있습니다.';
+  String get groupCommunityDesc =>
+      '커뮤니티: 생성 후 자유롭게 입장 및 탈퇴가 가능하며, 기록 메시지 저장을 지원하며, 사용자가 그룹 ID를 검색하고 그룹 신청을 한 후 관리자 승인 없이 그룹에 가입할 수 있습니다.';
 
   @override
   String get groupDetail => '그룹 채팅 세부정보';
@@ -630,7 +634,8 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get invite => '초대하다';
 
   @override
-  String get groupApplicationAllReadyBeenProcessed => '이 초대 또는 신청 요청은 이미 처리되었습니다.';
+  String get groupApplicationAllReadyBeenProcessed =>
+      '이 초대 또는 신청 요청은 이미 처리되었습니다.';
 
   @override
   String get accepted => '동의함';
@@ -810,7 +815,22 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get permissionNeeded => '필수 권한';
 
   @override
-  String get permissionDeniedContent => '설정으로 가서 사진 권한을 허용해 주세요.';
+  String get permissionDeniedContent => '설정으로 가서 필요한 권한을 허용해 주세요.';
+
+  @override
+  String get permissionDeniedCamera => '설정으로 가서 카메라 권한을 허용해 주세요.';
+
+  @override
+  String get permissionDeniedMicrophone => '설정으로 가서 마이크 권한을 허용해 주세요.';
+
+  @override
+  String get permissionDeniedPhotos => '설정으로 가서 사진 권한을 허용해 주세요.';
+
+  @override
+  String get permissionDeniedStorage => '설정으로 가서 저장소 권한을 허용해 주세요.';
+
+  @override
+  String get permissionDeniedNotification => '설정으로 가서 알림 권한을 허용해 주세요.';
 
   @override
   String maxCountFile(Object maxCount) {
@@ -1017,10 +1037,12 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get messageReadReceipt => '메시지 읽음 상태';
 
   @override
-  String get messageReadReceiptEnabledDesc => '끄면 보내고 받는 메시지에 메시지 읽음 상태가 표시되지 않으며, 상대방이 메시지를 읽었는지 확인할 수 없고 상대방도 당신이 메시지를 읽었는지 확인할 수 없습니다.';
+  String get messageReadReceiptEnabledDesc =>
+      '끄면 보내고 받는 메시지에 메시지 읽음 상태가 표시되지 않으며, 상대방이 메시지를 읽었는지 확인할 수 없고 상대방도 당신이 메시지를 읽었는지 확인할 수 없습니다.';
 
   @override
-  String get messageReadReceiptDisabledDesc => '켜면 그룹 채팅에서 보내고 받는 메시지에 메시지 읽음 상태가 표시되며, 상대방이 메시지를 읽었는지 확인할 수 있습니다. 개인 채팅 친구도 메시지 읽음 상태를 켜면, 해당 친구와의 개인 채팅에서 보내고 받는 메시지에도 메시지 읽음 상태가 표시됩니다.';
+  String get messageReadReceiptDisabledDesc =>
+      '켜면 그룹 채팅에서 보내고 받는 메시지에 메시지 읽음 상태가 표시되며, 상대방이 메시지를 읽었는지 확인할 수 있습니다. 개인 채팅 친구도 메시지 읽음 상태를 켜면, 해당 친구와의 개인 채팅에서 보내고 받는 메시지에도 메시지 읽음 상태가 표시됩니다.';
 
   @override
   String get appearance => '외관';
@@ -1257,4 +1279,12 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
 
   @override
   String get aiSubtitleLanguageRussian => 'Русский (러시아어)';
+
+  @override
+  String get backToLatest => '최신 위치로 돌아가기';
+
+  @override
+  String newMessageCount(int count) {
+    return '$count개의 새 메시지';
+  }
 }
