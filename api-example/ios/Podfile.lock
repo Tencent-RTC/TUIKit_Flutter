@@ -1,0 +1,73 @@
+PODS:
+  - atomic_x_core (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - HydraAsync (2.0.6)
+  - permission_handler_apple (9.3.0):
+    - Flutter
+  - rtc_room_engine_impl (4.0.0):
+    - Flutter
+    - RTCRoomEngine/Professional (~> 4.0.0)
+  - RTCRoomEngine/Professional (4.0.0):
+    - TXIMSDK_Plus_iOS_XCFramework (>= 8.4.6676)
+    - TXLiteAVSDK_Professional (>= 12.8.0.19666)
+  - tencent_cloud_chat_sdk (8.0.0):
+    - Flutter
+    - HydraAsync
+    - TXIMSDK_Plus_iOS_XCFramework (~> 8.9.7511)
+  - tencent_rtc_sdk (0.0.1):
+    - Flutter
+    - TXCustomBeautyProcesserPlugin (= 1.0.2)
+    - TXLiteAVSDK_Professional (~> 13.1.20454)
+  - TXCustomBeautyProcesserPlugin (1.0.2)
+  - TXIMSDK_Plus_iOS_XCFramework (8.9.7511)
+  - TXLiteAVSDK_Professional (13.1.20476):
+    - TXLiteAVSDK_Professional/Professional (= 13.1.20476)
+  - TXLiteAVSDK_Professional/Professional (13.1.20476)
+
+DEPENDENCIES:
+  - atomic_x_core (from `.symlinks/plugins/atomic_x_core/ios`)
+  - Flutter (from `Flutter`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - rtc_room_engine_impl (from `.symlinks/plugins/rtc_room_engine_impl/ios`)
+  - tencent_cloud_chat_sdk (from `.symlinks/plugins/tencent_cloud_chat_sdk/ios`)
+  - tencent_rtc_sdk (from `.symlinks/plugins/tencent_rtc_sdk/ios`)
+
+SPEC REPOS:
+  trunk:
+    - HydraAsync
+    - RTCRoomEngine
+    - TXCustomBeautyProcesserPlugin
+    - TXIMSDK_Plus_iOS_XCFramework
+    - TXLiteAVSDK_Professional
+
+EXTERNAL SOURCES:
+  atomic_x_core:
+    :path: ".symlinks/plugins/atomic_x_core/ios"
+  Flutter:
+    :path: Flutter
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  rtc_room_engine_impl:
+    :path: ".symlinks/plugins/rtc_room_engine_impl/ios"
+  tencent_cloud_chat_sdk:
+    :path: ".symlinks/plugins/tencent_cloud_chat_sdk/ios"
+  tencent_rtc_sdk:
+    :path: ".symlinks/plugins/tencent_rtc_sdk/ios"
+
+SPEC CHECKSUMS:
+  atomic_x_core: 9ab26b4f42d08021f68ba622a35835e1f58cc463
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  HydraAsync: 8d589bd725b0224f899afafc9a396327405f8063
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  rtc_room_engine_impl: 9d43ff58d1fd38fad9d728eea531f5d4e9e62ea0
+  RTCRoomEngine: 0c233711ab09f0024caad25c7b1083cbb96afee6
+  tencent_cloud_chat_sdk: c57441f99ee254fa8b368a5f18e29065af890899
+  tencent_rtc_sdk: b17c1910a71977d5eba2d207bcae4e6db7ce06a7
+  TXCustomBeautyProcesserPlugin: 099393b941cb40eda12b3a80bf6c0319957b1cfd
+  TXIMSDK_Plus_iOS_XCFramework: 10893791aa5c27b2b689ae3547878d10aeea9b7b
+  TXLiteAVSDK_Professional: 9ecc756f4222a2667e4a5d852dd006ee7af9b0ac
+
+PODFILE CHECKSUM: 890618e4c339b5eb0953287905bb82b622501047
+
+COCOAPODS: 1.15.2
