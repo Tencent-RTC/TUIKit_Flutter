@@ -1,0 +1,355 @@
+{
+  "@@locale": "en",
+
+  "loginTitle": "LiveKit API Example",
+  "loginSubtitle": "Login to start",
+  "loginUserIDPlaceholder": "Enter User ID",
+  "loginUserSigPlaceholder": "User Sig (Auto-generated)",
+  "loginButton": "Login",
+  "loginStatusNotLoggedIn": "Not logged in",
+  "loginStatusLoggingIn": "Logging in...",
+  "loginStatusLoggedIn": "Logged in",
+  "loginErrorEmptyUserID": "Please enter User ID",
+  "loginErrorLoginFailed": "Login failed: {error}",
+  "@loginErrorLoginFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loginDebugTip": "UserSig will be generated locally (debug mode only)",
+  "loginErrorKickedOffline": "You have been kicked offline, please login again",
+  "loginErrorLoginExpired": "Login expired, please login again",
+
+  "profileTitle": "Profile Setup",
+  "profileHeader": "Set Up Your Profile",
+  "profileSubtitle": "Set your nickname and avatar so others can recognize you",
+  "profileNicknamePlaceholder": "Enter nickname",
+  "profileConfirm": "Done",
+  "profileSkip": "Skip",
+  "profileStatusSaved": "Profile saved successfully",
+  "profileErrorEmptyNickname": "Please enter a nickname",
+  "profileErrorSaveFailed": "Save failed: {error}",
+  "@profileErrorSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "featureListTitle": "Features",
+  "featureListSectionHeader": "Select Feature",
+  "featureListLanguage": "Switch Language",
+
+  "roleSelectTitle": "Select Role",
+  "roleSelectSubtitle": "Choose your experience role",
+  "roleSelectAnchor": "Anchor",
+  "roleSelectAnchorDesc": "Can create live, initiate co-host, start PK",
+  "roleSelectAudience": "Audience",
+  "roleSelectAudienceDesc": "Can watch live, send barrage, send gifts, apply for co-host",
+
+  "liveIDInputTitleAnchor": "Enter Room ID",
+  "liveIDInputTitleAudience": "Enter Room ID",
+  "liveIDInputMessageAnchor": "A random Room ID has been generated, you can modify or randomize it",
+  "liveIDInputMessageAudience": "Please enter the Room ID to join",
+  "liveIDInputPlaceholder": "9-digit Room ID",
+  "liveIDInputRandom": "🎲 Randomize",
+  "liveIDInputErrorEmpty": "Room ID cannot be empty",
+
+  "stageBasicStreaming": "Basic Streaming",
+  "stageBasicStreamingDesc": "start/join live",
+  "stageInteractive": "Interactive",
+  "stageInteractiveDesc": "Barrage, gifts, likes, beauty, sound effects",
+  "stageCoGuest": "Co-Guest",
+  "stageCoGuestDesc": "Audience list, guest connection request, host invitation, seat management",
+  "stageLivePK": "Live PK",
+  "stageLivePKDesc": "Cross-room host connection, PK battle, score display",
+
+  "basicStreamingTitle": "Basic Streaming",
+  "basicStreamingStartLive": "Start Live",
+  "basicStreamingStatusCreating": "Creating live...",
+  "basicStreamingStatusEnding": "Ending live...",
+  "basicStreamingStatusJoining": "Joining live...",
+  "basicStreamingStatusCreated": "Live created: {liveId}",
+  "@basicStreamingStatusCreated": {
+    "placeholders": {
+      "liveId": {
+        "type": "String"
+      }
+    }
+  },
+  "basicStreamingStatusJoined": "Joined live: {liveId}",
+  "@basicStreamingStatusJoined": {
+    "placeholders": {
+      "liveId": {
+        "type": "String"
+      }
+    }
+  },
+  "basicStreamingStatusEnded": "Live ended",
+  "basicStreamingStatusFailed": "Failed: {error}",
+  "@basicStreamingStatusFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "basicStreamingEndLiveConfirmTitle": "End Live",
+  "basicStreamingEndLiveConfirmMessage": "Are you sure you want to end the live?",
+
+  "interactiveTitle": "Interactive",
+  "interactiveSettingsTitle": "Settings",
+  "interactiveBarrageTitle": "Barrage",
+  "interactiveBarrageDescription": "Send and receive barrage messages",
+  "interactiveBarragePlaceholder": "Say something...",
+  "interactiveBarrageSend": "Send Barrage",
+  "interactiveGiftTitle": "Gifts",
+  "interactiveGiftDescription": "Send and receive gifts",
+  "interactiveGiftSend": "Send",
+  "interactiveGiftSent": "sent",
+  "interactiveLikeTitle": "Likes",
+  "interactiveLikeDescription": "Send and receive likes",
+  "interactiveLikeSend": "Send Like",
+  "interactiveBeautyTitle": "Beauty",
+  "interactiveBeautyDescription": "Enable beauty effects",
+  "interactiveBeautySmooth": "Smooth",
+  "interactiveBeautyWhiteness": "Whiteness",
+  "interactiveBeautyRuddy": "Ruddy",
+  "interactiveBeautyReset": "Reset All",
+  "interactiveAudioEffectTitle": "Audio Effects",
+  "interactiveAudioEffectChangerTitle": "Voice Changer",
+  "interactiveAudioEffectChangerNone": "None",
+  "interactiveAudioEffectChangerChild": "Child",
+  "interactiveAudioEffectChangerLittleGirl": "Girl",
+  "interactiveAudioEffectChangerMan": "Uncle",
+  "interactiveAudioEffectChangerEthereal": "Ethereal",
+  "interactiveAudioEffectReverbTitle": "Reverb",
+  "interactiveAudioEffectReverbNone": "None",
+  "interactiveAudioEffectReverbKtv": "KTV",
+  "interactiveAudioEffectReverbSmallRoom": "Room",
+  "interactiveAudioEffectReverbAuditorium": "Hall",
+  "interactiveAudioEffectReverbMetallic": "Metallic",
+  "interactiveAudioEffectEarMonitor": "Ear Monitor",
+  "interactiveAudioEffectEarMonitorVolume": "Monitor Volume",
+  "interactiveAudioEffectReset": "Reset All",
+  "interactiveErrorEmptyContent": "Please enter barrage content",
+  "interactiveSuccessGift": "Gift sent successfully",
+  "interactiveSuccessLike": "Like sent successfully",
+
+  "multiConnectTitle": "Co-Guest",
+
+  "coGuestAudienceListTitle": "Online Audience",
+  "coGuestAudienceListEmpty": "No audience online",
+  "coGuestAudienceListInvite": "Connect",
+  "coGuestAudienceListInviting": "Inviting",
+  "coGuestAudienceListConnected": "Connected",
+  "coGuestAudienceCount": "{count} Online",
+  "@coGuestAudienceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "coGuestStatusApplying": "Applying for connection...",
+  "coGuestStatusCancelled": "Connection request cancelled",
+  "coGuestStatusConnected": "Connected successfully",
+  "coGuestStatusDisconnected": "Disconnected",
+  "coGuestStatusInvited": "Connection invitation sent",
+
+  "coGuestApplicationTitle": "Connection Request",
+  "coGuestApplicationMessage": "{user} is requesting to connect",
+  "@coGuestApplicationMessage": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestApplicationAccept": "Accept",
+  "coGuestApplicationReject": "Reject",
+
+  "coGuestInvitationTitle": "Connection Invitation",
+  "coGuestInvitationMessage": "Host {user} is inviting you to connect",
+  "@coGuestInvitationMessage": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestInvitationAccept": "Accept",
+  "coGuestInvitationReject": "Reject",
+
+  "coGuestEventInviteAccepted": "{user} accepted the connection invitation",
+  "@coGuestEventInviteAccepted": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestEventInviteRejected": "{user} rejected the connection invitation",
+  "@coGuestEventInviteRejected": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestEventApplicationCancelled": "{user} cancelled the connection request",
+  "@coGuestEventApplicationCancelled": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestEventApplicationRejected": "{user} rejected your connection request",
+  "@coGuestEventApplicationRejected": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestEventApplicationTimeout": "Connection request timed out, please try again",
+  "coGuestEventKickedOff": "You have been removed from the connection",
+  "coGuestEventInvitationCancelled": "Host cancelled the connection invitation",
+
+  "coGuestManageTitle": "Manage {user}",
+  "@coGuestManageTitle": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "coGuestManageOpenCamera": "Request to open camera",
+  "coGuestManageCloseCamera": "Close camera",
+  "coGuestManageOpenMic": "Request to open microphone",
+  "coGuestManageCloseMic": "Close microphone",
+  "coGuestManageKickOff": "Remove from connection",
+
+  "coGuestSelfManageTitle": "Device Settings",
+  "coGuestSelfManageDisconnect": "Disconnect",
+  "coGuestSelfManageOpenCamera": "Turn On Camera",
+  "coGuestSelfManageCloseCamera": "Turn Off Camera",
+  "coGuestSelfManageOpenMic": "Turn On Microphone",
+  "coGuestSelfManageCloseMic": "Turn Off Microphone",
+
+  "coGuestDeviceCameraRequestTitle": "Turn On Camera",
+  "coGuestDeviceCameraRequestMessage": "The host requests you to turn on your camera",
+  "coGuestDeviceMicRequestTitle": "Turn On Microphone",
+  "coGuestDeviceMicRequestMessage": "The host requests you to turn on your microphone",
+  "coGuestDeviceCameraClosed": "Host has turned off your camera",
+  "coGuestDeviceMicClosed": "Host has turned off your microphone",
+
+  "livePKTitle": "Live PK",
+
+  "livePKCoHostConnect": "Connect",
+  "livePKCoHostDisconnect": "Disconnect",
+  "livePKCoHostConnecting": "Connecting...",
+  "livePKCoHostConnected": "Connected",
+  "livePKCoHostDisconnected": "Disconnected",
+  "livePKCoHostSelectHost": "Select Host",
+  "livePKCoHostEmptyList": "No other live rooms available",
+  "livePKCoHostRequestReceived": "{user} requests to connect",
+  "@livePKCoHostRequestReceived": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "livePKCoHostRequestAccepted": "{user} accepted the connection",
+  "@livePKCoHostRequestAccepted": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "livePKCoHostRequestRejected": "{user} rejected the connection",
+  "@livePKCoHostRequestRejected": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "livePKCoHostRequestTimeout": "Connection request timed out",
+  "livePKCoHostRequestCancelled": "Connection request cancelled",
+  "livePKCoHostUserLeft": "{user} left the connection",
+  "@livePKCoHostUserLeft": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "livePKCoHostConfirmDisconnect": "Are you sure you want to disconnect?",
+
+  "livePKBattleTitle": "PK Battle",
+  "livePKBattleStart": "Start PK",
+  "livePKBattleEnd": "End PK",
+  "livePKBattleRequesting": "PK requesting...",
+  "livePKBattleStarted": "PK Started!",
+  "livePKBattleEnded": "PK Ended",
+  "livePKBattleRequestReceived": "{user} challenges you to PK",
+  "@livePKBattleRequestReceived": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "livePKBattleRequestAccepted": "PK accepted",
+  "livePKBattleRequestRejected": "PK rejected",
+  "livePKBattleRequestTimeout": "PK request timed out",
+  "livePKBattleDuration": "PK Duration: {seconds} seconds",
+  "@livePKBattleDuration": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "livePKBattleScore": "{score1} : {score2}",
+  "@livePKBattleScore": {
+    "placeholders": {
+      "score1": {
+        "type": "int"
+      },
+      "score2": {
+        "type": "int"
+      }
+    }
+  },
+  "livePKBattleWin": "🏆 Win",
+  "livePKBattleLose": "Lose",
+  "livePKBattleDraw": "Draw",
+  "livePKBattleMe": "Me",
+  "livePKBattleConfirmEnd": "Are you sure you want to end PK?",
+
+  "livePKStatusIdle": "Waiting to connect",
+  "livePKStatusCoHostConnected": "Connected · Ready for PK",
+  "livePKStatusBattling": "PK in progress",
+
+  "deviceSettingTitle": "Device Settings",
+  "deviceSettingCamera": "Camera",
+  "deviceSettingMicrophone": "Microphone",
+  "deviceSettingFrontCamera": "Front Camera",
+  "deviceSettingMirror": "Mirror Mode",
+  "deviceSettingVideoQuality": "Video Quality",
+
+  "commonCancel": "Cancel",
+  "commonConfirm": "OK",
+  "commonError": "Error",
+  "commonSuccess": "Success",
+  "commonWarning": "Warning"
+}
