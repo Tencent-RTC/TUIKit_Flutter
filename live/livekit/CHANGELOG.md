@@ -1,5 +1,16 @@
 # TUILiveKit
 
+## 4.0.1
+- atomic_x_core upgraded to 4.0.1.
+- tencent_rtc_sdk upgraded to 13.2.
+- Default internationalization language set to English.
+- Added mobile game live-streaming (landscape game mode) with voice chat support.
+- TUILogin replaced with LoginStore.
+- Floating window functionality optimized.
+- Video streaming permission request flow optimized.
+- Fixed issue with voice chat streaming parameters not taking effect.
+- Updated live room cover image and background image.
+
 ## 3.6.4
 
 - atomic_x_core upgraded to 3.6.4, adapt to LiveCoreWidget.

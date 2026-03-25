@@ -1,6 +1,5 @@
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_widget.dart';
 
@@ -28,25 +27,8 @@ class TUILiveRoomAnchorOverlayState extends State<TUILiveRoomAnchorOverlay> {
     super.initState();
     LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
     LiveKitLogger.info("TUILiveRoomAnchorOverlay initState");
+    GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
-        String error = "Error: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!\n"
-            "You need to enable the floating window feature first.\n"
-            "It is recommended to execute the following in main.dart first: GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!");
-        if (mounted) Navigator.pop(context);
-        return;
-      }
-      if (Global.secondaryNavigatorKey.currentState == null) {
-        String error = "Error: Global.secondaryNavigatorKey is invalid!\n"
-            "Please refer to the home parameter of MaterialApp in example's main.dart.\n"
-            "You need to wrap the home page with a Navigator and use Global.secondaryNavigatorKey as the key for this Navigator.";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: Global.secondaryNavigatorKey is invalid!");
-        if (mounted) Navigator.pop(context);
-        return;
-      }
       if (GlobalFloatWindowManager.instance.isFloating()) {
         GlobalFloatWindowState state = GlobalFloatWindowManager.instance.state;
         if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
@@ -72,12 +54,19 @@ class TUILiveRoomAnchorOverlayState extends State<TUILiveRoomAnchorOverlay> {
       }
 
       GlobalFloatWindowManager.instance.overlayManager.setSwitchToFullScreenCallback(switchToFullScreenMode);
-      return TUILiveRoomAnchorWidget(
-          roomId: widget.roomId,
-          needPrepare: widget.needPrepare,
-          liveInfo: widget.liveInfo,
-          onStartLive: widget.onStartLive,
-          floatWindowController: controller);
+      return Navigator(
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) => TUILiveRoomAnchorWidget(
+                roomId: widget.roomId,
+                needPrepare: widget.needPrepare,
+                liveInfo: widget.liveInfo,
+                onStartLive: widget.onStartLive,
+                floatWindowController: controller),
+            settings: settings,
+          );
+        },
+      );
     });
   }
 

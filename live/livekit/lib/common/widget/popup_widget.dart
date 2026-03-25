@@ -5,7 +5,7 @@ import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 BottomSheetHandler popupWidget(Widget widget,
     {Color? barrierColor,
     Color? backgroundColor = LiveColors.designStandardG2,
-    BuildContext? context,
+    required BuildContext context,
     RouteSettings? routeSettings,
     bool isDismissible = true,
     VoidCallback? onDismiss}) {
@@ -15,7 +15,7 @@ BottomSheetHandler popupWidget(Widget widget,
     isScrollControlled: true,
     isDismissible: isDismissible,
     onDismiss: onDismiss,
-    context: context ?? Global.appContext(),
+    context: context,
     routeSettings: routeSettings,
     builder: (context) => Container(
       decoration: BoxDecoration(

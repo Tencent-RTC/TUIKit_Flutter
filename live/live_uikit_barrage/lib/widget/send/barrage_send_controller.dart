@@ -15,10 +15,7 @@ class BarrageSendController {
   double _inputKeyboardHeight = 0;
 
   BarrageSendController(
-      {required String roomId,
-      required String ownerId,
-      required String selfUserId,
-      String? selfName}) {
+      {required String roomId, required String ownerId, required String selfUserId, String? selfName}) {
     Store().manager.init(roomId, ownerId, selfUserId, selfName);
     focusNode.addListener(_handleFocusChange);
   }
@@ -38,9 +35,7 @@ class BarrageSendController {
   }
 
   double getInputKeyboardHeight(BuildContext context) {
-    return _inputKeyboardHeight > 0
-        ? _inputKeyboardHeight
-        : MediaQuery.viewInsetsOf(context).bottom;
+    return _inputKeyboardHeight > 0 ? _inputKeyboardHeight : MediaQuery.viewInsetsOf(context).bottom;
   }
 
   void inputEmoji(String displayText) {
@@ -64,9 +59,8 @@ class BarrageSendController {
 
       textEditingController.value = value.copyWith(
           text: newText,
-          selection: value.selection.copyWith(
-              baseOffset: end + displayText.length,
-              extentOffset: end + displayText.length));
+          selection:
+              value.selection.copyWith(baseOffset: end + displayText.length, extentOffset: end + displayText.length));
     } else {
       textEditingController.value = TextEditingValue(
         text: displayText,
@@ -77,8 +71,7 @@ class BarrageSendController {
     }
 
     SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-      textFieldKey.currentState
-          ?.bringIntoView(textEditingController.selection.base);
+      textFieldKey.currentState?.bringIntoView(textEditingController.selection.base);
     });
   }
 
@@ -136,9 +129,7 @@ class BarrageSendController {
 
   bool _isValidEmoji(String text, int start, int end) {
     String selectText = text.substring(start, end);
-    return text[start] == '[' &&
-        text[end - 1] == ']' &&
-        BarrageEmoji.emojiMap.containsValue(selectText);
+    return text[start] == '[' && text[end - 1] == ']' && BarrageEmoji.emojiMap.containsValue(selectText);
   }
 
   void _deleteText(String text, int start, int end) {
@@ -155,10 +146,7 @@ class BarrageSendController {
     }
     int first = text.codeUnitAt(index);
     int second = text.codeUnitAt(index + 1);
-    return first >= 0xD800 &&
-        first <= 0xDBFF &&
-        second >= 0xDC00 &&
-        second <= 0xDFFF;
+    return first >= 0xD800 && first <= 0xDBFF && second >= 0xDC00 && second <= 0xDFFF;
   }
 
   void _handleFocusChange() {

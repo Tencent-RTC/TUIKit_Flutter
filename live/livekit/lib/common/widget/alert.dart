@@ -40,10 +40,11 @@ class AlertHandler {
 }
 
 class Alert {
-  static AlertHandler showAlert(AlertInfo info, {BuildContext? context}) {
+  static AlertHandler showAlert(AlertInfo info, BuildContext context) {
     final handler = AlertHandler();
     showDialog(
-      context: context ?? Global.appContext(),
+      context: context,
+      useRootNavigator: false,
       barrierDismissible: false,
       builder: (builderContext) {
         handler._setContext(builderContext);

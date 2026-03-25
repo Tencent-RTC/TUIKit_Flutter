@@ -160,7 +160,7 @@ class _AnchorCoGuestFloatWidgetState extends State<AnchorCoGuestFloatWidget> {
 
 extension on _AnchorCoGuestFloatWidgetState {
   void _showCoGuestManagementPanelWidget() {
-    popupWidget(CoGuestManagePanelWidget(liveStreamManager: liveStreamManager));
+    popupWidget(context: context, CoGuestManagePanelWidget(liveStreamManager: liveStreamManager));
   }
 
   CoGuestState _getCoGuestState() {

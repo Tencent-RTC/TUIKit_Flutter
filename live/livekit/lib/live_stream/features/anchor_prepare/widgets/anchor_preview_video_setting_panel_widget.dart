@@ -99,12 +99,12 @@ class _AnchorPreviewVideoSettingPanelWidgetState extends State<AnchorPreviewVide
                     _showVideoQualitySelectionPanel();
                   },
                   child: ValueListenableBuilder(
-                      valueListenable: widget.liveStreamManager.mediaState.videoQuality,
+                      valueListenable: DeviceStore.shared.state.localVideoQuality,
                       builder: (context, videoQuality, _) {
                         return Row(
                           spacing: 4.width,
                           children: [
-                            Text(_getVideoQualityString(widget.liveStreamManager.mediaState.videoQuality.value),
+                            Text(_getVideoQualityString(DeviceStore.shared.state.localVideoQuality.value),
                                 style: TextStyle(
                                     color: LiveColors.designStandardFlowkitWhite.withAlpha(230),
                                     fontSize: 16,
@@ -135,7 +135,7 @@ extension on _AnchorPreviewVideoSettingPanelWidgetState {
 
     final videoQuality1080P = ActionSheetModel(
         isCenter: true,
-        text: _getVideoQualityString(TUIVideoQuality.videoQuality_1080P),
+        text: _getVideoQualityString(VideoQuality.quality1080P),
         textStyle: TextStyle(color: textColor, fontSize: 16),
         lineColor: lineColor,
         bingData: videoQuality1080PNumber);
@@ -143,7 +143,7 @@ extension on _AnchorPreviewVideoSettingPanelWidgetState {
 
     final videoQuality720P = ActionSheetModel(
         isCenter: true,
-        text: _getVideoQualityString(TUIVideoQuality.videoQuality_720P),
+        text: _getVideoQualityString(VideoQuality.quality720P),
         textStyle: TextStyle(color: textColor, fontSize: 16),
         lineColor: lineColor,
         bingData: videoQuality720PNumber);
@@ -157,29 +157,34 @@ extension on _AnchorPreviewVideoSettingPanelWidgetState {
         bingData: cancelNumber);
     menuData.add(cancel);
 
-    ActionSheet.show(menuData, (model) {
-      switch (model.bingData) {
-        case videoQuality1080PNumber:
-          widget.liveStreamManager.updateVideoQuality(TUIVideoQuality.videoQuality_1080P);
-          break;
-        case videoQuality720PNumber:
-          widget.liveStreamManager.updateVideoQuality(TUIVideoQuality.videoQuality_720P);
-          break;
-        default:
-          break;
-      }
-    }, backgroundColor: LiveColors.designBgColorOperate);
+    ActionSheet.show(
+      menuData,
+      (model) {
+        switch (model.bingData) {
+          case videoQuality1080PNumber:
+            widget.liveStreamManager.updateVideoQuality(VideoQuality.quality1080P);
+            break;
+          case videoQuality720PNumber:
+            widget.liveStreamManager.updateVideoQuality(VideoQuality.quality720P);
+            break;
+          default:
+            break;
+        }
+      },
+      parentContext: context,
+      backgroundColor: LiveColors.designBgColorOperate,
+    );
   }
 
-  String _getVideoQualityString(TUIVideoQuality videoQuality) {
+  String _getVideoQualityString(VideoQuality videoQuality) {
     switch (videoQuality) {
-      case TUIVideoQuality.videoQuality_1080P:
+      case VideoQuality.quality1080P:
         return '1080P';
-      case TUIVideoQuality.videoQuality_720P:
+      case VideoQuality.quality720P:
         return '720P';
-      case TUIVideoQuality.videoQuality_540P:
+      case VideoQuality.quality540P:
         return '540P';
-      case TUIVideoQuality.videoQuality_360P:
+      case VideoQuality.quality360P:
         return '360P';
       default:
         return 'unknown';

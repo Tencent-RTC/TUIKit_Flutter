@@ -217,7 +217,7 @@ extension on _SeatInvitationPanelWidgetState {
           _coGuestStore.inviteToSeat(inviteeID: audience.userID, seatIndex: seatIndex, timeout: defaultTimeout);
 
       if (seatIndex != -1 && mounted) {
-        Navigator.of(Global.appContext()).pop();
+        Navigator.of(context).pop();
       }
 
       final result = await future;

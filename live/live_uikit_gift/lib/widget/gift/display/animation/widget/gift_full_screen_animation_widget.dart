@@ -1,7 +1,6 @@
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
 import 'package:flutter/material.dart';
-
-// import 'package:flutter_effect_player/ftceffect_player.dart';
+import 'package:flutter_effect_player/ftceffect_player.dart';
 import 'package:live_uikit_gift/live_uikit_gift.dart';
 import 'package:live_uikit_gift/widget/gift/display/animation/manager/list_manager.dart';
 import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
@@ -24,9 +23,8 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
     with SingleTickerProviderStateMixin {
   late SVGAAnimationController _svgaAnimationController;
   late AnimationStatusListener _svgaAnimationStatusListener;
-
-  // FTCEffectViewController? _effectViewController;
-  // final FTCEffectConfig _effectConfig = FTCEffectConfig();
+  FTCEffectViewController? _effectViewController;
+  final FTCEffectConfig _effectConfig = FTCEffectConfig();
 
   ListManager<TUIGiftData> giftQueue = ListManager<TUIGiftData>(maxLength: 3);
   ValueNotifier<String> currentAnimationUrl = ValueNotifier('');
@@ -48,7 +46,7 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
     TUIGiftStore().giftDataMap.removeListener(_onReceiveGiftData);
     _svgaAnimationController.removeStatusListener(_svgaAnimationStatusListener);
     _svgaAnimationController.dispose();
-    // _effectViewController = null;
+    _effectViewController = null;
     super.dispose();
   }
 
@@ -58,12 +56,12 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
         valueListenable: currentAnimationUrl,
         builder: (context, animationUrl, _) {
           return Stack(children: [
-            // FTCEffectAnimView(
-            //     controllerCallback: (controller) async {
-            //       await _setupEffectViewController(controller);
-            //       _playAnimation();
-            //     }
-            // ),
+            FTCEffectAnimView(
+                controllerCallback: (controller) async {
+                  await _setupEffectViewController(controller);
+                  _playAnimation();
+                }
+            ),
             SVGAImage(
               _svgaAnimationController,
               fit: BoxFit.contain,
@@ -115,36 +113,27 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
   }
 
   Future<bool> _isAnimating() async {
-    // final result = await _effectViewController?.isPlaying() ?? false;
-    // return result || _svgaAnimationController.isAnimating;
-    return _svgaAnimationController.isAnimating;
+    final result = await _effectViewController?.isPlaying() ?? false;
+    return result || _svgaAnimationController.isAnimating;
   }
 
   Widget _getAnimationWidget(String animationUrl) {
-    // AnimationSourceType sourceType = _getSourceType(animationUrl);
-    // if (isTCEffectPlayerUsable && sourceType == AnimationSourceType.mp4) {
-    //   return FTCEffectAnimView(
-    //     controllerCallback: (controller) async {
-    //       await _setupEffectViewController(controller);
-    //     },
-    //   );
-    // } else {
-    //   return SVGAImage(
-    //     _svgaAnimationController,
-    //     fit: BoxFit.contain,
-    //     clearsAfterStop: true,
-    //     allowDrawingOverflow: false,
-    //     filterQuality: FilterQuality.low,
-    //   );
-    // }
-
-    return SVGAImage(
-      _svgaAnimationController,
-      fit: BoxFit.contain,
-      clearsAfterStop: true,
-      allowDrawingOverflow: false,
-      filterQuality: FilterQuality.low,
-    );
+    AnimationSourceType sourceType = _getSourceType(animationUrl);
+    if (isTCEffectPlayerUsable && sourceType == AnimationSourceType.mp4) {
+      return FTCEffectAnimView(
+        controllerCallback: (controller) async {
+          await _setupEffectViewController(controller);
+        },
+      );
+    } else {
+      return SVGAImage(
+        _svgaAnimationController,
+        fit: BoxFit.contain,
+        clearsAfterStop: true,
+        allowDrawingOverflow: false,
+        filterQuality: FilterQuality.low,
+      );
+    }
   }
 
   AnimationSourceType _getSourceType(String animationUrl) {
@@ -204,35 +193,35 @@ extension SVGAPlayer on GiftFullScreenAnimationWidgetState {
 }
 
 extension EffectPlayer on GiftFullScreenAnimationWidgetState {
-  // Future<void> _setupEffectViewController(FTCEffectViewController controller) async {
-  //   _effectViewController = controller;
-  //   _effectViewController?.setPlayListener(FAnimPlayListener(
-  //       onPlayStart: () {},
-  //       onPlayEnd: () {
-  //         debugPrint("GiftFullScreenAnimationWidget _onEffectPlayerAnimationStatusChange:completed stop");
-  //         currentAnimationUrl.value = '';
-  //         _playAnimation();
-  //       },
-  //       onPlayEvent: (int event, Map params) {},
-  //       onPlayError: (code) {
-  //         debugPrint("GiftFullScreenAnimationWidget _onEffectPlayerAnimationStatusChange:error code: $code");
-  //         _playAnimation();
-  //       }));
-  // }
+  Future<void> _setupEffectViewController(FTCEffectViewController controller) async {
+    _effectViewController = controller;
+    _effectViewController?.setPlayListener(FAnimPlayListener(
+        onPlayStart: () {},
+        onPlayEnd: () {
+          debugPrint("GiftFullScreenAnimationWidget _onEffectPlayerAnimationStatusChange:completed stop");
+          currentAnimationUrl.value = '';
+          _playAnimation();
+        },
+        onPlayEvent: (int event, Map params) {},
+        onPlayError: (code) {
+          debugPrint("GiftFullScreenAnimationWidget _onEffectPlayerAnimationStatusChange:error code: $code");
+          _playAnimation();
+        }));
+  }
 
   Future<void> _playMP4Animation(String animationUrl) async {
-    // try {
-    //   currentAnimationUrl.value = animationUrl;
-    //   final animationLocalPath = await _loadMp4Resource(animationUrl);
-    //   _effectViewController?.setConfig(_effectConfig);
-    //   FTCEffectViewController controller = _effectViewController!;
-    //   controller.setVideoMode(FVideoMode.VIDEO_MODE_SPLIT_HORIZONTAL);
-    //   controller.setScaleType(FScaleType.CENTER_CROP);
-    //   await controller.startPlay(animationLocalPath);
-    // } catch (e) {
-    //   debugPrint("GiftFullScreenAnimationWidget MP4 load failed: $e");
-    //   _playAnimation();
-    // }
+    try {
+      currentAnimationUrl.value = animationUrl;
+      final animationLocalPath = await _loadMp4Resource(animationUrl);
+      _effectViewController?.setConfig(_effectConfig);
+      FTCEffectViewController controller = _effectViewController!;
+      controller.setVideoMode(FVideoMode.VIDEO_MODE_SPLIT_HORIZONTAL);
+      controller.setScaleType(FScaleType.CENTER_CROP);
+      await controller.startPlay(animationLocalPath);
+    } catch (e) {
+      debugPrint("GiftFullScreenAnimationWidget MP4 load failed: $e");
+      _playAnimation();
+    }
   }
 
   Future<String> _loadMp4Resource(String animationUrl) async {

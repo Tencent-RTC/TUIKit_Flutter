@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_mode.dart';
 
 import 'package:tencent_live_uikit/common/platform/rtc_live_tuikit_platform_interface.dart';
@@ -61,15 +62,23 @@ class GlobalFloatWindowManager {
 }
 
 class OverlayManager {
+  OverlayState? _rootOverlay;
   OverlayEntry? _overlayEntry;
   VoidCallback? _switchToFullScreenMode;
 
   void showOverlayEntry(OverlayEntry overlayEntry) {
-    Global.secondaryNavigatorKey.currentState!.overlay!.insert(overlayEntry);
+    _rootOverlay = Navigator.of(Global.appContext(), rootNavigator: true).overlay;
+    if (_rootOverlay == null) {
+      LiveKitLogger.error("OverlayManager, _rootOverlay is null");
+      return;
+    }
+    LiveKitLogger.info("OverlayManager, showOverlayEntry, _rootOverlay.mounted = ${_rootOverlay!.mounted}");
+    _rootOverlay?.insert(overlayEntry);
     _overlayEntry = overlayEntry;
   }
 
   void closeOverlay() {
+    LiveKitLogger.error("OverlayManager, closeOverlay, _overlayEntry = $_overlayEntry");
     if (_overlayEntry != null) {
       _overlayEntry!.remove();
       _overlayEntry = null;

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:tencent_cloud_uikit_core/tencent_cloud_uikit_core.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit_example/debug/generate_test_user_sig.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
@@ -11,6 +10,7 @@ import 'package:tencent_live_uikit_example/src/view/login/profile_widget.dart';
 import 'package:tencent_live_uikit_example/src/view/main/main_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -156,27 +156,24 @@ class _LoginWidgetState extends State<LoginWidget> {
       await _switchTestEnvironment();
     }
 
-    await TUILogin.instance.login(
-      GenerateTestUserSig.sdkAppId,
-      _userId,
-      GenerateTestUserSig.genTestSig(_userId),
-      TUICallback(
-        onError: (code, message) {
-          LiveKitLogger.error("TUILogin login fail, {code:$code, message:$message}");
-          makeToast(msg: "code:$code message:$message");
-        },
-        onSuccess: () async {
-          LiveKitLogger.info("TUILogin login success");
-          AppStore.userId = _userId;
-          await AppManager.getUserInfo(_userId);
-          if (AppStore.userName.value.isEmpty || AppStore.userAvatar.isEmpty) {
-            _enterProfileWidget();
-          } else {
-            _enterMainWidget();
-          }
-        },
-      ),
+    final result = await LoginStore.shared.login(
+      sdkAppID: GenerateTestUserSig.sdkAppId,
+      userID: _userId,
+      userSig: GenerateTestUserSig.genTestSig(_userId),
     );
+    if (result.isSuccess) {
+      LiveKitLogger.info("LoginStore login success");
+      AppStore.userId = _userId;
+      await AppManager.getUserInfo(_userId);
+      if (AppStore.userName.value.isEmpty || AppStore.userAvatar.isEmpty) {
+        _enterProfileWidget();
+      } else {
+        _enterMainWidget();
+      }
+    } else {
+      LiveKitLogger.error("LoginStore login fail, {code:${result.errorCode}, message:${result.errorMessage}");
+      makeToast(msg: "code:${result.errorCode} message:${result.errorMessage}");
+    }
     _isButtonEnabled = true;
   }
 

@@ -36,6 +36,10 @@ abstract class TUILiveKitPlatform extends PlatformInterface {
 
   static Stream<bool> get networkConnectionStateChanged => instance.onNetworkConnectionStateChanged;
 
+  Stream<bool> get onScreenCaptureStateChanged;
+
+  static Stream<bool> get screenCaptureStateChanged => instance.onScreenCaptureStateChanged;
+
   Future<void> apiLog(LiveKitLoggerLevel level, String module, String file, int line, String logString) async {
     await instance.apiLog(level, module, file, line, logString);
   }

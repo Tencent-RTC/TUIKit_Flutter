@@ -230,10 +230,11 @@ class _CoGuestManagePanelWidgetState extends State<CoGuestManagePanelWidget> {
               ),
             ],
           ),
-          GestureDetector(
+          DebounceGestureRecognizer(
             onTap: () {
               _disconnectUser(seat.userInfo.userID);
             },
+            delay: Duration(milliseconds: 1000),
             child: Container(
               width: 64.width,
               height: 24.height,

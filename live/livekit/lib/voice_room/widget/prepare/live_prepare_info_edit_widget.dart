@@ -19,6 +19,7 @@ class LivePrepareInfoEditWidget extends StatefulWidget {
 
 class _LivePrepareInfoEditWidgetState extends State<LivePrepareInfoEditWidget> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _editFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _LivePrepareInfoEditWidgetState extends State<LivePrepareInfoEditWidget> {
   @override
   dispose() {
     _controller.dispose();
+    _editFocusNode.dispose();
     super.dispose();
   }
 
@@ -125,6 +127,7 @@ class _LivePrepareInfoEditWidgetState extends State<LivePrepareInfoEditWidget> {
                         width: 185.width,
                         child: TextField(
                             controller: _controller,
+                            focusNode: _editFocusNode,
                             inputFormatters: [_Utf8ByteLengthLimitingTextInputFormatter(100)],
                             decoration: const InputDecoration(
                               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
@@ -140,12 +143,17 @@ class _LivePrepareInfoEditWidgetState extends State<LivePrepareInfoEditWidget> {
                       );
                     },
                   ),
-                  SizedBox(
-                    width: 16.radius,
-                    height: 16.radius,
-                    child: Image.asset(
-                      LiveImages.streamEditIcon,
-                      package: Constants.pluginName,
+                  GestureDetector(
+                    onTap: () {
+                      _editFocusNode.requestFocus();
+                    },
+                    child: SizedBox(
+                      width: 16.radius,
+                      height: 16.radius,
+                      child: Image.asset(
+                        LiveImages.streamEditIcon,
+                        package: Constants.pluginName,
+                      ),
                     ),
                   ),
                 ]),
@@ -221,7 +229,7 @@ extension on _LivePrepareInfoEditWidgetState {
     popupWidget(LiveCoverSelectPanelWidget(
         prepareStore: widget.prepareStore,
         coverUrls: Constants.coverUrlList,
-        initialCoverUrl: widget.prepareStore.state.liveInfo.value.coverURL));
+        initialCoverUrl: widget.prepareStore.state.liveInfo.value.coverURL), context: context);
   }
 
   void _showLiveModeSelectPanel() {
@@ -238,7 +246,7 @@ extension on _LivePrepareInfoEditWidgetState {
     ActionSheet.show(list, (ActionSheetModel model) async {
       final mode = model.bingData == 1 ? PrivacyStatus.public : PrivacyStatus.privacy;
       widget.prepareStore.onSetRoomPrivacy(mode);
-    });
+    }, parentContext: context);
   }
 
   String _getPrivacyStatus(PrivacyStatus status) {

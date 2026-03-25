@@ -1,32 +1,25 @@
 class Constants {
-  static const String pluginVersion = '3.6.4';
+  static const String pluginVersion = '4.0.1';
   static const String pluginName = 'tencent_live_uikit';
 
   static const String liveKitLog = 'LiveKitLog';
 
   static const String defaultCoverUrl =
-      'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover1.png';
+      'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover1.png';
   static const List<String> coverUrlList = [
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover1.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover2.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover3.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover4.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover5.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover6.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover7.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover8.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover9.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover10.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover11.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_cover12.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover1.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover2.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover3.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover4.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/live_cover5.png',
   ];
 
   static const String defaultBackgroundUrl =
-      'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_background1.png';
+      'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/voice_room_bg1.png';
   static const List<String> backgroundUrlList = [
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_background1.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_background2.png',
-    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/voice_room/voice_room_background3.png'
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/voice_room_bg1.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/voice_room_bg2.png',
+    'https://liteav-test-1252463788.cos.ap-guangzhou.myqcloud.com/live/voice_room_bg3.png'
   ];
 
   static const String giftViewType = 'gift_view_type';

@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/widget/global.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/store/app_store.dart';
 import 'package:tencent_live_uikit_example/src/view/login/login_widget.dart';
 import 'package:tencent_live_uikit_example/src/view/main/update_nickname_widget.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 class MeWidget extends StatefulWidget {
   const MeWidget({super.key});
@@ -186,13 +185,9 @@ extension _MeWidgetStateLogicExtension on _MeWidgetState {
 
   void _logout(BuildContext context) {
     GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      TUIRoomEngine.logout().then((result) {
-        TUILogin.instance.logout(TUICallback(onSuccess: () {}));
-      });
-    });
+    Future.delayed(const Duration(milliseconds: 500), () => LoginStore.shared.logout());
     Navigator.of(context).pop();
-    NavigatorState navigatorState = Global.secondaryNavigatorKey.currentState ?? Navigator.of(context);
+    NavigatorState navigatorState = Navigator.of(context);
     navigatorState.pushAndRemoveUntil(
       MaterialPageRoute(builder: (widget) => const LoginWidget()),
           (route) => false,

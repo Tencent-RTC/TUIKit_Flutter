@@ -8,6 +8,8 @@ import 'package:intl/intl.dart' as intl;
 import 'barrage_localizations_en.dart';
 import 'barrage_localizations_zh.dart';
 
+// ignore_for_file: type=lint
+
 /// Callers can lookup localized strings with an instance of BarrageLocalizations
 /// returned by `BarrageLocalizations.of(context)`.
 ///
@@ -60,18 +62,23 @@ import 'barrage_localizations_zh.dart';
 /// be consistent with the languages listed in the BarrageLocalizations.supportedLocales
 /// property.
 abstract class BarrageLocalizations {
-  BarrageLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  static BarrageLocalizations? defaultLocalizations;
+  BarrageLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
   static BarrageLocalizations? of(BuildContext context) {
-    return Localizations.of<BarrageLocalizations>(
-        context, BarrageLocalizations);
+    BarrageLocalizations? localizations = Localizations.of<BarrageLocalizations>(context, BarrageLocalizations);
+    if (localizations == null) {
+      if (defaultLocalizations == null) {
+        defaultLocalizations = BarrageLocalizationsEn();
+      }
+      return defaultLocalizations;
+    }
+    return localizations;
   }
 
-  static const LocalizationsDelegate<BarrageLocalizations> delegate =
-      _BarrageLocalizationsDelegate();
+  static const LocalizationsDelegate<BarrageLocalizations> delegate = _BarrageLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -83,8 +90,7 @@ abstract class BarrageLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -92,15 +98,12 @@ abstract class BarrageLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('zh')
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('zh')];
 
   /// No description provided for @barrage_let_us_chat.
   ///
   /// In en, this message translates to:
-  /// **'Let\\\'s talk'**
+  /// **'Join Chat!'**
   String get barrage_let_us_chat;
 
   /// No description provided for @barrage_send.
@@ -116,19 +119,16 @@ abstract class BarrageLocalizations {
   String get barrage_anchor;
 }
 
-class _BarrageLocalizationsDelegate
-    extends LocalizationsDelegate<BarrageLocalizations> {
+class _BarrageLocalizationsDelegate extends LocalizationsDelegate<BarrageLocalizations> {
   const _BarrageLocalizationsDelegate();
 
   @override
   Future<BarrageLocalizations> load(Locale locale) {
-    return SynchronousFuture<BarrageLocalizations>(
-        lookupBarrageLocalizations(locale));
+    return SynchronousFuture<BarrageLocalizations>(lookupBarrageLocalizations(locale));
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_BarrageLocalizationsDelegate old) => false;
@@ -143,8 +143,7 @@ BarrageLocalizations lookupBarrageLocalizations(Locale locale) {
       return BarrageLocalizationsZh();
   }
 
-  throw FlutterError(
-      'BarrageLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+  throw FlutterError('BarrageLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
       'an issue with the localizations generation tool. Please file an issue '
       'on GitHub with a reproducible sample app and the gen-l10n configuration '
       'that was used.');

@@ -312,99 +312,118 @@ class _AnchorUserManagementPanelWidgetState extends State<AnchorUserManagementPa
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 20.width,
-          children: [
-            ValueListenableBuilder(
-              valueListenable: widget.liveStreamManager.coGuestState.lockAudioUserList,
-              builder: (context, lockAudioUserList, child) {
-                final isAudioLocked = _isAudioLocked();
-                return GestureDetector(
-                  onTap: () => _remoteMicrophoneButtonClicked(),
-                  child: Column(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: LiveColors.designStandardG3.withAlpha(77),
-                              borderRadius: BorderRadius.circular(12.radius)),
-                          width: 50.radius,
-                          height: 50.radius,
-                          child: Center(
-                            child: Image.asset(isAudioLocked ? LiveImages.disableAudio : LiveImages.anchorUnmute,
-                                package: Constants.pluginName, width: 25.radius, height: 25.radius),
-                          )),
-                      Text(
-                        isAudioLocked
-                            ? LiveKitLocalizations.of(context)!.common_enable_audio
-                            : LiveKitLocalizations.of(context)!.common_disable_audio,
-                        style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                      )
-                    ],
-                  ),
-                );
-              },
+          children: _buildMediaAndSeatChildren(),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildMediaAndSeatChildren() {
+    final children = <Widget>[];
+    // lockAudio
+    children.add(
+      ValueListenableBuilder(
+        valueListenable: widget.liveStreamManager.coGuestState.lockAudioUserList,
+        builder: (context, lockAudioUserList, child) {
+          final isAudioLocked = _isAudioLocked();
+          return GestureDetector(
+            onTap: () => _remoteMicrophoneButtonClicked(),
+            child: Column(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: LiveColors.designStandardG3.withAlpha(77),
+                        borderRadius: BorderRadius.circular(12.radius)),
+                    width: 50.radius,
+                    height: 50.radius,
+                    child: Center(
+                      child: Image.asset(isAudioLocked ? LiveImages.disableAudio : LiveImages.anchorUnmute,
+                          package: Constants.pluginName, width: 25.radius, height: 25.radius),
+                    )),
+                Text(
+                  isAudioLocked
+                      ? LiveKitLocalizations.of(context)!.common_enable_audio
+                      : LiveKitLocalizations.of(context)!.common_disable_audio,
+                  style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
+                )
+              ],
             ),
-            ValueListenableBuilder(
-              valueListenable: widget.liveStreamManager.coGuestState.lockVideoUserList,
-              builder: (context, lockVideoUserList, child) {
-                final isVideoLocked = _isVideoLocked();
-                return GestureDetector(
-                  onTap: () => _remoteCameraButtonClicked(),
-                  child: Column(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: LiveColors.designStandardG3.withAlpha(77),
-                              borderRadius: BorderRadius.circular(12.radius)),
-                          width: 50.radius,
-                          height: 50.radius,
-                          child: Center(
-                            child: Image.asset(isVideoLocked ? LiveImages.disableCamera : LiveImages.openCamera,
-                                package: Constants.pluginName, width: 25.radius, height: 25.radius),
-                          )),
-                      Text(
-                        isVideoLocked
-                            ? LiveKitLocalizations.of(context)!.common_enable_video
-                            : LiveKitLocalizations.of(context)!.common_disable_video,
-                        style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-            GestureDetector(
-              onTap: () => _kickOutOfSeatButtonClicked(),
+          );
+        },
+      ),
+    );
+
+    // lockVideo
+    if (!widget.liveStreamManager.roomManager.isScreenShareLive()) {
+      children.add(
+        ValueListenableBuilder(
+          valueListenable: widget.liveStreamManager.coGuestState.lockVideoUserList,
+          builder: (context, lockVideoUserList, child) {
+            final isVideoLocked = _isVideoLocked();
+            return GestureDetector(
+              onTap: () => _remoteCameraButtonClicked(),
               child: Column(
                 children: [
                   Container(
                       decoration: BoxDecoration(
                           color: LiveColors.designStandardG3.withAlpha(77),
-                          borderRadius: BorderRadius.circular(12.5.radius)),
+                          borderRadius: BorderRadius.circular(12.radius)),
                       width: 50.radius,
                       height: 50.radius,
                       child: Center(
-                        child: Image.asset(LiveImages.leaveSeat,
+                        child: Image.asset(isVideoLocked ? LiveImages.disableCamera : LiveImages.openCamera,
                             package: Constants.pluginName, width: 25.radius, height: 25.radius),
                       )),
                   Text(
-                    LiveKitLocalizations.of(context)!.common_end_user,
+                    isVideoLocked
+                        ? LiveKitLocalizations.of(context)!.common_enable_video
+                        : LiveKitLocalizations.of(context)!.common_disable_video,
                     style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
                   )
                 ],
               ),
+            );
+          },
+        ),
+      );
+    }
+
+    // kickout
+    children.add(
+      GestureDetector(
+        onTap: () => _kickOutOfSeatButtonClicked(),
+        child: Column(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                    color: LiveColors.designStandardG3.withAlpha(77),
+                    borderRadius: BorderRadius.circular(12.5.radius)),
+                width: 50.radius,
+                height: 50.radius,
+                child: Center(
+                  child: Image.asset(LiveImages.leaveSeat,
+                      package: Constants.pluginName, width: 25.radius, height: 25.radius),
+                )),
+            Text(
+              LiveKitLocalizations.of(context)!.common_end_user,
+              style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
             )
           ],
         ),
       ),
     );
+
+    return children;
   }
 }
 
 extension on _AnchorUserManagementPanelWidgetState {
   void _onSeatListChanged() {
     final seatList = liveSeatStore.liveSeatState.seatList.value;
+    final isScreenShareLive = widget.liveStreamManager.roomManager.isScreenShareLive();
     for (var seat in seatList) {
       if (seat.userInfo.userID == widget.user.userID) {
-        _isCameraOpened.value = seat.userInfo.cameraStatus == DeviceStatus.on;
+        _isCameraOpened.value = seat.userInfo.cameraStatus == DeviceStatus.on && !isScreenShareLive;
         _isMicrophoneMuted.value = seat.userInfo.microphoneStatus != DeviceStatus.on;
         break;
       }
@@ -509,7 +528,7 @@ extension on _AnchorUserManagementPanelWidgetState {
           });
           _kickOutAlertHandler?.close();
         });
-    _kickOutAlertHandler = Alert.showAlert(alertInfo);
+    _kickOutAlertHandler = Alert.showAlert(alertInfo, context);
   }
 
   void _localMicrophoneButtonClicked() {
@@ -598,7 +617,7 @@ extension on _AnchorUserManagementPanelWidgetState {
           _kickOutOfSeatAlertHandler?.close();
         });
 
-    _kickOutOfSeatAlertHandler = Alert.showAlert(alertInfo);
+    _kickOutOfSeatAlertHandler = Alert.showAlert(alertInfo, context);
   }
 
   bool _isAudioLocked() {

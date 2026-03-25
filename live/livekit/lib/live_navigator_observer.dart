@@ -23,13 +23,14 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
   TUILiveKitNavigatorObserver._internal() {
     LiveKitLogger.info('TUILiveKitNavigatorObserver Init');
     Boot.instance;
+    LiveListStore.shared;
   }
 
   BuildContext getContext() {
     return navigator!.context;
   }
 
-  void enterLiveRoomPage(LiveInfo liveInfo) {
+  void enterLiveRoomPage(LiveInfo liveInfo) async {
     if (isRepeatClick) {
       return;
     }
@@ -56,15 +57,23 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
         .getSelfInfo()
         .userId;
     if (isOwner) {
+      try {
+        final result = await LiveListStore.shared.fetchLiveInfo(liveInfo.liveID);
+        if (result.errorCode == TUIError.success.value()) {
+          liveInfo.keepOwnerOnSeat = result.liveInfo.keepOwnerOnSeat;
+        }
+      } on Exception catch (e) {
+        LiveKitLogger.error(e.toString());
+      }
       Navigator.push(
           getContext(),
           MaterialPageRoute(
             settings: const RouteSettings(name: routeLiveRoomAudience),
             builder: (context) {
               if (floatWindowManager.isEnableFloatWindowFeature()) {
-                return TUILiveRoomAnchorOverlay(roomId: liveInfo.liveID, needPrepare: false);
+                return TUILiveRoomAnchorOverlay(roomId: liveInfo.liveID, liveInfo: liveInfo, needPrepare: false);
               } else {
-                return TUILiveRoomAnchorWidget(roomId: liveInfo.liveID, needPrepare: false);
+                return TUILiveRoomAnchorWidget(roomId: liveInfo.liveID, liveInfo: liveInfo, needPrepare: false);
               }
             },
           ));

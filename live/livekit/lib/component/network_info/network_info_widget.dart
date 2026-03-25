@@ -1,3 +1,4 @@
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
@@ -19,6 +20,11 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
   @override
   void initState() {
     super.initState();
+  }
+
+  bool _isScreenShareLive() {
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    return liveInfo.seatTemplate is VideoLandscape4Seats && liveInfo.keepOwnerOnSeat;
   }
 
   @override
@@ -48,7 +54,7 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
           ),
           Visibility(visible: !widget.isAudience, child: const SizedBox(height: 16)),
           Visibility(
-            visible: !widget.isAudience,
+            visible: !widget.isAudience && !_isScreenShareLive(),
             child: ValueListenableBuilder(
                 valueListenable: widget.manager.state.videoState,
                 builder: (context, videoState, _) {
@@ -87,7 +93,7 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                 }),
           ),
           Visibility(
-            visible: !widget.isAudience,
+            visible: !widget.isAudience && !_isScreenShareLive(),
             child: ListenableBuilder(
                 listenable: Listenable.merge([widget.manager.state.videoState, widget.manager.state.videoResolution]),
                 builder: (context, _) {
@@ -527,20 +533,25 @@ extension on _NetworkInfoWidgetState {
         bingData: cancelNumber);
     menuData.add(cancel);
 
-    ActionSheet.show(menuData, (model) {
-      switch (model.bingData) {
-        case defaultModeNumber:
-          widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileDefault);
-          break;
-        case musicModeNumber:
-          widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileMusic);
-          break;
-        case speechModeNumber:
-          widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileSpeech);
-          break;
-        default:
-          break;
-      }
-    }, backgroundColor: LiveColors.designBgColorOperate);
+    ActionSheet.show(
+      menuData,
+      (model) {
+        switch (model.bingData) {
+          case defaultModeNumber:
+            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileDefault);
+            break;
+          case musicModeNumber:
+            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileMusic);
+            break;
+          case speechModeNumber:
+            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileSpeech);
+            break;
+          default:
+            break;
+        }
+      },
+      parentContext: context,
+      backgroundColor: LiveColors.designBgColorOperate,
+    );
   }
 }

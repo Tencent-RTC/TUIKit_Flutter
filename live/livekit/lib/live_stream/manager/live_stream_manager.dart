@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
@@ -167,7 +168,7 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
         .isNotEmpty;
   }
 
-  void updateVideoQuality(TUIVideoQuality videoQuality) {
+  void updateVideoQuality(VideoQuality videoQuality) {
     return _mediaManager.updateVideoQuality(videoQuality);
   }
 
@@ -203,15 +204,13 @@ extension LiveStreamManagerWithAudience on LiveStreamManager {
     _userManager.onLeaveLive();
     _mediaManager.onLeaveLive();
   }
-
-  void onCoGuestStatusChanged(CoGuestStatus status) {
-    // TODO: krab needs to confirm whether needs changeVideoEncParams logic here
-  }
 }
 
 extension LiveStreamManagerWithFloatWindow on LiveStreamManager {
   Future<bool> enablePictureInPicture(String roomId, bool enable) async {
-    return _floatWindowManager.enablePictureInPicture(roomId, enable);
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    final isLandscape = liveInfo.seatTemplate is VideoLandscape4Seats;
+    return _floatWindowManager.enablePictureInPicture(roomId, enable, isLandscape: isLandscape);
   }
 
   void enablePipMode(bool enable) {
@@ -252,6 +251,8 @@ extension LiveStreamManagerWithTools on LiveStreamManager {
   BattleManager get battleManager => _battleManager;
 
   MediaManager get mediaManager => _mediaManager;
+
+  RoomManager get roomManager => _roomManager;
 
   // Other
   String getDefaultRoomName() {

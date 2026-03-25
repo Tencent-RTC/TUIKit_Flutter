@@ -124,7 +124,7 @@ extension on _NetworkInfoButtonState {
     _bottomSheetHandler = BaseBottomSheet.showModalSheet(
       barrierColor: barrierColor,
       isScrollControlled: true,
-      context: Global.appContext(),
+      context: context,
       backgroundColor: LiveColors.designStandardTransparent,
       builder: (context) => Container(
         decoration: BoxDecoration(

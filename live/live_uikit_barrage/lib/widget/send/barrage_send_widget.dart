@@ -1,15 +1,22 @@
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/index.dart';
 import 'barrage_input_panel_widget.dart';
 import 'barrage_send_controller.dart';
 
+enum BarrageSceneType {
+  live,
+  room,
+}
+
 class BarrageSendWidget extends StatefulWidget {
   final BarrageSendController controller;
   final BuildContext? parentContext;
+  final BarrageSceneType sceneType;
 
-  const BarrageSendWidget({super.key, required this.controller, this.parentContext});
+  const BarrageSendWidget(
+      {super.key, required this.controller, this.parentContext, this.sceneType = BarrageSceneType.live});
 
   @override
   State<BarrageSendWidget> createState() => _BarrageSendWidgetState();
@@ -18,6 +25,7 @@ class BarrageSendWidget extends StatefulWidget {
 class _BarrageSendWidgetState extends State<BarrageSendWidget> {
   BuildContext? _sheetContext;
   late final LiveListListener liveListListener;
+  late final RoomListener roomListener;
   late final VoidCallback _floatWindowModeChangedListener = _onFloatWindowModeChanged;
 
   @override
@@ -27,54 +35,74 @@ class _BarrageSendWidgetState extends State<BarrageSendWidget> {
     liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
       _autoCloseInputWidget();
     });
-    LiveListStore.shared.addLiveListListener(liveListListener);
+    roomListener = RoomListener(onRoomEnded: (RoomInfo roomInfo) {
+      _autoCloseInputWidget();
+    });
+    switch (widget.sceneType) {
+      case BarrageSceneType.live:
+        LiveListStore.shared.addLiveListListener(liveListListener);
+        break;
+      case BarrageSceneType.room:
+        RoomStore.shared.addRoomListener(roomListener);
+        break;
+    }
   }
 
   @override
   void dispose() {
     _autoCloseInputWidget();
     widget.controller.isFloatWindowMode.removeListener(_floatWindowModeChangedListener);
-    LiveListStore.shared.removeLiveListListener(liveListListener);
+    switch (widget.sceneType) {
+      case BarrageSceneType.live:
+        LiveListStore.shared.removeLiveListListener(liveListListener);
+        break;
+      case BarrageSceneType.room:
+        RoomStore.shared.removeRoomListener(roomListener);
+        break;
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36,
+      height: 40,
       child: ElevatedButton(
         onPressed: () async {
           showInputWidget(widget.parentContext ?? context, widget.controller);
         },
         style: ButtonStyle(
           padding: WidgetStateProperty.all(const EdgeInsets.all(0)),
-          backgroundColor:
-          WidgetStateProperty.all<Color>(BarrageColors.barrageLightGrey),
+          backgroundColor: WidgetStateProperty.all<Color>(BarrageColors.barrageLightGrey),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(widget.sceneType == BarrageSceneType.live ? 18 : 8),
+              side: const BorderSide(color: BarrageColors.barrageBorderColor, width: 1),
             ),
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              BarrageLocalizations.of(context)!.barrage_let_us_chat,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: BarrageColors.barrageTextGrey,
-                overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                BarrageLocalizations.of(context)!.barrage_let_us_chat,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: BarrageColors.barrageTextGrey,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            Image.asset(
-              BarrageImages.emojiIcon,
-              package: Constants.pluginName,
-              width: 18.33,
-              height: 18.33,
-            ),
-          ],
+              Image.asset(
+                BarrageImages.emojiIcon,
+                package: Constants.pluginName,
+                width: 20,
+                height: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -82,7 +110,6 @@ class _BarrageSendWidgetState extends State<BarrageSendWidget> {
 
   void showInputWidget(BuildContext context, BarrageSendController controller) {
     showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
       barrierColor: Colors.transparent,
       builder: (builderContext) {

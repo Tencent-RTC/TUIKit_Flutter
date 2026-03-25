@@ -145,7 +145,7 @@ extension SeatGridControllerWithSubsribeState on SeatGridController {
       final userId = entry.key;
       final seatModel = entry.value;
       final hasAudioStreamUserId =
-      _safeFind<String>(hasAudioStreamUserIds, (hasAudioStreamUserId) => hasAudioStreamUserId == userId);
+          _safeFind<String>(hasAudioStreamUserIds, (hasAudioStreamUserId) => hasAudioStreamUserId == userId);
 
       if (hasAudioStreamUserId != null && hasAudioStreamUserId.isNotEmpty) {
         seatModel.hasAudioNotifier.value = true;
@@ -158,13 +158,9 @@ extension SeatGridControllerWithSubsribeState on SeatGridController {
 
   bool _isSeatMovementDetected() {
     final oldSeatedCount =
-        seatWidgetStates
-            .where((seatWidget) => seatWidget.seatInfoNotifier.value.userInfo.userID.isNotEmpty)
-            .length;
+        seatWidgetStates.where((seatWidget) => seatWidget.seatInfoNotifier.value.userInfo.userID.isNotEmpty).length;
     final newSeatedCount =
-        _seatStore.liveSeatState.seatList.value
-            .where((seatInfo) => seatInfo.userInfo.userID.isNotEmpty)
-            .length;
+        _seatStore.liveSeatState.seatList.value.where((seatInfo) => seatInfo.userInfo.userID.isNotEmpty).length;
     return oldSeatedCount == newSeatedCount;
   }
 

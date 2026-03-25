@@ -1,9 +1,7 @@
-import 'dart:convert';
-
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
-import 'package:tencent_rtc_sdk/trtc_cloud.dart';
 
 import '../../../common/index.dart';
 import '../../../tencent_live_uikit.dart';
@@ -26,7 +24,7 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
   late final LiveListService _liveListService = LiveListService();
 
   final ScrollController _scrollController = ScrollController();
-  late final VoidCallback _listener = _onLoginChange;
+  late final VoidCallback _loginListener = _onLoginChange;
 
   @override
   void didChangeDependencies() {
@@ -41,15 +39,13 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     super.initState();
     _initData();
     _addListener();
-    _enableSwitchPlaybackQuality(true);
     GlobalFloatWindowManager.instance.setOverlayClosedCallback(() => _onRefresh());
-    _liveListService.refreshFetchList();
+    _onRefresh();
   }
 
   @override
   void dispose() {
     GlobalFloatWindowManager.instance.setOverlayClosedCallback(null);
-    _enableSwitchPlaybackQuality(false);
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _removeListener();
@@ -65,6 +61,7 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    DeviceLanguage.checkLocale(context);
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: OrientationBuilder(
@@ -88,21 +85,19 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
 
   void _initData() {
     _scrollController.addListener(_scrollListener);
-    if (Boot().isLogin.value) {
-      _onRefresh();
-    }
+    _onLoginChange();
   }
 
   void _addListener() {
-    Boot().isLogin.addListener(_listener);
+    LoginStore.shared.addListener(_loginListener);
   }
 
   void _removeListener() {
-    Boot().isLogin.removeListener(_listener);
+    LoginStore.shared.removeListener(_loginListener);
   }
 
   void _onLoginChange() {
-    if (Boot().isLogin.value) {
+    if (LoginStore.shared.loginState.loginStatus == LoginStatus.logined) {
       _onRefresh();
     }
   }
@@ -116,6 +111,10 @@ extension LiveListWidgetStateLogicExtension on LiveListWidgetState {
   }
 
   Future<void> _onRefresh() async {
+    if (TUIRoomEngine.getSelfInfo().userId.isEmpty) {
+      LiveKitLogger.error("engine login not finish");
+      return;
+    }
     await _liveListService.refreshFetchList();
   }
 
@@ -307,26 +306,6 @@ extension LiveListWidgetStateLogicExtension on LiveListWidgetState {
 }
 
 extension on LiveListWidgetState {
-  void _enableSwitchPlaybackQuality(bool enable) async {
-    Map<String, dynamic> config = {
-      'key': 'Liteav.engine.set.live.qos.audience.strategy.version"',
-      'value': enable ? 1 : 0
-    };
-
-    Map<String, dynamic> params = {
-      'configs': [config]
-    };
-    Map<String, dynamic> jsonObject = {'api': 'setPrivateConfig', 'params': params};
-
-    try {
-      final jsonString = json.encode(jsonObject);
-      final trtc = await TRTCCloud.sharedInstance();
-      trtc.callExperimentalAPI(jsonString);
-    } catch (e) {
-      LiveKitLogger.error('Error enableSwitchPlaybackQuality');
-    }
-  }
-
   bool _isValidUrl(String urlString) {
     try {
       Uri parsedUri = Uri.parse(urlString);

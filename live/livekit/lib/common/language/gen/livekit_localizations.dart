@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'livekit_localizations_ar.dart';
 import 'livekit_localizations_en.dart';
+import 'livekit_localizations_ja.dart';
 import 'livekit_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -62,14 +64,21 @@ import 'livekit_localizations_zh.dart';
 /// be consistent with the languages listed in the LiveKitLocalizations.supportedLocales
 /// property.
 abstract class LiveKitLocalizations {
+  static LiveKitLocalizations? defaultLocalizations;
   LiveKitLocalizations(String locale)
       : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
   static LiveKitLocalizations? of(BuildContext context) {
-    return Localizations.of<LiveKitLocalizations>(
-        context, LiveKitLocalizations);
+    LiveKitLocalizations? localizations = Localizations.of<LiveKitLocalizations>(context, LiveKitLocalizations);
+    if (localizations == null) {
+      if (defaultLocalizations == null) {
+        defaultLocalizations = LiveKitLocalizationsEn();
+      }
+      return defaultLocalizations;
+    }
+    return localizations;
   }
 
   static const LocalizationsDelegate<LiveKitLocalizations> delegate =
@@ -95,7 +104,9 @@ abstract class LiveKitLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('en'),
+    Locale('ja'),
     Locale('zh'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
@@ -334,6 +345,12 @@ abstract class LiveKitLocalizations {
   /// **'The anchor disabled your video'**
   String get common_mute_video_by_owner;
 
+  /// No description provided for @common_preview_video_live.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Video'**
+  String get common_preview_video_live;
+
   /// No description provided for @common_recommended_list.
   ///
   /// In en, this message translates to:
@@ -435,6 +452,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'Internal error, it is recommended to try again.'**
   String get live_error_connection_retry;
+
+  /// No description provided for @live_error_room_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The room types do not match; connections can only be initiated in rooms of the same type.'**
+  String get live_error_room_mismatch;
 
   /// No description provided for @livelist_loading.
   ///
@@ -1011,6 +1034,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'End Live'**
   String get common_end_live;
+
+  /// No description provided for @common_exit_connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit connect'**
+  String get common_exit_connect;
 
   /// No description provided for @common_end_user.
   ///
@@ -2118,6 +2147,12 @@ abstract class LiveKitLocalizations {
   /// **'In Battle'**
   String get seat_in_battle;
 
+  /// No description provided for @seat_in_connection.
+  ///
+  /// In en, this message translates to:
+  /// **'In Connection'**
+  String get seat_in_connection;
+
   /// No description provided for @seat_cancel_invite.
   ///
   /// In en, this message translates to:
@@ -2219,6 +2254,36 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'The connection only displays the first 6 seats. You have been removed.'**
   String get common_audience_kicked_re_apply;
+
+  /// No description provided for @common_game_live.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Live'**
+  String get common_game_live;
+
+  /// No description provided for @common_live_game.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Game'**
+  String get common_live_game;
+
+  /// No description provided for @common_go_to_enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Enable'**
+  String get common_go_to_enable;
+
+  /// No description provided for @common_live_screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Screen'**
+  String get common_live_screen;
+
+  /// No description provided for @common_select_app_to_live.
+  ///
+  /// In en, this message translates to:
+  /// **'Select App and Start Live'**
+  String get common_select_app_to_live;
 }
 
 class _LiveKitLocalizationsDelegate
@@ -2233,7 +2298,7 @@ class _LiveKitLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+      <String>['ar', 'en', 'ja', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_LiveKitLocalizationsDelegate old) => false;
@@ -2254,8 +2319,12 @@ LiveKitLocalizations lookupLiveKitLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return LiveKitLocalizationsAr();
     case 'en':
       return LiveKitLocalizationsEn();
+    case 'ja':
+      return LiveKitLocalizationsJa();
     case 'zh':
       return LiveKitLocalizationsZh();
   }

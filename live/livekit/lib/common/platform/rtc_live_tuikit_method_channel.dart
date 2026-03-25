@@ -15,6 +15,7 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
   static const _thermalEventChannel = EventChannel('tuilivekit_thermal_events');
   static const _networkEventChannel = EventChannel('tuilivekit_network_events');
   static const _pipEventChannel = EventChannel('tuilivekit_pip_events');
+  static const _screenCaptureEventChannel = EventChannel('tuilivekit_screen_capture_events');
 
   static const String STATE_ENTER_PIP = "state_enter_pip";
   static const String STATE_LEAVE_PIP = "state_leave_pip";
@@ -63,6 +64,22 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
         return false;
       }
     }).asBroadcastStream();
+  }
+
+  @override
+  Stream<bool> get onScreenCaptureStateChanged {
+    if (Platform.isIOS) {
+      final rawData = _screenCaptureEventChannel.receiveBroadcastStream();
+      return rawData.map((value) {
+        if (value is bool) {
+          return value;
+        } else {
+          return false;
+        }
+      }).asBroadcastStream();
+    } else {
+      return Stream<bool>.empty().asBroadcastStream();
+    }
   }
 
   @override

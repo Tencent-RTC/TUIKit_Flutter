@@ -1,5 +1,11 @@
 # LiveUIKitGift
 
+## 4.0.1
+
+- Default internationalization language set to English.
+- Dialog optimized by removing useRootNavigator = true.
+- Added support for the `flutter_effect_player` gift effect player.
+
 ## 3.0.0
 
 - Android & iOS:

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:tencent_live_uikit/common/widget/global.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
@@ -35,7 +33,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeApp() async {
-    GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);
     await AppBuilder.init(path: 'assets/appConfig.json');
   }
 
@@ -79,19 +76,7 @@ class _MyAppState extends State<MyApp> {
                 child: child,
               ),
             ),
-            home: PopScope(
-              canPop: false,
-              child: Navigator(
-                key: Global.secondaryNavigatorKey,
-                initialRoute: '/login_widget',
-                onGenerateRoute: (settings) {
-                  if (settings.name == '/login_widget') {
-                    return MaterialPageRoute(builder: (BuildContext context) => const LoginWidget());
-                  }
-                  return null;
-                },
-              ),
-            ),
+            home: const LoginWidget(),
           ),
         );
       }),

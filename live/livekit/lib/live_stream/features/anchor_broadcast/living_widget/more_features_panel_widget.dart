@@ -141,10 +141,12 @@ extension on _MoreFeaturesPanelWidgetState {
     final item = list[index];
     switch (item.type) {
       case FeaturesItemType.beauty:
-        _beautySheetHandler = popupWidget(const BeautyPanelWidget(), barrierColor: LiveColors.designStandardTransparent);
+        _beautySheetHandler = popupWidget(const BeautyPanelWidget(),
+            context: context, barrierColor: LiveColors.designStandardTransparent);
         break;
       case FeaturesItemType.audioEffect:
-        _audioEffectSheetHandler = popupWidget(AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId));
+        _audioEffectSheetHandler =
+            popupWidget(context: context, AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId));
         break;
       case FeaturesItemType.flip:
         DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
@@ -164,10 +166,12 @@ extension on _MoreFeaturesPanelWidgetState {
 
   void _showPipConfigPanel() {
     TUILiveKitPlatform.instance.hasPipPermission().then((hasPipPermission) {
+      if (!mounted) return;
       if (!hasPipPermission) {
         liveStreamManager.enablePipMode(false);
       }
       _pipConfigPanelHandler = popupWidget(
+        context: context,
         PipConfigPanelWidget(
           enablePipMode: liveStreamManager.floatWindowState.enablePipMode,
           onChanged: (enable) {

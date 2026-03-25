@@ -8,7 +8,7 @@ import 'package:tencent_live_uikit/component/network_info/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_guest/anchor_co_guest_float_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/living_widget/anchor_user_management_panel_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
 import '../../../../common/index.dart';
 import '../../../../component/index.dart';
 import '../../../live_define.dart';
@@ -45,6 +45,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   late final VoidCallback _userEnterRoomListener = _onRemoteUserEnterRoom;
   late final VoidCallback _isFloatWindowModeListener = _isFloatWindowModeChanged;
   late final LiveListListener _liveListListener;
+  late final VoidCallback _onScreenShareStatusListener = _onScreenShareStatusChanged;
 
   @override
   void initState() {
@@ -92,7 +93,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
     if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
     } else {
-      if (mounted) Navigator.pop(Global.appContext());
+      if (mounted) Navigator.pop(context);
     }
   }
 
@@ -149,51 +150,66 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   }
 
   Widget _buildFloatWindowWidget() {
-    return Visibility(
-      visible: GlobalFloatWindowManager.instance.isEnableFloatWindowFeature(),
-      child: Positioned(
-        right: 38.width,
-        top: 68.height,
-        width: 24.width,
-        height: 24.width,
-        child: GestureDetector(
-          onTap: () {
-            widget.onTapEnterFloatWindowInApp?.call();
-          },
-          child: Image.asset(
-            LiveImages.floatWindow,
-            package: Constants.pluginName,
-          ),
-        ),
-      ),
-    );
+    return ValueListenableBuilder(
+        valueListenable: liveStreamManager.roomState.liveStatus,
+        builder: (context, liveStatus, _) {
+          if (liveStatus != LiveStatus.pushing) {
+            return const SizedBox.shrink();
+          }
+          bool visible = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() &&
+              !widget.liveStreamManager.roomManager.isScreenShareLive();
+          return Visibility(
+            visible: visible,
+            child: Positioned(
+              right: 38.width,
+              top: 68.height,
+              width: 24.width,
+              height: 24.width,
+              child: GestureDetector(
+                onTap: () {
+                  widget.onTapEnterFloatWindowInApp?.call();
+                },
+                child: Image.asset(
+                  LiveImages.floatWindow,
+                  package: Constants.pluginName,
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   Widget _buildAudienceListWidget() {
-    return Positioned(
-        right: GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() ? 66.width : 38.width,
-        top: 68.height,
-        child: Container(
-          constraints: BoxConstraints(maxWidth: 107.width),
-          child: ValueListenableBuilder(
-              valueListenable: liveStreamManager.roomState.liveStatus,
-              builder: (context, liveStatus, _) {
-                return Visibility(
-                  visible: liveStatus == LiveStatus.pushing,
+    return ValueListenableBuilder(
+        valueListenable: liveStreamManager.roomState.liveStatus,
+        builder: (context, liveStatus, _) {
+          if (liveStatus != LiveStatus.pushing) {
+            return const SizedBox.shrink();
+          }
+          bool enableFloat = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() &&
+              !widget.liveStreamManager.roomManager.isScreenShareLive();
+          return Visibility(
+            child: Positioned(
+                right: enableFloat ? 66.width : 38.width,
+                top: 68.height,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 107.width),
                   child: AudienceListWidget(
                     roomId: liveStreamManager.roomState.roomId,
                     onClickUserItem: (user) {
-                      _userManagementPanelSheetHandler = popupWidget(AnchorUserManagementPanelWidget(
-                        panelType: AnchorUserManagementPanelType.messageAndKickOut,
-                        user: user,
-                        liveStreamManager: liveStreamManager,
-                        closeCallback: () => _userManagementPanelSheetHandler?.close(),
-                      ));
+                      _userManagementPanelSheetHandler = popupWidget(
+                          context: context,
+                          AnchorUserManagementPanelWidget(
+                            panelType: AnchorUserManagementPanelType.messageAndKickOut,
+                            user: user,
+                            liveStreamManager: liveStreamManager,
+                            closeCallback: () => _userManagementPanelSheetHandler?.close(),
+                          ));
                     },
                   ),
-                );
-              }),
-        ));
+                )),
+          );
+        });
   }
 
   Widget _buildLiveInfoWidget() {
@@ -283,12 +299,14 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
                     userID: barrage.sender.userID,
                     userName: barrage.sender.userName,
                     avatarURL: barrage.sender.avatarURL);
-                _userManagementPanelSheetHandler = popupWidget(AnchorUserManagementPanelWidget(
-                  panelType: AnchorUserManagementPanelType.messageAndKickOut,
-                  user: user,
-                  liveStreamManager: liveStreamManager,
-                  closeCallback: () => _userManagementPanelSheetHandler?.close(),
-                ));
+                _userManagementPanelSheetHandler = popupWidget(
+                    context: context,
+                    AnchorUserManagementPanelWidget(
+                      panelType: AnchorUserManagementPanelType.messageAndKickOut,
+                      user: user,
+                      liveStreamManager: liveStreamManager,
+                      closeCallback: () => _userManagementPanelSheetHandler?.close(),
+                    ));
               },
             );
           },
@@ -316,13 +334,36 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   }
 
   Widget _buildAnchorBottomMenuWidget() {
-    return Positioned(
-        left: 0,
-        bottom: 36.height,
-        child: SizedBox(
-            width: 1.screenWidth,
-            height: 46.height,
-            child: AnchorBottomMenuWidget(liveStreamManager: liveStreamManager)));
+    return ValueListenableBuilder(
+        valueListenable: widget.liveStreamManager.roomState.liveStatus,
+        builder: (context, liveStatus, _) {
+          if (liveStatus != LiveStatus.pushing) {
+            return const SizedBox.shrink();
+          }
+          bool enableCoGuest = true;
+          bool enableCoHost = true;
+          bool enableBattle = true;
+          bool enableMore = true;
+          if (widget.liveStreamManager.roomState.liveInfo.seatTemplate is VideoLandscape4Seats) {
+            enableCoGuest = widget.liveStreamManager.roomState.liveInfo.keepOwnerOnSeat;
+            enableCoHost = false;
+            enableBattle = false;
+            enableMore = false;
+          }
+          return Positioned(
+              left: 0,
+              bottom: 36.height,
+              child: SizedBox(
+                  width: 1.screenWidth,
+                  height: 46.height,
+                  child: AnchorBottomMenuWidget(
+                    liveStreamManager: liveStreamManager,
+                    enableCoGuest: enableCoGuest,
+                    enableCoHost: enableCoHost,
+                    enableBattle: enableBattle,
+                    enableMore: enableMore,
+                  )));
+        });
   }
 
   Widget _buildApplyLinkAudienceWidget() {
@@ -338,12 +379,14 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
 
 extension on _AnchorLivingWidgetState {
   void _addObserver() {
+    DeviceStore.shared.state.screenStatus.addListener(_onScreenShareStatusListener);
     liveListStore.addLiveListListener(_liveListListener);
     liveStreamManager.userState.enterUser.addListener(_userEnterRoomListener);
     liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
   }
 
   void _removeObserver() {
+    DeviceStore.shared.state.screenStatus.removeListener(_onScreenShareStatusListener);
     liveListStore.removeLiveListListener(_liveListListener);
     liveStreamManager.userState.enterUser.removeListener(_userEnterRoomListener);
     liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
@@ -428,21 +471,27 @@ extension on _AnchorLivingWidgetState {
         bingData: cancelNumber);
     menuData.add(cancel);
 
-    _closePanelSheetHandler = ActionSheet.show(menuData, (model) {
-      switch (model.bingData) {
-        case endBattleNumber:
-          _exitBattle();
-          break;
-        case endCoHostNumber:
-          _exitCoHost();
-          break;
-        case endLiveNumber:
-          _stopLiveStream();
-          break;
-        default:
-          break;
-      }
-    }, backgroundColor: LiveColors.designStandardFlowkitWhite, title: title);
+    _closePanelSheetHandler = ActionSheet.show(
+      menuData,
+      (model) {
+        switch (model.bingData) {
+          case endBattleNumber:
+            _exitBattle();
+            break;
+          case endCoHostNumber:
+            _exitCoHost();
+            break;
+          case endLiveNumber:
+            _stopLiveStream();
+            break;
+          default:
+            break;
+        }
+      },
+      backgroundColor: LiveColors.designStandardFlowkitWhite,
+      title: title,
+      parentContext: context,
+    );
   }
 
   void _exitBattle() {
@@ -464,6 +513,9 @@ extension on _AnchorLivingWidgetState {
         Navigator.of(context).pop();
       }
     } else {
+      if (liveStreamManager.roomState.videoStreamSource == VideoStreamSource.screenShare) {
+        liveStreamManager.mediaManager.stopScreenShare();
+      }
       final future = liveListStore.endLive();
       BarrageDisplayController.resetState();
       _giftPlayController?.dispose();
@@ -513,12 +565,14 @@ extension on _AnchorLivingWidgetState {
   }
 
   void onTapPureBroadcastTapWidget() {
-    _userManagementPanelSheetHandler = popupWidget(AnchorUserManagementPanelWidget(
-      panelType: AnchorUserManagementPanelType.pureMedia,
-      user: liveStreamManager.roomState.liveInfo.liveOwner,
-      liveStreamManager: liveStreamManager,
-      closeCallback: () => _userManagementPanelSheetHandler?.close(),
-    ));
+    _userManagementPanelSheetHandler = popupWidget(
+        context: context,
+        AnchorUserManagementPanelWidget(
+          panelType: AnchorUserManagementPanelType.pureMedia,
+          user: liveStreamManager.roomState.liveInfo.liveOwner,
+          liveStreamManager: liveStreamManager,
+          closeCallback: () => _userManagementPanelSheetHandler?.close(),
+        ));
   }
 
   bool _isPureAnchorBroadcast() {
@@ -527,5 +581,14 @@ extension on _AnchorLivingWidgetState {
             .where((seat) => seat.userInfo.userID.isNotEmpty && seat.userInfo.userID != selfUserId)
             .isEmpty &&
         coHostStore.coHostState.connected.value.isEmpty;
+  }
+
+  void _onScreenShareStatusChanged() {
+    if (!widget.liveStreamManager.roomManager.isScreenShareLive()) return;
+    DeviceStatus deviceStatus = DeviceStore.shared.state.screenStatus.value;
+    LiveKitLogger.info("_onScreenShareStatusChanged, deviceStatus=$deviceStatus");
+    if (deviceStatus == DeviceStatus.off) {
+      _stopLiveStream();
+    }
   }
 }

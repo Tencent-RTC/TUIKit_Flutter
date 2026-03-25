@@ -163,7 +163,7 @@ extension on _AudienceListWidgetState {
     _bottomSheetHandler = BaseBottomSheet.showModalSheet(
       barrierColor: barrierColor,
       isScrollControlled: true,
-      context: Global.appContext(),
+      context: context,
       builder: (context) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(

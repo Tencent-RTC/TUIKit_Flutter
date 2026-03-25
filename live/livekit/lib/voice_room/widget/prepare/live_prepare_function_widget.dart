@@ -119,17 +119,19 @@ class _LivePrepareFunctionWidgetState extends State<LivePrepareFunctionWidget> {
 
 extension on _LivePrepareFunctionWidgetState {
   void _showBackgroundSelectorPanel() {
-    popupWidget(LiveBackgroundSelectPanelWidget(
-        prepareStore: widget.prepareStore,
-        backgroundUrls: Constants.backgroundUrlList,
-        initialBackgroundUrl: widget.prepareStore.state.liveInfo.value.backgroundURL));
+    popupWidget(
+        LiveBackgroundSelectPanelWidget(
+            prepareStore: widget.prepareStore,
+            backgroundUrls: Constants.backgroundUrlList,
+            initialBackgroundUrl: widget.prepareStore.state.liveInfo.value.backgroundURL),
+        context: context);
   }
 
   void _showAudioEffectPanel() {
-    popupWidget(AudioEffectPanelWidget(roomId: widget.prepareStore.state.liveInfo.value.liveID));
+    popupWidget(AudioEffectPanelWidget(roomId: widget.prepareStore.state.liveInfo.value.liveID), context: context);
   }
 
   void _showSettingsPanel() {
-    popupWidget(SeatModeSettingPanelWidget(prepareStore: widget.prepareStore));
+    popupWidget(SeatModeSettingPanelWidget(prepareStore: widget.prepareStore), context: context);
   }
 }

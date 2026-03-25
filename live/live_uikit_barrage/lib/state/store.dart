@@ -1,5 +1,3 @@
-import 'package:atomic_x_core/api/barrage/barrage_store.dart';
-
 import '../manager/index.dart';
 
 typedef OnBarrageError = void Function(int code, String message);
@@ -26,9 +24,7 @@ class Store {
   String ownerId = '';
 
   void init(String roomId, String ownerId, String userId, String? name) {
-    if (this.roomId != roomId ||
-        this.ownerId != ownerId ||
-        selfUserId != userId) {
+    if (this.roomId != roomId || this.ownerId != ownerId || selfUserId != userId) {
       this.roomId = roomId;
       this.ownerId = ownerId;
       selfUserId = userId;

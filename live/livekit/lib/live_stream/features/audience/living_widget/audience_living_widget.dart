@@ -119,7 +119,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
                     final isSelf = TUIRoomEngine.getSelfInfo().userId == user.userID;
                     if (!isSelf) {
                       popupWidget(AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                          backgroundColor: LiveColors.designStandardTransparent);
+                          context: context, backgroundColor: LiveColors.designStandardTransparent);
                     }
                   },
                 ),
@@ -248,7 +248,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
                   avatarURL: barrage.sender.avatarURL);
               if (!isSelf) {
                 popupWidget(AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                    backgroundColor: LiveColors.designStandardTransparent);
+                    context: context, backgroundColor: LiveColors.designStandardTransparent);
               }
             },
           );
@@ -285,6 +285,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
     if (widget.liveStreamManager.roomState.roomVideoStreamIsLandscape.value && orientation == Orientation.landscape) {
       popupWidget(
         PlayerMenuWidget(liveStreamManager: widget.liveStreamManager),
+        context: context,
         barrierColor: LiveColors.designStandardTransparent,
         backgroundColor: LiveColors.designStandardTransparent,
       );
@@ -292,15 +293,31 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
   }
 
   Widget _buildBottomMenuWidget(double screenWidth, BuildContext context) {
-    return Positioned(
-      left: 0,
-      bottom: 34.height,
-      height: 36.height,
-      width: screenWidth,
-      child: Visibility(
-        visible: MediaQuery.orientationOf(context) == Orientation.portrait,
-        child: AudienceBottomMenuWidget(liveStreamManager: widget.liveStreamManager),
-      ),
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        widget.liveStreamManager.roomState.liveStatus,
+        widget.liveStreamManager.roomState.roomVideoStreamIsLandscape,
+      ]),
+      builder: (BuildContext context, Widget? child) {
+        if (widget.liveStreamManager.roomState.liveStatus.value != LiveStatus.playing) {
+          return const SizedBox.shrink();
+        }
+        bool enableCoGuest = widget.liveStreamManager.roomManager.isScreenShareLive() ||
+            !widget.liveStreamManager.roomState.roomVideoStreamIsLandscape.value;
+        return Positioned(
+          left: 0,
+          bottom: 34.height,
+          height: 36.height,
+          width: screenWidth,
+          child: Visibility(
+            visible: MediaQuery.orientationOf(context) == Orientation.portrait,
+            child: AudienceBottomMenuWidget(
+              liveStreamManager: widget.liveStreamManager,
+              enableCoGuest: enableCoGuest,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -314,12 +331,18 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
       child: ListenableBuilder(
         listenable: Listenable.merge([
           widget.liveStreamManager.roomState.roomVideoStreamIsLandscape,
-          widget.liveStreamManager.mediaState.isRemoteVideoStreamPaused
+          widget.liveStreamManager.mediaState.isRemoteVideoStreamPaused,
+          widget.liveStreamManager.roomState.liveStatus,
         ]),
         builder: (context, _) {
           final roomVideoStreamIsLandscape = widget.liveStreamManager.roomState.roomVideoStreamIsLandscape.value;
           final isRemoteVideoStreamPaused = widget.liveStreamManager.mediaState.isRemoteVideoStreamPaused.value;
-          final visible = !isRemoteVideoStreamPaused && roomVideoStreamIsLandscape;
+          bool visible = !isRemoteVideoStreamPaused && roomVideoStreamIsLandscape;
+          if (visible &&
+              widget.liveStreamManager.roomState.liveStatus.value == LiveStatus.playing &&
+              widget.liveStreamManager.roomManager.isScreenShareLive()) {
+            visible = false;
+          }
           return Visibility(
             visible: visible,
             child: IconButton(
@@ -415,7 +438,7 @@ extension on _AudienceLivingWidgetState {
     if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
     } else {
-      if (mounted) Navigator.pop(Global.appContext());
+      if (mounted) Navigator.pop(context);
     }
   }
 
@@ -484,7 +507,7 @@ extension on _AudienceLivingWidgetState {
         default:
           break;
       }
-    });
+    }, parentContext: context);
   }
 
   void _onRotateButtonTapped(Orientation currentOrientation) {

@@ -308,7 +308,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
                   ownerId: currentLive.liveOwner.userID,
                   selfUserId: selfInfo.userId,
                   selfName: selfInfo.userName ?? selfInfo.userId);
-              return BarrageSendWidget(controller: _barrageSendController);
+              return BarrageSendWidget(controller: _barrageSendController, parentContext: context);
             },
           ),
         ));
@@ -382,9 +382,6 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
 extension _RoomOperation on _VoiceRoomRootWidgetState {
   void _start({required liveID}) async {
     final liveInfo = widget.prepareStore.state.liveInfo.value;
-    final params = widget.prepareStore.roomParams;
-    liveInfo.seatMode = params.seatMode == TUISeatMode.applyToTake ? TakeSeatMode.apply : TakeSeatMode.free;
-    liveInfo.maxSeatCount = params.maxSeatCount;
     final result = await _liveListStore.createLive(liveInfo);
     if (result.isSuccess) {
       return _onStartSuccess(result.liveInfo);
@@ -517,6 +514,7 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
         if (model.bingData != 1) return;
         _roomOwnerLeave();
       },
+      parentContext: context,
       backgroundColor: LiveColors.designStandardFlowkitWhite,
     );
   }
@@ -587,6 +585,7 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
             break;
         }
       },
+      parentContext: context,
       title: LiveKitLocalizations.of(Global.appContext())!.common_audience_end_link_tips,
       backgroundColor: LiveColors.designStandardFlowkitWhite,
     );
@@ -611,7 +610,7 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
     } else {
       if (isOwner) {
-        if (mounted) Navigator.pop(Global.appContext());
+        if (mounted) Navigator.pop(context);
       } else {
         TUILiveKitNavigatorObserver.instance.backToVoiceRoomAudiencePage();
       }
@@ -685,13 +684,15 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
             break;
         }
       },
+      parentContext: context,
       backgroundColor: LiveColors.designStandardFlowkitWhite,
     );
   }
 
   void _showSeatInvitationPanel(TUISeatInfo seatInfo) {
     _seatInvitationPanelSheetHandler = popupWidget(
-        SeatInvitationPanelWidget(liveID: widget.liveID, toastService: widget.toastService, seatIndex: seatInfo.index));
+        SeatInvitationPanelWidget(liveID: widget.liveID, toastService: widget.toastService, seatIndex: seatInfo.index),
+        context: context);
   }
 
   void _lockSeat(TUISeatInfo seatInfo) {
@@ -700,12 +701,14 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   void _showUserManagementPanel(TUISeatInfo seatInfo) {
-    _userManagementPanelSheetHandler = popupWidget(UserManagementPanelWidget(
-        liveID: widget.liveID,
-        imStore: _imStore,
-        toastService: widget.toastService,
-        seatInfo: seatInfo,
-        onDismiss: () => _userManagementPanelSheetHandler?.close()));
+    _userManagementPanelSheetHandler = popupWidget(
+        UserManagementPanelWidget(
+            liveID: widget.liveID,
+            imStore: _imStore,
+            toastService: widget.toastService,
+            seatInfo: seatInfo,
+            onDismiss: () => _userManagementPanelSheetHandler?.close()),
+        context: context);
   }
 
   void _showNormalUserSeatOperationMenu(TUISeatInfo seatInfo) {
@@ -740,12 +743,17 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
         bingData: 2);
     menuData.add(cancel);
 
-    _takeSeatSheetHandler = ActionSheet.show(menuData, (model) {
-      if (model.bingData != 1) return;
-      final isOnSeat = _liveSeatStore.liveSeatState.seatList.value
-          .any((seatInfo) => seatInfo.userInfo.userID == TUIRoomEngine.getSelfInfo().userId);
-      isOnSeat ? _moveToSeat(seatInfo) : _takeSeat(seatInfo);
-    }, backgroundColor: LiveColors.designStandardFlowkitWhite);
+    _takeSeatSheetHandler = ActionSheet.show(
+      menuData,
+      (model) {
+        if (model.bingData != 1) return;
+        final isOnSeat = _liveSeatStore.liveSeatState.seatList.value
+            .any((seatInfo) => seatInfo.userInfo.userID == TUIRoomEngine.getSelfInfo().userId);
+        isOnSeat ? _moveToSeat(seatInfo) : _takeSeat(seatInfo);
+      },
+      parentContext: context,
+      backgroundColor: LiveColors.designStandardFlowkitWhite,
+    );
   }
 
   void _moveToSeat(TUISeatInfo seatInfo) async {
@@ -854,7 +862,7 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
           _responseSeatInvitation(userInfo, true);
         });
 
-    _receivedRequestAlertHandler = Alert.showAlert(alertInfo);
+    _receivedRequestAlertHandler = Alert.showAlert(alertInfo, context);
     _isShowingReceivedRequestAlert = true;
   }
 
@@ -877,8 +885,8 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
   }
 
   void _closeReceivedRequestAlert() {
-    if (_isShowingReceivedRequestAlert && Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
+    if (_isShowingReceivedRequestAlert && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
       _isShowingReceivedRequestAlert = false;
     }
   }

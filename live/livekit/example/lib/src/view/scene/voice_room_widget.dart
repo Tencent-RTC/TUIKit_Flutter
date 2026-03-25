@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit/voice_room/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -142,15 +141,11 @@ extension _VoiceRoomWidgetStateLogicExtension on _VoiceRoomWidgetState {
   void _enterVoiceRoomWidget() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        final roomId = LiveIdentityGenerator.instance
-            .generateId(AppStore.userId, RoomType.voice);
+        final roomId = LiveIdentityGenerator.instance.generateId(AppStore.userId, RoomType.voice);
         final params = RoomParams();
         params.maxSeatCount = 10;
-        if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
-          return TUIVoiceRoomOverlay(roomId: roomId, behavior: RoomBehavior.prepareCreate, params: params);
-        } else {
-          return TUIVoiceRoomWidget(roomId: roomId, behavior: RoomBehavior.prepareCreate, params: params);
-        }
+        // You can use TUIVoiceRoomWidget, but note that it does not support floating window mode.
+        return TUIVoiceRoomOverlay(roomId: roomId, behavior: RoomBehavior.prepareCreate, params: params);
       },
     ));
   }

@@ -2,7 +2,6 @@ import 'package:atomic_x_core/api/device/audio_effect_store.dart';
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
-import 'package:live_uikit_gift/live_uikit_gift.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
@@ -65,24 +64,11 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
     behavior = widget.behavior;
     params = widget.params;
     seatGridController = SeatGridController(liveID: liveID);
-    _prepareStore.prepareLiveIdBeforeEnterRoom(liveID: liveID);
+    _prepareStore.prepareLiveIdBeforeEnterRoom(liveID: liveID, params: params);
     _subscribeToast();
     _needToPrepare.value = behavior == RoomBehavior.prepareCreate;
     DeviceStore.shared.setFocus(DeviceFocusOwner.live);
     widget.floatWindowController?.isFullScreen.addListener(_onFullScreenChangedListener);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() &&
-          Global.secondaryNavigatorKey.currentState != null
-          && widget.floatWindowController == null) {
-        String error = "You have enabled the floating window feature,"
-            "but you are using TUIVoiceRoomWidget, Please switch to TUIVoiceRoomOverlay."
-            "Or disable the floating window feature in the app's main.dart: "
-            "GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: Please use TUIVoiceRoomOverlay");
-        if (mounted) Navigator.pop(context);
-      }
-    });
   }
 
   @override
@@ -99,6 +85,7 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
 
   @override
   Widget build(BuildContext context) {
+    DeviceLanguage.checkLocale(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(

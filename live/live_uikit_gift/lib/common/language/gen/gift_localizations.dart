@@ -62,13 +62,21 @@ import 'gift_localizations_zh.dart';
 /// be consistent with the languages listed in the GiftLocalizations.supportedLocales
 /// property.
 abstract class GiftLocalizations {
+  static GiftLocalizations? defaultLocalizations;
   GiftLocalizations(String locale)
       : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
   static GiftLocalizations? of(BuildContext context) {
-    return Localizations.of<GiftLocalizations>(context, GiftLocalizations);
+    GiftLocalizations? localizations = Localizations.of<GiftLocalizations>(context, GiftLocalizations);
+    if (localizations == null) {
+      if (defaultLocalizations == null) {
+        defaultLocalizations = GiftLocalizationsEn();
+      }
+      return defaultLocalizations;
+    }
+    return localizations;
   }
 
   static const LocalizationsDelegate<GiftLocalizations> delegate =
