@@ -32,7 +32,7 @@ dependencies:
   tuikit_atomic_x:
     path: ../../atomic-x
 
-  atomic_x_core: ^3.6.2
+  atomic_x_core: ^4.0.0
 
 dev_dependencies:
   flutter_test:
