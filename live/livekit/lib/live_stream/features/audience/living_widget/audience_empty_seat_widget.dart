@@ -21,7 +21,7 @@ class AudienceEmptySeatWidget extends StatelessWidget {
             visible: !isFloatWindowMode,
             child: GestureDetector(
               onTap: () {
-                _showCoGuestPanelWidget(seatInfo.index);
+                _showCoGuestPanelWidget(seatInfo.index, context);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -51,12 +51,18 @@ class AudienceEmptySeatWidget extends StatelessWidget {
         });
   }
 
-  void _showCoGuestPanelWidget(int seatIndex) {
+  void _showCoGuestPanelWidget(int seatIndex, BuildContext context) {
     final coGuestStatus = liveStreamManager.coGuestState.coGuestStatus.value;
     if (coGuestStatus == CoGuestStatus.applying || coGuestStatus == CoGuestStatus.linking) {
       LiveKitLogger.info("can't link, coGuestStatus:$coGuestStatus");
     } else {
-      popupWidget(CoGuestTypeSelectPanelWidget(liveStreamManager: liveStreamManager, seatIndex: seatIndex));
+      bool enableCamera = !liveStreamManager.roomManager.isScreenShareLive();
+      popupWidget(
+          CoGuestTypeSelectPanelWidget(
+        liveStreamManager: liveStreamManager,
+        seatIndex: seatIndex,
+        enableCamera: enableCamera,
+      ), context: context);
     }
   }
 }

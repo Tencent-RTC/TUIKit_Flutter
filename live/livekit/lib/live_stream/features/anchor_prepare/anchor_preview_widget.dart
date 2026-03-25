@@ -4,6 +4,7 @@ import 'package:tencent_live_uikit/common/error/error_handler.dart';
 import 'package:tencent_live_uikit/common/screen/index.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_prepare/anchor_preview_widget_define.dart';
+import 'package:tencent_live_uikit/live_stream/features/anchor_prepare/widgets/video_stream_source_widget.dart';
 import 'package:tencent_live_uikit/live_stream/live_define.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 
@@ -34,9 +35,11 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
   void initState() {
     super.initState();
     liveStreamManager = widget.liveStreamManager;
-
     _initEditInfo();
-    _startCameraAndMicrophone();
+    liveStreamManager.mediaManager.requestAllPermission().then((value) {
+      _startCamera();
+      _startMicrophone();
+    });
     if (DeviceStore.shared.state.localMirrorType.value != MirrorType.enable) {
       DeviceStore.shared.switchMirror(MirrorType.enable);
     }
@@ -49,8 +52,10 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
       child: Container(
         color: LiveColors.notStandardPureBlack,
         child: Stack(children: [
+          _initBackgroundWidget(),
           _buildVideoWidget(),
           _buildBackWidget(),
+          _buildLiveTabWidget(),
           _buildLiveInfoEditWidget(liveStreamManager),
           _buildFunctionWidget(),
           _buildStartLiveWidget()
@@ -59,16 +64,64 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
     );
   }
 
+  Widget _initBackgroundWidget() {
+    return SizedBox(
+      width: 1.screenWidth,
+      height: 1.screenHeight,
+      child: ValueListenableBuilder(
+          valueListenable: _editInfo.videoStreamSource,
+          builder: (_, videoStreamSource, child) {
+            if (videoStreamSource == VideoStreamSource.camera) {
+              return const SizedBox.shrink();
+            } else {
+              return Image.asset(LiveImages.defaultBackground, fit: BoxFit.cover, package: Constants.pluginName);
+            }
+          }),
+    );
+  }
+
+  Widget _buildLiveTabWidget() {
+    return Positioned(
+      top: 80.height,
+      height: 44.height,
+      child: SizedBox(
+        width: 1.screenWidth,
+        child: VideoStreamSourceWidget(videoStreamSourceChanged: (videoStreamSource) {
+          _editInfo.videoStreamSource.value = videoStreamSource;
+          if (videoStreamSource == VideoStreamSource.camera) {
+            _editInfo.coGuestTemplateMode.value = LiveTemplateMode.verticalDynamicGrid;
+            _startCamera();
+          } else {
+            _editInfo.coGuestTemplateMode.value = LiveTemplateMode.horizontalDynamic;
+            _stopCamera();
+          }
+        }),
+      ),
+    );
+  }
+
   Widget _buildVideoWidget() {
-    return Padding(
-      padding: EdgeInsets.only(top: 36.height, bottom: 96.height),
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.radius),
-          child: VideoView(
-            onViewCreated: (id) {
-              widget.liveStreamManager.mediaManager.setLocalVideoView(id);
-            },
-          )),
+    return Positioned(
+      width: 1.screenWidth,
+      height: 1.screenHeight,
+      child: ValueListenableBuilder(
+          valueListenable: _editInfo.videoStreamSource,
+          builder: (_, videoStreamSource, child) {
+            if (videoStreamSource != VideoStreamSource.camera) return const SizedBox.shrink();
+            return Padding(
+              padding: EdgeInsets.only(top: 36.height, bottom: 96.height),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.radius),
+                  child: VideoView(
+                    onViewCreated: (id) {
+                      widget.liveStreamManager.mediaManager.setLocalVideoView(id);
+                    },
+                    onViewDisposed: (id) {
+                      widget.liveStreamManager.mediaManager.setLocalVideoView(0);
+                    },
+                  )),
+            );
+          }),
     );
   }
 
@@ -87,7 +140,7 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
 
   Widget _buildLiveInfoEditWidget(LiveStreamManager manager) {
     return Positioned(
-        top: 96.height,
+        top: 120.height,
         left: 16.width,
         right: 16.width,
         height: 112.height,
@@ -96,11 +149,21 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
 
   Widget _buildFunctionWidget() {
     return Positioned(
-        left: 0,
-        bottom: 134.height,
-        width: 375.width,
-        height: 62.height,
-        child: AnchorPreviewFunctionWidget(editInfo: _editInfo, liveStreamManager: liveStreamManager));
+      left: 0,
+      bottom: 134.height,
+      width: 375.width,
+      height: 62.height,
+      child: ValueListenableBuilder(
+          valueListenable: _editInfo.videoStreamSource,
+          builder: (_, videoStreamSource, child) {
+            if (videoStreamSource == VideoStreamSource.camera) {
+              _editInfo.coGuestTemplateMode.value = LiveTemplateMode.verticalDynamicGrid;
+            }
+            return Visibility(
+                visible: videoStreamSource == VideoStreamSource.camera,
+                child: AnchorPreviewFunctionWidget(editInfo: _editInfo, liveStreamManager: liveStreamManager));
+          }),
+    );
   }
 
   Widget _buildStartLiveWidget() {
@@ -132,7 +195,11 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
 
 extension on _AnchorPreviewWidgetState {
   void _initEditInfo() {
-    _editInfo = EditInfo(roomName: _getDefaultRoomName(), privacyMode: LiveStreamPrivacyStatus.public);
+    _editInfo = EditInfo(
+      roomName: _getDefaultRoomName(),
+      privacyMode: LiveStreamPrivacyStatus.public,
+      videoStreamSource: VideoStreamSource.camera,
+    );
   }
 
   String _getDefaultRoomName() {
@@ -143,12 +210,16 @@ extension on _AnchorPreviewWidgetState {
     return selfInfo.userName!;
   }
 
-  void _startCameraAndMicrophone() async {
-    final startCameraResult = await liveStreamManager.mediaManager.openLocalCamera(true);
+  void _startCamera() async {
+    final isFront = DeviceStore.shared.state.isFrontCamera.value;
+    final startCameraResult = await liveStreamManager.mediaManager.openLocalCamera(isFront);
     if (startCameraResult.code != TUIError.success) {
       liveStreamManager.toastSubject
           .add(ErrorHandler.convertToErrorMessage(startCameraResult.code.rawValue, startCameraResult.message) ?? '');
     }
+  }
+
+  void _startMicrophone() async {
     final startMicrophoneResult = await liveStreamManager.mediaManager.openLocalMicrophone();
     if (startMicrophoneResult.code != TUIError.success) {
       liveStreamManager.toastSubject.add(
@@ -156,8 +227,11 @@ extension on _AnchorPreviewWidgetState {
     }
   }
 
-  void _stopCameraAndMicrophone() {
+  void _stopCamera() {
     liveStreamManager.mediaManager.closeLocalCamera();
+  }
+
+  void _stopMicrophone() {
     liveStreamManager.mediaManager.closeLocalMicrophone();
   }
 
@@ -166,7 +240,10 @@ extension on _AnchorPreviewWidgetState {
   }
 
   void _closeWidget() {
-    _stopCameraAndMicrophone();
+    _stopMicrophone();
+    if (_editInfo.videoStreamSource.value == VideoStreamSource.camera) {
+      _stopCamera();
+    }
     if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
     } else {

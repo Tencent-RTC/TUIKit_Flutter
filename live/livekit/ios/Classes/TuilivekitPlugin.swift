@@ -6,6 +6,7 @@ public class TuilivekitPlugin: NSObject, FlutterPlugin {
   var settingsManager: SettingsManager?
   let thermalManager = ThermalManager()
   let networkManager = NetworkManager()
+  let screenCaptureManager = ScreenCaptureManager()
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "tuilivekit", binaryMessenger: registrar.messenger())
@@ -17,6 +18,9 @@ public class TuilivekitPlugin: NSObject, FlutterPlugin {
     
     let networkEventChannel = FlutterEventChannel(name: "tuilivekit_network_events", binaryMessenger: registrar.messenger())
     networkEventChannel.setStreamHandler(instance.networkManager)
+
+    let screenCaptureEventChannel = FlutterEventChannel(name: "tuilivekit_screen_capture_events", binaryMessenger: registrar.messenger())
+    screenCaptureEventChannel.setStreamHandler(instance.screenCaptureManager)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

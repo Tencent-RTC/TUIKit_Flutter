@@ -40,19 +40,6 @@ class _TUILiveRoomAudienceWidgetState extends State<TUILiveRoomAudienceWidget> {
     _init();
     _addObserver();
     _startWakeLock();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() &&
-          Global.secondaryNavigatorKey.currentState != null
-          && widget.floatWindowController == null) {
-        String error = "You have enabled the floating window feature,"
-            "but you are using TUILiveRoomAudienceWidget, Please switch to TUILiveRoomAudienceOverlay."
-            "Or disable the floating window feature in the app's main.dart: "
-            "GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: Please use TUILiveRoomAudienceOverlay");
-        if (mounted) Navigator.pop(context);
-      }
-    });
   }
 
   @override
@@ -67,6 +54,7 @@ class _TUILiveRoomAudienceWidgetState extends State<TUILiveRoomAudienceWidget> {
 
   @override
   Widget build(BuildContext context) {
+    DeviceLanguage.checkLocale(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: AudienceWidget(

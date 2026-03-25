@@ -4,6 +4,7 @@ import 'package:tencent_live_uikit/live_stream/live_define.dart';
 import '../../../common/constants/constants.dart';
 
 class EditInfo {
+  ValueNotifier<VideoStreamSource> videoStreamSource;
   ValueNotifier<String> roomName;
   ValueNotifier<String> coverUrl;
   ValueNotifier<LiveStreamPrivacyStatus> privacyMode;
@@ -11,12 +12,14 @@ class EditInfo {
   ValueNotifier<LiveTemplateMode> coHostTemplateMode;
 
   EditInfo({
+    VideoStreamSource videoStreamSource = VideoStreamSource.camera,
     String roomName = '',
     String coverUrl = Constants.defaultCoverUrl,
     LiveStreamPrivacyStatus privacyMode = LiveStreamPrivacyStatus.public,
     LiveTemplateMode coGuestTemplateMode = LiveTemplateMode.verticalDynamicGrid,
     LiveTemplateMode coHostTemplateMode = LiveTemplateMode.verticalDynamicGrid,
-  })  : roomName = ValueNotifier(roomName),
+  })  : videoStreamSource = ValueNotifier(videoStreamSource),
+        roomName = ValueNotifier(roomName),
         coverUrl = ValueNotifier(coverUrl),
         privacyMode = ValueNotifier(privacyMode),
         coGuestTemplateMode = ValueNotifier(coGuestTemplateMode),

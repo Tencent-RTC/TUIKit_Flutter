@@ -30,25 +30,8 @@ class TUIVoiceRoomOverlayState extends State<TUIVoiceRoomOverlay> {
     super.initState();
     LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
     LiveKitLogger.info("TUIVoiceRoomOverlay initState");
+    GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
-        String error = "Error: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!\n"
-            "You need to enable the floating window feature first.\n"
-            "It is recommended to execute the following in main.dart first: GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: GlobalFloatWindowManager.isEnableFloatWindowFeature is false!");
-        if (mounted) Navigator.pop(context);
-        return;
-      }
-      if (Global.secondaryNavigatorKey.currentState == null) {
-        String error = "Error: Global.secondaryNavigatorKey is invalid!\n"
-            "Please refer to the home parameter of MaterialApp in example's main.dart.\n"
-            "You need to wrap the home page with a Navigator and use Global.secondaryNavigatorKey as the key for this Navigator.";
-        LiveKitLogger.error(error);
-        makeToast(msg: "Tip: Global.secondaryNavigatorKey is invalid!");
-        if (mounted) Navigator.pop(context);
-        return;
-      }
       if (GlobalFloatWindowManager.instance.isFloating()) {
         GlobalFloatWindowState state = GlobalFloatWindowManager.instance.state;
         if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
@@ -69,31 +52,41 @@ class TUIVoiceRoomOverlayState extends State<TUIVoiceRoomOverlay> {
   Widget buildOverlayContent() {
     final width = 60.width;
     return FloatWindowWidget(
-      padding: 0,
-      size: Size(width, width),
-      borderRadius: BorderRadius.circular(width / 2),
-      builder: (context, controller) {
-        switchToFullScreenMode() {
-          controller.onTapSwitchFloatWindowInApp(false);
-        }
+        padding: 0,
+        size: Size(width, width),
+        borderRadius: BorderRadius.circular(width / 2),
+        builder: (context, controller) {
+          switchToFullScreenMode() {
+            controller.onTapSwitchFloatWindowInApp(false);
+          }
 
-        GlobalFloatWindowManager.instance.overlayManager.setSwitchToFullScreenCallback(switchToFullScreenMode);
-        return Stack(
-          children: [
-            TUIVoiceRoomWidget(roomId: widget.roomId, behavior: widget.behavior, floatWindowController: controller),
-            Visibility(
-              visible: !controller.isFullScreen.value,
-              child: CachedNetworkImage(
-                imageUrl: LiveListStore.shared.liveState.currentLive.value.liveOwner.avatarURL,
-                errorWidget: (BuildContext context, String url, Object error) {
-                  return Image.asset(LiveImages.defaultAvatar, package: Constants.pluginName);
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
+          GlobalFloatWindowManager.instance.overlayManager.setSwitchToFullScreenCallback(switchToFullScreenMode);
+          return Navigator(
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (context) => Stack(
+                  children: [
+                    TUIVoiceRoomWidget(
+                        roomId: widget.roomId,
+                        behavior: widget.behavior,
+                        params: widget.params,
+                        floatWindowController: controller),
+                    Visibility(
+                      visible: !controller.isFullScreen.value,
+                      child: CachedNetworkImage(
+                        imageUrl: LiveListStore.shared.liveState.currentLive.value.liveOwner.avatarURL,
+                        errorWidget: (BuildContext context, String url, Object error) {
+                          return Image.asset(LiveImages.defaultAvatar, package: Constants.pluginName);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                settings: settings,
+              );
+            },
+          );
+        });
   }
 
   @override

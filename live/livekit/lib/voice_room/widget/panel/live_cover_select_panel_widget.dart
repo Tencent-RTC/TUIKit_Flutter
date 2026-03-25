@@ -148,6 +148,6 @@ extension on _LiveCoverSelectPanelWidgetState {
 
   void _setLiveCover() {
     widget.prepareStore.onSetRoomCoverUrl(widget.coverUrls[selectedIndex.value]);
-    Navigator.of(Global.appContext()).pop();
+    Navigator.of(context).pop();
   }
 }

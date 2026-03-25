@@ -15,10 +15,14 @@ import '../../../state/co_guest_state.dart';
 
 class AudienceBottomMenuWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
+  final bool enableCoGuest;
+  final bool enableMore;
 
   const AudienceBottomMenuWidget({
     super.key,
     required this.liveStreamManager,
+    this.enableCoGuest = true,
+    this.enableMore = true,
   });
 
   @override
@@ -56,13 +60,13 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
 
   void _closeAllDialog() {
     if (_coGuestPanelHandler?.isShowing() == true) {
-      Navigator.of(Global.appContext()).popUntil((Route<dynamic> route) {
+      Navigator.of(context).popUntil((Route<dynamic> route) {
         return route.settings.name == kCoGuestPanelName;
       });
       _coGuestPanelHandler?.close();
     }
     if (_settingsPanelHandler?.isShowing() == true) {
-      Navigator.of(Global.appContext()).popUntil((Route<dynamic> route) {
+      Navigator.of(context).popUntil((Route<dynamic> route) {
         return route.settings.name == kSettingsPanelName;
       });
       _settingsPanelHandler?.close();
@@ -93,22 +97,11 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
           children: [
             _buildGiftSendWidget(),
             SizedBox(width: 8.width),
-            ValueListenableBuilder(
-              valueListenable: widget.liveStreamManager.roomState.roomVideoStreamIsLandscape,
-              builder: (BuildContext context, isLandScape, Widget? child) {
-                return Visibility(
-                    visible: !isLandScape,
-                    child: Row(
-                      children: [
-                        _buildCoGuestWidget(),
-                        SizedBox(width: 8.width),
-                      ],
-                    ));
-              },
-            ),
+            Visibility(visible: widget.enableCoGuest, child: _buildCoGuestWidget()),
+            Visibility(visible: widget.enableCoGuest, child: SizedBox(width: 8.width)),
             _buildLikeSendWidget(),
-            SizedBox(width: 8.width),
-            _buildSettingsWidget()
+            Visibility(visible: widget.enableMore, child: SizedBox(width: 8.width)),
+            Visibility(visible: widget.enableMore, child: _buildSettingsWidget())
           ],
         ),
       ),
@@ -122,7 +115,7 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
       top: 0,
       width: 130.width,
       height: 36.height,
-      child: BarrageSendWidget(controller: _barrageSendController!, parentContext: Global.appContext()),
+      child: BarrageSendWidget(controller: _barrageSendController!),
     );
   }
 
@@ -155,7 +148,7 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
     return SizedBox(
       width: 32.radius,
       height: 32.radius,
-      child: GiftSendWidget(controller: _giftListController!, parentContext: Global.appContext()),
+      child: GiftSendWidget(controller: _giftListController!),
     );
   }
 
@@ -181,7 +174,7 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
 
   void _showSettingsPanel() {
     _settingsPanelHandler = popupWidget(AudienceSettingsPanelWidget(liveStreamManager: widget.liveStreamManager),
-        routeSettings: RouteSettings(name: kSettingsPanelName));
+        context: context, routeSettings: RouteSettings(name: kSettingsPanelName));
   }
 
   void _handleCoGuestTap(CoGuestStatus status, bool isCoGuestDisable) {
@@ -202,8 +195,14 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
   }
 
   void _showCoGuestPanelWidget() {
+    bool enableCamera = !widget.liveStreamManager.roomManager.isScreenShareLive();
     _coGuestPanelHandler = popupWidget(
-        CoGuestTypeSelectPanelWidget(liveStreamManager: widget.liveStreamManager, seatIndex: -1),
+        CoGuestTypeSelectPanelWidget(
+          liveStreamManager: widget.liveStreamManager,
+          seatIndex: -1,
+          enableCamera: enableCamera,
+        ),
+        context: context,
         routeSettings: RouteSettings(name: kCoGuestPanelName));
   }
 }
@@ -255,7 +254,7 @@ extension on _AudienceBottomMenuWidgetState {
         coGuestStore.cancelApplication();
         widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
       }
-    });
+    }, parentContext: context);
   }
 
   void _showCloseCoGuestPanelWidget() {
@@ -281,7 +280,7 @@ extension on _AudienceBottomMenuWidgetState {
         CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
         coGuestStore.disconnect();
       }
-    });
+    }, parentContext: context);
   }
 
   String _getImageByCoGuestStatus(bool isCoGuestDisabled) {

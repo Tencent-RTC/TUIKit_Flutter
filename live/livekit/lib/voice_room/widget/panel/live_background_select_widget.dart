@@ -164,6 +164,6 @@ extension on _LiveBackgroundSelectPanelWidgetState {
       currentLive.backgroundURL = backgroundUrl;
       liveListStore.updateLiveInfo(liveInfo: currentLive, modifyFlagList: [ModifyFlag.backgroundUrl]);
     }
-    Navigator.of(Global.appContext()).pop();
+    Navigator.of(context).pop();
   }
 }

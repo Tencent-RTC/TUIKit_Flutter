@@ -190,6 +190,9 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
             ListenableBuilder(
               listenable: Listenable.merge([_isCameraOpened, widget.liveStreamManager.mediaState.isVideoLocked]),
               builder: (context, child) {
+                if (widget.liveStreamManager.roomManager.isScreenShareLive()) {
+                  return const SizedBox.shrink();
+                }
                 final isCameraOpened = _isCameraOpened.value;
                 final isVideoLocked = widget.liveStreamManager.mediaState.isVideoLocked.value;
                 return GestureDetector(
@@ -220,7 +223,7 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
                 );
               },
             ),
-            SizedBox(width: 20.width),
+            widget.liveStreamManager.roomManager.isScreenShareLive() ? SizedBox.shrink() : SizedBox(width: 20.width),
             ValueListenableBuilder(
                 valueListenable: _isCameraOpened,
                 builder: (context, isCameraOpened, _) {
@@ -285,9 +288,10 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
 extension on _AudienceUserManagementPanelWidgetState {
   void _onSeatListChanged() {
     final seatList = liveSeatStore.liveSeatState.seatList.value;
+    final isScreenShareLive = widget.liveStreamManager.roomManager.isScreenShareLive();
     for (var seat in seatList) {
       if (seat.userInfo.userID == widget.user.userID) {
-        _isCameraOpened.value = seat.userInfo.cameraStatus == DeviceStatus.on;
+        _isCameraOpened.value = seat.userInfo.cameraStatus == DeviceStatus.on && !isScreenShareLive;
         _isMicrophoneMuted.value = seat.userInfo.microphoneStatus != DeviceStatus.on;
         break;
       }
@@ -403,7 +407,7 @@ extension on _AudienceUserManagementPanelWidgetState {
         ),
         cancelCallback: () {
           isShowingAlert = false;
-          Navigator.pop(Global.appContext());
+          Navigator.pop(context);
         },
         defaultActionInfo: (
           title: LiveKitLocalizations.of(Global.appContext())!.common_end_link,
@@ -413,11 +417,11 @@ extension on _AudienceUserManagementPanelWidgetState {
           CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
           coGuestStore.disconnect();
           isShowingAlert = false;
-          Navigator.pop(Global.appContext());
-          Navigator.pop(Global.appContext());
+          Navigator.pop(context);
+          Navigator.pop(context);
         });
 
-    Alert.showAlert(alertInfo);
+    Alert.showAlert(alertInfo, context);
     isShowingAlert = true;
   }
 }

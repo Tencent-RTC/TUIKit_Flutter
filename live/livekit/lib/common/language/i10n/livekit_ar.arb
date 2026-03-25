@@ -39,6 +39,7 @@
   "common_more_features": "المزيد من الميزات",
   "common_mute_audio_by_master": "قام المذيع بكتم صوتك",
   "common_mute_video_by_owner": "قام المذيع بتعطيل الفيديو الخاص بك",
+  "common_preview_video_live": "فيديو مباشر",
   "common_recommended_list": "المذيعون المقترحون",
   "common_link_mic_up_title": "الميكروفون الحالي",
   "common_send_message_disabled": "تم كتم صوتك في الغرفة الحالية",
@@ -338,6 +339,7 @@
   "seat_unlocked": "فتح قفل المقعد",
   "seat_no_guest": "لا يوجد ضيوف",
   "seat_in_battle": "في المنافسة",
+  "seat_in_connection": "قيد الاتصال",
   "seat_cancel_invite": "إلغاء الدعوة",
   "seat_request_battle": "طلب المنافسة",
   "seat_request_host": "دعوة المضيف",
@@ -354,5 +356,11 @@
   "mirror_type_change_to": "التغيير إلى xxx",
   "common_remove": "إزالة",
   "common_host_kick_user_after_connect": "تم الاتصال بنجاح. تمت إزالة المستخدمين خارج أول 6 مقاعد.",
-  "common_audience_kicked_re_apply": "يعرض الاتصال أول 6 مقاعد فقط. تمت إزالتك."
+  "common_audience_kicked_re_apply": "يعرض الاتصال أول 6 مقاعد فقط. تمت إزالتك.",
+  "common_game_live": "بث مباشر للألعاب",
+  "common_live_game": "بث مباشر للعبة",
+  "common_end_live_by_server": "تم إيقاف البث المباشر بسبب انتهاكات للوائح."
+  "common_go_to_enable": "الذهاب للتفعيل",
+  "common_live_screen": "بث الشاشة مباشرةً",
+  "common_select_app_to_live": "بث مباشر للعبةاختر التطبيق وابدأ البث المباشر"
 }

@@ -1,13 +1,21 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:replay_kit_launcher/replay_kit_launcher.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 
 import '../../api/live_stream_service.dart';
 import '../../state/co_guest_state.dart';
 import '../../state/media_state.dart';
 import '../live_stream_manager.dart';
+import '../../../common/platform/index.dart';
+
+const kIOSAppGroup = ''; //'group.com.tencent.fx.livekit'
 
 class MediaManager {
   LSMediaState mediaState = LSMediaState();
@@ -15,20 +23,29 @@ class MediaManager {
   late final Context context;
   late final LiveStreamService service;
 
+  StreamSubscription<bool>? _screenCaptureSubscription;
+
   void init(Context context) {
     this.context = context;
     service = context.service;
     _enableMultiPlaybackQuality(true);
-    _enableSwitchPlaybackQuality(true);
+    _subscribeScreenCaptureState();
   }
 
   void dispose() {
     _enableMultiPlaybackQuality(false);
-    _enableSwitchPlaybackQuality(false);
+    _screenCaptureSubscription?.cancel();
+    _screenCaptureSubscription = null;
   }
 
   void prepareLiveInfoBeforeEnterRoom(LiveInfo liveInfo) {
     _enableMultiPlaybackQuality(true);
+  }
+
+  Future<void> requestAllPermission() async {
+    await Permission.camera.request();
+    await Permission.microphone.request();
+    return Future.value();
   }
 
   Future<TUIActionCallback> openLocalCamera(bool useFrontCamera) async {
@@ -67,6 +84,20 @@ class MediaManager {
     DeviceStore.shared.closeLocalMicrophone();
   }
 
+  void launchReplayKitBroadcast() {
+    if (Platform.isIOS) {
+      ReplayKitLauncher.launchReplayKitBroadcast(kIOSAppGroup);
+    }
+  }
+
+  void startScreenShare() {
+    DeviceStore.shared.startScreenShare();
+  }
+
+  void stopScreenShare() {
+    DeviceStore.shared.stopScreenShare();
+  }
+
   void onJoinLive(LiveInfo liveInfo) async {
     final result = await getMultiPlaybackQuality(liveInfo.liveID);
     if (result.code != TUIError.success || result.data == null) {
@@ -93,9 +124,8 @@ class MediaManager {
     service.enableGravitySensor(true);
   }
 
-  void updateVideoQuality(TUIVideoQuality quality) {
-    service.updateVideoQuality(quality);
-    mediaState.videoQuality.value = quality;
+  void updateVideoQuality(VideoQuality quality) {
+    DeviceStore.shared.updateVideoQuality(quality);
   }
 
   Future<TUIValueCallBack<List<TUIVideoQuality>>> getMultiPlaybackQuality(String roomId) {
@@ -149,12 +179,16 @@ class MediaManager {
 }
 
 extension on MediaManager {
-  void _enableMultiPlaybackQuality(bool enable) {
-    service.enableMultiPlaybackQuality(enable);
+  void _subscribeScreenCaptureState() {
+    if (!Platform.isIOS) return;
+    _screenCaptureSubscription = TUILiveKitPlatform.screenCaptureStateChanged.listen((isCaptured) {
+      LiveKitLogger.info("screenCaptureStateChanged: isCaptured=$isCaptured");
+      mediaState.isScreenCaptured.value = isCaptured;
+    });
   }
 
-  void _enableSwitchPlaybackQuality(bool enable) {
-    service.enableSwitchPlaybackQuality(enable);
+  void _enableMultiPlaybackQuality(bool enable) {
+    service.enableMultiPlaybackQuality(enable);
   }
 
   TUIVideoQuality _getVideoQualityByVideoSize(int width, int height) {

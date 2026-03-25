@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'livekit_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -136,6 +138,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_mute_video_by_owner => 'The anchor disabled your video';
 
   @override
+  String get common_preview_video_live => 'Live Video';
+
+  @override
   String get common_recommended_list => 'Suggested Hosts';
 
   @override
@@ -193,6 +198,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   @override
   String get live_error_connection_retry =>
       'Internal error, it is recommended to try again.';
+
+  @override
+  String get live_error_room_mismatch =>
+      'The room types do not match; connections can only be initiated in rooms of the same type.';
 
   @override
   String get livelist_loading => 'Loading...';
@@ -528,6 +537,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_end_live => 'End Live';
+
+  @override
+  String get common_exit_connect => 'Exit connect';
 
   @override
   String get common_end_user => 'End';
@@ -1143,6 +1155,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get seat_in_battle => 'In Battle';
 
   @override
+  String get seat_in_connection => 'In Connection';
+
+  @override
   String get seat_cancel_invite => 'Cancel invite';
 
   @override
@@ -1195,4 +1210,19 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   @override
   String get common_audience_kicked_re_apply =>
       'The connection only displays the first 6 seats. You have been removed.';
+
+  @override
+  String get common_game_live => 'Game Live';
+
+  @override
+  String get common_live_game => 'Live Game';
+
+  @override
+  String get common_go_to_enable => 'Go to Enable';
+
+  @override
+  String get common_live_screen => 'Live Screen';
+
+  @override
+  String get common_select_app_to_live => 'Select App and Start Live';
 }

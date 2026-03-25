@@ -178,7 +178,7 @@ class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPa
       );
 
   void _showBeautyPanel() {
-    _beautyPanelHandler = popupWidget(const BeautyPanelWidget());
+    _beautyPanelHandler = popupWidget(const BeautyPanelWidget(), context: context);
   }
 }
 
@@ -188,7 +188,7 @@ extension on _CoGuestVideoSettingsPanelWidgetState {
   }
 
   Future<void> _requestIntraRoomVideoConnection() async {
-    Navigator.of(Global.appContext()).pop();
+    Navigator.of(context).pop();
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(true);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);

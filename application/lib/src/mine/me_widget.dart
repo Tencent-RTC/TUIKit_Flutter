@@ -4,7 +4,6 @@ import 'package:application/src/utils/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tencent_live_uikit/common/widget/global.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
@@ -194,7 +193,7 @@ extension _MeWidgetStateLogicExtension on _MeWidgetState {
       });
     });
     Navigator.of(context).pop();
-    NavigatorState navigatorState = Global.secondaryNavigatorKey.currentState ?? Navigator.of(context);
+    NavigatorState navigatorState = Navigator.of(context);
     navigatorState.pushAndRemoveUntil(
       MaterialPageRoute(builder: (widget) => const LoginWidget()),
       (route) => false,

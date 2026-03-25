@@ -36,27 +36,36 @@ class FloatWindowManager {
     }
   }
 
-  Future<bool> enablePictureInPicture(String roomId, bool enable) async {
-    final jsonString = _buildEnablePipJsonParams(enable, roomId);
+  Future<bool> enablePictureInPicture(String roomId, bool enable, {bool isLandscape = false}) async {
+    final jsonString = _buildEnablePipJsonParams(enable, roomId, isLandscape: isLandscape);
     return TUILiveKitPlatform.instance.enablePictureInPicture(jsonString);
   }
 
-  String _buildEnablePipJsonParams(bool enable, String roomId) {
+  String _buildEnablePipJsonParams(
+    bool enable,
+    String roomId, {
+    bool isLandscape = false,
+    Size canvasSize = const Size(720, 1280),
+  }) {
+    double w = 1.0;
+    double h = isLandscape ? 9.0 / 16 * canvasSize.width / canvasSize.height : 1.0;
+    double x = 0.0;
+    double y = isLandscape ? (1 - h) / 2.0 : 0.0;
     Map<String, dynamic> jsonObject = {
       'api': 'enablePictureInPicture',
       'params': {
         "room_id": roomId,
         "enable": enable,
         "camBackgroundCapture": true,
-        "canvas": {"width": 720, "height": 1280, "backgroundColor": "#000000"},
+        "canvas": {"width": canvasSize.width, "height": canvasSize.height, "backgroundColor": "#000000"},
         "regions": [
           {
             "userId": "",
             "userName": "",
-            "width": 1.0,
-            "height": 1.0,
-            "x": 0.0,
-            "y": 0.0,
+            "width": w,
+            "height": h,
+            "x": x,
+            "y": y,
             "streamType": "high",
             "backgroundColor": "#000000",
             "backgroundImage": "" // /path/to/user1_placeholder.png

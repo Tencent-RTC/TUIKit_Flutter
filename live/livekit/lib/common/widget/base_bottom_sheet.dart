@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'global.dart';
-
 class BottomSheetHandler {
   BuildContext? _context;
 
@@ -25,7 +23,7 @@ class BottomSheetHandler {
 class BaseBottomSheet {
   static BottomSheetHandler showModalSheet({
     required WidgetBuilder builder,
-    BuildContext? context,
+    required BuildContext context,
     RouteSettings? routeSettings,
     VoidCallback? onDismiss,
     bool useRootNavigator = false,
@@ -36,7 +34,7 @@ class BaseBottomSheet {
   }) {
     final handler = BottomSheetHandler();
     showModalBottomSheet(
-        context: context ?? Global.appContext(),
+        context: context,
         routeSettings: routeSettings,
         useRootNavigator: useRootNavigator,
         isDismissible: isDismissible,

@@ -130,7 +130,7 @@ extension on _BottomMenuWidgetState {
           height: imageSize,
           child: GiftSendWidget(
             controller: _giftListController!,
-            parentContext: Global.appContext(),
+            parentContext: context,
             icon: Image.asset(LiveImages.functionGift, package: Constants.pluginName),
           ),
         ),
@@ -208,6 +208,7 @@ extension on _BottomMenuWidgetState {
       SettingsPanelWidget(onTapSettingsPanelItem: (itemType) {
         _handleTapSettingsPanel(itemType);
       }),
+      context: context,
       barrierColor: LiveColors.designStandardTransparent,
     );
   }
@@ -216,13 +217,15 @@ extension on _BottomMenuWidgetState {
     switch (itemType) {
       case SettingsItemType.background:
         final currentLive = _liveListStore.liveState.currentLive.value;
-        _liveBackgroundSelectPanelHandler = popupWidget(LiveBackgroundSelectPanelWidget(
-            backgroundUrls: Constants.backgroundUrlList,
-            initialBackgroundUrl: currentLive.backgroundURL,
-            sceneType: SelectPanelSceneType.voice));
+        _liveBackgroundSelectPanelHandler = popupWidget(
+            LiveBackgroundSelectPanelWidget(
+                backgroundUrls: Constants.backgroundUrlList,
+                initialBackgroundUrl: currentLive.backgroundURL,
+                sceneType: SelectPanelSceneType.voice),
+            context: context);
         break;
       case SettingsItemType.audioEffect:
-        _audioEffectPanelHandler = popupWidget(AudioEffectPanelWidget(roomId: widget.liveID));
+        _audioEffectPanelHandler = popupWidget(AudioEffectPanelWidget(roomId: widget.liveID), context: context);
         break;
       default:
         break;
@@ -230,8 +233,9 @@ extension on _BottomMenuWidgetState {
   }
 
   void _showSeatManagementPanel() {
-    _seatManagementPanelHandler =
-        popupWidget(SeatManagementPanelWidget(liveID: widget.liveID, toastService: widget.toastService));
+    _seatManagementPanelHandler = popupWidget(
+        SeatManagementPanelWidget(liveID: widget.liveID, toastService: widget.toastService),
+        context: context);
   }
 
   void _handleAudienceLinkMic() async {

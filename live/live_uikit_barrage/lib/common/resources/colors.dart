@@ -21,5 +21,5 @@ class BarrageColors {
   static const Color barrageAnchorFlagBackground = Color(0xFF4D8EFF);
   static const Color barrageButtonColorPrimaryDefault = Color(0xFF4086FF);
   static const Color barrageButtonColorPrimaryDefaultDisabled = Color(0xFF243047);
-
+  static const Color barrageBorderColor = Color(0x24FFFFFF);
 }

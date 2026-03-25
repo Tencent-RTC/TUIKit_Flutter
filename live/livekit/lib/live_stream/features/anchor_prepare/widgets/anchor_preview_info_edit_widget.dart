@@ -26,6 +26,7 @@ class AnchorPreviewInfoEditWidget extends StatefulWidget {
 class _AnchorPreviewInfoEditWidgetState extends State<AnchorPreviewInfoEditWidget> {
   late final LiveStreamManager liveStreamManager;
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _editFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _AnchorPreviewInfoEditWidgetState extends State<AnchorPreviewInfoEditWidge
   @override
   void dispose() {
     _controller.dispose();
+    _editFocusNode.dispose();
     super.dispose();
   }
 
@@ -137,6 +139,7 @@ class _AnchorPreviewInfoEditWidgetState extends State<AnchorPreviewInfoEditWidge
                         width: 185.width,
                         child: TextField(
                             controller: _controller,
+                            focusNode: _editFocusNode,
                             inputFormatters: [_Utf8ByteLengthLimitingTextInputFormatter(100)],
                             decoration: const InputDecoration(
                               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
@@ -152,12 +155,17 @@ class _AnchorPreviewInfoEditWidgetState extends State<AnchorPreviewInfoEditWidge
                       );
                     },
                   ),
-                  SizedBox(
-                    width: 16.radius,
-                    height: 16.radius,
-                    child: Image.asset(
-                      LiveImages.streamEditIcon,
-                      package: Constants.pluginName,
+                  GestureDetector(
+                    onTap: () {
+                      _editFocusNode.requestFocus();
+                    },
+                    child: SizedBox(
+                      width: 16.radius,
+                      height: 16.radius,
+                      child: Image.asset(
+                        LiveImages.streamEditIcon,
+                        package: Constants.pluginName,
+                      ),
                     ),
                   ),
                 ]),
@@ -233,7 +241,7 @@ extension on _AnchorPreviewInfoEditWidgetState {
     popupWidget(CoverSelectPanelWidget(
       coverUrlNotifier: widget.editInfo.coverUrl,
       coverUrls: Constants.coverUrlList,
-    ));
+    ), context: context);
   }
 
   void _showLiveModeSelectPanel() {
@@ -250,7 +258,7 @@ extension on _AnchorPreviewInfoEditWidgetState {
     ActionSheet.show(list, (ActionSheetModel model) async {
       final mode = model.bingData == 1 ? LiveStreamPrivacyStatus.public : LiveStreamPrivacyStatus.privacy;
       widget.editInfo.privacyMode.value = mode;
-    });
+    }, parentContext: context);
   }
 
   String _getPrivacyStatus(LiveStreamPrivacyStatus status) {

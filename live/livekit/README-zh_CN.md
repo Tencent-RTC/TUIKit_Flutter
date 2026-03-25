@@ -77,21 +77,18 @@ return MaterialApp(
 在使用互动直播功能前，请确保您已执行如下登录代码完成初始化工作。
 
 ```dart
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 final int sdkAppId = 'replace with your sdkAppId';
 final String userId = 'replace with your userId';
-final String userSig = 'replace with your userSig'
+final String userSig = 'replace with your userSig';
 
-await TUILogin.instance.login(
-   sdkAppId,
-   userId,
-   userSig,
-   TUICallback(onSuccess: () async {
-      debugPrint("TUILogin login success");
-   }, onError: (code, message) {
-      debugPrint("TUILogin login fail, {code:$code, message:$message}");
-   }));
+final result = await LoginStore.shared.login(sdkAppID: sdkAppId, userID: userId, userSig: userSig);
+if (result.isSuccess) {
+  debugPrint("LoginStore login success");
+} else {
+  debugPrint("LoginStore login fail, {code:${result.errorCode}, message:${result.errorMessage}}");
+}
 ```
 
 > - sdkAppId获取方式：您可在 [控制台](https://trtc.io/zh/document/60033?platform=flutter&product=live&menulabel=uikit) 开通服务并获取 SDKAppID

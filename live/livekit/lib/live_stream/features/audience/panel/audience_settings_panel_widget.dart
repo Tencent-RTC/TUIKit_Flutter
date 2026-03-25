@@ -147,13 +147,18 @@ extension on _AudienceSettingsPanelWidgetState {
         bingData: cancelNumber);
     menuData.add(cancel);
 
-    _videoQualityPanelHandler = ActionSheet.show(menuData, (model) {
-      if (!videoQualityMap.containsKey(model.bingData)) {
-        return;
-      }
-      final TUIVideoQuality videoQuality = videoQualityMap[model.bingData]!;
-      liveStreamManager.switchPlaybackQuality(videoQuality);
-    }, backgroundColor: LiveColors.designBgColorOperate);
+    _videoQualityPanelHandler = ActionSheet.show(
+      menuData,
+      (model) {
+        if (!videoQualityMap.containsKey(model.bingData)) {
+          return;
+        }
+        final TUIVideoQuality videoQuality = videoQualityMap[model.bingData]!;
+        liveStreamManager.switchPlaybackQuality(videoQuality);
+      },
+      backgroundColor: LiveColors.designBgColorOperate,
+      parentContext: context,
+    );
   }
 
   String _getVideoQualityString(TUIVideoQuality videoQuality) {
@@ -173,6 +178,7 @@ extension on _AudienceSettingsPanelWidgetState {
 
   void _showPipConfigPanel() {
     TUILiveKitPlatform.instance.hasPipPermission().then((hasPipPermission) {
+      if (!mounted) return;
       if (!hasPipPermission) {
         liveStreamManager.enablePipMode(false);
       }
@@ -187,6 +193,7 @@ extension on _AudienceSettingsPanelWidgetState {
             }
           },
         ),
+        context: context,
       );
     });
   }

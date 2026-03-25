@@ -24,8 +24,19 @@ import '../co_guest/co_guest_management_panel_widget.dart';
 
 class AnchorBottomMenuWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
+  final bool enableCoGuest;
+  final bool enableCoHost;
+  final bool enableBattle;
+  final bool enableMore;
 
-  const AnchorBottomMenuWidget({super.key, required this.liveStreamManager});
+  const AnchorBottomMenuWidget({
+    super.key,
+    required this.liveStreamManager,
+    this.enableCoGuest = true,
+    this.enableCoHost = true,
+    this.enableBattle = true,
+    this.enableMore = true,
+  });
 
   @override
   State<AnchorBottomMenuWidget> createState() => _AnchorBottomMenuWidgetState();
@@ -84,7 +95,7 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
       _coHostPanelSheetHandler?.close();
       _coGuestManagePanelSheetHandler?.close();
       if (_moreFeaturesPanelSheetHandler?.isShowing() == true) {
-        Navigator.of(Global.appContext()).popUntil((Route<dynamic> route) {
+        Navigator.of(context).popUntil((Route<dynamic> route) {
           return route.settings.name == kMoreFeaturesPanelWidgetName;
         });
         _moreFeaturesPanelSheetHandler?.close();
@@ -118,7 +129,7 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
                   selfUserId: TUIRoomEngine.getSelfInfo().userId,
                   selfName: TUIRoomEngine.getSelfInfo().userName);
 
-              return BarrageSendWidget(controller: _barrageSendController!, parentContext: Global.appContext());
+              return BarrageSendWidget(controller: _barrageSendController!, parentContext: context);
             },
           ),
         ));
@@ -141,7 +152,14 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
 extension on _AnchorBottomMenuWidgetState {
   List<Widget> _generateFeaturesButtonWidgets() {
     final List<Widget> buttons = List.empty(growable: true);
+    if (widget.enableCoHost) buttons.add(_createCoHostWidget());
+    if (widget.enableBattle) buttons.add(_createBattleWidget());
+    if (widget.enableCoGuest) buttons.add(_createCoGuestWidget());
+    if (widget.enableMore) buttons.add(_createMoreFeaturesWidget());
+    return buttons;
+  }
 
+  Widget _createCoHostWidget() {
     final coHost = ListenableBuilder(
       listenable: Listenable.merge([
         coGuestStore.coGuestState.applicants,
@@ -170,8 +188,10 @@ extension on _AnchorBottomMenuWidgetState {
             });
       },
     );
-    buttons.add(coHost);
+    return coHost;
+  }
 
+  Widget _createBattleWidget() {
     final battle = ListenableBuilder(
       listenable: Listenable.merge([
         liveStreamManager.battleState.battleUsers,
@@ -190,8 +210,10 @@ extension on _AnchorBottomMenuWidgetState {
             });
       },
     );
-    buttons.add(battle);
+    return battle;
+  }
 
+  Widget _createCoGuestWidget() {
     final coGuest = ListenableBuilder(
       listenable: Listenable.merge([coGuestStore.coGuestState.applicants, coHostStore.coHostState.connected]),
       builder: (context, _) {
@@ -209,8 +231,10 @@ extension on _AnchorBottomMenuWidgetState {
             });
       },
     );
-    buttons.add(coGuest);
+    return coGuest;
+  }
 
+  Widget _createMoreFeaturesWidget() {
     final moreFeatures = BottomButtonWidget(
         normalImage: Image.asset(LiveImages.more, package: Constants.pluginName),
         normalTitle: Text(LiveKitLocalizations.of(Global.appContext())!.common_more,
@@ -220,9 +244,7 @@ extension on _AnchorBottomMenuWidgetState {
         onPressed: () {
           _showMoreFeaturesPanel();
         });
-    buttons.add(moreFeatures);
-
-    return buttons;
+    return moreFeatures;
   }
 
   void _handleCoHostClick() {
@@ -239,7 +261,7 @@ extension on _AnchorBottomMenuWidgetState {
 
   void _showCoHostPanel() {
     _coHostPanelSheetHandler = popupWidget(
-      context: Global.appContext(),
+      context: context,
       CoHostManagementPanelWidget(liveStreamManager: liveStreamManager),
     );
   }
@@ -323,9 +345,9 @@ extension on _AnchorBottomMenuWidgetState {
         bingData: cancelNumber);
     menuData.add(cancel);
 
-    ActionSheet.show(menuData, (model) async {
+    ActionSheet.show(parentContext: context, menuData, (model) async {
       if (model.bingData != terminateBattleNumber) return;
-      Navigator.of(Global.appContext()).pop();
+      Navigator.of(context).pop();
       _showExitBattleAlert();
     }, backgroundColor: LiveColors.designStandardFlowkitWhite);
   }
@@ -351,7 +373,7 @@ extension on _AnchorBottomMenuWidgetState {
           _exitBattleAlertHandler?.close();
         });
 
-    _exitBattleAlertHandler = Alert.showAlert(alertInfo);
+    _exitBattleAlertHandler = Alert.showAlert(alertInfo, context);
   }
 
   void _handleCoGuestClick() {
@@ -362,11 +384,16 @@ extension on _AnchorBottomMenuWidgetState {
   }
 
   void _showCoGuestPanel() {
-    _coGuestManagePanelSheetHandler = popupWidget(CoGuestManagePanelWidget(liveStreamManager: liveStreamManager));
+    _coGuestManagePanelSheetHandler = popupWidget(
+      context: context,
+      CoGuestManagePanelWidget(liveStreamManager: liveStreamManager),
+    );
   }
 
   void _showMoreFeaturesPanel() {
-    _moreFeaturesPanelSheetHandler = popupWidget(MoreFeaturesPanelWidget(liveStreamManager: liveStreamManager),
+    _moreFeaturesPanelSheetHandler = popupWidget(
+        context: context,
+        MoreFeaturesPanelWidget(liveStreamManager: liveStreamManager),
         routeSettings: RouteSettings(name: kMoreFeaturesPanelWidgetName));
   }
 }

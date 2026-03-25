@@ -75,21 +75,18 @@ return MaterialApp(
 Before using the interactive live streaming features, ensure that you have completed the initialization by executing the following login code.
 
 ```dart
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 final int sdkAppId = 'replace with your sdkAppId';
 final String userId = 'replace with your userId';
 final String userSig = 'replace with your userSig';
 
-await TUILogin.instance.login(
-   sdkAppId,
-   userId,
-   userSig,
-   TUICallback(onSuccess: () async {
-      debugPrint("TUILogin login success");
-   }, onError: (code, message) {
-      debugPrint("TUILogin login fail, {code:$code, message:$message}");
-   }));
+final result = await LoginStore.shared.login(sdkAppID: sdkAppId, userID: userId, userSig: userSig);
+if (result.isSuccess) {
+  debugPrint("LoginStore login success");
+} else {
+  debugPrint("LoginStore login fail, {code:${result.errorCode}, message:${result.errorMessage}}");
+}
 ```
 
 > - **sdkAppId**: You can obtain it from the [Console](https://trtc.io/document/60033?platform=flutter&product=live&menulabel=uikit) after activating the service.  

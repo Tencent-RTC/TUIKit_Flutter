@@ -29,12 +29,20 @@ class UserManager {
     return service.getUserInfo(userId);
   }
 
-  Future<TUIActionCallback> onDisableSendingMessageBtnClicked(String userId, bool isDisable) {
-    return service.disableSendingMessageByAdmin(userId, isDisable);
+  Future<TUIActionCallback> onDisableSendingMessageBtnClicked(String userId, bool isDisable) async {
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    if (liveInfo.liveID.isEmpty) return TUIActionCallback(code: TUIError.errRoomIdInvalid, message: '');
+    final liveAudienceStore = LiveAudienceStore.create(liveInfo.liveID);
+    final result = await liveAudienceStore.disableSendMessage(userID: userId, isDisable: isDisable);
+    return TUIActionCallback(code: TUIError.fromRawValue(result.errorCode), message: result.errorMessage);
   }
 
-  Future<TUIActionCallback> onKickedOutBtnClicked(String userId) {
-    return service.kickRemoteUserOutOfRoom(userId);
+  Future<TUIActionCallback> onKickedOutBtnClicked(String userId) async {
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    if (liveInfo.liveID.isEmpty) return TUIActionCallback(code: TUIError.errRoomIdInvalid, message: '');
+    final liveAudienceStore = LiveAudienceStore.create(liveInfo.liveID);
+    final result = await liveAudienceStore.kickUserOutOfRoom(userId);
+    return TUIActionCallback(code: TUIError.fromRawValue(result.errorCode), message: result.errorMessage);
   }
 }
 

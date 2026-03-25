@@ -1,5 +1,15 @@
 # LiveUIKitBarrage
 
+## 3.0.1
+
+- Default internationalization language set to English.
+- Dialog optimized by removing useRootNavigator = true.
+- UI optimized.
+
+## 2.0.1
+
+- Supported Barrage for Room scenarios.
+
 ## 2.0.0
 
 - Architecture upgraded: replaced the barrage logic with the new BarrageStore from AtomicXCore.

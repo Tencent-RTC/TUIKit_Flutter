@@ -163,6 +163,6 @@ extension on _CoverSelectPanelWidgetState {
 
   void _setLiveCover() {
     widget.coverUrlNotifier.value = widget.coverUrls[selectedIndex.value];
-    Navigator.of(Global.appContext()).pop();
+    Navigator.of(context).pop();
   }
 }

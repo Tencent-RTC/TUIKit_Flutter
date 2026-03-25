@@ -60,7 +60,7 @@ class _CoGuestWaitingAgreeWidgetState extends State<CoGuestWaitingAgreeWidget> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 14.height),
+                  SizedBox(height: 10.height),
                   _buildUserAvatarWidget(),
                   SizedBox(height: 6.height),
                   _buildWaitingAgreeTextWidget(),
@@ -106,7 +106,7 @@ class _CoGuestWaitingAgreeWidgetState extends State<CoGuestWaitingAgreeWidget> {
             text,
             style: const TextStyle(
               color: LiveColors.designStandardFlowkitWhite,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
         );
@@ -140,7 +140,7 @@ class _CoGuestWaitingAgreeWidgetState extends State<CoGuestWaitingAgreeWidget> {
         coGuestStore.cancelApplication();
         widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
       }
-    });
+    }, parentContext: context);
   }
 
   void _startTimer() {

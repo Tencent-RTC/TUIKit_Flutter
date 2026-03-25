@@ -10,8 +10,14 @@ import '../../../manager/live_stream_manager.dart';
 class CoGuestTypeSelectPanelWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
   final int seatIndex;
+  final bool enableCamera;
 
-  const CoGuestTypeSelectPanelWidget({super.key, required this.liveStreamManager, this.seatIndex = -1});
+  const CoGuestTypeSelectPanelWidget({
+    super.key,
+    required this.liveStreamManager,
+    this.seatIndex = -1,
+    this.enableCamera = true,
+  });
 
   @override
   State<CoGuestTypeSelectPanelWidget> createState() => _CoGuestTypeSelectPanelWidgetState();
@@ -30,27 +36,29 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
   Widget build(BuildContext context) {
     return Container(
       width: 1.screenWidth,
-      height: 234.height,
+      constraints: BoxConstraints(maxHeight: 234.height),
       decoration: BoxDecoration(
         color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.radius),
-          topRight: Radius.circular(20.radius),
-        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           _buildTitleWidget(),
-          _buildOptionButton(
-            icon: LiveImages.linkVideo,
-            text: LiveKitLocalizations.of(context)!.common_text_link_mic_video,
-            onTap: _connectVideo,
+          Visibility(
+            visible: widget.enableCamera,
+            child: _buildOptionButton(
+              icon: LiveImages.linkVideo,
+              text: LiveKitLocalizations.of(context)!.common_text_link_mic_video,
+              onTap: _connectVideo,
+            ),
           ),
           _buildOptionButton(
             icon: LiveImages.linkAudio,
             text: LiveKitLocalizations.of(context)!.common_text_link_mic_audio,
             onTap: _connectAudio,
           ),
+          SizedBox(height: 34.height),
         ],
       ),
     );
@@ -87,35 +95,31 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
               ),
             ),
           ),
-          Positioned(
-            right: 16.width,
-            top: 35.height,
-            child: GestureDetector(
-              onTap: () {
-                _showSettingsPanel();
-              },
-              child: Container(
-                width: 40.width,
-                height: 40.height,
-                padding: EdgeInsets.all(10.width),
-                color: LiveColors.designStandardTransparent,
-                child: Image.asset(
-                  LiveImages.linkSettings,
-                  package: Constants.pluginName,
+          Visibility(
+            visible: widget.enableCamera,
+            child: Positioned(
+              right: 16.width,
+              top: 35.height,
+              child: GestureDetector(
+                onTap: () {
+                  _showSettingsPanel();
+                },
+                child: Container(
+                  width: 40.width,
+                  height: 40.height,
+                  padding: EdgeInsets.all(10.width),
+                  color: LiveColors.designStandardTransparent,
+                  child: Image.asset(LiveImages.linkSettings, package: Constants.pluginName),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildOptionButton({
-    required String icon,
-    required String text,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildOptionButton({required String icon, required String text, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -124,31 +128,16 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
         color: LiveColors.designStandardTransparent,
         child: Stack(
           children: [
-            Container(
-              width: 1.width,
-              height: 1.height,
-              color: LiveColors.notStandardBlue30Transparency,
-            ),
+            Container(width: 1.width, height: 1.height, color: LiveColors.notStandardBlue30Transparency),
             Positioned(
               top: 17.height,
               left: 16.width,
-              child: Image.asset(
-                icon,
-                package: Constants.pluginName,
-                width: 20.width,
-                height: 20.height,
-              ),
+              child: Image.asset(icon, package: Constants.pluginName, width: 20.width, height: 20.height),
             ),
             Positioned(
               top: 17.height,
               left: 49.width,
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: LiveColors.designStandardFlowkitWhite,
-                  fontSize: 16,
-                ),
-              ),
+              child: Text(text, style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 16)),
             ),
           ],
         ),
@@ -158,7 +147,9 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
 
   void _showSettingsPanel() {
     _videoSettingsPanelHandler = popupWidget(
-        CoGuestVideoSettingsPanelWidget(liveStreamManager: widget.liveStreamManager, seatIndex: widget.seatIndex));
+      CoGuestVideoSettingsPanelWidget(liveStreamManager: widget.liveStreamManager, seatIndex: widget.seatIndex),
+      context: context,
+    );
   }
 }
 
@@ -168,13 +159,15 @@ extension on _CoGuestTypeSelectPanelWidgetState {
   void _connectAudio() => _requestConnection(isVideo: false);
 
   Future<void> _requestConnection({required bool isVideo}) async {
-    Navigator.of(Global.appContext()).pop();
+    Navigator.of(context).pop();
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(isVideo);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
     makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.common_toast_apply_link_mic);
-    final result =
-        await coGuestStore.applyForSeat(seatIndex: widget.seatIndex, timeout: Constants.defaultRequestTimeout);
+    final result = await coGuestStore.applyForSeat(
+      seatIndex: widget.seatIndex,
+      timeout: Constants.defaultRequestTimeout,
+    );
     if (result.errorCode != TUIError.success.rawValue) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
       makeToast(msg: ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');

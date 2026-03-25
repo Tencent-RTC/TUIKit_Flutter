@@ -17,23 +17,23 @@ class VoiceRoomPrepareState {
             : ValueNotifier(LiveInfo(
                 coverURL: Constants.defaultCoverUrl,
                 backgroundURL: Constants.defaultBackgroundUrl,
-                isSeatEnabled: true,
                 keepOwnerOnSeat: true,
-                seatLayoutTemplateID: 70));
+                seatTemplate: const AudioSalon(10)));
 }
 
 class VoiceRoomPrepareStore {
   VoiceRoomPrepareState state = VoiceRoomPrepareState();
 
-  late RoomParams roomParams = RoomParams();
-
-  void prepareLiveIdBeforeEnterRoom({
-    required String liveID,
-    RoomParams? params,
-  }) {
-    state.liveInfo.value = state.liveInfo.value.copyWith(liveID: liveID);
-    if (params != null) {
-      roomParams = params;
+  void prepareLiveIdBeforeEnterRoom({required String liveID, RoomParams? params}) {
+    LiveInfo liveInfo = state.liveInfo.value;
+    if (params == null) {
+      state.liveInfo.value = liveInfo.copyWith(liveID: liveID);
+    } else {
+      state.liveInfo.value = liveInfo.copyWith(
+        liveID: liveID,
+        seatTemplate: AudioSalon(params.maxSeatCount),
+        seatMode: params.seatMode == TUISeatMode.applyToTake ? TakeSeatMode.apply : TakeSeatMode.free,
+      );
     }
   }
 
@@ -56,7 +56,6 @@ class VoiceRoomPrepareStore {
   void onChangedSeatMode(TUISeatMode seatMode) {
     state.liveInfo.value = state.liveInfo.value
         .copyWith(seatMode: seatMode == TUISeatMode.applyToTake ? TakeSeatMode.apply : TakeSeatMode.free);
-    roomParams.seatMode = seatMode;
   }
 
   void dispose() {
@@ -71,11 +70,9 @@ extension on LiveInfo {
       String? notice,
       bool? isMessageDisable,
       bool? isPublicVisible,
-      bool? isSeatEnabled,
       bool? keepOwnerOnSeat,
-      int? maxSeatCount,
       TakeSeatMode? seatMode,
-      int? seatLayoutTemplateID,
+      SeatLayoutTemplate? seatTemplate,
       String? coverURL,
       String? backgroundURL,
       List<int>? categoryList,
@@ -91,11 +88,9 @@ extension on LiveInfo {
         notice: notice ?? this.notice,
         isMessageDisable: isMessageDisable ?? this.isMessageDisable,
         isPublicVisible: isPublicVisible ?? this.isPublicVisible,
-        isSeatEnabled: isSeatEnabled ?? this.isSeatEnabled,
         keepOwnerOnSeat: keepOwnerOnSeat ?? this.keepOwnerOnSeat,
-        maxSeatCount: maxSeatCount ?? this.maxSeatCount,
         seatMode: seatMode ?? this.seatMode,
-        seatLayoutTemplateID: seatLayoutTemplateID ?? this.seatLayoutTemplateID,
+        seatTemplate: seatTemplate ?? this.seatTemplate,
         coverURL: coverURL ?? this.coverURL,
         backgroundURL: backgroundURL ?? this.backgroundURL,
         categoryList: categoryList ?? this.categoryList,

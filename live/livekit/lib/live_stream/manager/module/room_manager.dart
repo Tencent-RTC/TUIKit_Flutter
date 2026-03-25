@@ -91,6 +91,20 @@ class RoomManager {
     roomState.liveExtraInfo.giftIncome += price;
     roomState.liveExtraInfo.giftPeopleSet.add(senderUserId);
   }
+
+  bool isScreenShareLive() {
+    // screenShare: VideoLandscape4Seats + keepOwnerOnSeat(true)
+    final seatTemplate = roomState.liveInfo.seatTemplate;
+    final keepOwnerOnSeat = roomState.liveInfo.keepOwnerOnSeat;
+    return seatTemplate is VideoLandscape4Seats && keepOwnerOnSeat;
+  }
+
+  bool isObsLive() {
+    // obs: VideoLandscape4Seats + keepOwnerOnSeat(false)
+    final seatTemplate = roomState.liveInfo.seatTemplate;
+    final keepOwnerOnSeat = roomState.liveInfo.keepOwnerOnSeat;
+    return seatTemplate is VideoLandscape4Seats && !keepOwnerOnSeat;
+  }
 }
 
 extension RoomManagerCallBack on RoomManager {

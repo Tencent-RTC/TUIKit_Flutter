@@ -6,6 +6,7 @@ import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
+import 'package:flutter_effect_player/ftceffect_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../debug/generate_test_user_sig.dart';
@@ -169,6 +170,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   void _onLoginSuccess() {
+    _setTencentEffectPlayerLicense();
     _initCallKitSettings();
   }
 
@@ -183,6 +185,12 @@ class _LoginWidgetState extends State<LoginWidget> {
     TUICallKit.instance.enableIncomingBanner(enableIncomingBanner);
     TUICallKit.instance.enableMuteMode(enableMuteMode);
     TUICallKit.instance.enableAITranscriber(enableAITranscriber);
+  }
+
+  void _setTencentEffectPlayerLicense() {
+    FTCMediaXBase.instance.setLicense(tencentEffectLicenseURL, tencentEffectLicenseKey, (code, msg) {
+      debugPrint("TCMediax setLicense code:$code | msg:$msg");
+    });
   }
 
   void _enterProfileWidget() {

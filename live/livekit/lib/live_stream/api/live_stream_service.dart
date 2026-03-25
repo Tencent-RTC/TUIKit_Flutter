@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_rtc_sdk/trtc_cloud.dart';
 
@@ -76,14 +75,6 @@ extension LiveStreamServiceWithUser on LiveStreamService {
   Future<TUIValueCallBack<TUIUserInfo>> getUserInfo(String userId) {
     return roomEngine.getUserInfo(userId);
   }
-
-  Future<TUIActionCallback> disableSendingMessageByAdmin(String userId, bool isDisable) {
-    return roomEngine.disableSendingMessageByAdmin(userId, isDisable);
-  }
-
-  Future<TUIActionCallback> kickRemoteUserOutOfRoom(String userId) {
-    return roomEngine.kickRemoteUserOutOfRoom(userId);
-  }
 }
 
 extension LiveStreamServiceWithMedia on LiveStreamService {
@@ -103,10 +94,6 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
     roomEngine.setVideoResolutionMode(TUIVideoStreamType.cameraStream, resolutionMode);
   }
 
-  void updateVideoQuality(TUIVideoQuality videoQuality) {
-    roomEngine.updateVideoQuality(videoQuality);
-  }
-
   void updateVideoQualityEx(TUIVideoStreamType streamType, TUIRoomVideoEncoderParams params) {
     roomEngine.updateVideoQualityEx(streamType, params);
   }
@@ -124,26 +111,6 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
       TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error enableMultiPlaybackQuality');
-    }
-  }
-
-  void enableSwitchPlaybackQuality(bool enable) async {
-    Map<String, dynamic> config = {
-      'key': 'Liteav.engine.set.live.qos.audience.strategy.version"',
-      'value': enable ? 1 : 0
-    };
-
-    Map<String, dynamic> params = {
-      'configs': [config]
-    };
-    Map<String, dynamic> jsonObject = {'api': 'setPrivateConfig', 'params': params};
-
-    try {
-      final jsonString = json.encode(jsonObject);
-      final trtc = await TRTCCloud.sharedInstance();
-      trtc.callExperimentalAPI(jsonString);
-    } catch (e) {
-      LiveKitLogger.error('Error enableSwitchPlaybackQuality');
     }
   }
 
@@ -179,14 +146,14 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
       };
 
       String jsonString = jsonEncode(jsonObject);
-      TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
+      roomEngine.invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error switchPlaybackQuality');
     }
   }
 
   void setAudioPlayoutVolume(int volume) {
-    TUIRoomEngine.sharedInstance().setAudioPlayoutVolume(volume);
+    roomEngine.setAudioPlayoutVolume(volume);
   }
 
   void pauseByAudience() async {
@@ -195,7 +162,7 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
 
     try {
       final jsonString = json.encode(jsonObject);
-      final result = await TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
+      final result = await roomEngine.invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error pauseByAudience');
     }
@@ -207,7 +174,7 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
 
     try {
       final jsonString = json.encode(jsonObject);
-      final result = await TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
+      final result = await roomEngine.invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error resumeByAudience');
     }
@@ -231,19 +198,6 @@ extension LiveStreamServiceWithSeat on LiveStreamService {
 extension LiveStreamServiceWithCoHost on LiveStreamService {
   Future<TUIValueCallBack<TUILiveListResult>> fetchRecommendedList(String cursor, int count) {
     return liveListManager.fetchLiveList(cursor, count);
-  }
-
-  void setCoHostLayoutTemplateId(int templateId) {
-    try {
-      Map<String, dynamic> params = {'templateId': templateId};
-
-      Map<String, dynamic> jsonObject = {'api': 'setCoHostLayoutTemplateId', 'params': params};
-
-      final jsonString = jsonEncode(jsonObject);
-      TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
-    } catch (e) {
-      LiveKitLogger.error('Error setCoHostLayoutTemplateId. templateId:$templateId');
-    }
   }
 }
 

@@ -8,7 +8,6 @@ import '../../state/store.dart';
 import '../send/index.dart';
 import '../emoji/index.dart';
 
-
 class BarrageInputPanelWidget extends StatefulWidget {
   final BarrageSendController controller;
 
@@ -19,13 +18,14 @@ class BarrageInputPanelWidget extends StatefulWidget {
 }
 
 class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
-  ValueNotifier<bool> _isValidBarrageContent = ValueNotifier(false);
-  late final VoidCallback _inputListener = _textInputListener;
+  final ValueNotifier<bool> _isValidBarrageContent = ValueNotifier(false);
+  late final _textInputListener = _onTextInputChanged;
 
   @override
   void initState() {
     super.initState();
     widget.controller.textEditingController.addListener(_textInputListener);
+    _onTextInputChanged();
   }
 
   @override
@@ -36,20 +36,20 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    widget.controller.setInputKeyboardHeight(MediaQuery
-        .viewInsetsOf(context)
-        .bottom);
-    return SizedBox(
-      width: MediaQuery
-          .sizeOf(context)
-          .width,
-      height: widget.controller.getInputKeyboardHeight(context) + 60,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _buildTopBarWidget(context),
-          _buildPanelWidget(context),
-        ],
+    widget.controller.setInputKeyboardHeight(MediaQuery.viewInsetsOf(context).bottom);
+    return GestureDetector(
+      onTap: () {},
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        height: widget.controller.getInputKeyboardHeight(context) + 60,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildTopBarWidget(context),
+            _buildPanelWidget(context),
+          ],
+        ),
       ),
     );
   }
@@ -57,9 +57,7 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
   Widget _buildTopBarWidget(BuildContext context) {
     Orientation orientation = MediaQuery.orientationOf(context);
     return Container(
-      width: MediaQuery
-          .sizeOf(context)
-          .width,
+      width: MediaQuery.sizeOf(context).width,
       height: 60,
       padding: EdgeInsets.symmetric(horizontal: orientation == Orientation.portrait ? 16 : 52, vertical: 12),
       color: BarrageColors.barrageG2,
@@ -78,15 +76,16 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
 
   Widget _buildPanelWidget(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: widget.controller.showEmojiPanel,
-        builder: (BuildContext context, bool value, Widget? child) {
-          return widget.controller.showEmojiPanel.value
-              ? EmojiPanelWidget(controller: widget.controller)
-              : Container(
-            color: BarrageColors.barrageColorDark,
-            height: widget.controller.getInputKeyboardHeight(context),
-          );
-        });
+      valueListenable: widget.controller.showEmojiPanel,
+      builder: (BuildContext context, bool value, Widget? child) {
+        return widget.controller.showEmojiPanel.value
+            ? EmojiPanelWidget(controller: widget.controller)
+            : Container(
+                color: BarrageColors.barrageColorDark,
+                height: widget.controller.getInputKeyboardHeight(context),
+              );
+      },
+    );
   }
 
   Widget _buildEmojiButton() {
@@ -159,26 +158,27 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
       width: 60,
       height: 36,
       child: ValueListenableBuilder(
-          valueListenable: _isValidBarrageContent, builder: (context, isValidBarageContet, _) {
-        return ElevatedButton(
-          onPressed: () => _sendBarrage(),
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(
-                isValidBarageContet ? BarrageColors.barrageButtonColorPrimaryDefault : BarrageColors
-                    .barrageButtonColorPrimaryDefaultDisabled),
-            padding: WidgetStateProperty.all(EdgeInsets.zero),
-            shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+          valueListenable: _isValidBarrageContent,
+          builder: (context, isValidBarrageContet, _) {
+            return ElevatedButton(
+              onPressed: () => _sendBarrage(),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(isValidBarrageContet
+                    ? BarrageColors.barrageButtonColorPrimaryDefault
+                    : BarrageColors.barrageButtonColorPrimaryDefaultDisabled),
+                padding: WidgetStateProperty.all(EdgeInsets.zero),
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
               ),
-            ),
-          ),
-          child: Text(
-            BarrageLocalizations.of(context)!.barrage_send,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        );
-      }),
+              child: Text(
+                BarrageLocalizations.of(context)!.barrage_send,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            );
+          }),
     );
   }
 
@@ -209,7 +209,7 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
     });
   }
 
-  void _textInputListener() {
+  void _onTextInputChanged() {
     _isValidBarrageContent.value = widget.controller.textEditingController.text.isNotEmpty;
   }
 }

@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'livekit_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -124,6 +126,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_mute_video_by_owner => '您已被主播关闭摄像头';
 
   @override
+  String get common_preview_video_live => '视频直播';
+
+  @override
   String get common_recommended_list => '推荐列表';
 
   @override
@@ -173,6 +178,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get live_error_connection_retry => '内部错误，推荐重试一次。';
+
+  @override
+  String get live_error_room_mismatch => '房间类型不匹配，只能在相同类型房间发起连线。';
 
   @override
   String get livelist_loading => '正在加载...';
@@ -488,6 +496,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get common_end_live => '结束直播';
+
+  @override
+  String get common_exit_connect => '退出连线';
 
   @override
   String get common_end_user => '挂断';
@@ -1069,6 +1080,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get seat_in_battle => '正在PK';
 
   @override
+  String get seat_in_connection => '正在连线';
+
+  @override
   String get seat_cancel_invite => '取消邀请';
 
   @override
@@ -1120,6 +1134,21 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   @override
   String get common_audience_kicked_re_apply =>
       '连线仅显示前 6 个麦位。您已被移除，如有需要请重新申请上麦。';
+
+  @override
+  String get common_game_live => '手游直播';
+
+  @override
+  String get common_live_game => '正在游戏直播中';
+
+  @override
+  String get common_go_to_enable => '去开启';
+
+  @override
+  String get common_live_screen => '直播屏幕';
+
+  @override
+  String get common_select_app_to_live => '选择应用并开始直播';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1244,6 +1273,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_mute_video_by_owner => '您已被主播關閉攝像頭';
 
   @override
+  String get common_preview_video_live => '視頻直播';
+
+  @override
   String get common_recommended_list => '推薦列表';
 
   @override
@@ -1293,6 +1325,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get live_error_connection_retry => '內部錯誤，推薦重試一次。';
+
+  @override
+  String get live_error_room_mismatch => '房間類型不匹配，只能在相同類型房間發起連線。';
 
   @override
   String get livelist_loading => '正在加載...';
@@ -1608,6 +1643,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_end_live => '結束直播';
+
+  @override
+  String get common_exit_connect => '退出連線';
 
   @override
   String get common_end_user => '掛斷';
@@ -2189,6 +2227,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get seat_in_battle => '正在PK';
 
   @override
+  String get seat_in_connection => '正在連線';
+
+  @override
   String get seat_cancel_invite => '取消邀請';
 
   @override
@@ -2240,4 +2281,19 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   @override
   String get common_audience_kicked_re_apply =>
       '連線僅顯示前 6 個麥位。您已被移除，如有需要請重新申請上麥。';
+
+  @override
+  String get common_game_live => '手遊直播';
+
+  @override
+  String get common_live_game => '遊戲直播中';
+
+  @override
+  String get common_go_to_enable => '去開啟';
+
+  @override
+  String get common_live_screen => '直播螢幕';
+
+  @override
+  String get common_select_app_to_live => '選擇應用並開始直播';
 }

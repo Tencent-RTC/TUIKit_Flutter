@@ -456,7 +456,8 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
 
 extension on _SeatManagementPanelWidgetState {
   void _showSeatInvitationPanel() {
-    popupWidget(SeatInvitationPanelWidget(liveID: widget.liveID, toastService: widget.toastService, seatIndex: -1));
+    popupWidget(SeatInvitationPanelWidget(liveID: widget.liveID, toastService: widget.toastService, seatIndex: -1),
+        context: context);
   }
 
   void _acceptLinkMicRequest(String userId) async {

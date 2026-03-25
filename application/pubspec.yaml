@@ -52,8 +52,9 @@ dependencies:
 
 # Temporary solution, to be removed after the release of chat/live
 dependency_overrides: 
-  atomic_x_core: 4.0.0
+  atomic_x_core: 4.0.1
   rtc_room_engine: 4.0.0
+  live_uikit_barrage: 3.0.1
 
 dev_dependencies:
   flutter_test:

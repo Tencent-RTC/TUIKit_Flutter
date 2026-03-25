@@ -38,7 +38,6 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
     coHostStore = CoHostStore.create(liveStreamManager.roomState.roomId);
     _addObserver();
     _refreshRecommendUserList();
-    liveStreamManager.coHostManager.setCoHostLayoutTemplateId();
   }
 
   @override
@@ -502,7 +501,7 @@ extension on _CoHostManagementPanelWidgetState {
           _disconnectCoHostHandler?.close();
         });
 
-    _disconnectCoHostHandler = Alert.showAlert(confirmInfo);
+    _disconnectCoHostHandler = Alert.showAlert(confirmInfo, context);
   }
 
   void _inviteToCoHost(TUIConnectionUser user) async {

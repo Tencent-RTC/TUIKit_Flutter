@@ -39,6 +39,7 @@
   "common_more_features": "更多功能",
   "common_mute_audio_by_master": "您已被主播靜音",
   "common_mute_video_by_owner": "您已被主播關閉攝像頭",
+  "common_preview_video_live": "視頻直播",
   "common_recommended_list": "推薦列表",
   "common_link_mic_up_title": "當前麥位",
   "common_send_message_disabled": "當前房間內，您已被禁言",
@@ -338,6 +339,7 @@
   "seat_unlocked": "解鎖麦位",
   "seat_no_guest": "暫無嘉賓",
   "seat_in_battle": "正在PK",
+  "seat_in_connection": "正在連線",
   "seat_cancel_invite": "取消邀請",
   "seat_request_battle": "發起PK",
   "seat_request_host": "邀請連線",
@@ -354,5 +356,11 @@
   "mirror_type_change_to": "切換為xxx",
   "common_remove": "移除",
   "common_host_kick_user_after_connect": "連線成功。前 6 個麥位以外的使用者已被移除。如需互動，請重新邀請。",
-  "common_audience_kicked_re_apply": "連線僅顯示前 6 個麥位。您已被移除，如有需要請重新申請上麥。"
+  "common_audience_kicked_re_apply": "連線僅顯示前 6 個麥位。您已被移除，如有需要請重新申請上麥。",
+  "common_game_live": "手遊直播",
+  "common_live_game": "遊戲直播中",
+  "common_end_live_by_server": "直播內容違規已強制關播"
+  "common_go_to_enable": "去開啟",
+  "common_live_screen": "直播螢幕",
+  "common_select_app_to_live": "選擇應用並開始直播"
 }

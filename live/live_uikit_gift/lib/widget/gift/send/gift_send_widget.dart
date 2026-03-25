@@ -53,7 +53,6 @@ class _GiftSendWidgetState extends State<GiftSendWidget> {
   void showGiftPanelWidget(BuildContext context, GiftListController controller) {
     showModalBottomSheet(
       context: context,
-      useRootNavigator: true,
       barrierColor: Colors.transparent,
       builder: (builderContext) {
         _sheetContext = builderContext;

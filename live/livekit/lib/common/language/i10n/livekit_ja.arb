@@ -39,6 +39,7 @@
   "common_more_features": "その他の機能",
   "common_mute_audio_by_master": "あなたはアンカーによってミュートされました",
   "common_mute_video_by_owner": "あなたはアンカーによってオフにされました",
+  "common_preview_video_live": "ライブビデオ",
   "common_recommended_list": "推奨リスト",
   "common_link_mic_up_title": "現在の場所",
   "common_send_message_disabled": "あなたは現在の部屋で禁止されています",
@@ -338,6 +339,7 @@
   "seat_unlocked": "ロックを解除します",
   "seat_no_guest": "まだゲストはいません",
   "seat_in_battle": "戦闘中",
+  "seat_in_connection": "接続中",
   "seat_cancel_invite": "招待をキャンセルします",
   "seat_request_battle": "戦闘を開始します",
   "seat_request_host": "ホストを招待します",
@@ -354,5 +356,11 @@
   "mirror_type_change_to": "xxxに変更します",
   "common_remove": "取り除く",
   "common_host_kick_user_after_connect": "接続に成功しました。先着6席以外のユーザーはマイクを降りました。",
-  "common_audience_kicked_re_apply": "接続は先着6席のみ表示されます。あなたはマイクから降ろされました。"
+  "common_audience_kicked_re_apply": "接続は先着6席のみ表示されます。あなたはマイクから降ろされました。",
+  "common_game_live": "スマホゲーム実況",
+  "common_live_game": "ゲームライブ配信中",
+  "common_end_live_by_server": "規則違反のため、ライブ配信は停止されました。"
+  "common_go_to_enable": "有効にする",
+  "common_live_screen": "画面をライブ配信",
+  "common_select_app_to_live": "アプリを選択してライブを開始"
 }

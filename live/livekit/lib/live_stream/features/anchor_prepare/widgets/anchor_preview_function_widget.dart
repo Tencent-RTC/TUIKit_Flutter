@@ -195,11 +195,11 @@ class _AnchorPreviewFunctionWidgetState extends State<AnchorPreviewFunctionWidge
 
 extension on _AnchorPreviewFunctionWidgetState {
   void _showBeautyPanel() async {
-    popupWidget(const BeautyPanelWidget());
+    popupWidget(const BeautyPanelWidget(), context: context);
   }
 
   void _showAudioEffectPanel() {
-    popupWidget(AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId));
+    popupWidget(AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId), context: context);
   }
 
   void _clickCameraFlip() {
@@ -207,10 +207,11 @@ extension on _AnchorPreviewFunctionWidgetState {
   }
 
   void _clickTemplate() {
-    popupWidget(SeatLayoutTemplateWidget(editInfo: widget.editInfo), backgroundColor: Color(0xFF131417));
+    popupWidget(SeatLayoutTemplateWidget(editInfo: widget.editInfo),
+        context: context, backgroundColor: Color(0xFF131417));
   }
 
   void _clickVideoSettings() {
-    popupWidget(AnchorPreviewVideoSettingPanelWidget(liveStreamManager: liveStreamManager));
+    popupWidget(AnchorPreviewVideoSettingPanelWidget(liveStreamManager: liveStreamManager), context: context);
   }
 }

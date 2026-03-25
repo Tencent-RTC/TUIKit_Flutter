@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../live_define.dart';
 
 class LSRoomState {
+  VideoStreamSource videoStreamSource = VideoStreamSource.camera;
   String roomId = '';
   LiveInfo liveInfo = LiveInfo();
   int createTime = 0;

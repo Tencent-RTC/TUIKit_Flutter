@@ -140,13 +140,9 @@ extension _VideoLiveWidgetStateLogicExtension on _VideoLiveWidgetState {
   void _startAnchorWidget() async {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
-          return TUILiveRoomAnchorOverlay(
-              roomId: LiveIdentityGenerator.instance.generateId(AppStore.userId, RoomType.live));
-        } else {
-          return TUILiveRoomAnchorWidget(
-              roomId: LiveIdentityGenerator.instance.generateId(AppStore.userId, RoomType.live));
-        }
+        // You can use TUILiveRoomAnchorWidget, but note that it does not support floating window mode.
+        return TUILiveRoomAnchorOverlay(
+            roomId: LiveIdentityGenerator.instance.generateId(AppStore.userId, RoomType.live));
       },
     ));
   }

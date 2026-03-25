@@ -11,6 +11,7 @@ import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../common/widget/base_bottom_sheet.dart';
 import '../../manager/live_stream_manager.dart';
+import '../decorations/co_guest/co_guest_seat_list_widget.dart';
 import '../decorations/index.dart';
 import 'battle/battle_count_down_widget.dart';
 import 'living_widget/anchor_living_widget.dart';
@@ -89,11 +90,55 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
         child: Container(
           color: LiveColors.notStandardPureBlack,
           child: Stack(
-            children: [_buildCoreWidget(), _buildLivingWidget(), _buildDashboardWidget()],
+            children: [
+              _buildMainWidget(),
+              _buildLivingWidget(),
+              _buildSeatListWidget(),
+              _buildDashboardWidget(),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildMainWidget() {
+    if (liveStreamManager.roomState.liveInfo.seatTemplate is VideoLandscape4Seats) {
+      if (liveStreamManager.roomState.liveInfo.keepOwnerOnSeat) {
+        return SizedBox(
+          width: 1.screenWidth,
+          height: 1.screenHeight,
+          child: Stack(
+            children: [
+              SizedBox(
+                width: 1.screenWidth,
+                height: 1.screenHeight,
+                child: Image.asset(LiveImages.defaultBackground, fit: BoxFit.cover, package: Constants.pluginName),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 120.height),
+                height: 200.height,
+                child: Center(
+                  child: Text(
+                    LiveKitLocalizations.of(Global.appContext())!.common_live_game,
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+      return Container(
+        color: Colors.black,
+        margin: EdgeInsets.only(top: 120.height),
+        width: 1.screenWidth,
+        height: 9 / 16.0 * 1.screenWidth,
+        child: LiveCoreWidget(controller: widget.liveCoreController),
+      );
+    } else {
+      return _buildCoreWidget();
+    }
   }
 
   Widget _buildCoreWidget() {
@@ -104,48 +149,73 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
         borderRadius: isFloatWindowMode ? BorderRadius.zero : BorderRadius.circular(16.radius),
         child: LiveCoreWidget(
           controller: liveCoreController,
-          videoWidgetBuilder: VideoWidgetBuilder(coGuestWidgetBuilder: (context, seatInfo, viewLayer) {
-            if (seatInfo.userInfo.userID.isEmpty) {
-              if (viewLayer == ViewLayer.background) {
-                return AnchorEmptySeatWidget(seatInfo: seatInfo, liveStreamManager: liveStreamManager);
-              } else {
-                return Container();
-              }
-            }
-            if (viewLayer == ViewLayer.background) {
-              return CoGuestBackgroundWidget(
-                  seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
-            } else {
-              return GestureDetector(
-                  onTap: () => _onTapCoGuestForegroundWidget(seatInfo),
-                  child: Container(
-                      color: Colors.transparent,
-                      child: CoGuestForegroundWidget(
-                          seatInfo: seatInfo,
-                          isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode)));
-            }
-          }, coHostWidgetBuilder: (context, seatInfo, viewLayer) {
-            if (viewLayer == ViewLayer.background) {
-              return CoHostBackgroundWidget(
-                  seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
-            } else {
-              return CoHostForegroundWidget(
-                  seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-            }
-          }, battleWidgetBuilder: (context, seatInfo) {
-            return BattleMemberInfoWidget(
-                liveStreamManager: liveStreamManager,
-                battleUserId: seatInfo.userInfo.userID,
-                isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-          }, battleContainerWidgetBuilder: (context) {
-            return BattleInfoWidget(
-                liveStreamManager: liveStreamManager,
-                isOwner: true,
-                isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-          }),
+          videoWidgetBuilder: VideoWidgetBuilder(
+              coGuestWidgetBuilder: _createCoGuestWidgetBuilder(),
+              coHostWidgetBuilder: (context, seatInfo, viewLayer) {
+                if (viewLayer == ViewLayer.background) {
+                  return CoHostBackgroundWidget(
+                      seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
+                } else {
+                  return CoHostForegroundWidget(
+                      seatInfo: seatInfo,
+                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                }
+              },
+              battleWidgetBuilder: (context, seatInfo) {
+                return BattleMemberInfoWidget(
+                    liveStreamManager: liveStreamManager,
+                    battleUserId: seatInfo.userInfo.userID,
+                    isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+              },
+              battleContainerWidgetBuilder: (context) {
+                return BattleInfoWidget(
+                    liveStreamManager: liveStreamManager,
+                    isOwner: true,
+                    isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+              }),
         ),
       ),
     );
+  }
+
+  Widget _buildSeatListWidget() {
+    if (widget.liveStreamManager.roomManager.isScreenShareLive()) {
+      return Center(
+        child: CoGuestSeatListWidget(
+          liveID: widget.liveStreamManager.roomState.roomId,
+          onTapSeat: (seatInfo) {
+            if (seatInfo.userInfo.userID.isEmpty) return;
+            _onTapCoGuestForegroundWidget(seatInfo);
+          },
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  CoGuestWidgetBuilder _createCoGuestWidgetBuilder() {
+    return (context, seatInfo, viewLayer) {
+      if (seatInfo.userInfo.userID.isEmpty) {
+        if (viewLayer == ViewLayer.background) {
+          return AnchorEmptySeatWidget(seatInfo: seatInfo, liveStreamManager: liveStreamManager);
+        } else {
+          return Container();
+        }
+      }
+      if (viewLayer == ViewLayer.background) {
+        return CoGuestBackgroundWidget(
+            seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
+      } else {
+        return GestureDetector(
+            onTap: () => _onTapCoGuestForegroundWidget(seatInfo),
+            child: Container(
+                color: Colors.transparent,
+                child: CoGuestForegroundWidget(
+                    seatInfo: seatInfo,
+                    isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode)));
+      }
+    };
   }
 
   Widget _buildLivingWidget() {
@@ -233,7 +303,7 @@ extension on _AnchorBroadcastWidgetState {
           defaultCallback: () {
             _responseCoHostInvitation(inviter, true);
           });
-      _connectRequestAlertHandler = Alert.showAlert(alertInfo);
+      _connectRequestAlertHandler = Alert.showAlert(alertInfo, context);
       _isShowingConnectRequestAlert = true;
     }
   }
@@ -270,8 +340,8 @@ extension on _AnchorBroadcastWidgetState {
   }
 
   void _closeConnectRequestAlert() {
-    if (_isShowingConnectRequestAlert && Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
+    if (_isShowingConnectRequestAlert && mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
       _isShowingConnectRequestAlert = false;
     }
   }
@@ -308,7 +378,7 @@ extension on _AnchorBroadcastWidgetState {
             _responseBattleInvitation(battleId, true);
           });
 
-      _battleRequestAlertHandler = Alert.showAlert(alertInfo);
+      _battleRequestAlertHandler = Alert.showAlert(alertInfo, context);
       _isShowingBattleRequestAlert = true;
     }
   }
@@ -335,8 +405,8 @@ extension on _AnchorBroadcastWidgetState {
   }
 
   void _closeBattleRequestAlert() {
-    if (_isShowingBattleRequestAlert && Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
+    if (_isShowingBattleRequestAlert && mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
       _isShowingBattleRequestAlert = false;
     }
   }
@@ -349,6 +419,7 @@ extension on _AnchorBroadcastWidgetState {
 
     if (liveStreamManager.battleState.isInWaiting.value && _battleWaitingSheetHandler?.isShowing() != true) {
       _battleWaitingSheetHandler = popupWidget(
+        context: context,
         BattleCountDownWidget(
           isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode,
           countdownTime: LSBattleState.battleRequestTime,
@@ -388,12 +459,14 @@ extension on _AnchorBroadcastWidgetState {
     final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
     final user = LiveUserInfo(
         userID: seatInfo.userInfo.userID, userName: seatInfo.userInfo.userName, avatarURL: seatInfo.userInfo.avatarURL);
-    _userManagementPanelSheetHandler = popupWidget(AnchorUserManagementPanelWidget(
-      panelType: isSelf ? AnchorUserManagementPanelType.pureMedia : AnchorUserManagementPanelType.mediaAndSeat,
-      user: user,
-      liveStreamManager: liveStreamManager,
-      closeCallback: () => _userManagementPanelSheetHandler?.close(),
-    ));
+    _userManagementPanelSheetHandler = popupWidget(
+        context: context,
+        AnchorUserManagementPanelWidget(
+          panelType: isSelf ? AnchorUserManagementPanelType.pureMedia : AnchorUserManagementPanelType.mediaAndSeat,
+          user: user,
+          liveStreamManager: liveStreamManager,
+          closeCallback: () => _userManagementPanelSheetHandler?.close(),
+        ));
   }
 
   bool _canAcceptCoGuestApplication() {

@@ -92,14 +92,6 @@ class CoHostManager {
     coHostState.recommendedUsers.value = newRecommendedUsers;
     coHostState.recommendListCursor.value = recommendListResult.cursor;
   }
-
-  void setLayoutTemplateId(int id) {
-    coHostState.templateId = id;
-  }
-
-  void setCoHostLayoutTemplateId() {
-    service.setCoHostLayoutTemplateId(coHostState.templateId);
-  }
 }
 
 extension CoHostManagerCallback on CoHostManager {
