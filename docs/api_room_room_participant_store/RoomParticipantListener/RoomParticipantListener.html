@@ -62,6 +62,10 @@
 </ol>)?, </span></li>
 <li><span class="parameter" id="-param-onParticipantLeft"><span class="type-annotation">void</span> <span class="parameter-name">onParticipantLeft</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-participant"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">participant</span></span></li>
 </ol>)?, </span></li>
+<li><span class="parameter" id="-param-onAudiencePromotedToParticipant"><span class="type-annotation">void</span> <span class="parameter-name">onAudiencePromotedToParticipant</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onParticipantDemotedToAudience"><span class="type-annotation">void</span> <span class="parameter-name">onParticipantDemotedToAudience</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-userInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">userInfo</span></span></li>
+</ol>)?, </span></li>
 <li><span class="parameter" id="-param-onOwnerChanged"><span class="type-annotation">void</span> <span class="parameter-name">onOwnerChanged</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-newOwner"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">newOwner</span>, </span></li>
 <li><span class="parameter" id="param-oldOwner"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">oldOwner</span></span></li>
 </ol>)?, </span></li>
@@ -123,6 +127,8 @@
   <pre class="language-dart"><code class="language-dart">RoomParticipantListener({
   this.onParticipantJoined,
   this.onParticipantLeft,
+  this.onAudiencePromotedToParticipant,
+  this.onParticipantDemotedToAudience,
   this.onOwnerChanged,
   this.onAdminSet,
   this.onAdminRevoked,
@@ -170,7 +176,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

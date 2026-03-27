@@ -61,20 +61,22 @@
         
         void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)</span>?
         <span class="name ">onUserJoinBattle</span>
-        <div class="features"><span class="feature">getter/setter pair</span></div>
+        <div class="features"><span class="feature">final</span></div>
 
       </section>
       
 <section class="desc markdown">
-  <p>Triggered when a user joins PK.</p>
-<p>@param battleID PK ID
-@param battleUser User information joining PK. {@link $SeatUserInfo$}</p>
+  <p>This callback is triggered when a user joins PK.</p>
+<ul>
+<li><code>battleID</code> : PK ID</li>
+<li><code>battleUser</code> : User information of the user joining PK</li>
+</ul>
 </section>
 
       
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void Function(String battleID, SeatUserInfo battleUser)? onUserJoinBattle;</code></pre>
+  <pre class="language-dart"><code class="language-dart">final void Function(String battleID, SeatUserInfo battleUser)? onUserJoinBattle;</code></pre>
 </section>
 
 
@@ -103,7 +105,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

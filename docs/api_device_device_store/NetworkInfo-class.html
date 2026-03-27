@@ -60,6 +60,42 @@
 <section class="desc markdown">
   <p>Network information</p>
 <p>Data structure for network status information, containing user ID, network quality, packet loss rate and latency.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_device_device_store/NetworkInfo/userID.html">userID</a></td>
+<td><code>String</code></td>
+<td>User unique ID</td>
+</tr>
+<tr>
+<td><a href="../api_device_device_store/NetworkInfo/quality.html">quality</a></td>
+<td><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></td>
+<td>Network quality</td>
+</tr>
+<tr>
+<td><a href="../api_device_device_store/NetworkInfo/upLoss.html">upLoss</a></td>
+<td><code>int</code></td>
+<td>Uplink packet loss rate, range <code>0, 100</code></td>
+</tr>
+<tr>
+<td><a href="../api_device_device_store/NetworkInfo/downLoss.html">downLoss</a></td>
+<td><code>int</code></td>
+<td>Downlink packet loss rate, range <code>0, 100</code></td>
+</tr>
+<tr>
+<td><a href="../api_device_device_store/NetworkInfo/delay.html">delay</a></td>
+<td><code>int</code></td>
+<td>{'Latency (unit': 'milliseconds)'}</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -251,7 +287,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

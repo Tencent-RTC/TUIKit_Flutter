@@ -59,7 +59,108 @@
 
     
 <section class="desc markdown">
-  <p>Live room list management class, used to manage live room related business.</p>
+  <p>Live list related interfaces, managing live room creation, joining, leaving and other operations.</p>
+<p><code>LiveListStore</code> Live room list management class for managing live room related business.
+<code>LiveListStore</code> provides a complete set of live room management APIs, including creating live, joining live, leaving live, ending live and other functions.
+Through this class, you can manage the lifecycle of live rooms.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Live List</strong>：Get and manage live room list</li>
+<li><strong>Live Creation</strong>：Create new live rooms</li>
+<li><strong>Live Joining</strong>：Join existing live rooms</li>
+<li><strong>Live Management</strong>：Update live info, end live and other operations</li>
+<li><strong>Event Listening</strong>：Listen for live ended, kicked out and other events</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_live_live_list_store/LiveListStore/shared.html">LiveListStore.shared</a> singleton object to get the <code>LiveListStore</code> instance.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Live state updates are delivered through the <a href="../api_live_live_list_store/LiveListStore/liveState.html">liveState</a> publisher. Subscribe to it to receive real-time updates of live data.</p>
+</blockquote>
+<h3 id="live-management-operations-overview">Live Management Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get List</td>
+<td><a href="../api_live_live_list_store/LiveListStore/fetchLiveList.html">fetchLiveList</a></td>
+<td>Get live room list</td>
+</tr>
+<tr>
+<td>Get Info</td>
+<td><a href="../api_live_live_list_store/LiveListStore/fetchLiveInfo.html">fetchLiveInfo</a></td>
+<td>Get specified live room info</td>
+</tr>
+<tr>
+<td>Create Live</td>
+<td><a href="../api_live_live_list_store/LiveListStore/createLive.html">createLive</a></td>
+<td>Create new live room</td>
+</tr>
+<tr>
+<td>Join Live</td>
+<td><a href="../api_live_live_list_store/LiveListStore/joinLive.html">joinLive</a></td>
+<td>Join existing live room</td>
+</tr>
+<tr>
+<td>Leave Live</td>
+<td><a href="../api_live_live_list_store/LiveListStore/leaveLive.html">leaveLive</a></td>
+<td>Leave current live room</td>
+</tr>
+<tr>
+<td>End Live</td>
+<td><a href="../api_live_live_list_store/LiveListStore/endLive.html">endLive</a></td>
+<td>End current live</td>
+</tr>
+<tr>
+<td>Update Info</td>
+<td><a href="../api_live_live_list_store/LiveListStore/updateLiveInfo.html">updateLiveInfo</a></td>
+<td>Update live room info</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="getting-instance">Getting Instance</h3>
+<ul>
+<li><a href="../api_live_live_list_store/LiveListStore/shared.html">LiveListStore.shared</a> : Singleton object</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_live_list_store/LiveListStore/liveState.html">liveState</a> : Live list state</li>
+<li><a href="../api_live_live_list_store/LiveListStore/addLiveListListener.html">addLiveListListener</a>/<a href="../api_live_live_list_store/LiveListStore/removeLiveListListener.html">removeLiveListListener</a> : Live list event callbacks</li>
+</ul>
+<h3 id="live-list">Live List</h3>
+<ul>
+<li><a href="../api_live_live_list_store/LiveListStore/fetchLiveList.html">fetchLiveList</a> : Get live list</li>
+<li><a href="../api_live_live_list_store/LiveListStore/fetchLiveInfo.html">fetchLiveInfo</a> : Get live info</li>
+</ul>
+<h3 id="live-operations">Live Operations</h3>
+<ul>
+<li><a href="../api_live_live_list_store/LiveListStore/createLive.html">createLive</a> : Create live</li>
+<li><a href="../api_live_live_list_store/LiveListStore/joinLive.html">joinLive</a> : Join live</li>
+<li><a href="../api_live_live_list_store/LiveListStore/leaveLive.html">leaveLive</a> : Leave live</li>
+<li><a href="../api_live_live_list_store/LiveListStore/endLive.html">endLive</a> : End live</li>
+<li><a href="../api_live_live_list_store/LiveListStore/updateLiveInfo.html">updateLiveInfo</a> : Update live info</li>
+</ul>
+<h3 id="metadata-operations">Metadata Operations</h3>
+<ul>
+<li><a href="../api_live_live_list_store/LiveListStore/queryMetaData.html">queryMetaData</a> : Query metadata</li>
+<li><a href="../api_live_live_list_store/LiveListStore/updateLiveMetaData.html">updateLiveMetaData</a> : Update metadata</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_live_list_store/LiveInfo-class.html">LiveInfo</a></li>
+<li><a href="../api_live_live_list_store/LiveListState-class.html">LiveListState</a></li>
+<li><a href="../api_live_live_list_store/LiveListListener-class.html">LiveListListener</a></li>
+<li><a href="../api_live_live_list_store/TakeSeatMode.html">TakeSeatMode</a></li>
+<li><a href="../api_live_live_list_store/LiveEndedReason.html">LiveEndedReason</a></li>
+<li><a href="../api_live_live_list_store/LiveKickedOutReason.html">LiveKickedOutReason</a></li>
+</ul>
 </section>
 
 
@@ -101,7 +202,7 @@
 
 </dt>
 <dd>
-  Live list state{@link LiveListState}
+  Live list state
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +236,7 @@
 
 </dt>
 <dd>
-  Live list event publisher
+  Add live list event listener
   
 
 </dd>
@@ -166,6 +267,19 @@
 
 </dd>
 
+        <dt id="fetchLiveInfo" class="callable">
+  <span class="name"><a href="../api_live_live_list_store/LiveListStore/fetchLiveInfo.html">fetchLiveInfo</a></span><span class="signature">(<wbr><span class="parameter" id="fetchLiveInfo-param-liveID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">liveID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_list_store/LiveInfoCompletionHandler-class.html">LiveInfoCompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Get live info
+  
+
+</dd>
+
         <dt id="fetchLiveList" class="callable">
   <span class="name"><a href="../api_live_live_list_store/LiveListStore/fetchLiveList.html">fetchLiveList</a></span><span class="signature">(<wbr>{<span class="parameter" id="fetchLiveList-param-cursor"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">cursor</span>, </span><span class="parameter" id="fetchLiveList-param-count"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
@@ -174,7 +288,7 @@
 
 </dt>
 <dd>
-  Fetch live list
+  Get live list
   
 
 </dd>
@@ -239,7 +353,7 @@
 
 </dt>
 <dd>
-  
+  Remove live list event listener
   
 
 </dd>
@@ -278,7 +392,7 @@
 
 </dt>
 <dd>
-  Update live information
+  Update live info
   
 
 </dd>
@@ -363,7 +477,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

@@ -66,11 +66,13 @@
       </section>
       
 <section class="desc markdown">
-  <p>Event callback for receiving new gift messages. When other audiences send gifts in the live room/voice chat room, this event will be triggered and return relevant information.
-@param liveID Live room ID
-@param gift Gift information, {@link Gift}
-@param count Gift quantity
-@param sender Gift sender information, {@link $LiveUserInfo$}</p>
+  <p>Event callback when receiving a new gift message. This event is triggered when other viewers send gifts in the live room/voice chat room, returning relevant information.</p>
+<ul>
+<li><code>liveID</code> : Live room ID</li>
+<li><code>gift</code> : Gift information</li>
+<li><code>count</code> : Gift count</li>
+<li><code>sender</code> : Gift sender information</li>
+</ul>
 </section>
 
       
@@ -105,7 +107,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

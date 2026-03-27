@@ -59,10 +59,9 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">startPreviewLiveStream</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="startPreviewLiveStream-param-roomID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span></li>
+<span class="name ">startPreviewLiveStream</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="startPreviewLiveStream-param-roomID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span></li>
 <li><span class="parameter" id="startPreviewLiveStream-param-isMuteAudio"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isMuteAudio</span>, </span></li>
-<li><span class="parameter" id="startPreviewLiveStream-param-viewID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">viewID</span>, </span></li>
-<li><span class="parameter" id="startPreviewLiveStream-param-playCallback"><span class="type-annotation">TUIPlayCallback?</span> <span class="parameter-name">playCallback</span>, </span></li>
+<li><span class="parameter" id="startPreviewLiveStream-param-playCallback"><span class="type-annotation">TUIPlayCallback?</span> <span class="parameter-name">playCallback</span></span></li>
 </ol>)
 
       
@@ -70,18 +69,19 @@
     </section>
     
 <section class="desc markdown">
-  <p>Preview outside room</p>
-<p>@param roomID Live ID.
-@param isMuteAudio Whether to mute audio.
-@param viewID the view to play.
-@param callback Callback.</p>
+  <p>Preview outside room.</p>
+<ul>
+<li><code>roomID</code> : Live ID.</li>
+<li><code>isMuteAudio</code> : Whether to mute audio.</li>
+<li><code>playCallback</code> : Play callback.</li>
+</ul>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void startPreviewLiveStream(String roomID, bool isMuteAudio, int viewID, TUIPlayCallback? playCallback);</code></pre>
+  <pre class="language-dart"><code class="language-dart">void startPreviewLiveStream(String roomID, bool isMuteAudio, TUIPlayCallback? playCallback);</code></pre>
 </section>
 
 
@@ -109,7 +109,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

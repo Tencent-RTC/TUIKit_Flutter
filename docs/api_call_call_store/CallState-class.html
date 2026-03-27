@@ -64,6 +64,53 @@
 <blockquote>
 <p><strong>Note</strong>: Call state updates automatically. Subscribe to <code>state</code> to receive real-time updates.</p>
 </blockquote>
+<h3 id="state-properties-overview">State Properties Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>activeCall</code></td>
+<td><code>ValueListenable&lt;CallInfo&gt;</code></td>
+<td>Current active call information</td>
+</tr>
+<tr>
+<td><code>recentCalls</code></td>
+<td><code>ValueListenable&lt;List&lt;CallInfo&gt;&gt;</code></td>
+<td>Recent call records list</td>
+</tr>
+<tr>
+<td><code>cursor</code></td>
+<td><code>ValueListenable&lt;String&gt;</code></td>
+<td>Pagination cursor</td>
+</tr>
+<tr>
+<td><code>selfInfo</code></td>
+<td><code>ValueListenable&lt;CallParticipantInfo&gt;</code></td>
+<td>Current user's own information</td>
+</tr>
+<tr>
+<td><code>allParticipants</code></td>
+<td><code>ValueListenable&lt;List&lt;CallParticipantInfo&gt;&gt;</code></td>
+<td>All participants in current call</td>
+</tr>
+<tr>
+<td><code>speakerVolumes</code></td>
+<td><code>ValueListenable&lt;Map&lt;String, int&gt;&gt;</code></td>
+<td>Participant volume information</td>
+</tr>
+<tr>
+<td><code>networkQualities</code></td>
+<td><code>ValueListenable&lt;Map&lt;String, NetworkQuality&gt;&gt;</code></td>
+<td>Participant network quality information</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -88,7 +135,7 @@
     <dl class="properties">
         <dt id="activeCall" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/activeCall.html">activeCall</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallInfo-class.html">CallInfo</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallInfo-class.html">CallInfo</a></span>&gt;</span></span>
   
 
 </dt>
@@ -100,7 +147,7 @@
 
         <dt id="allParticipants" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/allParticipants.html">allParticipants</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallParticipantInfo-class.html">CallParticipantInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallParticipantInfo-class.html">CallParticipantInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -112,7 +159,7 @@
 
         <dt id="cursor" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/cursor.html">cursor</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
   
 
 </dt>
@@ -136,7 +183,7 @@
 
         <dt id="networkQualities" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/networkQualities.html">networkQualities</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -148,7 +195,7 @@
 
         <dt id="recentCalls" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/recentCalls.html">recentCalls</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallInfo-class.html">CallInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallInfo-class.html">CallInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -172,7 +219,7 @@
 
         <dt id="selfInfo" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/selfInfo.html">selfInfo</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallParticipantInfo-class.html">CallParticipantInfo</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_call_call_store/CallParticipantInfo-class.html">CallParticipantInfo</a></span>&gt;</span></span>
   
 
 </dt>
@@ -184,7 +231,7 @@
 
         <dt id="speakerVolumes" class="property">
   <span class="name"><a href="../api_call_call_store/CallState/speakerVolumes.html">speakerVolumes</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -279,7 +326,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

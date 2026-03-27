@@ -59,7 +59,85 @@
 
     
 <section class="desc markdown">
-  <p>Live audience management class, used to manage audience list, permission settings and other related business.</p>
+  <p>Live audience related interfaces, managing audience list, permission settings and other operations.</p>
+<p><code>LiveAudienceStore</code> Live audience management class for managing audience list, permission settings and related business.
+<code>LiveAudienceStore</code> provides a complete set of audience management APIs, including fetching audience list, setting administrators, kicking users, muting, etc.
+Through this class, you can implement audience management functions in live rooms.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Audience List</strong>：Get and manage the audience list of the current room</li>
+<li><strong>Permission Management</strong>：Set and revoke administrator permissions</li>
+<li><strong>User Management</strong>：Kick users, mute, and other operations</li>
+<li><strong>Event Listening</strong>：Listen for audience join, leave, and other events</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_live_live_audience_store/LiveAudienceStore/create.html">LiveAudienceStore.create</a> factory method to create a <code>LiveAudienceStore</code> instance, which requires a valid live room ID.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Audience state updates are delivered through the <a href="../api_live_live_audience_store/LiveAudienceStore/liveAudienceState.html">liveAudienceState</a> publisher. Subscribe to it to receive real-time updates of audience data in the room.</p>
+</blockquote>
+<h3 id="audience-management-operations-overview">Audience Management Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fetch Audience List</td>
+<td><a href="../api_live_live_audience_store/LiveAudienceStore/fetchAudienceList.html">fetchAudienceList</a></td>
+<td>Get the audience list of the current room</td>
+</tr>
+<tr>
+<td>Set Administrator</td>
+<td><a href="../api_live_live_audience_store/LiveAudienceStore/setAdministrator.html">setAdministrator</a></td>
+<td>Set a user as administrator</td>
+</tr>
+<tr>
+<td>Revoke Administrator</td>
+<td><a href="../api_live_live_audience_store/LiveAudienceStore/revokeAdministrator.html">revokeAdministrator</a></td>
+<td>Revoke user's administrator permission</td>
+</tr>
+<tr>
+<td>Kick User</td>
+<td><a href="../api_live_live_audience_store/LiveAudienceStore/kickUserOutOfRoom.html">kickUserOutOfRoom</a></td>
+<td>Kick a user out of the room</td>
+</tr>
+<tr>
+<td>Mute User</td>
+<td><a href="../api_live_live_audience_store/LiveAudienceStore/disableSendMessage.html">disableSendMessage</a></td>
+<td>Disable/enable user message sending</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/create.html">LiveAudienceStore.create</a> : Create audience management instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/liveAudienceState.html">liveAudienceState</a> : Current room's audience state</li>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/addLiveAudienceListener.html">addLiveAudienceListener</a>/<a href="../api_live_live_audience_store/LiveAudienceStore/removeLiveAudienceListener.html">removeLiveAudienceListener</a> : Audience event callbacks</li>
+</ul>
+<h3 id="audience-management">Audience Management</h3>
+<ul>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/fetchAudienceList.html">fetchAudienceList</a> : Fetch audience list</li>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/setAdministrator.html">setAdministrator</a> : Set administrator</li>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/revokeAdministrator.html">revokeAdministrator</a> : Revoke administrator</li>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/kickUserOutOfRoom.html">kickUserOutOfRoom</a> : Kick user</li>
+<li><a href="../api_live_live_audience_store/LiveAudienceStore/disableSendMessage.html">disableSendMessage</a> : Mute/unmute user</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_live_audience_store/LiveAudienceState-class.html">LiveAudienceState</a></li>
+<li><a href="../api_live_live_audience_store/LiveAudienceListener-class.html">LiveAudienceListener</a></li>
+<li><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></li>
+<li><a href="../api_live_live_audience_store/Role.html">Role</a></li>
+</ul>
 </section>
 
 
@@ -101,7 +179,7 @@
 
 </dt>
 <dd>
-  Audience state of the current room. {@link LiveAudienceState}
+  Current room's audience state.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +213,7 @@
 
 </dt>
 <dd>
-  Add live audience event listener
+  Add audience event listener
   
 
 </dd>
@@ -148,7 +226,7 @@
 
 </dt>
 <dd>
-  Disable/enable user to send messages
+  Disable/enable user message sending
   
 
 </dd>
@@ -200,7 +278,7 @@
 
 </dt>
 <dd>
-  Remove live audience event listener
+  Remove audience event listener
   
 
 </dd>
@@ -280,7 +358,7 @@
 
 </dt>
 <dd>
-  Create an audience management instance
+  Create audience management instance
   
 
 </dd>
@@ -312,7 +390,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

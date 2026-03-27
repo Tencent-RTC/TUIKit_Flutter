@@ -63,8 +63,63 @@
 
     
 <section class="desc markdown">
-  <p>Reverb effect</p>
+  <p>Reverb effect type</p>
 <p>Reverb effects can be applied to human voice, and the sound is processed through acoustic algorithms to simulate the presence in various different environments.</p>
+<blockquote>
+<p><strong>Note</strong>: The set effect will automatically become invalid after leaving the room. If you need the corresponding effect for the next room entry, you need to call the setting interface again.</p>
+</blockquote>
+<h3 id="reverb-effect-list">Reverb Effect List</h3>
+<table>
+<thead>
+<tr>
+<th>Effect</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">none</a></td>
+<td>0</td>
+<td>Disable effect</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">ktv</a></td>
+<td>1</td>
+<td>KTV</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">smallRoom</a></td>
+<td>2</td>
+<td>Small room</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">auditorium</a></td>
+<td>3</td>
+<td>Auditorium</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">deep</a></td>
+<td>4</td>
+<td>Deep</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">loud</a></td>
+<td>5</td>
+<td>Loud</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">metallic</a></td>
+<td>6</td>
+<td>Metallic</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioReverbType.html">magnetic</a></td>
+<td>7</td>
+<td>Magnetic</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -391,7 +446,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

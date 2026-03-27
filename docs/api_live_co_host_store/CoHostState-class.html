@@ -59,7 +59,52 @@
 
     
 <section class="desc markdown">
-  <p>Cross-room connection related state data provided by CoHostStore</p>
+  <p>Cross-room connection related state data provided externally by CoHostStore</p>
+<p>A comprehensive snapshot of the current cross-room connection session state. This structure contains all relevant information about connection status, connected hosts, pending invitations and applications.</p>
+<blockquote>
+<p><strong>Note</strong>: State is automatically updated when hosts join/leave connection, send/cancel invitations, or receive applications. Subscribe to <code>coHostState</code> to receive real-time updates.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/coHostStatus.html">coHostStatus</a></td>
+<td><code>ValueListenable&lt;CoHostStatus&gt;</code></td>
+<td>Real-time cross-room connection status</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/connected.html">connected</a></td>
+<td><code>ValueListenable&lt;List&lt;SeatUserInfo&gt;&gt;</code></td>
+<td>List of hosts currently connected with current live room</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/invitees.html">invitees</a></td>
+<td><code>ValueListenable&lt;List&lt;SeatUserInfo&gt;&gt;</code></td>
+<td>List of hosts to whom requests have been sent</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/applicant.html">applicant</a></td>
+<td><code>ValueListenable&lt;SeatUserInfo?&gt;</code></td>
+<td>Host who initiated connection request to current live room</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/candidatesCursor.html">candidatesCursor</a></td>
+<td><code>ValueListenable&lt;String&gt;</code></td>
+<td>Recommended user list cursor</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_host_store/CoHostState/candidates.html">candidates</a></td>
+<td><code>ValueListenable&lt;List&lt;SeatUserInfo&gt;&gt;</code></td>
+<td>Recommended user list</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -84,36 +129,60 @@
     <dl class="properties">
         <dt id="applicant" class="property">
   <span class="name"><a href="../api_live_co_host_store/CoHostState/applicant.html">applicant</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a>?</span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a>?</span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Anchor who initiated connection request to the current live room. {@link $SeatUserInfo$}
+  Host who initiated connection request to current live room.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="candidates" class="property">
+  <span class="name"><a href="../api_live_co_host_store/CoHostState/candidates.html">candidates</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Recommended user list.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="candidatesCursor" class="property">
+  <span class="name"><a href="../api_live_co_host_store/CoHostState/candidatesCursor.html">candidatesCursor</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Recommended user list cursor.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="coHostStatus" class="property">
   <span class="name"><a href="../api_live_co_host_store/CoHostState/coHostStatus.html">coHostStatus</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_co_host_store/CoHostStatus.html">CoHostStatus</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_co_host_store/CoHostStatus.html">CoHostStatus</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Real-time status of cross-room connection. {@link CoHostStatus}
+  Real-time cross-room connection status.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="connected" class="property">
   <span class="name"><a href="../api_live_co_host_store/CoHostState/connected.html">connected</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  List of anchors currently connected with the current live room. {@link $SeatUserInfo$}
+  List of hosts currently connected with current live room.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -132,12 +201,12 @@
 
         <dt id="invitees" class="property">
   <span class="name"><a href="../api_live_co_host_store/CoHostState/invitees.html">invitees</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  List of anchors to whom requests have been sent to other live rooms. {@link $SeatUserInfo$}
+  List of hosts to whom requests have been sent.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -239,7 +308,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

@@ -59,6 +59,64 @@
     
 <section class="desc markdown">
   <p>Barrage data model, containing complete attribute information of a single barrage.</p>
+<p>Contains complete information about the barrage sender, content, type, etc.</p>
+<h3 id="property-overview">Property Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/liveID.html">liveID</a></td>
+<td><code>String</code></td>
+<td>Unique identifier ID of the live room/voice chat room the barrage belongs to</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/sender.html">sender</a></td>
+<td><code>LiveUserInfo</code></td>
+<td>User information of the barrage sender</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/sequence.html">sequence</a></td>
+<td><code>int</code></td>
+<td>Unique sequence ID of the barrage message</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/timestampInSecond.html">timestampInSecond</a></td>
+<td><code>int</code></td>
+<td>Barrage sending timestamp (unit: seconds)</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/messageType.html">messageType</a></td>
+<td><code>BarrageType</code></td>
+<td>Barrage message type (text or custom)</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/textContent.html">textContent</a></td>
+<td><code>String</code></td>
+<td>Message content of text type barrage</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/extensionInfo.html">extensionInfo</a></td>
+<td><code>Map&lt;String, String&gt;</code></td>
+<td>Barrage extension information</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/businessID.html">businessID</a></td>
+<td><code>String</code></td>
+<td>Business identifier ID of custom type barrage</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/Barrage/data.html">data</a></td>
+<td><code>String</code></td>
+<td>Specific data content of custom type barrage</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -88,7 +146,7 @@
 
 </dt>
 <dd>
-  Business identifier ID of custom type barrage, used to distinguish custom barrages in different business scenarios.
+  Business identifier ID of custom type barrage, used to distinguish custom barrages from different business scenarios.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -100,7 +158,7 @@
 
 </dt>
 <dd>
-  Specific data content of custom type barrage (usually a JSON format string), valid when messageType{@link BarrageType} is CUSTOM.
+  Specific data content of custom type barrage (usually JSON format string), valid when messageType is CUSTOM.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -112,7 +170,7 @@
 
 </dt>
 <dd>
-  Barrage extension information, customizable fields (such as display style, priority, etc.). Valid when messageType {@link BarrageType} is TEXT.
+  Barrage extension information, customizable fields (such as display style, priority, etc.). Valid when messageType is TEXT.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -136,7 +194,7 @@
 
 </dt>
 <dd>
-  The unique identifier ID of the live room/voice chat room to which the barrage belongs.
+  Unique identifier ID of the live room/voice chat room the barrage belongs to.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -148,7 +206,7 @@
 
 </dt>
 <dd>
-  Barrage message type (text or custom). {@link BarrageType}
+  Barrage message type (text or custom).
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -172,7 +230,7 @@
 
 </dt>
 <dd>
-  User information of the barrage sender (such as user ID, nickname, avatar, etc.). {@link $LiveUserInfo$}
+  User information of the barrage sender (such as user ID, nickname, avatar, etc.).
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -208,7 +266,7 @@
 
 </dt>
 <dd>
-  Barrage sending timestamp (unit: seconds), used to display the sending time order.
+  Barrage sending timestamp (unit: seconds), used to display sending time order.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
@@ -298,7 +356,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

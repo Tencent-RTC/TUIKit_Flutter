@@ -59,7 +59,135 @@
 
     
 <section class="desc markdown">
-  <p>Live seat management class</p>
+  <p>Live seat management related interfaces, managing seat operations such as taking seat, leaving seat, locking seat, and releasing seat.</p>
+<p><code>LiveSeatStore</code> Live seat management class for managing seat operations such as taking seat, leaving seat, locking seat, and releasing seat.
+<code>LiveSeatStore</code> provides a complete set of seat management APIs, including taking seat, leaving seat, locking seat, unlocking seat, kicking user off seat, remote device control, etc.
+Through this class, seat management functionality can be implemented in the live room.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Seat Management</strong>：Take seat, leave seat, lock seat, unlock seat operations</li>
+<li><strong>User Management</strong>：Kick user off seat, move user to specified seat</li>
+<li><strong>Device Control</strong>：Remote control of user's camera and microphone</li>
+<li><strong>Event Listening</strong>：Listen to seat-related events</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_live_live_seat_store/LiveSeatStore/create.html">LiveSeatStore.create</a> factory method to create a <code>LiveSeatStore</code> instance, passing a valid live room ID.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Seat state updates are delivered through the <a href="../api_live_live_seat_store/LiveSeatStore/liveSeatState.html">liveSeatState</a> publisher. Subscribe to it to receive real-time updates of seat data in the room.</p>
+</blockquote>
+<h3 id="seat-management-operations-overview">Seat Management Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Take Seat</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/takeSeat.html">takeSeat</a></td>
+<td>User takes seat</td>
+</tr>
+<tr>
+<td>Leave Seat</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/leaveSeat.html">leaveSeat</a></td>
+<td>User leaves seat</td>
+</tr>
+<tr>
+<td>Lock Seat</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/lockSeat.html">lockSeat</a></td>
+<td>Lock seat</td>
+</tr>
+<tr>
+<td>Unlock</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/unlockSeat.html">unlockSeat</a></td>
+<td>Unlock seat</td>
+</tr>
+<tr>
+<td>Kick</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/kickUserOutOfSeat.html">kickUserOutOfSeat</a></td>
+<td>Kick user off seat</td>
+</tr>
+<tr>
+<td>Move</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/moveUserToSeat.html">moveUserToSeat</a></td>
+<td>Move user to specified seat</td>
+</tr>
+</tbody>
+</table>
+<h3 id="remote-device-control">Remote Device Control</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Open Camera</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/openRemoteCamera.html">openRemoteCamera</a></td>
+<td>Remotely open user's camera</td>
+</tr>
+<tr>
+<td>Close Camera</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/closeRemoteCamera.html">closeRemoteCamera</a></td>
+<td>Remotely close user's camera</td>
+</tr>
+<tr>
+<td>Open Microphone</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/openRemoteMicrophone.html">openRemoteMicrophone</a></td>
+<td>Remotely open user's microphone</td>
+</tr>
+<tr>
+<td>Close Microphone</td>
+<td><a href="../api_live_live_seat_store/LiveSeatStore/closeRemoteMicrophone.html">closeRemoteMicrophone</a></td>
+<td>Remotely close user's microphone</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/create.html">LiveSeatStore.create</a> : Create seat management instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/liveSeatState.html">liveSeatState</a> : Current room seat state</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/addLiveSeatEventListener.html">addLiveSeatEventListener</a>/<a href="../api_live_live_seat_store/LiveSeatStore/removeLiveSeatEventListener.html">removeLiveSeatEventListener</a> : Seat event callbacks</li>
+</ul>
+<h3 id="seat-operations">Seat Operations</h3>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/takeSeat.html">takeSeat</a> : Take seat</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/leaveSeat.html">leaveSeat</a> : Leave seat</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/lockSeat.html">lockSeat</a> : Lock seat</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/unlockSeat.html">unlockSeat</a> : Unlock seat</li>
+</ul>
+<h3 id="user-management">User Management</h3>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/kickUserOutOfSeat.html">kickUserOutOfSeat</a> : Kick user off seat</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/moveUserToSeat.html">moveUserToSeat</a> : Move user</li>
+</ul>
+<h3 id="remote-device-control-2">Remote Device Control</h3>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/openRemoteCamera.html">openRemoteCamera</a> : Open remote camera</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/closeRemoteCamera.html">closeRemoteCamera</a> : Close remote camera</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/openRemoteMicrophone.html">openRemoteMicrophone</a> : Open remote microphone</li>
+<li><a href="../api_live_live_seat_store/LiveSeatStore/closeRemoteMicrophone.html">closeRemoteMicrophone</a> : Close remote microphone</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_live_seat_store/LiveSeatState-class.html">LiveSeatState</a></li>
+<li><a href="../api_live_live_seat_store/LiveSeatListener-class.html">LiveSeatListener</a></li>
+<li><a href="../api_live_live_seat_store/SeatInfo-class.html">SeatInfo</a></li>
+<li><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></li>
+<li><a href="../api_live_live_seat_store/MoveSeatPolicy.html">MoveSeatPolicy</a></li>
+<li><a href="../api_live_live_seat_store/DeviceControlPolicy.html">DeviceControlPolicy</a></li>
+</ul>
 </section>
 
 
@@ -101,7 +229,7 @@
 
 </dt>
 <dd>
-  Seat state data provided by LiveSeatStore. {@link LiveSeatState}
+  Seat state data provided by LiveSeatStore.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +263,7 @@
 
 </dt>
 <dd>
-  Add live seat event listener.
+  Add seat event listener
   
 
 </dd>
@@ -174,7 +302,7 @@
 
 </dt>
 <dd>
-  Kick user out of seat
+  Kick user off seat
   
 
 </dd>
@@ -278,7 +406,7 @@
 
 </dt>
 <dd>
-  Remove live seat event listener.
+  Remove seat event listener
   
 
 </dd>
@@ -403,7 +531,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

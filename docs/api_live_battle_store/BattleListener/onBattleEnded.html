@@ -59,22 +59,24 @@
     
       <section class="multi-line-signature">
         
-        void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a>?</span> <span class="parameter-name">reason</span></span>)</span>?
+        void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a></span> <span class="parameter-name">reason</span></span>)</span>?
         <span class="name ">onBattleEnded</span>
-        <div class="features"><span class="feature">getter/setter pair</span></div>
+        <div class="features"><span class="feature">final</span></div>
 
       </section>
       
 <section class="desc markdown">
-  <p>Triggered when PK ends.</p>
-<p>@param battleInfo PK information. {@link BattleInfo}
-@param reason PK ended reason {@link BattleEndedReason}</p>
+  <p>This callback is triggered when PK ends.</p>
+<ul>
+<li><code>battleInfo</code> : PK information</li>
+<li><code>reason</code> : Reason for PK ending</li>
+</ul>
 </section>
 
       
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void Function(BattleInfo battleInfo, BattleEndedReason? reason)? onBattleEnded;</code></pre>
+  <pre class="language-dart"><code class="language-dart">final void Function(BattleInfo battleInfo, BattleEndedReason reason)? onBattleEnded;</code></pre>
 </section>
 
 
@@ -103,7 +105,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

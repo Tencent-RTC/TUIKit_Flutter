@@ -59,7 +59,37 @@
 
     
 <section class="desc markdown">
-  <p>PK related state data provided by BattleStore.</p>
+  <p>PK-related state data provided by BattleStore</p>
+<p>A comprehensive snapshot of the current PK session state. This structure contains all relevant information about current PK information, participating users, and scores.</p>
+<blockquote>
+<p><strong>Note</strong>: State is automatically updated when PK starts/ends, users join/exit PK, or scores are updated. Subscribe to <code>battleState</code> to receive real-time updates.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_live_battle_store/BattleState/currentBattleInfo.html">currentBattleInfo</a></td>
+<td><code>ValueListenable&lt;BattleInfo?&gt;</code></td>
+<td>Current PK information</td>
+</tr>
+<tr>
+<td><a href="../api_live_battle_store/BattleState/battleUsers.html">battleUsers</a></td>
+<td><code>ValueListenable&lt;List&lt;SeatUserInfo&gt;&gt;</code></td>
+<td>PK user list</td>
+</tr>
+<tr>
+<td><a href="../api_live_battle_store/BattleState/battleScore.html">battleScore</a></td>
+<td><code>ValueListenable&lt;Map&lt;String, int&gt;&gt;</code></td>
+<td>PK score mapping</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -84,7 +114,7 @@
     <dl class="properties">
         <dt id="battleScore" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleState/battleScore.html">battleScore</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -96,24 +126,24 @@
 
         <dt id="battleUsers" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleState/battleUsers.html">battleUsers</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  PK user list. {@link $SeatUserInfo$}
+  PK user list.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="currentBattleInfo" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleState/currentBattleInfo.html">currentBattleInfo</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a>?</span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a>?</span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Current PK information. {@link BattleInfo}
+  Current PK information.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -227,7 +257,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

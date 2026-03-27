@@ -59,7 +59,133 @@
 
     
 <section class="desc markdown">
-  <p>Anchor PK management class</p>
+  <p>Live PK management APIs for creating, joining, and leaving PK sessions.</p>
+<p><code>BattleStore</code> Manages all PK-related operations between hosts,
+including initiating, accepting, rejecting, and exiting processes.
+PK feature enables real-time interactive battles between hosts. <code>BattleStore</code> provides a comprehensive set of APIs to manage the entire PK lifecycle.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>PK Request Management</strong>：Hosts can initiate PK requests, and invitees can accept or reject</li>
+<li><strong>State Management</strong>：Real-time tracking of PK information, participating users, and scores</li>
+<li><strong>Event-Driven Architecture</strong>：Provides complete PK event callbacks</li>
+<li><strong>Timeout Handling</strong>：Built-in timeout mechanism for PK requests</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Always use the factory method <a href="../api_live_battle_store/BattleStore/create.html">BattleStore.create</a> with a valid live room ID to create a <code>BattleStore</code> instance. Do not attempt to initialize directly.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: PK state updates are delivered through the <a href="../api_live_battle_store/BattleStore/battleState.html">battleState</a> publisher. Subscribe to it to receive real-time updates about PK information, participating users, and scores.</p>
+</blockquote>
+<h3 id="pk-workflow">PK Workflow</h3>
+<p>The following table shows a typical PK workflow</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Role</th>
+<th>Action</th>
+<th>Triggered Event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Host A</td>
+<td>Call <a href="../api_live_battle_store/BattleStore/requestBattle.html">requestBattle</a></td>
+<td><a href="../api_live_battle_store/BattleListener/onBattleRequestReceived.html">BattleListener.onBattleRequestReceived</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Host B</td>
+<td>Call <a href="../api_live_battle_store/BattleStore/acceptBattle.html">acceptBattle</a></td>
+<td><a href="../api_live_battle_store/BattleListener/onBattleRequestAccept.html">BattleListener.onBattleRequestAccept</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>System</td>
+<td>PK starts</td>
+<td><a href="../api_live_battle_store/BattleListener/onBattleStarted.html">BattleListener.onBattleStarted</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Create store instance
+final store = BattleStore.create('live_room_123');
+
+// Define listeners
+late final VoidCallback battleInfoListener = _onBattleInfoChanged;
+late final VoidCallback battleUsersListener = _onBattleUsersChanged;
+
+void _onBattleInfoChanged() {
+    final battleInfo = store.battleState.currentBattleInfo.value;
+    if (battleInfo != null) {
+        print('Current PK ID: ${battleInfo.battleID}');
+    }
+}
+
+void _onBattleUsersChanged() {
+    print('PK user count: ${store.battleState.battleUsers.value.length}');
+}
+
+// Subscribe to state changes
+store.battleState.currentBattleInfo.addListener(battleInfoListener);
+store.battleState.battleUsers.addListener(battleUsersListener);
+
+// Add PK event listener
+final battleListener = BattleListener(
+    onBattleStarted: (battleInfo, inviter, invitees) {
+        print('PK started, initiator: ${inviter.userName}');
+    },
+    onBattleEnded: (battleInfo, reason) {
+        print('PK ended, reason: $reason');
+    },
+);
+store.addBattleListener(battleListener);
+
+// Initiate PK request
+final config = BattleConfig(duration: 300, needResponse: true);
+final result = await store.requestBattle(
+    config: config,
+    userIDList: ['user_456'],
+    timeout: 30,
+);
+if (result.code == 0) {
+    print('PK request successful: ${result.battleInfo?.battleID}');
+} else {
+    print('PK request failed: ${result.message}');
+}
+
+// Unsubscribe when done
+store.battleState.currentBattleInfo.removeListener(battleInfoListener);
+store.battleState.battleUsers.removeListener(battleUsersListener);
+store.removeBattleListener(battleListener);
+</code></pre>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_battle_store/BattleStore/create.html">BattleStore.create</a> : Create BattleStore instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_battle_store/BattleStore/battleState.html">battleState</a> : PK state data</li>
+<li><a href="../api_live_battle_store/BattleStore/addBattleListener.html">addBattleListener</a>/<a href="../api_live_battle_store/BattleStore/removeBattleListener.html">removeBattleListener</a> : PK event callbacks</li>
+</ul>
+<h3 id="pk-operations">PK Operations</h3>
+<ul>
+<li><a href="../api_live_battle_store/BattleStore/requestBattle.html">requestBattle</a> : Initiate PK request</li>
+<li><a href="../api_live_battle_store/BattleStore/cancelBattleRequest.html">cancelBattleRequest</a> : Cancel PK request</li>
+<li><a href="../api_live_battle_store/BattleStore/acceptBattle.html">acceptBattle</a> : Accept PK request</li>
+<li><a href="../api_live_battle_store/BattleStore/rejectBattle.html">rejectBattle</a> : Reject PK request</li>
+<li><a href="../api_live_battle_store/BattleStore/exitBattle.html">exitBattle</a> : Exit PK</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a></li>
+<li><a href="../api_live_battle_store/BattleConfig-class.html">BattleConfig</a></li>
+<li><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></li>
+<li><a href="../api_live_battle_store/BattleState-class.html">BattleState</a></li>
+<li><a href="../api_live_battle_store/BattleListener-class.html">BattleListener</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +215,7 @@
 
 </dt>
 <dd>
-  PK state. {@link BattleState}
+  PK state
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -148,7 +274,7 @@
 
 </dt>
 <dd>
-  Add PK callback listener.
+  Add PK callback listener
   
 
 </dd>
@@ -213,7 +339,7 @@
 
 </dt>
 <dd>
-  Remove PK callback listener.
+  Remove PK callback listener
   
 
 </dd>
@@ -312,7 +438,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

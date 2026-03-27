@@ -59,7 +59,165 @@
 
     
 <section class="desc markdown">
-  <p>Audience co-hosting management class</p>
+  <p>Live co-guest management related interfaces, managing co-guest application, invitation, acceptance, rejection and other operations between hosts and audience.</p>
+<p><code>CoGuestStore</code> Manages all co-guest related operations between hosts and audience,
+including application, invitation, acceptance and rejection processes.
+Co-guest feature enables real-time interaction between hosts and audience members through a seat-based system. <code>CoGuestStore</code> provides a comprehensive set of APIs to manage the entire co-guest lifecycle.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Bidirectional Invitation</strong>：Hosts can invite audience members, and audience members can also apply to join</li>
+<li><strong>State Management</strong>：Real-time tracking of connected users, invitations and applications</li>
+<li><strong>Event-Driven Architecture</strong>：Provides separate event streams for host and guest roles</li>
+<li><strong>Timeout Handling</strong>：Built-in timeout mechanism for invitations and applications</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Always use the factory method <a href="../api_live_co_guest_store/CoGuestStore/create.html">CoGuestStore.create</a> with a valid live room ID to create a <code>CoGuestStore</code> instance. Do not attempt to initialize directly.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Co-guest state updates are delivered through the <a href="../api_live_co_guest_store/CoGuestStore/coGuestState.html">coGuestState</a> publisher. Subscribe to it to receive real-time updates about connected users, invitations and applications.</p>
+</blockquote>
+<h3 id="co-guest-workflow">Co-Guest Workflow</h3>
+<p>The following table shows a typical co-guest workflow</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Role</th>
+<th>Action</th>
+<th>Triggered Event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Audience</td>
+<td>Call <a href="../api_live_co_guest_store/CoGuestStore/applyForSeat.html">applyForSeat</a></td>
+<td><a href="../api_live_co_guest_store/HostListener/onGuestApplicationReceived.html">HostListener.onGuestApplicationReceived</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Host</td>
+<td>Call <a href="../api_live_co_guest_store/CoGuestStore/acceptApplication.html">acceptApplication</a></td>
+<td><a href="../api_live_co_guest_store/GuestListener/onGuestApplicationResponded.html">GuestListener.onGuestApplicationResponded</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>System</td>
+<td>User connects to seat</td>
+<td>State updated through <a href="../api_live_co_guest_store/CoGuestStore/coGuestState.html">coGuestState</a> publisher</td>
+</tr>
+</tbody>
+</table>
+<h3 id="host-initiated-flow">Host-Initiated Flow</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Role</th>
+<th>Action</th>
+<th>Triggered Event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Host</td>
+<td>Call <a href="../api_live_co_guest_store/CoGuestStore/inviteToSeat.html">inviteToSeat</a></td>
+<td><a href="../api_live_co_guest_store/GuestListener/onHostInvitationReceived.html">GuestListener.onHostInvitationReceived</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Audience</td>
+<td>Call <a href="../api_live_co_guest_store/CoGuestStore/acceptInvitation.html">acceptInvitation</a></td>
+<td><a href="../api_live_co_guest_store/HostListener/onHostInvitationResponded.html">HostListener.onHostInvitationResponded</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>System</td>
+<td>User connects to seat</td>
+<td>State updated through <a href="../api_live_co_guest_store/CoGuestStore/coGuestState.html">coGuestState</a> publisher</td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Create store instance
+final store = CoGuestStore.create('live_room_123');
+
+// Define listeners
+late final VoidCallback connectedListener = _onConnectedChanged;
+late final VoidCallback applicantsListener = _onApplicantsChanged;
+
+void _onConnectedChanged() {
+    print('Connected users: ${store.coGuestState.connected.value.length}');
+}
+
+void _onApplicantsChanged() {
+    print('Pending applications: ${store.coGuestState.applicants.value.length}');
+}
+
+// Subscribe to state changes
+store.coGuestState.connected.addListener(connectedListener);
+store.coGuestState.applicants.addListener(applicantsListener);
+
+// Add host event listener (for hosts)
+final hostListener = HostListener(
+    onGuestApplicationReceived: (guestUser) {
+        print('Received application from ${guestUser.userName}');
+        // Show accept/reject UI
+    },
+    onHostInvitationResponded: (isAccept, guestUser) {
+        print('Audience ${guestUser.userName} ${isAccept ? "accepted" : "rejected"}');
+    },
+);
+store.addHostListener(hostListener);
+
+// Host: Accept application
+final result = await store.acceptApplication('user_456');
+if (result.code == 0) {
+    print('Application accepted successfully');
+}
+
+// Unsubscribe when done
+store.coGuestState.connected.removeListener(connectedListener);
+store.coGuestState.applicants.removeListener(applicantsListener);
+store.removeHostListener(hostListener);
+</code></pre>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_co_guest_store/CoGuestStore/create.html">CoGuestStore.create</a> : Create object instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_co_guest_store/CoGuestStore/coGuestState.html">coGuestState</a> : Reactive state containing connected users, invitees, applicants and candidates</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/addHostListener.html">addHostListener</a>/<a href="../api_live_co_guest_store/CoGuestStore/removeHostListener.html">removeHostListener</a> : Host-side event callbacks</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/addGuestListener.html">addGuestListener</a>/<a href="../api_live_co_guest_store/CoGuestStore/removeGuestListener.html">removeGuestListener</a> : Guest-side event callbacks</li>
+</ul>
+<h3 id="guest-operations">Guest Operations</h3>
+<ul>
+<li><a href="../api_live_co_guest_store/CoGuestStore/applyForSeat.html">applyForSeat</a> : Guest applies for co-guest</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/cancelApplication.html">cancelApplication</a> : Guest cancels application</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/acceptApplication.html">acceptApplication</a> : Host accepts application</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/rejectApplication.html">rejectApplication</a> : Host rejects application</li>
+</ul>
+<h3 id="host-operations">Host Operations</h3>
+<ul>
+<li><a href="../api_live_co_guest_store/CoGuestStore/inviteToSeat.html">inviteToSeat</a> : Host invites guest to co-guest</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/cancelInvitation.html">cancelInvitation</a> : Host cancels invitation</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/acceptInvitation.html">acceptInvitation</a> : Guest accepts invitation</li>
+<li><a href="../api_live_co_guest_store/CoGuestStore/rejectInvitation.html">rejectInvitation</a> : Guest rejects invitation</li>
+</ul>
+<h3 id="connection-control">Connection Control</h3>
+<ul>
+<li><a href="../api_live_co_guest_store/CoGuestStore/disconnect.html">disconnect</a> : End co-guest session</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_co_guest_store/NoResponseReason.html">NoResponseReason</a></li>
+<li><a href="../api_live_co_guest_store/CoGuestState-class.html">CoGuestState</a></li>
+<li><a href="../api_live_co_guest_store/HostListener-class.html">HostListener</a></li>
+<li><a href="../api_live_co_guest_store/GuestListener-class.html">GuestListener</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +247,7 @@
 
 </dt>
 <dd>
-  Co-hosting related state data provided by CoGuestStore
+  Co-guest related state data provided externally by CoGuestStore
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -161,7 +319,7 @@
 
 </dt>
 <dd>
-  Add guest side event callback listener
+  Add guest-side event callback listener
   
 
 </dd>
@@ -174,7 +332,7 @@
 
 </dt>
 <dd>
-  Add host side event callback listener
+  Add host-side event callback listener
   
 
 </dd>
@@ -187,7 +345,7 @@
 
 </dt>
 <dd>
-  Apply for seat
+  Apply to go on seat
   
 
 </dd>
@@ -226,7 +384,7 @@
 
 </dt>
 <dd>
-  Disconnect co-hosting
+  Disconnect co-guest
   
 
 </dd>
@@ -291,7 +449,7 @@
 
 </dt>
 <dd>
-  Remove guest side event callback listener
+  Remove guest-side event callback listener
   
 
 </dd>
@@ -304,7 +462,7 @@
 
 </dt>
 <dd>
-  Remove host side event callback listener
+  Remove host-side event callback listener
   
 
 </dd>
@@ -390,7 +548,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

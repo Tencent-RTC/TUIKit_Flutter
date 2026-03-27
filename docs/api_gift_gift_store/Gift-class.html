@@ -59,6 +59,59 @@
     
 <section class="desc markdown">
   <p>Gift data model, containing complete attribute information of a single gift.</p>
+<p>Contains complete information about the gift including ID, name, description, icon, animation resource, etc.</p>
+<h3 id="properties-overview">Properties Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/giftID.html">giftID</a></td>
+<td><code>String</code></td>
+<td>Gift ID</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/name.html">name</a></td>
+<td><code>String</code></td>
+<td>Gift name</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/desc.html">desc</a></td>
+<td><code>String</code></td>
+<td>Gift description</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/iconURL.html">iconURL</a></td>
+<td><code>String</code></td>
+<td>Network URL of the gift icon image</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/resourceURL.html">resourceURL</a></td>
+<td><code>String</code></td>
+<td>Network URL of the gift animation resource file</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/level.html">level</a></td>
+<td><code>int</code></td>
+<td>Gift level</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/coins.html">coins</a></td>
+<td><code>int</code></td>
+<td>Gift price (coins)</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/Gift/extensionInfo.html">extensionInfo</a></td>
+<td><code>Map&lt;String, String&gt;</code></td>
+<td>Gift extension information</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -112,7 +165,7 @@
 
 </dt>
 <dd>
-  Gift extension information, customizable fields (such as effect type, gifting restrictions, etc.)
+  Gift extension information, customizable fields (such as effect type, sending restrictions, etc.)
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -184,7 +237,7 @@
 
 </dt>
 <dd>
-  Network URL of the gift animation resource file, used to load gift display effects.
+  Network URL of the gift animation resource file, used to load gift display animations.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -286,7 +339,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

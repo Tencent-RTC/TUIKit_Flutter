@@ -60,6 +60,27 @@
     
 <section class="desc markdown">
   <p>Gift state, managing the gift data state of the current room, supporting real-time updates and subscription listening.</p>
+<p>Contains all gift categories and gift lists available in the current room, supporting real-time updates.</p>
+<blockquote>
+<p><strong>Note</strong>: Gift state is automatically updated. Subscribe to <code>giftState</code> to receive real-time updates.</p>
+</blockquote>
+<h3 id="properties-overview">Properties Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_gift_gift_store/GiftState/usableGifts.html">usableGifts</a></td>
+<td><code>ValueListenable&lt;List&lt;GiftCategory&gt;&gt;</code></td>
+<td>All gift categories and gift lists available in the current room</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -108,12 +129,12 @@
 
         <dt id="usableGifts" class="property">
   <span class="name"><a href="../api_gift_gift_store/GiftState/usableGifts.html">usableGifts</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_gift_gift_store/GiftCategory-class.html">GiftCategory</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_gift_gift_store/GiftCategory-class.html">GiftCategory</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  All available gift categories and gift lists in the current room. {@link GiftCategory}
+  All gift categories and gift lists available in the current room.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -203,7 +224,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

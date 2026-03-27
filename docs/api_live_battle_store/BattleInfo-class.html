@@ -59,6 +59,38 @@
     
 <section class="desc markdown">
   <p>PK information</p>
+<p>PK information, containing PK ID, configuration information, start time, and end time.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_live_battle_store/BattleInfo/battleID.html">battleID</a></td>
+<td><code>String</code></td>
+<td>PK ID</td>
+</tr>
+<tr>
+<td><a href="../api_live_battle_store/BattleInfo/config.html">config</a></td>
+<td><a href="../api_live_battle_store/BattleConfig-class.html">BattleConfig</a></td>
+<td>PK configuration information</td>
+</tr>
+<tr>
+<td><a href="../api_live_battle_store/BattleInfo/startTime.html">startTime</a></td>
+<td><code>int</code></td>
+<td>{'PK start timestamp (unit': 'seconds)'}</td>
+</tr>
+<tr>
+<td><a href="../api_live_battle_store/BattleInfo/endTime.html">endTime</a></td>
+<td><code>int</code></td>
+<td>{'PK end timestamp (unit': 'seconds)'}</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -100,7 +132,7 @@
 
 </dt>
 <dd>
-  PK configuration information set when sending PK request. {@link BattleConfig}
+  PK configuration information set when sending a PK request.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -112,7 +144,7 @@
 
 </dt>
 <dd>
-  PK end timestamp (unit: seconds).
+  PK end marker timestamp (unit: seconds).
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -148,7 +180,7 @@
 
 </dt>
 <dd>
-  PK start timestamp (unit: seconds).
+  PK start marker timestamp (unit: seconds).
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -238,7 +270,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

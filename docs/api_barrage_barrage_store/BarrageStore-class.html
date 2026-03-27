@@ -59,7 +59,68 @@
 
     
 <section class="desc markdown">
-  <p>Barrage management class.</p>
+  <p>Barrage related interfaces, managing barrage sending, barrage state synchronization, and barrage event listening in live rooms/voice chat rooms.</p>
+<p><code>BarrageStore</code> Barrage management class for handling barrage related business logic in live rooms/voice chat rooms.
+<code>BarrageStore</code> provides a complete set of barrage management APIs, including sending text barrages, sending custom barrages, and adding local tip messages.
+Through this class, you can implement barrage interaction functionality in live rooms.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Text Barrage</strong>：Supports sending plain text barrage messages</li>
+<li><strong>Custom Barrage</strong>：Supports sending custom format barrages (such as barrages with special effects)</li>
+<li><strong>Local Tips</strong>：Supports adding tip messages visible only locally</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_barrage_barrage_store/BarrageStore/create.html">create</a> factory method to create a <code>BarrageStore</code> instance, which requires a valid live room ID.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Barrage state updates are delivered through the <a href="../api_barrage_barrage_store/BarrageStore/barrageState.html">barrageState</a> publisher. Subscribe to it to receive real-time updates of barrage data in the room.</p>
+</blockquote>
+<h3 id="barrage-type-description">Barrage Type Description</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Enum Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_barrage_barrage_store/BarrageType.html">BarrageType.text</a></td>
+<td>0</td>
+<td>Text type barrage</td>
+</tr>
+<tr>
+<td><a href="../api_barrage_barrage_store/BarrageType.html">BarrageType.custom</a></td>
+<td>1</td>
+<td>Custom type barrage</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_barrage_barrage_store/BarrageStore/create.html">create</a> : Create barrage management instance</li>
+</ul>
+<h3 id="observing-state">Observing State</h3>
+<ul>
+<li><a href="../api_barrage_barrage_store/BarrageStore/barrageState.html">barrageState</a> : Barrage state data</li>
+</ul>
+<h3 id="sending-barrage">Sending Barrage</h3>
+<ul>
+<li><a href="../api_barrage_barrage_store/BarrageStore/sendTextMessage.html">sendTextMessage</a> : Send text barrage</li>
+<li><a href="../api_barrage_barrage_store/BarrageStore/sendCustomMessage.html">sendCustomMessage</a> : Send custom barrage</li>
+</ul>
+<h3 id="local-messages">Local Messages</h3>
+<ul>
+<li><a href="../api_barrage_barrage_store/BarrageStore/appendLocalTip.html">appendLocalTip</a> : Add local tip message</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_barrage_barrage_store/BarrageType.html">BarrageType</a></li>
+<li><a href="../api_barrage_barrage_store/Barrage-class.html">Barrage</a></li>
+<li><a href="../api_barrage_barrage_store/BarrageState-class.html">BarrageState</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +150,7 @@
 
 </dt>
 <dd>
-  Barrage state subscription of the current room, containing barrage message list and other information. By subscribing to this state, you can get real-time updates of barrage data in the room. {@link BarrageState}
+  Barrage state subscription of the current room, including barrage message list and other information. By subscribing to this state, you can get real-time updates of barrage data in the room.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -228,7 +289,7 @@
 
 </dt>
 <dd>
-  Barrage management core class, used to handle barrage related business logic in live rooms/voice chat rooms.
+  Barrage management core class for handling barrage related business logic in live rooms/voice chat rooms.
   
 
 </dd>
@@ -260,7 +321,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

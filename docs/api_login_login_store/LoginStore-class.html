@@ -71,8 +71,38 @@ Through this class, you can manage user login status and user profiles.</p>
 <li><strong>Personal Information Settings</strong>：Supports setting user nickname, avatar, gender and other personal information</li>
 </ul>
 <blockquote>
+<p><strong>Important</strong>: Use <a href="../api_login_login_store/LoginStore/shared.html">shared</a> singleton object to access the <code>LoginStore</code> instance.</p>
+</blockquote>
+<blockquote>
 <p><strong>Note</strong>: Login status updates are delivered through <a href="../api_login_login_store/LoginStore/loginState.html">loginState</a> publisher. Subscribe to it to receive real-time updates about login status.</p>
 </blockquote>
+<h3 id="login-operations-overview">Login Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login</td>
+<td><a href="../api_login_login_store/LoginStore/login.html">login</a></td>
+<td>Login using SDK application ID user ID and user signature</td>
+</tr>
+<tr>
+<td>Logout</td>
+<td><a href="../api_login_login_store/LoginStore/logout.html">logout</a></td>
+<td>User logout</td>
+</tr>
+<tr>
+<td>Set Info</td>
+<td><a href="../api_login_login_store/LoginStore/setSelfInfo.html">setSelfInfo</a></td>
+<td>Set user personal information</td>
+</tr>
+</tbody>
+</table>
 <h2 id="topics">Topics</h2>
 <h3 id="getting-instance">Getting Instance</h3>
 <ul>
@@ -100,6 +130,28 @@ Through this class, you can manage user login status and user profiles.</p>
 </section>
 
 
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html">ChangeNotifier</a></li>
+      <li>LoginStore</li>
+    </ul>
+  </dd>
+
+        
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
 
     
   <section class="summary offset-anchor" id="constructors">
@@ -132,7 +184,7 @@ Through this class, you can manage user login status and user profiles.</p>
 </dd>
 
         <dt id="hasListeners" class="property inherited">
-  <span class="name"><a href="../api_login_login_store/LoginStore/hasListeners.html">hasListeners</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/hasListeners.html">hasListeners</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   
 
@@ -189,7 +241,7 @@ Through this class, you can manage user login status and user profiles.</p>
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="addListener" class="callable inherited">
-  <span class="name"><a href="../api_login_login_store/LoginStore/addListener.html">addListener</a></span><span class="signature">(<wbr><span class="parameter" id="addListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a></span><span class="signature">(<wbr><span class="parameter" id="addListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -202,7 +254,7 @@ Through this class, you can manage user login status and user profiles.</p>
 </dd>
 
         <dt id="dispose" class="callable inherited">
-  <span class="name"><a href="../api_login_login_store/LoginStore/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/dispose.html">dispose</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -211,7 +263,7 @@ Through this class, you can manage user login status and user profiles.</p>
 <dd class="inherited">
   Discards any resources used by the object. After this is called, the
 object is not in a usable state and should be discarded (calls to
-<code>addListener</code> will throw after the object is disposed).
+<a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a> will throw after the object is disposed).
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -256,7 +308,7 @@ object is not in a usable state and should be discarded (calls to
 </dd>
 
         <dt id="notifyListeners" class="callable inherited">
-  <span class="name"><a href="../api_login_login_store/LoginStore/notifyListeners.html">notifyListeners</a></span><span class="signature">(<wbr>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/notifyListeners.html">notifyListeners</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -269,7 +321,7 @@ object is not in a usable state and should be discarded (calls to
 </dd>
 
         <dt id="removeListener" class="callable inherited">
-  <span class="name"><a href="../api_login_login_store/LoginStore/removeListener.html">removeListener</a></span><span class="signature">(<wbr><span class="parameter" id="removeListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/removeListener.html">removeListener</a></span><span class="signature">(<wbr><span class="parameter" id="removeListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -375,7 +427,7 @@ notified when the object changes.
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

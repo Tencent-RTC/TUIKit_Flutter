@@ -59,7 +59,72 @@
 
     
 <section class="desc markdown">
-  <p>Like management class, used to handle like-related business logic in live rooms/voice chat rooms.</p>
+  <p>Like related interfaces, managing like sending, like state synchronization, and like event listening operations in live rooms/voice chat rooms.</p>
+<p><code>LikeStore</code> Like management class for handling like-related business logic in live rooms/voice chat rooms.
+<code>LikeStore</code> provides a complete set of like management APIs, including sending likes, listening to like events, and getting like states. Through this class, you can implement like interaction features in live rooms.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Like Sending</strong>：Support sending likes to the current room</li>
+<li><strong>Like State</strong>：Get the accumulated like count of the current room</li>
+<li><strong>Event Listening</strong>：Listen to like receiving events</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_live_like_store/LikeStore/create.html">create</a> factory method to create a <code>LikeStore</code> instance, which requires a valid live room ID.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Like state updates are delivered through the <a href="../api_live_like_store/LikeStore/likeState.html">likeState</a> publisher. Subscribe to it to receive real-time updates of like data in the room.</p>
+</blockquote>
+<h3 id="like-operations-overview">Like Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Send Like</td>
+<td><a href="../api_live_like_store/LikeStore/sendLike.html">sendLike</a></td>
+<td>Send likes to the current room</td>
+</tr>
+<tr>
+<td>Get State</td>
+<td><a href="../api_live_like_store/LikeStore/likeState.html">likeState</a></td>
+<td>Get the like state of the current room</td>
+</tr>
+<tr>
+<td>Add Listener</td>
+<td><a href="../api_live_like_store/LikeStore/addLikeListener.html">addLikeListener</a></td>
+<td>Add like event listener</td>
+</tr>
+<tr>
+<td>Remove Listener</td>
+<td><a href="../api_live_like_store/LikeStore/removeLikeListener.html">removeLikeListener</a></td>
+<td>Remove like event listener</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_like_store/LikeStore/create.html">create</a> - Create like management instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_like_store/LikeStore/likeState.html">likeState</a> - Like state of the current room</li>
+<li><a href="../api_live_like_store/LikeStore/addLikeListener.html">addLikeListener</a>/<a href="../api_live_like_store/LikeStore/removeLikeListener.html">removeLikeListener</a> - Like event callbacks</li>
+</ul>
+<h3 id="like-operations">Like Operations</h3>
+<ul>
+<li><a href="../api_live_like_store/LikeStore/sendLike.html">sendLike</a> - Send likes</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_like_store/LikeState-class.html">LikeState</a></li>
+<li><a href="../api_live_like_store/LikeListener-class.html">LikeListener</a></li>
+</ul>
 </section>
 
 
@@ -101,7 +166,7 @@
 
 </dt>
 <dd>
-  Like state subscription for the current room, containing information such as accumulated like count. By subscribing to this state, you can get real-time updates of like data in the room. {@link LikeState}
+  Like state subscription for the current room, containing information such as accumulated like count. By subscribing to this state, you can get real-time updates of like data in the room.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +200,7 @@
 
 </dt>
 <dd>
-  Like event publisher, through which you can subscribe/remove like events in live rooms/voice chat rooms. After subscription, you will receive corresponding notifications when audiences send likes. {@link LikeListener}
+  Add like event listener
   
 
 </dd>
@@ -161,7 +226,7 @@
 
 </dt>
 <dd>
-  
+  Remove like event listener
   
 
 </dd>
@@ -260,7 +325,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>
