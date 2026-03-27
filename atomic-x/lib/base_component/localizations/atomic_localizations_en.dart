@@ -231,9 +231,6 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get send => 'Send';
 
   @override
-  String get sendSoundTips => 'Press and hold to speak Release to send';
-
-  @override
   String get more => 'More';
 
   @override
@@ -1040,6 +1037,14 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   String get groupDeliveredTo => 'Delivered to';
 
   @override
+  String get readReceiptAllRead => 'All Read';
+
+  @override
+  String readReceiptNPersonRead(int count) {
+    return '$count Read';
+  }
+
+  @override
   String get loadingMore => 'Load more...';
 
   @override
@@ -1304,5 +1309,19 @@ class AtomicLocalizationsEn extends AtomicLocalizations {
   @override
   String newMessageCount(int count) {
     return '$count new messages';
+  }
+
+  @override
+  String get holdToTalk => 'Hold to talk';
+
+  @override
+  String get releaseToSend => 'Release to send';
+
+  @override
+  String get releaseToCancel => 'Release to cancel';
+
+  @override
+  String recordCountdownTips(int seconds) {
+    return 'Recording will stop in ${seconds}s';
   }
 }

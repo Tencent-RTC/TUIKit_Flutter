@@ -1,4 +1,7 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4.5 12H20.5" stroke="#1C66E5" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M12.5 20L12.5 4" stroke="#1C66E5" stroke-width="1.5" stroke-linecap="round"/>
+<svg width="56" height="57" viewBox="0 0 56 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#231;&#188;&#150;&#231;&#187;&#132; 4">
+<circle id="&#230;&#164;&#173;&#229;&#156;&#134;&#229;&#189;&#162;&#229;&#164;&#135;&#228;&#187;&#189; 27" cx="28" cy="28.8535" r="26" stroke="#444444" stroke-width="4"/>
+<rect id="&#231;&#159;&#169;&#229;&#189;&#162;&#229;&#164;&#135;&#228;&#187;&#189; 8" x="15" y="27.8535" width="26" height="4" rx="1" fill="#444444"/>
+<rect id="&#231;&#159;&#169;&#229;&#189;&#162;&#229;&#164;&#135;&#228;&#187;&#189; 8_2" x="26" y="42.8535" width="26" height="4" rx="1" transform="rotate(-90 26 42.8535)" fill="#444444"/>
+</g>
 </svg>

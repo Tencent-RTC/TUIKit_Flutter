@@ -231,9 +231,6 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get send => 'يرسل';
 
   @override
-  String get sendSoundTips => 'اضغط مع الاستمرار للتحدث، ثم حرر للإرسال';
-
-  @override
   String get more => 'المزيد';
 
   @override
@@ -1041,6 +1038,14 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get groupDeliveredTo => 'تم التسليم إلى';
 
   @override
+  String get readReceiptAllRead => 'قرأ الكل';
+
+  @override
+  String readReceiptNPersonRead(int count) {
+    return 'قرأ $count';
+  }
+
+  @override
   String get loadingMore => 'تحميل المزيد...';
 
   @override
@@ -1301,5 +1306,19 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   @override
   String newMessageCount(int count) {
     return '$count رسائل جديدة';
+  }
+
+  @override
+  String get holdToTalk => 'اضغط مع الاستمرار للتحدث';
+
+  @override
+  String get releaseToSend => 'حرر للإرسال';
+
+  @override
+  String get releaseToCancel => 'حرر للإلغاء';
+
+  @override
+  String recordCountdownTips(int seconds) {
+    return 'سيتوقف التسجيل بعد $seconds ثانية';
   }
 }

@@ -888,17 +888,6 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       ));
     }
 
-    // Info button (read receipt detail)
-    if (_shouldShowReadReceiptDetail()) {
-      items.add(MessageMenuItem(
-        title: atomicLocal.detail,
-        assetName: 'chat_assets/icon/info.svg',
-        package: 'tuikit_atomic_x',
-        icon: Icons.info_outline,
-        onTap: () => _showReadReceiptDetail(),
-      ));
-    }
-
     // Add custom actions
     for (final customAction in widget.customActions) {
       items.add(MessageMenuItem(
@@ -978,62 +967,35 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     switch (widget.config.alignment) {
       case 'left':
         return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
           bottomLeft: Radius.circular(0),
-          bottomRight: Radius.circular(18),
+          bottomRight: Radius.circular(10),
         );
       case 'right':
         return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(18),
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(10),
           bottomRight: Radius.circular(0),
         );
       case 'two-sided':
       default:
         if (widget.isSelf) {
           return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(18),
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
             bottomRight: Radius.circular(0),
           );
         } else {
           return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
             bottomLeft: Radius.circular(0),
-            bottomRight: Radius.circular(18),
+            bottomRight: Radius.circular(10),
           );
         }
     }
-  }
-
-  bool _shouldShowReadReceiptDetail() {
-    final groupID = widget.message.groupID;
-    if (groupID == null || groupID.isEmpty) return false;
-
-    if (!widget.isSelf) return false;
-
-    if (!widget.message.needReadReceipt) return false;
-
-    if (widget.message.status != MessageStatus.sendSuccess) return false;
-
-    return true;
-  }
-
-  void _showReadReceiptDetail() {
-    final messageActionStore = MessageActionStore.create(widget.message);
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MessageReadReceiptView(
-          messageActionStore: messageActionStore,
-          messageListStore: widget.messageListStore,
-          message: widget.message,
-        ),
-      ),
-    );
   }
 }

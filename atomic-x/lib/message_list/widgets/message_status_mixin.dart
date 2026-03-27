@@ -1,10 +1,23 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
-import 'package:tuikit_atomic_x/message_list/utils/message_list_helper.dart';
 
 mixin MessageStatusMixin {
+  /// Check whether a read-receipt indicator should be displayed for [message].
+  static bool shouldShowReadReceipt({
+    required MessageInfo message,
+    required bool enableReadReceipt,
+    bool isInMergedDetailView = false,
+  }) {
+    if (isInMergedDetailView) return false;
+    if (!enableReadReceipt) return false;
+    if (!message.isSelf) return false;
+    if (!message.needReadReceipt) return false;
+    if (message.status != MessageStatus.sendSuccess) return false;
+    if (message.messageType == MessageType.system) return false;
+    return true;
+  }
+
   /// Build status indicator (sendFail, violation, or sending) - to be shown outside bubble
   /// Returns null if no status to show
   Widget? buildOutsideBubbleStatusIndicator({
@@ -60,33 +73,11 @@ mixin MessageStatusMixin {
   }) {
     if (!isSelf) return const SizedBox.shrink();
 
-    Color iconColor = isOverlay ? colorsTheme.textColorAntiPrimary : colorsTheme.buttonColorPrimaryDefault;
-
     switch (message.status) {
       case MessageStatus.sendSuccess:
-        // In merged detail view, don't show any read status indicator
-        if (isInMergedDetailView) {
-          return const SizedBox.shrink();
-        }
-        if (MessageListHelper.shouldShowReadReceipt(
-          message: message,
-          enableReadReceipt: enableReadReceipt,
-        )) {
-          return buildReadReceiptIndicator(
-            message: message,
-            enableReadReceipt: enableReadReceipt,
-            colorsTheme: colorsTheme,
-            isOverlay: isOverlay,
-          );
-        }
-        return SvgPicture.asset(
-          'chat_assets/icon/message_read_status.svg',
-          width: 14,
-          height: 14,
-          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-          package: 'tuikit_atomic_x',
-          fit: BoxFit.contain,
-        );
+        // Read receipt is now shown outside the bubble as a text label.
+        // No in-bubble icon needed for sendSuccess anymore.
+        return const SizedBox.shrink();
       case MessageStatus.sending:
       case MessageStatus.sendFail:
       case MessageStatus.violation:
@@ -168,43 +159,82 @@ mixin MessageStatusMixin {
     return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
   }
 
-  /// 构建已读回执指示器
-  Widget buildReadReceiptIndicator({
+  /// Build read receipt text label to be shown **outside** the bubble (on the left side).
+  ///
+  /// Rules:
+  /// - Only for self-sent, successfully delivered messages with enableReadReceipt = true.
+  /// - C2C: peer read → gray "已读", unread → primary color "未读".
+  /// - Group: all read → gray "全部已读", partially read → primary color "N人已读",
+  ///   no one read → primary color "未读".
+  /// - Returns null when nothing should be shown.
+  Widget? buildOutsideReadReceiptLabel({
     required MessageInfo message,
-    required bool enableReadReceipt,
     required SemanticColorScheme colorsTheme,
-    bool isOverlay = false,
+    required AtomicLocalizations locale,
+    required bool enableReadReceipt,
+    bool isInMergedDetailView = false,
+    VoidCallback? onTap,
   }) {
-    if (!MessageListHelper.shouldShowReadReceipt(
+    if (!shouldShowReadReceipt(
       message: message,
       enableReadReceipt: enableReadReceipt,
+      isInMergedDetailView: isInMergedDetailView,
     )) {
-      return const SizedBox.shrink();
+      return null;
     }
 
-    final iconName = MessageListHelper.getReceiptIconName(message);
-    final isHighlight = iconName == 'read_receipt_check_all_highlight';
+    String text;
+    Color textColor;
 
-    // 高亮图标使用固定颜色，其他图标使用主题颜色
-    if (isHighlight) {
-      return SvgPicture.asset(
-        'chat_assets/icon/$iconName.svg',
-        width: 14,
-        height: 14,
-        package: 'tuikit_atomic_x',
-        fit: BoxFit.contain,
+    final isGroup = message.groupID != null && message.groupID!.isNotEmpty;
+
+    if (!isGroup) {
+      // C2C conversation
+      if (message.receipt?.isPeerRead == true) {
+        text = locale.groupReadBy; // "已读"
+        textColor = colorsTheme.textColorSecondary; // gray
+      } else {
+        text = locale.groupDeliveredTo; // "未读"
+        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
+      }
+    } else {
+      // Group conversation
+      final readCount = message.receipt?.readCount ?? 0;
+      final unreadCount = message.receipt?.unreadCount ?? 0;
+      final totalCount = readCount + unreadCount;
+
+      if (totalCount > 0 && readCount == totalCount) {
+        // All read
+        text = locale.readReceiptAllRead; // "全部已读"
+        textColor = colorsTheme.textColorSecondary; // gray
+      } else if (readCount > 0) {
+        // Partially read
+        text = locale.readReceiptNPersonRead(readCount); // "N人已读"
+        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
+      } else {
+        // No one read
+        text = locale.groupDeliveredTo; // "未读"
+        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
+      }
+    }
+
+    final textWidget = Text(
+      text,
+      style: TextStyle(
+        fontSize: 12,
+        color: textColor,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+
+    // Group messages: tappable to show read receipt detail
+    if (isGroup && onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        child: textWidget,
       );
     }
 
-    Color iconColor = colorsTheme.textColorAntiPrimary;
-
-    return SvgPicture.asset(
-      'chat_assets/icon/$iconName.svg',
-      width: 14,
-      height: 14,
-      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-      package: 'tuikit_atomic_x',
-      fit: BoxFit.contain,
-    );
+    return textWidget;
   }
 }

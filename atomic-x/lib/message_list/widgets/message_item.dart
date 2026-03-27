@@ -7,6 +7,7 @@ import 'package:tuikit_atomic_x/message_list/utils/calling_message_data_provider
 import 'package:tuikit_atomic_x/message_list/utils/message_utils.dart';
 import 'package:tuikit_atomic_x/message_list/utils/translation_display_manager.dart';
 import 'package:tuikit_atomic_x/message_list/widgets/message_status_mixin.dart';
+import 'package:tuikit_atomic_x/message_list/widgets/message_read_receipt_view.dart';
 import 'package:tuikit_atomic_x/message_list/widgets/message_tooltip.dart';
 
 class MessageItem extends StatelessWidget with MessageStatusMixin {
@@ -196,6 +197,21 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     messageInputStore.sendMessage(message: message);
   }
 
+  /// Show read receipt detail page (group messages only)
+  void _showReadReceiptDetail(BuildContext context) {
+    final messageActionStore = MessageActionStore.create(message);
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MessageReadReceiptView(
+          messageActionStore: messageActionStore,
+          messageListStore: messageListStore,
+          message: message,
+        ),
+      ),
+    );
+  }
+
   Widget _buildWithConversationInfo(bool isSelf, String? defaultAvatarURL, String defaultSenderName) {
     return FutureBuilder<ConversationInfo?>(
       future: _fetchConversationInfo(),
@@ -291,6 +307,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.sender.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
+    final locale = AtomicLocalizations.of(context);
 
     // In merged detail view: always show avatar, disable click, hide nickname
     final shouldShowAvatar = isInMergedDetailView || config.isShowLeftAvatar;
@@ -302,6 +319,18 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
             message: message,
             colorsTheme: colors,
             onResendTap: message.status == MessageStatus.sendFail ? () => _showResendConfirmDialog(context) : null,
+          )
+        : null;
+
+    // Build read receipt label (only for self messages)
+    final readReceiptLabel = isSelf
+        ? buildOutsideReadReceiptLabel(
+            message: message,
+            colorsTheme: colors,
+            locale: locale,
+            enableReadReceipt: config.enableReadReceipt,
+            isInMergedDetailView: isInMergedDetailView,
+            onTap: () => _showReadReceiptDetail(context),
           )
         : null;
 
@@ -354,15 +383,19 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                       ),
                     ),
                   ),
-                // Bubble row with status icon on the right (for self messages in left-aligned layout)
+                // Bubble row with status icon and read receipt label
                 Row(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Flexible(child: messageBubble),
                     if (statusIndicator != null) ...[
                       const SizedBox(width: 6),
                       statusIndicator,
+                    ],
+                    if (readReceiptLabel != null) ...[
+                      const SizedBox(width: 4),
+                      readReceiptLabel,
                     ],
                   ],
                 ),
@@ -384,6 +417,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.sender.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
+    final locale = AtomicLocalizations.of(context);
 
     // Build status indicator if needed (only for self messages)
     final statusIndicator = isSelf
@@ -391,6 +425,18 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
             message: message,
             colorsTheme: colors,
             onResendTap: message.status == MessageStatus.sendFail ? () => _showResendConfirmDialog(context) : null,
+          )
+        : null;
+
+    // Build read receipt label (only for self messages)
+    final readReceiptLabel = isSelf
+        ? buildOutsideReadReceiptLabel(
+            message: message,
+            colorsTheme: colors,
+            locale: locale,
+            enableReadReceipt: config.enableReadReceipt,
+            isInMergedDetailView: isInMergedDetailView,
+            onTap: () => _showReadReceiptDetail(context),
           )
         : null;
 
@@ -414,12 +460,16 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                       ),
                     ),
                   ),
-                // Bubble row with status icon on the left
+                // Bubble row with read receipt label on the left, status icon, then bubble
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    if (readReceiptLabel != null) ...[
+                      readReceiptLabel,
+                      const SizedBox(width: 4),
+                    ],
                     if (statusIndicator != null) ...[
                       statusIndicator,
                       const SizedBox(width: 6),
@@ -461,12 +511,23 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.sender.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
+    final locale = AtomicLocalizations.of(context);
 
     // Build status indicator if needed
     final statusIndicator = buildOutsideBubbleStatusIndicator(
       message: message,
       colorsTheme: colors,
       onResendTap: message.status == MessageStatus.sendFail ? () => _showResendConfirmDialog(context) : null,
+    );
+
+    // Build read receipt label (shown outside bubble on the left)
+    final readReceiptLabel = buildOutsideReadReceiptLabel(
+      message: message,
+      colorsTheme: colors,
+      locale: locale,
+      enableReadReceipt: config.enableReadReceipt,
+      isInMergedDetailView: isInMergedDetailView,
+      onTap: () => _showReadReceiptDetail(context),
     );
 
     // When the other side's left avatar is shown, add a left spacer for self messages
@@ -491,12 +552,16 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                   ),
                 ),
               ),
-            // Bubble row with status icon on the left
+            // Bubble row with read receipt label on the left, status icon, then bubble
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                if (readReceiptLabel != null) ...[
+                  readReceiptLabel,
+                  const SizedBox(width: 4),
+                ],
                 if (statusIndicator != null) ...[
                   statusIndicator,
                   const SizedBox(width: 6),

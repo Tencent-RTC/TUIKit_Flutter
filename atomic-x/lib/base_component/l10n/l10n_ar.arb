@@ -67,7 +67,6 @@
     "takeAPhoto": "التقاط صورة",
     "recordAVideo": "تسجيل فيديو",
     "send": "يرسل",
-    "sendSoundTips": "اضغط مع الاستمرار للتحدث، ثم حرر للإرسال",
     "more": "المزيد",
     "delete": "حذف",
     "clearMessage": "مسح سجل الدردشة",
@@ -329,6 +328,15 @@
     "messageReadDetail": "تفاصيل قراءة الرسالة",
     "groupReadBy": "قرأ بواسطة",
     "groupDeliveredTo": "تم التسليم إلى",
+    "readReceiptAllRead": "قرأ الكل",
+    "readReceiptNPersonRead": "قرأ {count}",
+    "@readReceiptNPersonRead": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "loadingMore": "تحميل المزيد...",
     "unknownFile": "ملف غير معروف",
     "messageReadReceipt": "حالة قراءة الرسالة",
@@ -446,6 +454,17 @@
     "@newMessageCount": {
         "placeholders": {
             "count": {
+                "type": "int"
+            }
+        }
+    },
+    "holdToTalk": "اضغط مع الاستمرار للتحدث",
+    "releaseToSend": "حرر للإرسال",
+    "releaseToCancel": "حرر للإلغاء",
+    "recordCountdownTips": "سيتوقف التسجيل بعد {seconds} ثانية",
+    "@recordCountdownTips": {
+        "placeholders": {
+            "seconds": {
                 "type": "int"
             }
         }

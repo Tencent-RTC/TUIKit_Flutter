@@ -1,6 +1,6 @@
 name: tuikit_atomic_x
 description: "tuikit_atomic_x is a public UI library for Tencent components."
-version: 4.0.1
+version: 4.0.2
 homepage: https://trtc.io
 
 environment:

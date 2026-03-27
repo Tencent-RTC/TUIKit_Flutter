@@ -324,9 +324,8 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
       ),
       style: TextStyle(
         color: widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        height: 1.4,
+        fontSize: 15,
+        fontWeight: FontWeight.normal,
       ),
     );
   }

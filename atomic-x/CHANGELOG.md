@@ -1,3 +1,9 @@
+## 4.0.2
+* Optimized input box styling and voice recording animations.
+* Enhanced the visual design of read receipts.
+* Image messages now support pinch-to-zoom gestures.
+* Resolved compatibility issues with Huawei Nova phones when the default system language is set to Traditional Chinese, including permission dialog displays.
+
 ## 4.0.1
 * Added floating button features to the chat page: "Jump to Latest Position," "X Unread Messages," and "Someone @-ed Me".
 * Text message links now support opening in a browser.

@@ -231,9 +231,6 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get send => '보내다';
 
   @override
-  String get sendSoundTips => '길게 눌러 말하기, 놓으면 보내기';
-
-  @override
   String get more => '더보기';
 
   @override
@@ -1028,6 +1025,14 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   String get groupDeliveredTo => '읽지 않음';
 
   @override
+  String get readReceiptAllRead => '전체 읽음';
+
+  @override
+  String readReceiptNPersonRead(int count) {
+    return '$count명 읽음';
+  }
+
+  @override
   String get loadingMore => '더 불러오기...';
 
   @override
@@ -1286,5 +1291,19 @@ class AtomicLocalizationsKo extends AtomicLocalizations {
   @override
   String newMessageCount(int count) {
     return '$count개의 새 메시지';
+  }
+
+  @override
+  String get holdToTalk => '길게 눌러 말하기';
+
+  @override
+  String get releaseToSend => '놓으면 보내기';
+
+  @override
+  String get releaseToCancel => '놓으면 취소';
+
+  @override
+  String recordCountdownTips(int seconds) {
+    return '$seconds초 후 녹음이 중지됩니다';
   }
 }

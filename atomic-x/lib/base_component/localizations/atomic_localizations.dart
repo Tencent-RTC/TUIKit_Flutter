@@ -102,6 +102,7 @@ abstract class AtomicLocalizations {
     Locale('ja'),
     Locale('ko'),
     Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
@@ -512,12 +513,6 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'Send'**
   String get send;
-
-  /// No description provided for @sendSoundTips.
-  ///
-  /// In en, this message translates to:
-  /// **'Press and hold to speak Release to send'**
-  String get sendSoundTips;
 
   /// No description provided for @more.
   ///
@@ -2085,6 +2080,18 @@ abstract class AtomicLocalizations {
   /// **'Delivered to'**
   String get groupDeliveredTo;
 
+  /// No description provided for @readReceiptAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'All Read'**
+  String get readReceiptAllRead;
+
+  /// No description provided for @readReceiptNPersonRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Read'**
+  String readReceiptNPersonRead(int count);
+
   /// No description provided for @loadingMore.
   ///
   /// In en, this message translates to:
@@ -2582,6 +2589,30 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'{count} new messages'**
   String newMessageCount(int count);
+
+  /// No description provided for @holdToTalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to talk'**
+  String get holdToTalk;
+
+  /// No description provided for @releaseToSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Release to send'**
+  String get releaseToSend;
+
+  /// No description provided for @releaseToCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Release to cancel'**
+  String get releaseToCancel;
+
+  /// No description provided for @recordCountdownTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording will stop in {seconds}s'**
+  String recordCountdownTips(int seconds);
 }
 
 class _AtomicLocalizationsDelegate
@@ -2608,6 +2639,8 @@ AtomicLocalizations lookupAtomicLocalizations(Locale locale) {
     case 'zh':
       {
         switch (locale.scriptCode) {
+          case 'Hans':
+            return AtomicLocalizationsZhHans();
           case 'Hant':
             return AtomicLocalizationsZhHant();
         }

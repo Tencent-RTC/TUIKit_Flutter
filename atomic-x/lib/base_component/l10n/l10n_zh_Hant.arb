@@ -67,7 +67,6 @@
     "takeAPhoto": "拍照",
     "recordAVideo": "錄製",
     "send": "傳送",
-    "sendSoundTips": "按住說話 松開發送",
     "more": "更多",
     "delete": "刪除",
     "clearMessage": "清除聊天記錄",
@@ -329,6 +328,15 @@
     "messageReadDetail": "訊息已讀詳情",
     "groupReadBy": "已讀",
     "groupDeliveredTo": "未讀",
+    "readReceiptAllRead": "全部已讀",
+    "readReceiptNPersonRead": "{count}人已讀",
+    "@readReceiptNPersonRead": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "loadingMore": "載入更多...",
     "unknownFile": "未知檔案",
     "messageReadReceipt": "消息閱讀狀態",
@@ -446,6 +454,17 @@
     "@newMessageCount": {
         "placeholders": {
             "count": {
+                "type": "int"
+            }
+        }
+    },
+    "holdToTalk": "按住說話",
+    "releaseToSend": "鬆手發送",
+    "releaseToCancel": "鬆手取消",
+    "recordCountdownTips": "{seconds}s 後將停止錄音",
+    "@recordCountdownTips": {
+        "placeholders": {
+            "seconds": {
                 "type": "int"
             }
         }

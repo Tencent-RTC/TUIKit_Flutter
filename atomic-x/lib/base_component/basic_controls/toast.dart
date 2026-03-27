@@ -179,6 +179,7 @@ class _IconToastState extends State<IconToast> with SingleTickerProviderStateMix
                           widget.message,
                           style: FontScheme.caption2Medium.copyWith(
                             color: colorsTheme.textColorPrimary,
+                            decoration: TextDecoration.none,
                           ),
                           textAlign: TextAlign.left,
                         ),
@@ -255,6 +256,7 @@ class SimpleToast extends StatelessWidget {
                     message,
                     style: FontScheme.caption2Medium.copyWith(
                       color: colorsTheme.textColorPrimary,
+                      decoration: TextDecoration.none,
                     ),
                     textAlign: TextAlign.center,
                   ),

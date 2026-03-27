@@ -19,7 +19,7 @@ import 'package:tuikit_atomic_x/video_recorder/video_recorder.dart';
 import 'mention/mention_info.dart';
 import 'mention/mention_member_picker.dart';
 import 'message_input_config.dart';
-import 'widget/audio_record_widget.dart';
+import 'widget/audio_record_overlay.dart';
 
 export 'mention/mention_info.dart';
 export 'message_input_config.dart';
@@ -53,13 +53,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   Timer? _recordingStarter;
   bool _isWaitingToStartRecord = false;
-  final bool _isEmojiPickerExist = true;
   bool _showSendButton = false;
   bool _showEmojiPanel = false;
   bool _showMorePanel = false;
-  OverlayEntry? _overlayEntry;
-  final GlobalKey _moreButtonKey = GlobalKey();
-  final GlobalKey<AudioRecordWidgetState> _recordingWidgetKey = GlobalKey();
+  int _morePanelPageIndex = 0;
+  final GlobalKey<AudioRecordOverlayState> _recordOverlayKey = GlobalKey();
+  OverlayEntry? _recordOverlayEntry;
 
   double _bottomPadding = 0.0;
 
@@ -68,7 +67,9 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   bool _isSwitchingPanel = false;
 
   final GlobalKey<TooltipState> _micTooltipKey = GlobalKey<TooltipState>();
-  bool _isRecording = false;
+
+  /// Whether the input is in voice mode (WeChat-style: tap mic button to toggle)
+  bool _isVoiceMode = false;
 
   // Draft related state
   Timer? _draftSaveTimer;
@@ -115,10 +116,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       if (_showEmojiPanel || _showMorePanel) {
         setState(() {
           _showEmojiPanel = false;
-          if (_showMorePanel) {
-            _showMorePanel = false;
-            _removeOverlay();
-          }
+          _showMorePanel = false;
         });
       }
     }
@@ -133,7 +131,6 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     }
     if (_showMorePanel) {
       _showMorePanel = false;
-      _removeOverlay();
       needsRebuild = true;
     }
     if (needsRebuild) {
@@ -213,13 +210,13 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   @override
   void dispose() {
+    _removeRecordOverlay();
     _textEditingController.removeListener(_onTextChanged);
     _textEditingFocusNode.removeListener(_onFocusChanged);
     _draftSaveTimer?.cancel();
     // Save draft immediately on dispose (fallback mechanism)
     _saveDraftImmediately();
     _textEditingController.dispose();
-    _removeOverlay();
     super.dispose();
   }
 
@@ -490,39 +487,19 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   void _toggleMorePanel() {
     if (_showMorePanel) {
-      _removeOverlay();
+      // Closing more panel
+      setState(() {
+        _showMorePanel = false;
+      });
     } else {
-      // Set flag so _onFocusChanged won't collapse panels when we unfocus
+      // Opening more panel: hide keyboard and emoji panel
       _isSwitchingPanel = true;
       _textEditingFocusNode.unfocus();
-      // hide emoji panel
-      if (_showEmojiPanel) {
-        setState(() {
-          _showEmojiPanel = false;
-        });
-      }
-      _showOverlay();
+      setState(() {
+        _showEmojiPanel = false;
+        _showMorePanel = true;
+      });
     }
-    setState(() {
-      _showMorePanel = !_showMorePanel;
-    });
-  }
-
-  void _showOverlay() {
-    final RenderBox renderBox = _moreButtonKey.currentContext?.findRenderObject() as RenderBox;
-    final position = renderBox.localToGlobal(Offset.zero);
-    final size = renderBox.size;
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) => _buildMorePanelOverlay(position, size),
-    );
-
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
   }
 
   /// Handle sending text message from input field or emoji panel
@@ -830,6 +807,43 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     }
   }
 
+  void _showRecordOverlay() {
+    _removeRecordOverlay();
+
+    // Capture inherited dependencies from current context before creating
+    // the OverlayEntry, since the overlay lives in a different widget subtree
+    // and cannot look up these InheritedWidgets.
+    final colorScheme = BaseThemeProvider.colorsOf(context);
+    final atomicLocalizations = AtomicLocalizations.of(context);
+    final overlay = Overlay.of(context);
+
+    _recordOverlayEntry = OverlayEntry(
+      builder: (overlayContext) {
+        return Material(
+          type: MaterialType.transparency,
+          child: AudioRecordOverlay(
+            key: _recordOverlayKey,
+            colorScheme: colorScheme,
+            atomicLocalizations: atomicLocalizations,
+            onRecordFinish: (recordInfo) {
+              _removeRecordOverlay();
+              _onAudioRecorderFinished(recordInfo);
+            },
+            onRecordCancelled: () {
+              _removeRecordOverlay();
+            },
+          ),
+        );
+      },
+    );
+    overlay.insert(_recordOverlayEntry!);
+  }
+
+  void _removeRecordOverlay() {
+    _recordOverlayEntry?.remove();
+    _recordOverlayEntry = null;
+  }
+
   void _onAudioRecorderFinished(RecordInfo recordInfo) async {
     if (recordInfo.errorCode != AudioRecordResultCode.success &&
         recordInfo.errorCode != AudioRecordResultCode.successExceedMaxDuration) {
@@ -855,12 +869,10 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     // by the microphone during recording.
     AudioPlayerPlatform.stop();
 
-    setState(() {
-      _isRecording = true;
-    });
+    _showRecordOverlay();
 
     // Immediately reset recording state to avoid showing old progress
-    _recordingWidgetKey.currentState?.resetRecordingState();
+    _recordOverlayKey.currentState?.resetRecordingState();
 
     _recordingStarter?.cancel();
     _isWaitingToStartRecord = true;
@@ -869,7 +881,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       _isWaitingToStartRecord = false;
       String path =
           ChatUtil.generateMediaPath(messageType: MessageType.sound, prefix: "", withExtension: "m4a", isCache: true);
-      _recordingWidgetKey.currentState?.startRecord(filePath: path);
+      _recordOverlayKey.currentState?.startRecord(filePath: path);
     });
   }
 
@@ -878,29 +890,21 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       _recordingStarter?.cancel();
       _recordingStarter = null;
       _isWaitingToStartRecord = false;
-
-      if (mounted) {
-        setState(() {
-          _isRecording = false;
-        });
-      }
+      _removeRecordOverlay();
 
       _micTooltipKey.currentState?.ensureTooltipVisible();
       Future.delayed(const Duration(seconds: 1), () {
         Tooltip.dismissAllToolTips();
       });
     } else {
-      if (mounted) {
-        setState(() {
-          _isRecording = false;
-        });
-      }
-
-      bool gestureCancel = _recordingWidgetKey.currentState?.isPointerOverTrashIcon(event.position) ?? false;
+      // Check if finger is over cancel button on the overlay
+      bool gestureCancel = _recordOverlayKey.currentState?.isPointerOverCancelButton(event.position) ?? false;
       if (gestureCancel) {
-        _recordingWidgetKey.currentState?.cancelRecord();
+        // cancelRecord callback will call _removeRecordOverlay
+        _recordOverlayKey.currentState?.cancelRecord();
       } else {
-        _recordingWidgetKey.currentState?.stopRecord();
+        // stopRecord callback will call _removeRecordOverlay via onRecordFinish
+        _recordOverlayKey.currentState?.stopRecord();
       }
     }
   }
@@ -914,194 +918,203 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       _recordingStarter?.cancel();
       _recordingStarter = null;
       _isWaitingToStartRecord = false;
+      _removeRecordOverlay();
     } else {
       // System cancelled the gesture — treat as user cancellation
       // (don't send the recording) since the pointer position is unreliable.
-      _recordingWidgetKey.currentState?.cancelRecord();
-    }
-
-    if (mounted) {
-      setState(() {
-        _isRecording = false;
-      });
+      // cancelRecord's callback (onRecordCancelled) will call _removeRecordOverlay.
+      _recordOverlayKey.currentState?.cancelRecord();
     }
   }
 
-  Widget _buildMorePanelOverlay(Offset position, Size buttonSize) {
-    final colorsTheme = BaseThemeProvider.colorsOf(context);
-
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () {
-              _toggleMorePanel();
-            },
-            child: Container(
-              color: colorsTheme.bgColorMask,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 50,
-          left: 8,
-          right: 8,
-          child: _buildActionSheet(colorsTheme),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionSheet(SemanticColorScheme colorsTheme) {
-    final List<Widget> actionItems = [];
-    bool isFirst = true;
+  /// Build the WeChat-style "more" panel with grid icons
+  /// Figma spec (750px canvas = 2x):
+  /// - Panel bg: #EBF0F6 (same as input bar)
+  /// - Icon container: 128×128px → 64×64pt, border-radius: 28px → 14pt, bg: white
+  /// - Icon inner: ~40×40pt (path content)
+  /// - Label: font-size 24px → 12pt, color #8F959D, PingFang SC Regular
+  /// - Grid: 4 columns, horizontal spacing ~88pt center-to-center
+  /// - Panel padding: ~24pt horizontal, ~22pt from divider line
+  /// - Divider at top: opacity 0.10 black
+  Widget _buildMorePanelContent(SemanticColorScheme colorsTheme) {
+    final List<_MorePanelItem> items = [];
 
     if (widget.config.isShowPhotoTaker) {
-      actionItems.add(_buildActionItem(
+      items.add(_MorePanelItem(
         icon: 'chat_assets/icon/camera_action.svg',
         title: atomicLocale.takeAPhoto,
-        onTap: () {
-          _toggleMorePanel();
-          _onTakePhoto();
-        },
-        colorsTheme: colorsTheme,
-        isFirst: isFirst,
+        onTap: _onTakePhoto,
       ));
-      isFirst = false;
-    }
-
-    if (widget.config.isShowPhotoTaker) {
-      if (actionItems.isNotEmpty) {
-        actionItems.add(_buildDivider(colorsTheme));
-      }
-      actionItems.add(_buildActionItem(
+      items.add(_MorePanelItem(
         icon: 'chat_assets/icon/record_action.svg',
         title: atomicLocale.recordAVideo,
-        onTap: () {
-          _toggleMorePanel();
-          _onTakeVideo();
-        },
-        colorsTheme: colorsTheme,
-        isFirst: isFirst,
+        onTap: _onTakeVideo,
       ));
-      isFirst = false;
     }
 
-    if (actionItems.isNotEmpty) {
-      actionItems.add(_buildDivider(colorsTheme));
-    }
-    actionItems.add(_buildActionItem(
+    items.add(_MorePanelItem(
       icon: 'chat_assets/icon/image_action.svg',
       title: atomicLocale.album,
-      onTap: () {
-        _toggleMorePanel();
-        _onPickAlbum();
-      },
-      colorsTheme: colorsTheme,
-      isFirst: isFirst,
+      onTap: _onPickAlbum,
     ));
-    isFirst = false;
 
-    actionItems.add(_buildDivider(colorsTheme));
-    actionItems.add(_buildActionItem(
+    items.add(_MorePanelItem(
       icon: 'chat_assets/icon/file_action.svg',
       title: atomicLocale.file,
-      onTap: () {
-        _toggleMorePanel();
-        _onPickFile();
-      },
-      colorsTheme: colorsTheme,
-      isLast: true,
+      onTap: _onPickFile,
     ));
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: colorsTheme.bgColorOperate,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(
-            children: actionItems,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            color: colorsTheme.bgColorOperate,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: TextButton(
-            onPressed: _toggleMorePanel,
-            child: Text(
-              atomicLocale.cancel,
-              style: TextStyle(
-                color: colorsTheme.textColorLink,
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+    // Each page shows 2 rows × 4 columns = 8 items max
+    const int itemsPerPage = 8;
+    final int pageCount = (items.length / itemsPerPage).ceil();
 
-  Widget _buildActionItem({
-    required String icon,
-    required String title,
-    required VoidCallback onTap,
-    required SemanticColorScheme colorsTheme,
-    bool isFirst = false,
-    bool isLast = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: colorsTheme.bgColorOperate,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(isFirst ? 14 : 0),
-            topRight: Radius.circular(isFirst ? 14 : 0),
-            bottomLeft: Radius.circular(isLast ? 14 : 0),
-            bottomRight: Radius.circular(isLast ? 14 : 0),
+    return Container(
+      color: colorsTheme.bgColorInput,
+      child: Column(
+        children: [
+          Container(
+            height: 0.5,
+            color: colorsTheme.textColorPrimary.withValues(alpha: 0.1),
           ),
-        ),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              icon,
-              package: 'tuikit_atomic_x',
-              width: 24,
-              height: 24,
+          Expanded(
+            child: PageView.builder(
+              itemCount: pageCount,
+              onPageChanged: (index) {
+                setState(() {
+                  _morePanelPageIndex = index;
+                });
+              },
+              itemBuilder: (context, pageIndex) {
+                final startIndex = pageIndex * itemsPerPage;
+                final endIndex = (startIndex + itemsPerPage).clamp(0, items.length);
+                final pageItems = items.sublist(startIndex, endIndex);
+
+                // Each item row: icon 64 + spacing 8 + text ~14 = ~86pt
+                // Two-row content height: 86 + 20 (gap) + 86 = 192pt
+                const double twoRowHeight = 192;
+
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    final topPadding = ((constraints.maxHeight - twoRowHeight) / 2)
+                        .clamp(8.0, double.infinity);
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: topPadding,
+                      ),
+                      child: _buildMorePanelPage(pageItems, colorsTheme),
+                    );
+                  },
+                );
+              },
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: colorsTheme.textColorLink,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.none,
-                ),
+          ),
+          // Page indicator dots — always reserve space, hide when only 1 page
+          Opacity(
+            opacity: pageCount > 1 ? 1.0 : 0.0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(pageCount > 1 ? pageCount : 1, (index) {
+                  return Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: index == _morePanelPageIndex
+                          ? colorsTheme.textColorTertiary
+                          : colorsTheme.switchColorOff,
+                    ),
+                  );
+                }),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildDivider(SemanticColorScheme colorsTheme) {
-    return Container(
-      height: 1,
-      color: colorsTheme.bgColorBubbleReciprocal,
+  /// Build a single page of the more panel grid (up to 2 rows × 4 columns)
+  Widget _buildMorePanelPage(List<_MorePanelItem> pageItems, SemanticColorScheme colorsTheme) {
+    const int columns = 4;
+    // Split items into rows of 4
+    final List<List<_MorePanelItem>> rows = [];
+    for (int i = 0; i < pageItems.length; i += columns) {
+      rows.add(pageItems.sublist(i, (i + columns).clamp(0, pageItems.length)));
+    }
+
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) ...[
+            if (rowIndex > 0) const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (int colIndex = 0; colIndex < columns; colIndex++)
+                  if (colIndex < rows[rowIndex].length)
+                    _buildMorePanelItemWidget(rows[rowIndex][colIndex], colorsTheme)
+                  else
+                    const SizedBox(width: 64), // Placeholder for grid alignment
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// Build a single action item widget in the more panel
+  Widget _buildMorePanelItemWidget(_MorePanelItem item, SemanticColorScheme colorsTheme) {
+    return GestureDetector(
+      onTap: item.onTap,
+      child: SizedBox(
+        width: 64,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: colorsTheme.bgColorOperate,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  item.icon,
+                  package: 'tuikit_atomic_x',
+                  colorFilter: ColorFilter.mode(
+                    colorsTheme.textColorSecondary,
+                    BlendMode.srcIn,
+                  ),
+                  width: 26,
+                  height: 22,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              item.title,
+              style: TextStyle(
+                color: colorsTheme.textColorSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                decoration: TextDecoration.none,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1111,25 +1124,22 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     atomicLocale = AtomicLocalizations.of(context);
     localeProvider = Provider.of<LocaleProvider>(context);
 
-    var panelHeight = _getBottomContainerHeight();
+    final panelHeight = _getBottomContainerHeight();
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final colors = BaseThemeProvider.colorsOf(context);
         return Column(
           children: [
-            IndexedStack(
-              index: _isRecording ? 1 : 0,
-              alignment: Alignment.bottomCenter,
-              children: [
-                _buildInputWidget(colors),
-                _buildAudioRecordWidget(),
-              ],
-            ),
+            _buildInputWidget(colors),
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.ease,
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(),
               height: panelHeight,
-              constraints: _showEmojiPanel ? BoxConstraints(minHeight: panelHeight) : null,
+              constraints: (_showEmojiPanel || _showMorePanel) 
+                  ? BoxConstraints(minHeight: panelHeight) 
+                  : null,
               child: _showEmojiPanel
                   ? Center(
                       child: FutureBuilder<bool>(
@@ -1139,8 +1149,10 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                         },
                       ),
                     )
-                  : Container(),
-            )
+                  : _showMorePanel
+                      ? _buildMorePanelContent(colors)
+                      : Container(),
+            ),
           ],
         );
       },
@@ -1156,121 +1168,204 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     return true;
   }
 
+  /// WeChat-style input bar layout (aligned to Figma spec):
+  /// [Voice/Keyboard toggle] [Input field / Hold-to-talk] [Emoji] [More / Send]
+  ///
+  /// Figma spec (750px canvas = 2x, all values in logical pt):
+  /// - Bar background: #EBF0F6, top shadow: 0px -2px #E6E9EB (via divider)
+  /// - Horizontal padding: ~16pt, vertical padding: 8pt
+  /// - Icon size: 26pt (52px@2x), input height: 34pt (68px@2x)
+  /// - Input field bg: white, border-radius: 4pt (8px@2x)
+  /// - Gap between icon and input: ~10pt
   Widget _buildInputWidget(SemanticColorScheme colorsTheme) {
     return Container(
-      color: colorsTheme.bgColorOperate,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      color: colorsTheme.bgColorInput,
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 50),
-            child: Row(
+          Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (widget.config.isShowMore)
+                // Left: Voice / Keyboard toggle button (28×28pt icon)
+                // SizedBox height matches input field minHeight so button is
+                // vertically centered when single-line, and stays at bottom when multi-line.
+                if (widget.config.isShowAudioRecorder)
                   SizedBox(
-                    height: 50,
-                    child: Center(child: _buildAddButton(colorsTheme)),
-                  ),
-                if (widget.config.isShowMore) const SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 50),
-                    decoration: BoxDecoration(
-                      color: colorsTheme.bgColorBubbleReciprocal,
-                      borderRadius: BorderRadius.circular(25),
+                    height: 34,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: _toggleVoiceMode,
+                        child: _isVoiceMode
+                            ? SvgPicture.asset(
+                                'chat_assets/icon/keyboard.svg',
+                                package: 'tuikit_atomic_x',
+                                colorFilter: ColorFilter.mode(
+                                  colorsTheme.textColorPrimary,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 26,
+                                height: 26,
+                              )
+                            : SvgPicture.asset(
+                                'chat_assets/icon/mic.svg',
+                                package: 'tuikit_atomic_x',
+                                colorFilter: ColorFilter.mode(
+                                  colorsTheme.textColorPrimary,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 26,
+                                height: 26,
+                              ),
+                      ),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const SizedBox(width: 16),
-                        Expanded(
+                  ),
+                // Gap: 10pt between voice icon and input field
+                const SizedBox(width: 10),
+
+                // Middle: Input field or "Hold to talk" button
+                Expanded(
+                  child: _isVoiceMode
+                      ? _buildHoldToTalkButton(colorsTheme)
+                      : Container(
+                          constraints: const BoxConstraints(minHeight: 34),
+                          decoration: BoxDecoration(
+                            color: colorsTheme.textColorButtonDisabled,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                           child: _buildInputTextField(colorsTheme: colorsTheme),
                         ),
-                        if (_isEmojiPickerExist)
-                          SizedBox(
-                            height: 50,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (!_showEmojiPanel) {
-                                    // Switching to emoji panel: hide keyboard.
-                                    // Set flag so _onFocusChanged won't collapse the panel.
-                                    _isSwitchingPanel = true;
-                                    _textEditingFocusNode.unfocus();
-                                  } else {
-                                    // Switching back from emoji panel to keyboard.
-                                    _textEditingFocusNode.requestFocus();
-                                  }
-                                  setState(() {
-                                    _showEmojiPanel = !_showEmojiPanel;
-                                  });
-                                },
-                                child: _showEmojiPanel
-                                    ? Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                                        child: const Icon(Icons.keyboard_alt_outlined),
-                                      )
-                                    : _buildInputButton(
-                                        icon: 'chat_assets/icon/emoji.svg',
-                                        isActive: _showEmojiPanel,
-                                        colorsTheme: colorsTheme,
-                                      ),
+                ),
+
+                // Gap: 10pt between input field and emoji icon
+                const SizedBox(width: 10),
+
+                // Right: Emoji button (28×28pt icon)
+                SizedBox(
+                  height: 34,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: _toggleEmojiPanel,
+                      child: _showEmojiPanel
+                          ? SvgPicture.asset(
+                              'chat_assets/icon/keyboard.svg',
+                              package: 'tuikit_atomic_x',
+                              colorFilter: ColorFilter.mode(
+                                colorsTheme.textColorPrimary,
+                                BlendMode.srcIn,
                               ),
+                              width: 28,
+                              height: 28,
+                            )
+                          : SvgPicture.asset(
+                              'chat_assets/icon/emoji.svg',
+                              package: 'tuikit_atomic_x',
+                              colorFilter: ColorFilter.mode(
+                                colorsTheme.textColorPrimary,
+                                BlendMode.srcIn,
+                              ),
+                              width: 26,
+                              height: 26,
                             ),
-                          ),
-                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+
+                // Gap: 10pt between emoji and more/send
+                const SizedBox(width: 10),
+
+                // Right: More button or Send button (28×28pt icon)
                 SizedBox(
-                  height: 50,
+                  height: 34,
                   child: Center(
-                    child: Row(
-                      children: [
-                        if (_showSendButton)
-                          _buildSendButton(colorsTheme)
-                        else if (!_showSendButton && widget.config.isShowAudioRecorder)
-                          Tooltip(
-                            preferBelow: false,
-                            verticalOffset: 36,
-                            message: atomicLocale.sendSoundTips,
-                            child: Listener(
-                              onPointerDown: _onStartRecording,
-                              onPointerUp: _onStopRecording,
-                              onPointerCancel: _onRecordingPointerCancel,
-                              child: Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color: colorsTheme.buttonColorSecondaryDefault,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'chat_assets/icon/mic.svg',
-                                    package: 'tuikit_atomic_x',
-                                    colorFilter: ColorFilter.mode(
-                                      colorsTheme.textColorLink,
-                                      BlendMode.srcIn,
-                                    ),
-                                    width: 24,
-                                    height: 24,
+                    child: _showSendButton && !_isVoiceMode
+                        ? _buildSendButton(colorsTheme)
+                        : widget.config.isShowMore
+                            ? GestureDetector(
+                                onTap: _toggleMorePanel,
+                                child: SvgPicture.asset(
+                                  'chat_assets/icon/add.svg',
+                                  package: 'tuikit_atomic_x',
+                                  colorFilter: ColorFilter.mode(
+                                    colorsTheme.textColorPrimary,
+                                    BlendMode.srcIn,
                                   ),
+                                  width: 26,
+                                  height: 26,
                                 ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                              )
+                            : const SizedBox.shrink(),
                   ),
                 ),
               ],
             ),
-          ),
         ],
+      ),
+    );
+  }
+
+  /// Toggle between voice mode and text input mode
+  void _toggleVoiceMode() {
+    setState(() {
+      _isVoiceMode = !_isVoiceMode;
+      if (_isVoiceMode) {
+        // Switching to voice mode: hide keyboard and panels
+        _textEditingFocusNode.unfocus();
+        _showEmojiPanel = false;
+        _showMorePanel = false;
+      } else {
+        // Switching back to text mode: show keyboard
+        _textEditingFocusNode.requestFocus();
+      }
+    });
+  }
+
+  /// Toggle emoji panel
+  void _toggleEmojiPanel() {
+    if (!_showEmojiPanel) {
+      // Opening emoji panel: hide keyboard
+      _isSwitchingPanel = true;
+      _textEditingFocusNode.unfocus();
+      setState(() {
+        _isVoiceMode = false;
+        _showEmojiPanel = true;
+        _showMorePanel = false;
+      });
+    } else {
+      // Closing emoji panel: show keyboard
+      setState(() {
+        _showEmojiPanel = false;
+      });
+      _textEditingFocusNode.requestFocus();
+    }
+  }
+
+  /// Build the "Hold to talk" button for voice recording
+  /// Height: 34pt, bg: white, border-radius: 4pt (aligned to Figma input field spec)
+  Widget _buildHoldToTalkButton(SemanticColorScheme colorsTheme) {
+    return Listener(
+      onPointerDown: _onStartRecording,
+      onPointerUp: _onStopRecording,
+      onPointerCancel: _onRecordingPointerCancel,
+      onPointerMove: (PointerMoveEvent event) {
+        _recordOverlayKey.currentState?.updatePointerPosition(event.position);
+      },
+      child: Container(
+        height: 34,
+        decoration: BoxDecoration(
+          color: colorsTheme.textColorButtonDisabled,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: Text(
+            atomicLocale.holdToTalk,
+            style: TextStyle(
+              color: colorsTheme.textColorPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1284,46 +1379,22 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         _textEditingFocusNode.requestFocus();
         setState(() {
           _showEmojiPanel = false;
+          _showMorePanel = false;
+          _isVoiceMode = false;
         });
       },
     );
   }
 
-  Widget _buildInputButton({
-    Key? key,
-    required String icon,
-    required SemanticColorScheme colorsTheme,
-    VoidCallback? onPressed,
-    bool isActive = false,
-  }) {
-    return IconButton.buttonContent(
-      key: key,
-      content: IconOnlyContent(
-        SvgPicture.asset(
-          icon,
-          package: 'tuikit_atomic_x',
-          colorFilter: ColorFilter.mode(
-            colorsTheme.textColorLink,
-            BlendMode.srcIn,
-          ),
-        ),
-      ),
-      type: ButtonType.noBorder,
-      size: ButtonSize.m,
-      onClick: onPressed,
-      colorType: ButtonColorType.secondary,
-    );
-  }
-
   Widget _buildSendButton(SemanticColorScheme colorsTheme) {
-    return InkWell(
+    return GestureDetector(
       onTap: _handleSendTextMessage,
       child: Container(
-        width: 64,
+        width: 56,
         height: 32,
         decoration: BoxDecoration(
           color: colorsTheme.buttonColorPrimaryDefault,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: Center(
           child: Text(
@@ -1331,7 +1402,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
             style: TextStyle(
               color: colorsTheme.textColorButton,
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.normal,
             ),
           ),
         ),
@@ -1339,35 +1410,14 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     );
   }
 
-  Widget _buildAddButton(SemanticColorScheme colorsTheme) {
-    return IconButton(
-      key: _moreButtonKey,
-      colorType: ButtonColorType.secondary,
-      icon: SvgPicture.asset(
-        'chat_assets/icon/add.svg',
-        package: 'tuikit_atomic_x',
-        colorFilter: ColorFilter.mode(
-          colorsTheme.textColorLink,
-          BlendMode.srcIn,
-        ),
-        width: 24,
-        height: 24,
-      ),
-      onClick: _toggleMorePanel,
-    );
-  }
-
   double _getBottomContainerHeight() {
-    if (_showEmojiPanel) {
+    if (_showEmojiPanel || _showMorePanel) {
       return 280;
     }
 
     return _bottomPadding;
   }
 
-  Widget _buildAudioRecordWidget() {
-    return AudioRecordWidget(key: _recordingWidgetKey, onRecordFinish: _onAudioRecorderFinished);
-  }
 }
 
 /// Custom TextEditingController that manages mention ranges
@@ -1621,19 +1671,20 @@ class _MentionTextFieldState extends State<_MentionTextField> {
       maxLines: 5,
       style: TextStyle(
         color: widget.colorsTheme.textColorPrimary,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontSize: 15,
+        fontWeight: FontWeight.normal,
       ),
       decoration: InputDecoration(
+        isDense: true,
         hintStyle: TextStyle(
           color: widget.colorsTheme.textColorTertiary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontSize: 15,
+          fontWeight: FontWeight.normal,
         ),
         border: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 12,
+          horizontal: 6,
+          vertical: 6,
         ),
       ),
       specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
@@ -1642,4 +1693,17 @@ class _MentionTextFieldState extends State<_MentionTextField> {
       ),
     );
   }
+}
+
+/// Data model for a "more" panel grid item
+class _MorePanelItem {
+  final String icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _MorePanelItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
 }

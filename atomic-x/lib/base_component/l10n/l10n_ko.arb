@@ -67,7 +67,6 @@
     "takeAPhoto": "사진",
     "recordAVideo": "동영상",
     "send": "보내다",
-    "sendSoundTips": "길게 눌러 말하기, 놓으면 보내기",
     "more": "더보기",
     "delete": "삭제",
     "clearMessage": "채팅 기록 삭제",
@@ -330,6 +329,15 @@
     "messageReadDetail": "메시지 읽음 상세",
     "groupReadBy": "읽음",
     "groupDeliveredTo": "읽지 않음",
+    "readReceiptAllRead": "전체 읽음",
+    "readReceiptNPersonRead": "{count}명 읽음",
+    "@readReceiptNPersonRead": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "loadingMore": "더 불러오기...",
     "unknownFile": "알 수 없는 파일",
     "messageReadReceipt": "메시지 읽음 상태",
@@ -447,6 +455,17 @@
     "@newMessageCount": {
         "placeholders": {
             "count": {
+                "type": "int"
+            }
+        }
+    },
+    "holdToTalk": "길게 눌러 말하기",
+    "releaseToSend": "놓으면 보내기",
+    "releaseToCancel": "놓으면 취소",
+    "recordCountdownTips": "{seconds}초 후 녹음이 중지됩니다",
+    "@recordCountdownTips": {
+        "placeholders": {
+            "seconds": {
                 "type": "int"
             }
         }

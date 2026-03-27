@@ -87,7 +87,7 @@ class _ConversationItemState extends State<ConversationItem> {
         },
         color: colorsTheme.textColorLink,
         icon: SvgPicture.asset(
-          hasUnread ? 'chat_assets/icon/message_read_status.svg' : 'chat_assets/icon/read_receipt_check.svg',
+          hasUnread ? 'chat_assets/icon/message_read_status.svg' : 'chat_assets/icon/message_unread_status.svg',
           width: 20,
           height: 20,
           colorFilter: ColorFilter.mode(colorsTheme.textColorButton, BlendMode.srcIn),

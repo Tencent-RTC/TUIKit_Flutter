@@ -2,6 +2,7 @@ package io.trtc.tuikit.atomicx.permission
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,6 +25,8 @@ class PermissionHandler(
     companion object {
         private const val PERMISSION_REQUEST_CODE = 9527
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 9528
+        private const val PREFS_NAME = "atomic_x_permissions"
+        private const val KEY_EVER_REQUESTED_PREFIX = "ever_requested_"
         
         // Permission identifiers from Dart
         private const val PERMISSION_CAMERA = "camera"
@@ -38,8 +41,38 @@ class PermissionHandler(
     private var activity: Activity? = null
     private var pendingResult: MethodChannel.Result? = null
     private var requestedPermissionTypes: List<String>? = null
-    private var requestedAndroidPermissions: List<String>? = null
     private var pendingOverlayPermissionTypes: List<String>? = null
+
+    private val prefs by lazy {
+        pluginBinding.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    /**
+     * Check if a permission type has ever been requested via [requestPermissions].
+     * Used by [checkPermissionStatus] to avoid false-positive
+     * `permanentlyDenied` on devices (e.g. Huawei) where
+     * `shouldShowRequestPermissionRationale` returns `false` even before
+     * the permission has ever been requested.
+     */
+    private fun hasEverBeenRequested(permissionType: String): Boolean {
+        return prefs.getBoolean("$KEY_EVER_REQUESTED_PREFIX$permissionType", false)
+    }
+
+    /**
+     * Mark permission types as having been requested at least once.
+     *
+     * Called in [onRequestPermissionsResult] — i.e. only after the system
+     * permission dialog has returned a result and the user has made a choice.
+     * This ensures that if the user kills the app before interacting with
+     * the dialog, the permission is NOT marked as "ever requested".
+     */
+    private fun markAsRequested(permissionTypes: List<String>) {
+        val editor = prefs.edit()
+        for (type in permissionTypes) {
+            editor.putBoolean("$KEY_EVER_REQUESTED_PREFIX$type", true)
+        }
+        editor.apply()
+    }
 
     fun setActivity(activity: Activity?) {
         this.activity = activity
@@ -139,17 +172,13 @@ class PermissionHandler(
     }
 
     /**
-     * Core logic for resolving a permission type's status.
+     * Core logic for resolving a permission type's raw status.
      *
-     * @param permissionType The permission type identifier from Dart.
-     * @param checkRequestedPermissions When `true`, only reports `permanentlyDenied`
-     *   for permissions tracked in [requestedAndroidPermissions] (used after a
-     *   request flow to avoid false positives). When `false`, reports
-     *   `permanentlyDenied` purely based on `!isGranted && !shouldShowRationale`
-     *   (used for standalone check calls; the Dart layer cross-validates with a
-     *   subsequent request() to filter out false positives).
+     * Reports `permanentlyDenied` purely based on `!isGranted && !shouldShowRationale`.
+     * Callers (e.g. [checkPermissionStatus]) are responsible for filtering out
+     * false positives via [hasEverBeenRequested].
      */
-    private fun resolvePermissionStatus(permissionType: String, checkRequestedPermissions: Boolean): String {
+    private fun resolvePermissionStatus(permissionType: String): String {
         // Handle overlay permissions separately
         if (isOverlayPermission(permissionType)) {
             return if (canDrawOverlays()) "granted" else "denied"
@@ -184,13 +213,11 @@ class PermissionHandler(
             return "denied"
         }
 
-        // Check if any permission is permanently denied.
-        // When checkRequestedPermissions is true, only report permanentlyDenied for
-        // permissions that have been requested in the current session.
+        // Check if any permission is permanently denied
         val anyPermanentlyDenied = androidPermissions.any { permission ->
             val isGranted = ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
             val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(currentActivity, permission)
-            !isGranted && !shouldShow && (!checkRequestedPermissions || requestedAndroidPermissions?.contains(permission) == true)
+            !isGranted && !shouldShow
         }
 
         if (anyPermanentlyDenied) {
@@ -198,34 +225,6 @@ class PermissionHandler(
         }
 
         return "denied"
-    }
-
-    /**
-     * Get the status of a permission type after a requestPermissions flow.
-     *
-     * Uses [requestedAndroidPermissions] to avoid false positives:
-     * `shouldShowRequestPermissionRationale` returns false for both "never asked"
-     * and "permanently denied". By checking against `requestedAndroidPermissions`,
-     * we only report `permanentlyDenied` for permissions that have actually been
-     * requested in the current session.
-     */
-    private fun getStatusAfterRequest(permissionType: String): String {
-        return resolvePermissionStatus(permissionType, checkRequestedPermissions = true)
-    }
-
-    /**
-     * Check the status of a permission type (used for standalone check calls).
-     *
-     * Unlike [getPermissionTypeStatus], this method does NOT rely on
-     * [requestedAndroidPermissions]. It reports `permanentlyDenied` purely based
-     * on `!isGranted && !shouldShowRationale`, which may produce false positives
-     * when the permission has never been requested.
-     *
-     * The Dart layer uses this to get a preliminary signal, then cross-validates
-     * with a subsequent `request()` call to filter out false positives.
-     */
-    private fun checkPermissionStatusInternal(permissionType: String): String {
-        return resolvePermissionStatus(permissionType, checkRequestedPermissions = false)
     }
 
     fun requestPermissions(permissionTypes: List<String>, result: MethodChannel.Result) {
@@ -259,7 +258,6 @@ class PermissionHandler(
         }
         
         requestedPermissionTypes = regularPermissions
-        requestedAndroidPermissions = androidPermissions
         pendingResult = result
         
         if (androidPermissions.isNotEmpty()) {
@@ -342,7 +340,7 @@ class PermissionHandler(
         
         // Add regular permissions status
         for (permissionType in regularPermissions) {
-            resultMap[permissionType] = getStatusAfterRequest(permissionType)
+            resultMap[permissionType] = checkPermissionStatus(permissionType)
         }
         
         // Add overlay permissions status
@@ -368,8 +366,26 @@ class PermissionHandler(
         }
     }
 
+    /**
+     * Check the status of a permission type (used for standalone check calls).
+     *
+     * Only reports `permanentlyDenied` when the permission has been requested
+     * at least once before (persisted via SharedPreferences). This avoids
+     * false positives on devices like Huawei where
+     * `shouldShowRequestPermissionRationale` returns `false` even for
+     * never-requested permissions.
+     *
+     * The Dart layer uses this to get a preliminary signal, then cross-validates
+     * with a subsequent `request()` call to filter out false positives.
+     */
     fun checkPermissionStatus(permissionType: String): String {
-        return checkPermissionStatusInternal(permissionType)
+        val status = resolvePermissionStatus(permissionType)
+        // If resolve says permanentlyDenied but the permission has never been
+        // requested, it is a false positive — report as denied instead.
+        if (status == "permanentlyDenied" && !hasEverBeenRequested(permissionType)) {
+            return "denied"
+        }
+        return status
     }
 
     override fun onRequestPermissionsResult(
@@ -391,6 +407,12 @@ class PermissionHandler(
             return true
         }
 
+        // The system dialog has returned a result — the user made a choice.
+        // Persist that these permission types have been requested at least once,
+        // so that future checkPermissionStatus() calls can accurately
+        // distinguish "never asked" from "permanently denied".
+        markAsRequested(permissionTypes)
+
         // If we have pending overlay permissions, request them now
         if (!overlayPermissions.isNullOrEmpty()) {
             requestOverlayPermissionAfterRegular(permissionTypes, overlayPermissions, result)
@@ -398,7 +420,7 @@ class PermissionHandler(
         }
 
         // Build result map based on permission types
-        val resultMap = permissionTypes.associateWith { getStatusAfterRequest(it) }
+        val resultMap = permissionTypes.associateWith { checkPermissionStatus(it) }
         
         result.success(resultMap)
         clearPendingRequest()
@@ -457,7 +479,6 @@ class PermissionHandler(
     private fun clearPendingRequest() {
         pendingResult = null
         requestedPermissionTypes = null
-        requestedAndroidPermissions = null
         pendingOverlayPermissionTypes = null
     }
 }

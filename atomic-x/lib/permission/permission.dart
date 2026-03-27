@@ -155,18 +155,18 @@ class Permission {
   ///
   /// Behavior:
   /// 1. **Check** the current status of each permission via `checkPermissionStatus`
-  ///    on the native side, which uses `!isGranted && !shouldShowRationale` without
-  ///    relying on `requestedAndroidPermissions`. This may produce false positives
-  ///    for "never asked" permissions (since `shouldShowRationale` returns false
-  ///    for both "never asked" and "permanently denied").
-  /// 2. **Request** permissions via the normal flow, which on the native side uses
-  ///    `getPermissionTypeStatus` with `requestedAndroidPermissions` — only
-  ///    permissions that were actually requested can be reported as
-  ///    `permanentlyDenied`.
+  ///    on the native side. On Android, this only reports `permanentlyDenied` for
+  ///    permissions that have been requested at least once (persisted via
+  ///    SharedPreferences), avoiding false positives on devices like Huawei where
+  ///    `shouldShowRationale` returns false for never-requested permissions.
+  /// 2. **Request** permissions via the normal flow, which on the native side
+  ///    also uses `checkPermissionStatus` — the same `hasEverBeenRequested`
+  ///    guard ensures only previously-requested permissions can be reported
+  ///    as `permanentlyDenied`.
   /// 3. Show settings dialog **only when BOTH** `check` and `request` return
   ///    `permanentlyDenied`. This filters out:
-  ///    - "Never asked" false positives: check → permanentlyDenied (false positive),
-  ///      request → granted/denied (user made a choice) → no dialog.
+  ///    - "Never asked" false positives: check → denied (not yet requested),
+  ///      request → any status → no dialog.
   ///    - "User just chose Don't Ask Again": check → denied (shouldShow was true),
   ///      request → permanentlyDenied → no dialog (respects user's immediate choice).
   ///

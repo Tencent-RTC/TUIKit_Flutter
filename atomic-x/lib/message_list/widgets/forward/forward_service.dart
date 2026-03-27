@@ -201,7 +201,6 @@ class ForwardService {
   }
 
   /// Generate merged message title
-  /// Follows Swift MessageListHelper.generateMergedTitle logic
   static String _generateMergedTitle(
     AtomicLocalizations locale,
     List<MessageInfo> messages,

@@ -231,9 +231,6 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get send => '送信';
 
   @override
-  String get sendSoundTips => '長押しすると話します。離すと送信します。';
-
-  @override
   String get more => 'もっと';
 
   @override
@@ -1029,6 +1026,14 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get groupDeliveredTo => '未読';
 
   @override
+  String get readReceiptAllRead => '全員既読';
+
+  @override
+  String readReceiptNPersonRead(int count) {
+    return '$count人既読';
+  }
+
+  @override
   String get loadingMore => 'もっと読み込む...';
 
   @override
@@ -1287,5 +1292,19 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   @override
   String newMessageCount(int count) {
     return '$count 件の新しいメッセージ';
+  }
+
+  @override
+  String get holdToTalk => '長押しで録音';
+
+  @override
+  String get releaseToSend => '離すと送信';
+
+  @override
+  String get releaseToCancel => '離すとキャンセル';
+
+  @override
+  String recordCountdownTips(int seconds) {
+    return '$seconds秒後に録音が停止します';
   }
 }

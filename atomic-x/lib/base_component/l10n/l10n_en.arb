@@ -67,7 +67,6 @@
     "takeAPhoto": "Take a photo",
     "recordAVideo": "Record a video",
     "send": "Send",
-    "sendSoundTips": "Press and hold to speak Release to send",
     "more": "More",
     "delete": "Delete",
     "clearMessage": "Clear chat history",
@@ -329,6 +328,15 @@
     "messageReadDetail": "Message Read Details",
     "groupReadBy": "Read by",
     "groupDeliveredTo": "Delivered to",
+    "readReceiptAllRead": "All Read",
+    "readReceiptNPersonRead": "{count} Read",
+    "@readReceiptNPersonRead": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "loadingMore": "Load more...",
     "unknownFile": "Unknown file",
     "messageReadReceipt": "Message Read Receipt",
@@ -446,6 +454,17 @@
     "@newMessageCount": {
         "placeholders": {
             "count": {
+                "type": "int"
+            }
+        }
+    },
+    "holdToTalk": "Hold to talk",
+    "releaseToSend": "Release to send",
+    "releaseToCancel": "Release to cancel",
+    "recordCountdownTips": "Recording will stop in {seconds}s",
+    "@recordCountdownTips": {
+        "placeholders": {
+            "seconds": {
                 "type": "int"
             }
         }

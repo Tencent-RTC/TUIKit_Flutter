@@ -67,7 +67,6 @@
     "takeAPhoto": "写真",
     "recordAVideo": "ビデオ",
     "send": "送信",
-    "sendSoundTips": "長押しすると話します。離すと送信します。",
     "more": "もっと",
     "delete": "削除",
     "clearMessage": "チャット履歴を消去",
@@ -329,6 +328,15 @@
     "messageReadDetail": "既読詳細",
     "groupReadBy": "既読",
     "groupDeliveredTo": "未読",
+    "readReceiptAllRead": "全員既読",
+    "readReceiptNPersonRead": "{count}人既読",
+    "@readReceiptNPersonRead": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "loadingMore": "もっと読み込む...",
     "unknownFile": "不明なファイル",
     "messageReadReceipt": "メッセージ既読状態",
@@ -446,6 +454,17 @@
     "@newMessageCount": {
         "placeholders": {
             "count": {
+                "type": "int"
+            }
+        }
+    },
+    "holdToTalk": "長押しで録音",
+    "releaseToSend": "離すと送信",
+    "releaseToCancel": "離すとキャンセル",
+    "recordCountdownTips": "{seconds}秒後に録音が停止します",
+    "@recordCountdownTips": {
+        "placeholders": {
+            "seconds": {
                 "type": "int"
             }
         }
