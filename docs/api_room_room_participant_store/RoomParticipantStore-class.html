@@ -85,6 +85,13 @@ Room participant management provides complete participant lifecycle management, 
 <h3 id="participant-list">Participant List</h3>
 <ul>
 <li><a href="../api_room_room_participant_store/RoomParticipantStore/getParticipantList.html">getParticipantList</a> : Get participant list</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/getAudienceList.html">getAudienceList</a> : Get audience list (for webinar room)</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/searchUsers.html">searchUsers</a> : Search users by keyword</li>
+</ul>
+<h3 id="audienceparticipant-role-management">Audience/Participant Role Management</h3>
+<ul>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/promoteAudienceToParticipant.html">promoteAudienceToParticipant</a> : Promote audience to participant (for webinar room)</li>
+<li><a href="../api_room_room_participant_store/RoomParticipantStore/demoteParticipantToAudience.html">demoteParticipantToAudience</a> : Demote participant to audience (for webinar room)</li>
 </ul>
 <h3 id="permission-management">Permission Management</h3>
 <ul>
@@ -286,6 +293,19 @@ Room participant management provides complete participant lifecycle management, 
 
 </dd>
 
+        <dt id="demoteParticipantToAudience" class="callable">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/demoteParticipantToAudience.html">demoteParticipantToAudience</a></span><span class="signature">(<wbr><span class="parameter" id="demoteParticipantToAudience-param-userID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Demote participant to audience (for webinar room)
+  
+
+</dd>
+
         <dt id="disableAllDevices" class="callable">
   <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/disableAllDevices.html">disableAllDevices</a></span><span class="signature">(<wbr>{<span class="parameter" id="disableAllDevices-param-device"><span>required</span> <span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="disableAllDevices-param-disable"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">disable</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
@@ -321,6 +341,19 @@ Room participant management provides complete participant lifecycle management, 
 </dt>
 <dd>
   Mute user
+  
+
+</dd>
+
+        <dt id="getAudienceList" class="callable">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/getAudienceList.html">getAudienceList</a></span><span class="signature">(<wbr><span class="parameter" id="getAudienceList-param-cursor"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">cursor</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/ListResultCompletionHandler-class.html">ListResultCompletionHandler</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Get audience list (for webinar room)
   
 
 </dd>
@@ -390,6 +423,19 @@ Room participant management provides complete participant lifecycle management, 
 
 </dd>
 
+        <dt id="promoteAudienceToParticipant" class="callable">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/promoteAudienceToParticipant.html">promoteAudienceToParticipant</a></span><span class="signature">(<wbr><span class="parameter" id="promoteAudienceToParticipant-param-userID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Promote audience to participant (for webinar room)
+  
+
+</dd>
+
         <dt id="rejectOpenDeviceRequest" class="callable">
   <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/rejectOpenDeviceRequest.html">rejectOpenDeviceRequest</a></span><span class="signature">(<wbr>{<span class="parameter" id="rejectOpenDeviceRequest-param-device"><span>required</span> <span class="type-annotation"><a href="../api_device_device_store/DeviceType.html">DeviceType</a></span> <span class="parameter-name">device</span>, </span><span class="parameter" id="rejectOpenDeviceRequest-param-userID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userID</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
@@ -438,6 +484,19 @@ Room participant management provides complete participant lifecycle management, 
 </dt>
 <dd>
   Revoke admin
+  
+
+</dd>
+
+        <dt id="searchUsers" class="callable">
+  <span class="name"><a href="../api_room_room_participant_store/RoomParticipantStore/searchUsers.html">searchUsers</a></span><span class="signature">(<wbr><span class="parameter" id="searchUsers-param-keyword"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">keyword</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/ListResultCompletionHandler-class.html">ListResultCompletionHandler</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/RoomUser-class.html">RoomUser</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Search users by keyword
   
 
 </dd>
@@ -588,7 +647,7 @@ Room participant management provides complete participant lifecycle management, 
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

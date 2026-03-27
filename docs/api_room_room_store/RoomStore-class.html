@@ -102,6 +102,13 @@ Room management provides complete room lifecycle management, including instant r
 <li><a href="../api_room_room_store/RoomStore/getRoomInfo.html">getRoomInfo</a> : Get room info</li>
 </ul>
 <h3 id="room-call-operations">Room Call Operations</h3>
+<ul>
+<li><a href="../api_room_room_store/RoomStore/getPendingCalls.html">getPendingCalls</a> : Get pending calls list</li>
+<li><a href="../api_room_room_store/RoomStore/callUserToRoom.html">callUserToRoom</a> : Call user to join room</li>
+<li><a href="../api_room_room_store/RoomStore/cancelCall.html">cancelCall</a> : Cancel call</li>
+<li><a href="../api_room_room_store/RoomStore/acceptCall.html">acceptCall</a> : Accept call</li>
+<li><a href="../api_room_room_store/RoomStore/rejectCall.html">rejectCall</a> : Reject call</li>
+</ul>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="../api_room_room_store/RoomStatus.html">RoomStatus</a></li>
@@ -177,6 +184,19 @@ Room management provides complete room lifecycle management, including instant r
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="acceptCall" class="callable">
+  <span class="name"><a href="../api_room_room_store/RoomStore/acceptCall.html">acceptCall</a></span><span class="signature">(<wbr><span class="parameter" id="acceptCall-param-roomID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Accept call
+  
+
+</dd>
+
         <dt id="addRoomListener" class="callable">
   <span class="name"><a href="../api_room_room_store/RoomStore/addRoomListener.html">addRoomListener</a></span><span class="signature">(<wbr><span class="parameter" id="addRoomListener-param-listener"><span class="type-annotation"><a href="../api_room_room_store/RoomListener-class.html">RoomListener</a></span> <span class="parameter-name">listener</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -203,6 +223,32 @@ Room management provides complete room lifecycle management, including instant r
 
 </dd>
 
+        <dt id="callUserToRoom" class="callable">
+  <span class="name"><a href="../api_room_room_store/RoomStore/callUserToRoom.html">callUserToRoom</a></span><span class="signature">(<wbr>{<span class="parameter" id="callUserToRoom-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="callUserToRoom-param-userIDList"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIDList</span>, </span><span class="parameter" id="callUserToRoom-param-timeout"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">timeout</span> = <span class="default-value">0</span>, </span><span class="parameter" id="callUserToRoom-param-extensionInfo"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">extensionInfo</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/CallUserToRoomCompletionHandler-class.html">CallUserToRoomCompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Call user to join room
+  
+
+</dd>
+
+        <dt id="cancelCall" class="callable">
+  <span class="name"><a href="../api_room_room_store/RoomStore/cancelCall.html">cancelCall</a></span><span class="signature">(<wbr>{<span class="parameter" id="cancelCall-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="cancelCall-param-userIDList"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIDList</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Cancel call
+  
+
+</dd>
+
         <dt id="cancelScheduledRoom" class="callable">
   <span class="name"><a href="../api_room_room_store/RoomStore/cancelScheduledRoom.html">cancelScheduledRoom</a></span><span class="signature">(<wbr><span class="parameter" id="cancelScheduledRoom-param-roomID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
@@ -217,7 +263,7 @@ Room management provides complete room lifecycle management, including instant r
 </dd>
 
         <dt id="createAndJoinRoom" class="callable">
-  <span class="name"><a href="../api_room_room_store/RoomStore/createAndJoinRoom.html">createAndJoinRoom</a></span><span class="signature">(<wbr>{<span class="parameter" id="createAndJoinRoom-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="createAndJoinRoom-param-options"><span>required</span> <span class="type-annotation"><a href="../api_room_room_store/CreateRoomOptions-class.html">CreateRoomOptions</a></span> <span class="parameter-name">options</span></span>})
+  <span class="name"><a href="../api_room_room_store/RoomStore/createAndJoinRoom.html">createAndJoinRoom</a></span><span class="signature">(<wbr>{<span class="parameter" id="createAndJoinRoom-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="createAndJoinRoom-param-roomType"><span>required</span> <span class="type-annotation"><a href="../api_room_room_store/RoomType.html">RoomType</a></span> <span class="parameter-name">roomType</span>, </span><span class="parameter" id="createAndJoinRoom-param-options"><span>required</span> <span class="type-annotation"><a href="../api_room_room_store/CreateRoomOptions-class.html">CreateRoomOptions</a></span> <span class="parameter-name">options</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
   </span>
   
@@ -238,6 +284,19 @@ Room management provides complete room lifecycle management, including instant r
 </dt>
 <dd>
   End room
+  
+
+</dd>
+
+        <dt id="getPendingCalls" class="callable">
+  <span class="name"><a href="../api_room_room_store/RoomStore/getPendingCalls.html">getPendingCalls</a></span><span class="signature">(<wbr>{<span class="parameter" id="getPendingCalls-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="getPendingCalls-param-cursor"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">cursor</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/ListResultCompletionHandler-class.html">ListResultCompletionHandler</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_room_room_store/RoomCall-class.html">RoomCall</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Get pending calls list
   
 
 </dd>
@@ -282,7 +341,7 @@ Room management provides complete room lifecycle management, including instant r
 </dd>
 
         <dt id="joinRoom" class="callable">
-  <span class="name"><a href="../api_room_room_store/RoomStore/joinRoom.html">joinRoom</a></span><span class="signature">(<wbr>{<span class="parameter" id="joinRoom-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="joinRoom-param-password"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">password</span> = <span class="default-value">&quot;&quot;</span></span>})
+  <span class="name"><a href="../api_room_room_store/RoomStore/joinRoom.html">joinRoom</a></span><span class="signature">(<wbr>{<span class="parameter" id="joinRoom-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="joinRoom-param-roomType"><span>required</span> <span class="type-annotation"><a href="../api_room_room_store/RoomType.html">RoomType</a></span> <span class="parameter-name">roomType</span>, </span><span class="parameter" id="joinRoom-param-password"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">password</span> = <span class="default-value">&quot;&quot;</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
   </span>
   
@@ -317,6 +376,19 @@ Room management provides complete room lifecycle management, including instant r
 <dd class="inherited">
   Invoked when a nonexistent method or property is accessed.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rejectCall" class="callable">
+  <span class="name"><a href="../api_room_room_store/RoomStore/rejectCall.html">rejectCall</a></span><span class="signature">(<wbr>{<span class="parameter" id="rejectCall-param-roomID"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">roomID</span>, </span><span class="parameter" id="rejectCall-param-reason"><span>required</span> <span class="type-annotation"><a href="../api_room_room_store/CallRejectionReason.html">CallRejectionReason</a></span> <span class="parameter-name">reason</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Reject call
+  
 
 </dd>
 
@@ -478,7 +550,7 @@ Room management provides complete room lifecycle management, including instant r
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

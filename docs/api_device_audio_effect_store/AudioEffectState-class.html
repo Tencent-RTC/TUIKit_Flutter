@@ -59,7 +59,59 @@
 
     
 <section class="desc markdown">
-  <p>Audio effect state</p>
+  <p>Audio effect related state data provided by AudioEffectStore</p>
+<p>A comprehensive snapshot of the current audio effect session state. This structure contains all relevant information about voice changer effects, reverb effects, and ear monitor state.</p>
+<blockquote>
+<p><strong>Note</strong>: The state is updated automatically when audio effect settings change. Subscribe to <code>audioEffectState</code> to receive real-time updates.</p>
+</blockquote>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Update voice changer UI
+store.audioEffectState.audioChangerType.addListener(() {
+    updateChangerTypeUI(store.audioEffectState.audioChangerType.value);
+});
+
+// Update reverb UI
+store.audioEffectState.audioReverbType.addListener(() {
+    updateReverbTypeUI(store.audioEffectState.audioReverbType.value);
+});
+
+// Update ear monitor UI
+store.audioEffectState.isEarMonitorOpened.addListener(() {
+    updateEarMonitorUI(store.audioEffectState.isEarMonitorOpened.value);
+});
+</code></pre>
+<h3 id="state-property-overview">State Property Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioEffectState/audioChangerType.html">audioChangerType</a></td>
+<td><code>ValueListenable&lt;AudioChangerType&gt;</code></td>
+<td>Current voice changer effect type</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioEffectState/audioReverbType.html">audioReverbType</a></td>
+<td><code>ValueListenable&lt;AudioReverbType&gt;</code></td>
+<td>Current reverb effect type</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioEffectState/isEarMonitorOpened.html">isEarMonitorOpened</a></td>
+<td><code>ValueListenable&lt;bool&gt;</code></td>
+<td>Whether ear monitor is enabled</td>
+</tr>
+<tr>
+<td><a href="../api_device_audio_effect_store/AudioEffectState/earMonitorVolume.html">earMonitorVolume</a></td>
+<td><code>ValueListenable&lt;int&gt;</code></td>
+<td>Ear monitor volume (0-100)</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -84,7 +136,7 @@
     <dl class="properties">
         <dt id="audioChangerType" class="property">
   <span class="name"><a href="../api_device_audio_effect_store/AudioEffectState/audioChangerType.html">audioChangerType</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_audio_effect_store/AudioChangerType.html">AudioChangerType</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_audio_effect_store/AudioChangerType.html">AudioChangerType</a></span>&gt;</span></span>
   
 
 </dt>
@@ -96,7 +148,7 @@
 
         <dt id="audioReverbType" class="property">
   <span class="name"><a href="../api_device_audio_effect_store/AudioEffectState/audioReverbType.html">audioReverbType</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_audio_effect_store/AudioReverbType.html">AudioReverbType</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_audio_effect_store/AudioReverbType.html">AudioReverbType</a></span>&gt;</span></span>
   
 
 </dt>
@@ -108,7 +160,7 @@
 
         <dt id="earMonitorVolume" class="property">
   <span class="name"><a href="../api_device_audio_effect_store/AudioEffectState/earMonitorVolume.html">earMonitorVolume</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>
   
 
 </dt>
@@ -133,7 +185,7 @@
 
         <dt id="isEarMonitorOpened" class="property">
   <span class="name"><a href="../api_device_audio_effect_store/AudioEffectState/isEarMonitorOpened.html">isEarMonitorOpened</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
   
 
 </dt>
@@ -240,7 +292,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

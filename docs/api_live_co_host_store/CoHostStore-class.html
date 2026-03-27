@@ -59,7 +59,132 @@
 
     
 <section class="desc markdown">
-  <p>Anchor connection management class</p>
+  <p>Live host connection management related interfaces, managing creation, joining, leaving and other operations for host-to-host connections.</p>
+<p><code>CoHostStore</code> Manages all host-to-host connection related operations,
+including initiating connection requests, cancelling, accepting, rejecting and exiting connections.
+Cross-room connection feature allows hosts from different live rooms to interact in real-time. <code>CoHostStore</code> provides a comprehensive set of APIs to manage the entire cross-room connection lifecycle.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Bidirectional Connection</strong>：Hosts can initiate connection requests to other hosts, and also receive connection requests from other hosts</li>
+<li><strong>State Management</strong>：Real-time tracking of connection status, connected hosts, invitation list and applicants</li>
+<li><strong>Event-Driven Architecture</strong>：Provides connection event stream for monitoring various connection state changes</li>
+<li><strong>Layout Templates</strong>：Supports multiple connection layout templates, such as dynamic grid layout and 1-to-6 layout</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Always use the factory method <a href="../api_live_co_host_store/CoHostStore/create.html">CoHostStore.create</a> with a valid live room ID to create a <code>CoHostStore</code> instance. Do not attempt to initialize directly.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Connection state updates are delivered through the <a href="../api_live_co_host_store/CoHostStore/coHostState.html">coHostState</a> publisher. Subscribe to it to receive real-time updates about connection status, connected hosts, invitations and applications.</p>
+</blockquote>
+<h3 id="cross-room-connection-workflow">Cross-Room Connection Workflow</h3>
+<p>The following table shows a typical cross-room connection workflow</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Role</th>
+<th>Action</th>
+<th>Triggered Event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Host A</td>
+<td>Call <a href="../api_live_co_host_store/CoHostStore/requestHostConnection.html">requestHostConnection</a></td>
+<td><a href="../api_live_co_host_store/CoHostListener/onCoHostRequestReceived.html">CoHostListener.onCoHostRequestReceived</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Host B</td>
+<td>Call <a href="../api_live_co_host_store/CoHostStore/acceptHostConnection.html">acceptHostConnection</a></td>
+<td><a href="../api_live_co_host_store/CoHostListener/onCoHostRequestAccepted.html">CoHostListener.onCoHostRequestAccepted</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>System</td>
+<td>Hosts connected successfully</td>
+<td><a href="../api_live_co_host_store/CoHostListener/onCoHostUserJoined.html">CoHostListener.onCoHostUserJoined</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Create store instance
+final store = CoHostStore.create('live_room_123');
+
+// Define listeners
+late final VoidCallback statusListener = _onStatusChanged;
+late final VoidCallback connectedListener = _onConnectedChanged;
+
+void _onStatusChanged() {
+    print('Connection status: ${store.coHostState.coHostStatus.value}');
+}
+
+void _onConnectedChanged() {
+    print('Connected hosts: ${store.coHostState.connected.value.length}');
+}
+
+// Subscribe to state changes
+store.coHostState.coHostStatus.addListener(statusListener);
+store.coHostState.connected.addListener(connectedListener);
+
+// Add connection event listener
+final coHostListener = CoHostListener(
+    onCoHostRequestReceived: (inviter, extensionInfo) {
+        print('Received connection request from ${inviter.userName}');
+        // Show accept/reject UI
+    },
+    onCoHostRequestAccepted: (invitee) {
+        print('Connection request accepted by ${invitee.userName}');
+    },
+    onCoHostUserJoined: (userInfo) {
+        print('Host ${userInfo.userName} joined connection');
+    },
+);
+store.addCoHostListener(coHostListener);
+
+// Initiate connection request
+final result = await store.requestHostConnection(
+    targetHostLiveID: 'target_live_id',
+    layoutTemplate: CoHostLayoutTemplate.hostDynamicGrid,
+    timeout: 30,
+    extraInfo: '',
+);
+if (result.code == 0) {
+    print('Connection request sent successfully');
+}
+
+// Unsubscribe when done
+store.coHostState.coHostStatus.removeListener(statusListener);
+store.coHostState.connected.removeListener(connectedListener);
+store.removeCoHostListener(coHostListener);
+</code></pre>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_live_co_host_store/CoHostStore/create.html">CoHostStore.create</a> : Create object instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_live_co_host_store/CoHostStore/coHostState.html">coHostState</a> : Reactive state containing connection status, connected hosts, invitation list and applicants</li>
+<li><a href="../api_live_co_host_store/CoHostStore/addCoHostListener.html">addCoHostListener</a>/<a href="../api_live_co_host_store/CoHostStore/removeCoHostListener.html">removeCoHostListener</a> : Connection event callbacks</li>
+</ul>
+<h3 id="connection-operations">Connection Operations</h3>
+<ul>
+<li><a href="../api_live_co_host_store/CoHostStore/requestHostConnection.html">requestHostConnection</a> : Initiate connection request</li>
+<li><a href="../api_live_co_host_store/CoHostStore/cancelHostConnection.html">cancelHostConnection</a> : Cancel connection request</li>
+<li><a href="../api_live_co_host_store/CoHostStore/acceptHostConnection.html">acceptHostConnection</a> : Accept connection request</li>
+<li><a href="../api_live_co_host_store/CoHostStore/rejectHostConnection.html">rejectHostConnection</a> : Reject connection request</li>
+<li><a href="../api_live_co_host_store/CoHostStore/exitHostConnection.html">exitHostConnection</a> : Exit connection</li>
+<li><a href="../api_live_co_host_store/CoHostStore/getCoHostCandidates.html">getCoHostCandidates</a> : Get recommended host list</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_live_co_host_store/CoHostStatus.html">CoHostStatus</a></li>
+<li><a href="../api_live_co_host_store/CoHostLayoutTemplate.html">CoHostLayoutTemplate</a></li>
+<li><a href="../api_live_co_host_store/CoHostState-class.html">CoHostState</a></li>
+<li><a href="../api_live_co_host_store/CoHostListener-class.html">CoHostListener</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +214,7 @@
 
 </dt>
 <dd>
-  Cross-room connection related state data provided by CoHostStore. {@link CoHostState}
+  Cross-room connection related state data provided externally by CoHostStore
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +260,7 @@
 
 </dt>
 <dd>
-  Accept anchor connection request
+  Accept host connection request
   
 
 </dd>
@@ -148,7 +273,7 @@
 
 </dt>
 <dd>
-  Add connection callback listener.
+  Add connection callback listener
   
 
 </dd>
@@ -161,7 +286,7 @@
 
 </dt>
 <dd>
-  Cancel anchor connection request
+  Cancel host connection request
   
 
 </dd>
@@ -174,7 +299,20 @@
 
 </dt>
 <dd>
-  Exit anchor connection
+  Exit host connection
+  
+
+</dd>
+
+        <dt id="getCoHostCandidates" class="callable">
+  <span class="name"><a href="../api_live_co_host_store/CoHostStore/getCoHostCandidates.html">getCoHostCandidates</a></span><span class="signature">(<wbr><span class="parameter" id="getCoHostCandidates-param-cursor"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">cursor</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_define/CompletionHandler-class.html">CompletionHandler</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Get recommended host list that can connect with current host
   
 
 </dd>
@@ -200,7 +338,7 @@
 
 </dt>
 <dd>
-  Reject anchor connection request
+  Reject host connection request
   
 
 </dd>
@@ -213,7 +351,7 @@
 
 </dt>
 <dd>
-  Remove connection callback listener.
+  Remove connection callback listener
   
 
 </dd>
@@ -226,7 +364,7 @@
 
 </dt>
 <dd>
-  Initiate anchor connection request
+  Initiate host connection request
   
 
 </dd>
@@ -312,7 +450,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

@@ -61,21 +61,23 @@
         
         void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitees"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span> <span class="parameter-name">invitees</span></span>)</span>?
         <span class="name ">onBattleStarted</span>
-        <div class="features"><span class="feature">getter/setter pair</span></div>
+        <div class="features"><span class="feature">final</span></div>
 
       </section>
       
 <section class="desc markdown">
-  <p>Triggered when PK officially starts, notifying all participants that PK has started.</p>
-<p>@param battleInfo PK information, containing detailed configuration and status of PK. {@link BattleInfo}
-@param inviter User information of the PK initiator {@link $SeatUserInfo$}
-@param invitees List of users invited to participate in PK {@link $SeatUserInfo$}</p>
+  <p>This callback is triggered when PK officially starts, notifying all participants that PK has begun.</p>
+<ul>
+<li><code>battleInfo</code> : PK information, containing detailed configuration and status of the PK</li>
+<li><code>inviter</code> : User information of the PK initiator</li>
+<li><code>invitees</code> : List of users invited to participate in PK</li>
+</ul>
 </section>
 
       
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void Function(BattleInfo battleInfo, SeatUserInfo inviter, List&lt;SeatUserInfo&gt; invitees)? onBattleStarted;</code></pre>
+  <pre class="language-dart"><code class="language-dart">final void Function(BattleInfo battleInfo, SeatUserInfo inviter, List&lt;SeatUserInfo&gt; invitees)? onBattleStarted;</code></pre>
 </section>
 
 
@@ -104,7 +106,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

@@ -74,8 +74,86 @@ Audio/video call functionality is implemented through <code>CallStore</code> for
 <li><strong>State Subscription</strong>：Real-time subscription to current call state, including participant list, volume information, network quality, etc.</li>
 </ul>
 <blockquote>
+<p><strong>Important</strong>: Ensure the SDK is initialized before accessing the <code>CallStore.shared</code> singleton. Do not instantiate it directly, as doing so will prevent you from receiving call state updates.</p>
+</blockquote>
+<blockquote>
 <p><strong>Note</strong>: Call state updates are delivered through the <code>state</code> publisher. Subscribe to it to receive real-time updates of call data.</p>
 </blockquote>
+<h3 id="call-operations-overview">Call Operations Overview</h3>
+<p>The following table shows the main call operations</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Call</td>
+<td><code>calls</code></td>
+<td>Create an audio or video call to specified users</td>
+</tr>
+<tr>
+<td>Answer Call</td>
+<td><code>accept</code></td>
+<td>Answer an incoming call</td>
+</tr>
+<tr>
+<td>Reject Call</td>
+<td><code>reject</code></td>
+<td>Reject an incoming call</td>
+</tr>
+<tr>
+<td>Hang Up Call</td>
+<td><code>hangup</code></td>
+<td>Hang up the current call</td>
+</tr>
+<tr>
+<td>Join Call</td>
+<td><code>join</code></td>
+<td>Actively join a group call</td>
+</tr>
+<tr>
+<td>Invite Users</td>
+<td><code>invite</code></td>
+<td>Invite other users to join the current call</td>
+</tr>
+</tbody>
+</table>
+<h3 id="call-history-management">Call History Management</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query Records</td>
+<td><code>queryRecentCalls</code></td>
+<td>Query recent call records (with pagination support)</td>
+</tr>
+<tr>
+<td>Delete Records</td>
+<td><code>deleteRecordCalls</code></td>
+<td>Delete specified call records</td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:atomic_x_core/atomicxcore.dart';
+
+// Create a video call
+final result = await CallStore.shared.calls(
+  ["mike"],
+  CallMediaType.video,
+  null,
+);
+</code></pre>
 <h2 id="topics">Topics</h2>
 <h3 id="get-instance">Get Instance</h3>
 <ul>
@@ -415,7 +493,7 @@ Audio/video call functionality is implemented through <code>CallStore</code> for
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

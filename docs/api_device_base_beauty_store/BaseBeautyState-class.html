@@ -59,7 +59,66 @@
 
     
 <section class="desc markdown">
-  <p>Basic beauty state, managing level data of beauty effects such as smoothing, whitening, and ruddy. Supports subscription to synchronize UI display with actual effects.</p>
+  <p>Basic beauty state, managing the level data of smooth, whiteness, ruddy and other beauty effects. Supports subscription to synchronize UI display with actual effects.</p>
+<p>A comprehensive snapshot of the current beauty session state. This structure contains all relevant information about smooth, whiteness, ruddy and other beauty effect levels.</p>
+<blockquote>
+<p><strong>Note</strong>: The state is updated automatically when beauty setting methods are called. Subscribe to <code>baseBeautyState</code> to receive real-time updates.</p>
+</blockquote>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Define listeners
+late final VoidCallback smoothLevelListener = _onSmoothLevelChanged;
+late final VoidCallback whitenessLevelListener = _onWhitenessLevelChanged;
+late final VoidCallback ruddyLevelListener = _onRuddyLevelChanged;
+
+void _onSmoothLevelChanged() {
+    smoothSlider.value = store.baseBeautyState.smoothLevel.value;
+}
+
+void _onWhitenessLevelChanged() {
+    whitenessSlider.value = store.baseBeautyState.whitenessLevel.value;
+}
+
+void _onRuddyLevelChanged() {
+    ruddySlider.value = store.baseBeautyState.ruddyLevel.value;
+}
+
+// Subscribe to state changes
+store.baseBeautyState.smoothLevel.addListener(smoothLevelListener);
+store.baseBeautyState.whitenessLevel.addListener(whitenessLevelListener);
+store.baseBeautyState.ruddyLevel.addListener(ruddyLevelListener);
+
+// Unsubscribe when done
+store.baseBeautyState.smoothLevel.removeListener(smoothLevelListener);
+store.baseBeautyState.whitenessLevel.removeListener(whitenessLevelListener);
+store.baseBeautyState.ruddyLevel.removeListener(ruddyLevelListener);
+</code></pre>
+<h3 id="state-property-overview">State Property Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_device_base_beauty_store/BaseBeautyState/smoothLevel.html">smoothLevel</a></td>
+<td><code>ValueListenable&lt;double&gt;</code></td>
+<td>Smooth level, value range 0-9</td>
+</tr>
+<tr>
+<td><a href="../api_device_base_beauty_store/BaseBeautyState/whitenessLevel.html">whitenessLevel</a></td>
+<td><code>ValueListenable&lt;double&gt;</code></td>
+<td>Whiteness level, value range 0-9</td>
+</tr>
+<tr>
+<td><a href="../api_device_base_beauty_store/BaseBeautyState/ruddyLevel.html">ruddyLevel</a></td>
+<td><code>ValueListenable&lt;double&gt;</code></td>
+<td>Ruddy level, value range 0-9</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -96,12 +155,12 @@
 
         <dt id="ruddyLevel" class="property">
   <span class="name"><a href="../api_device_base_beauty_store/BaseBeautyState/ruddyLevel.html">ruddyLevel</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Ruddy level, range <code>0-9</code>; 0 means off, 9 means the most obvious effect.
+  Ruddy level, value range <code>0-9</code>; 0 means off, 9 means most obvious effect.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -120,24 +179,24 @@
 
         <dt id="smoothLevel" class="property">
   <span class="name"><a href="../api_device_base_beauty_store/BaseBeautyState/smoothLevel.html">smoothLevel</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Smoothing level, range <code>0-9</code>; 0 means off, 9 means the most obvious effect.
+  Smooth level, value range <code>0-9</code>; 0 means off, 9 means most obvious effect.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="whitenessLevel" class="property">
   <span class="name"><a href="../api_device_base_beauty_store/BaseBeautyState/whitenessLevel.html">whitenessLevel</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  Whitening level, range <code>0-9</code>; 0 means off, 9 means the most obvious effect.
+  Whiteness level, value range <code>0-9</code>; 0 means off, 9 means most obvious effect.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -227,7 +286,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

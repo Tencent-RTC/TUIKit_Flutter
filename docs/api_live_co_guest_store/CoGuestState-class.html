@@ -59,7 +59,77 @@
 
     
 <section class="desc markdown">
-  <p>Co-hosting related state data provided by CoGuestStore</p>
+  <p>Co-guest related state data provided externally by CoGuestStore</p>
+<p>A comprehensive snapshot of the current co-guest session state. This structure contains all relevant information about connected users, pending invitations and applications.</p>
+<blockquote>
+<p><strong>Note</strong>: State is automatically updated when users join/leave seats, send/cancel invitations, or apply/cancel applications. Subscribe to <code>coGuestState</code> to receive real-time updates.</p>
+</blockquote>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Define listeners
+late final VoidCallback connectedListener = _onConnectedChanged;
+late final VoidCallback applicantsListener = _onApplicantsChanged;
+late final VoidCallback inviteesListener = _onInviteesChanged;
+
+void _onConnectedChanged() {
+    updateConnectedUsersUI(store.coGuestState.connected.value);
+}
+
+void _onApplicantsChanged() {
+    final applicants = store.coGuestState.applicants.value;
+    if (applicants.isNotEmpty) {
+        showApplicationsBadge(applicants.length);
+    }
+}
+
+void _onInviteesChanged() {
+    final invitees = store.coGuestState.invitees.value;
+    if (invitees.isNotEmpty) {
+        showInvitationsPendingUI(invitees);
+    }
+}
+
+// Subscribe to state changes
+store.coGuestState.connected.addListener(connectedListener);
+store.coGuestState.applicants.addListener(applicantsListener);
+store.coGuestState.invitees.addListener(inviteesListener);
+</code></pre>
+<h3 id="state-properties-overview">State Properties Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Role</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_live_co_guest_store/CoGuestState/connected.html">connected</a></td>
+<td><code>ValueListenable&lt;List&lt;SeatUserInfo&gt;&gt;</code></td>
+<td>Both</td>
+<td>List of users currently on seats</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_guest_store/CoGuestState/invitees.html">invitees</a></td>
+<td><code>ValueListenable&lt;List&lt;LiveUserInfo&gt;&gt;</code></td>
+<td>Host</td>
+<td>Users invited by host (waiting for response)</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_guest_store/CoGuestState/applicants.html">applicants</a></td>
+<td><code>ValueListenable&lt;List&lt;LiveUserInfo&gt;&gt;</code></td>
+<td>Host</td>
+<td>Users who applied (waiting for host decision)</td>
+</tr>
+<tr>
+<td><a href="../api_live_co_guest_store/CoGuestState/candidates.html">candidates</a></td>
+<td><code>ValueListenable&lt;List&lt;LiveUserInfo&gt;&gt;</code></td>
+<td>Host</td>
+<td>List of potential users available for invitation</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -84,31 +154,31 @@
     <dl class="properties">
         <dt id="applicants" class="property">
   <span class="name"><a href="../api_live_co_guest_store/CoGuestState/applicants.html">applicants</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  List of users who applied for co-hosting received by anchor.
+  List of users who applied for co-guest received by host.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="candidates" class="property">
   <span class="name"><a href="../api_live_co_guest_store/CoGuestState/candidates.html">candidates</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  List of candidate users for co-hosting.
+  List of candidate users for co-guest.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
         <dt id="connected" class="property">
   <span class="name"><a href="../api_live_co_guest_store/CoGuestState/connected.html">connected</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -132,12 +202,12 @@
 
         <dt id="invitees" class="property">
   <span class="name"><a href="../api_live_co_guest_store/CoGuestState/invitees.html">invitees</a></span>
-  <span class="signature">&#8594; ValueListenable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/ValueListenable-class.html">ValueListenable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_audience_store/LiveUserInfo-class.html">LiveUserInfo</a></span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
 <dd>
-  List of users invited by anchor.
+  List of users invited by host.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -239,7 +309,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

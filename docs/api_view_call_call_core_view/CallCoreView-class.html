@@ -77,6 +77,75 @@
 <blockquote>
 <p><strong>Note</strong>: This view component must be used together with <a href="../api_call_call_store/CallStore-class.html">CallStore</a> to properly display call screens and receive call state updates.</p>
 </blockquote>
+<h3 id="method-overview">Method Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Multi-Layout Switching</td>
+<td><code>controller.setLayoutTemplate</code></td>
+<td>Switch call interface layout (single-person float/multi-person grid/PiP)</td>
+</tr>
+<tr>
+<td>Default Avatar</td>
+<td><code>defaultAvatar</code></td>
+<td>Set the default placeholder avatar widget</td>
+</tr>
+<tr>
+<td>Loading Animation</td>
+<td><code>loadingAnimation</code></td>
+<td>Set the loading animation widget during call waiting state</td>
+</tr>
+<tr>
+<td>Volume Icons</td>
+<td><code>volumeIcons</code></td>
+<td>Customize icons for each volume level</td>
+</tr>
+<tr>
+<td>Network Icons</td>
+<td><code>networkQualityIcons</code></td>
+<td>Customize icons for each network quality level</td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:atomic_x_core/atomicxcore.dart';
+
+// Create controller
+final controller = CallCoreController.create();
+
+// Create call view with configuration
+CallCoreView(
+  controller: controller,
+  defaultAvatar: Icon(Icons.person),
+  loadingAnimation: CircularProgressIndicator(),
+  volumeIcons: {
+    VolumeLevel.mute: Icon(Icons.volume_off),
+    VolumeLevel.low: Icon(Icons.volume_down),
+    VolumeLevel.medium: Icon(Icons.volume_up),
+    VolumeLevel.high: Icon(Icons.volume_up),
+    VolumeLevel.peak: Icon(Icons.volume_up),
+  },
+  networkQualityIcons: {
+    NetworkQuality.unknown: Icon(Icons.signal_wifi_off),
+    NetworkQuality.excellent: Icon(Icons.signal_wifi_4_bar),
+    NetworkQuality.good: Icon(Icons.signal_wifi_4_bar),
+    NetworkQuality.poor: Icon(Icons.network_wifi_3_bar),
+    NetworkQuality.bad: Icon(Icons.network_wifi_2_bar),
+    NetworkQuality.veryBad: Icon(Icons.network_wifi_1_bar),
+    NetworkQuality.down: Icon(Icons.signal_wifi_off),
+  },
+);
+
+// Set layout mode
+controller.setLayoutTemplate(CallLayoutTemplate.grid);
+</code></pre>
 <h2 id="topics">Topics</h2>
 <h3 id="static-properties">Static Properties</h3>
 <ul>
@@ -97,13 +166,37 @@
 </section>
 
 
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree-class.html">DiagnosticableTree</a></li>
+        <li><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></li>
+        <li><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html">StatefulWidget</a></li>
+      <li>CallCoreView</li>
+    </ul>
+  </dd>
+
+        
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
 
     
   <section class="summary offset-anchor" id="constructors">
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="CallCoreView" class="callable">
-          <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/CallCoreView.html">CallCoreView</a></span><span class="signature">({<span class="parameter" id="-param-key"><span class="type-annotation">Key?</span> <span class="parameter-name">key</span>, </span><span class="parameter" id="-param-controller"><span>required</span> <span class="type-annotation"><a href="../api_view_call_call_core_view/CallCoreController-class.html">CallCoreController</a></span> <span class="parameter-name">controller</span>, </span><span class="parameter" id="-param-defaultAvatar"><span class="type-annotation">Widget?</span> <span class="parameter-name">defaultAvatar</span>, </span><span class="parameter" id="-param-loadingAnimation"><span class="type-annotation">Widget?</span> <span class="parameter-name">loadingAnimation</span>, </span><span class="parameter" id="-param-volumeIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span> <span class="parameter-name">volumeIcons</span> = <span class="default-value">const {}</span>, </span><span class="parameter" id="-param-networkQualityIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span> <span class="parameter-name">networkQualityIcons</span> = <span class="default-value">const {}</span></span>})</span>
+          <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/CallCoreView.html">CallCoreView</a></span><span class="signature">({<span class="parameter" id="-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/Key-class.html">Key</a>?</span> <span class="parameter-name">key</span>, </span><span class="parameter" id="-param-controller"><span>required</span> <span class="type-annotation"><a href="../api_view_call_call_core_view/CallCoreController-class.html">CallCoreController</a></span> <span class="parameter-name">controller</span>, </span><span class="parameter" id="-param-defaultAvatar"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a>?</span> <span class="parameter-name">defaultAvatar</span>, </span><span class="parameter" id="-param-loadingAnimation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a>?</span> <span class="parameter-name">loadingAnimation</span>, </span><span class="parameter" id="-param-volumeIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span> <span class="parameter-name">volumeIcons</span> = <span class="default-value">const {}</span>, </span><span class="parameter" id="-param-networkQualityIcons"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span> <span class="parameter-name">networkQualityIcons</span> = <span class="default-value">const {}</span></span>})</span>
         </dt>
         <dd>
           Constructor and lifecycle methods for CallCoreView widget.
@@ -131,7 +224,7 @@
 
         <dt id="defaultAvatar" class="property">
   <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/defaultAvatar.html">defaultAvatar</a></span>
-  <span class="signature">&#8594; Widget?</span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a>?</span>
   
 
 </dt>
@@ -142,7 +235,7 @@
 </dd>
 
         <dt id="hashCode" class="property inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/hashCode.html">hashCode</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
   
 
@@ -154,8 +247,8 @@
 </dd>
 
         <dt id="key" class="property inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/key.html">key</a></span>
-  <span class="signature">&#8594; Key?</span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/foundation/Key-class.html">Key</a>?</span>
   
 
 </dt>
@@ -167,7 +260,7 @@
 
         <dt id="loadingAnimation" class="property">
   <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/loadingAnimation.html">loadingAnimation</a></span>
-  <span class="signature">&#8594; Widget?</span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a>?</span>
   
 
 </dt>
@@ -179,7 +272,7 @@
 
         <dt id="networkQualityIcons" class="property">
   <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/networkQualityIcons.html">networkQualityIcons</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_device_device_store/NetworkQuality.html">NetworkQuality</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span>
   
 
 </dt>
@@ -203,7 +296,7 @@
 
         <dt id="volumeIcons" class="property">
   <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/volumeIcons.html">volumeIcons</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter">Widget</span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/VolumeLevel.html">VolumeLevel</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span>
   
 
 </dt>
@@ -223,47 +316,47 @@
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="createElement" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/createElement.html">createElement</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; StatefulElement</span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/StatefulWidget/createElement.html">createElement</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/StatefulElement-class.html">StatefulElement</a></span>
   </span>
   
 
 </dt>
 <dd class="inherited">
-  Creates a <code>StatefulElement</code> to manage this widget's location in the tree.
+  Creates a <a href="https://api.flutter.dev/flutter/widgets/StatefulElement-class.html">StatefulElement</a> to manage this widget's location in the tree.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
         <dt id="createState" class="callable">
   <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/createState.html">createState</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; State<span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/CallCoreView-class.html">CallCoreView</a></span>&gt;</span></span>
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/widgets/State-class.html">State</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_view_call_call_core_view/CallCoreView-class.html">CallCoreView</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
   Creates the mutable state for this widget at a given location in the tree.
-  
+  <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
         <dt id="debugDescribeChildren" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/debugDescribeChildren.html">debugDescribeChildren</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">DiagnosticsNode</span>&gt;</span></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/debugDescribeChildren.html">debugDescribeChildren</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode-class.html">DiagnosticsNode</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd class="inherited">
-  Returns a list of <code>DiagnosticsNode</code> objects describing this node's
+  Returns a list of <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode-class.html">DiagnosticsNode</a> objects describing this node's
 children.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
         <dt id="debugFillProperties" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/debugFillProperties.html">debugFillProperties</a></span><span class="signature">(<wbr><span class="parameter" id="debugFillProperties-param-properties"><span class="type-annotation">DiagnosticPropertiesBuilder</span> <span class="parameter-name">properties</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/Widget/debugFillProperties.html">debugFillProperties</a></span><span class="signature">(<wbr><span class="parameter" id="debugFillProperties-param-properties"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticPropertiesBuilder-class.html">DiagnosticPropertiesBuilder</a></span> <span class="parameter-name">properties</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -289,21 +382,21 @@ children.
 </dd>
 
         <dt id="toDiagnosticsNode" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toDiagnosticsNode.html">toDiagnosticsNode</a></span><span class="signature">(<wbr>{<span class="parameter" id="toDiagnosticsNode-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="toDiagnosticsNode-param-style"><span class="type-annotation">DiagnosticsTreeStyle?</span> <span class="parameter-name">style</span></span>})
-    <span class="returntype parameter">&#8594; DiagnosticsNode</span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toDiagnosticsNode.html">toDiagnosticsNode</a></span><span class="signature">(<wbr>{<span class="parameter" id="toDiagnosticsNode-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="toDiagnosticsNode-param-style"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticsTreeStyle.html">DiagnosticsTreeStyle</a>?</span> <span class="parameter-name">style</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode-class.html">DiagnosticsNode</a></span>
   </span>
   
 
 </dt>
 <dd class="inherited">
   Returns a debug representation of the object that is used by debugging
-tools and by <code>DiagnosticsNode.toStringDeep</code>.
+tools and by <a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode/toStringDeep.html">DiagnosticsNode.toStringDeep</a>.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
 
         <dt id="toString" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toString.html">toString</a></span><span class="signature">(<wbr>{<span class="parameter" id="toString-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.info</span></span>})
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/Diagnosticable/toString.html">toString</a></span><span class="signature">(<wbr>{<span class="parameter" id="toString-param-minLevel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticLevel.html">DiagnosticLevel</a></span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.info</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -316,7 +409,7 @@ tools and by <code>DiagnosticsNode.toStringDeep</code>.
 </dd>
 
         <dt id="toStringDeep" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringDeep.html">toStringDeep</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringDeep-param-prefixLineOne"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">prefixLineOne</span> = <span class="default-value">&#39;&#39;</span>, </span><span class="parameter" id="toStringDeep-param-prefixOtherLines"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">prefixOtherLines</span>, </span><span class="parameter" id="toStringDeep-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span></span>})
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringDeep.html">toStringDeep</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringDeep-param-prefixLineOne"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">prefixLineOne</span> = <span class="default-value">&#39;&#39;</span>, </span><span class="parameter" id="toStringDeep-param-prefixOtherLines"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">prefixOtherLines</span>, </span><span class="parameter" id="toStringDeep-param-minLevel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticLevel.html">DiagnosticLevel</a></span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span>, </span><span class="parameter" id="toStringDeep-param-wrapWidth"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">wrapWidth</span> = <span class="default-value">65</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -329,7 +422,7 @@ tools and by <code>DiagnosticsNode.toStringDeep</code>.
 </dd>
 
         <dt id="toStringShallow" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringShallow.html">toStringShallow</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringShallow-param-joiner"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">joiner</span> = <span class="default-value">&#39;, &#39;</span>, </span><span class="parameter" id="toStringShallow-param-minLevel"><span class="type-annotation">DiagnosticLevel</span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span></span>})
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticableTree/toStringShallow.html">toStringShallow</a></span><span class="signature">(<wbr>{<span class="parameter" id="toStringShallow-param-joiner"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">joiner</span> = <span class="default-value">&#39;, &#39;</span>, </span><span class="parameter" id="toStringShallow-param-minLevel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticLevel.html">DiagnosticLevel</a></span> <span class="parameter-name">minLevel</span> = <span class="default-value">DiagnosticLevel.debug</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -342,7 +435,7 @@ tools and by <code>DiagnosticsNode.toStringDeep</code>.
 </dd>
 
         <dt id="toStringShort" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/toStringShort.html">toStringShort</a></span><span class="signature">(<wbr>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/Widget/toStringShort.html">toStringShort</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -363,7 +456,7 @@ tools and by <code>DiagnosticsNode.toStringDeep</code>.
     <h2>Operators</h2>
     <dl class="callables">
         <dt id="operator ==" class="callable inherited">
-  <span class="name"><a href="../api_view_call_call_core_view/CallCoreView/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/widgets/Widget/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   </span>
   
@@ -404,7 +497,7 @@ tools and by <code>DiagnosticsNode.toStringDeep</code>.
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

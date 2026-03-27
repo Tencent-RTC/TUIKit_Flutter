@@ -59,7 +59,78 @@
 
     
 <section class="desc markdown">
-  <p>Basic beauty management class, used to handle the adjustment and state management of beauty effects.</p>
+  <p>Basic beauty related interfaces, managing the adjustment and state synchronization of smooth, whiteness, ruddy and other basic beauty effects.</p>
+<p><code>BaseBeautyStore</code> <code>BaseBeautyStore</code> manages the adjustment and state synchronization of smooth, whiteness, ruddy and other basic beauty effects.
+Basic beauty functionality achieves real-time beauty effect adjustment through easy-to-use APIs. <code>BaseBeautyStore</code> provides a complete set of interfaces to manage beauty effect settings and state subscriptions.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Smooth Effect</strong>：Supports 0-9 level smooth effect adjustment</li>
+<li><strong>Whiteness Effect</strong>：Supports 0-9 level whiteness effect adjustment</li>
+<li><strong>Ruddy Effect</strong>：Supports 0-9 level ruddy effect adjustment</li>
+<li><strong>State Subscription</strong>：Real-time subscription to beauty state changes, synchronizing UI display with actual effects</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: Beauty state updates are delivered through the <a href="../api_device_base_beauty_store/BaseBeautyStore/baseBeautyState.html">baseBeautyState</a> publisher. Subscribe to it to receive real-time updates about beauty effect levels.</p>
+</blockquote>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Get singleton instance
+final store = BaseBeautyStore.shared;
+
+// Define listeners
+late final VoidCallback smoothLevelListener = _onSmoothLevelChanged;
+late final VoidCallback whitenessLevelListener = _onWhitenessLevelChanged;
+late final VoidCallback ruddyLevelListener = _onRuddyLevelChanged;
+
+void _onSmoothLevelChanged() {
+    print('Smooth level: ${store.baseBeautyState.smoothLevel.value}');
+}
+
+void _onWhitenessLevelChanged() {
+    print('Whiteness level: ${store.baseBeautyState.whitenessLevel.value}');
+}
+
+void _onRuddyLevelChanged() {
+    print('Ruddy level: ${store.baseBeautyState.ruddyLevel.value}');
+}
+
+// Subscribe to state changes
+store.baseBeautyState.smoothLevel.addListener(smoothLevelListener);
+store.baseBeautyState.whitenessLevel.addListener(whitenessLevelListener);
+store.baseBeautyState.ruddyLevel.addListener(ruddyLevelListener);
+
+// Set beauty effects
+store.setSmoothLevel(5.0);
+store.setWhitenessLevel(3.0);
+store.setRuddyLevel(2.0);
+
+// Reset all beauty effects
+store.reset();
+
+// Unsubscribe when done
+store.baseBeautyState.smoothLevel.removeListener(smoothLevelListener);
+store.baseBeautyState.whitenessLevel.removeListener(whitenessLevelListener);
+store.baseBeautyState.ruddyLevel.removeListener(ruddyLevelListener);
+</code></pre>
+<h2 id="topics">Topics</h2>
+<h3 id="getting-instance">Getting Instance</h3>
+<ul>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/shared.html">shared</a> : Get singleton instance</li>
+</ul>
+<h3 id="observing-state">Observing State</h3>
+<ul>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/baseBeautyState.html">baseBeautyState</a> : Beauty state data</li>
+</ul>
+<h3 id="beauty-adjustment">Beauty Adjustment</h3>
+<ul>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/setSmoothLevel.html">setSmoothLevel</a> : Set smooth level</li>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/setWhitenessLevel.html">setWhitenessLevel</a> : Set whiteness level</li>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/setRuddyLevel.html">setRuddyLevel</a> : Set ruddy level</li>
+<li><a href="../api_device_base_beauty_store/BaseBeautyStore/reset.html">reset</a> : Reset to default state</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_device_base_beauty_store/BaseBeautyState-class.html">BaseBeautyState</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +160,7 @@
 
 </dt>
 <dd>
-  Beauty state subscription, containing beauty effect levels such as smoothing, whitening, and ruddy. By subscribing to this state, you can get real-time updates of beauty data. {@link BaseBeautyState}
+  Beauty state subscription, including smooth, whiteness, ruddy and other beauty effect levels. By subscribing to this state, you can get real-time updates of beauty data.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -148,7 +219,7 @@
 
 </dt>
 <dd>
-  Reset all beauty parameters (smoothing, whitening, ruddy) to the default off state (value is 0).
+  Reset all beauty parameters (smooth, whiteness, ruddy) to default off state (value 0).
   
 
 </dd>
@@ -174,7 +245,7 @@
 
 </dt>
 <dd>
-  Set smoothing level
+  Set smooth level
   
 
 </dd>
@@ -187,7 +258,7 @@
 
 </dt>
 <dd>
-  Set whitening level
+  Set whiteness level
   
 
 </dd>
@@ -272,7 +343,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

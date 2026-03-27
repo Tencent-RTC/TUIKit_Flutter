@@ -70,6 +70,30 @@
 </ol>)?, </span></li>
 <li><span class="parameter" id="-param-onRoomEnded"><span class="type-annotation">void</span> <span class="parameter-name">onRoomEnded</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span></span></li>
 </ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallReceived"><span class="type-annotation">void</span> <span class="parameter-name">onCallReceived</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span>, </span></li>
+<li><span class="parameter" id="param-extensionInfo"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">extensionInfo</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallCancelled"><span class="type-annotation">void</span> <span class="parameter-name">onCallCancelled</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onCallTimeout</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallAccepted"><span class="type-annotation">void</span> <span class="parameter-name">onCallAccepted</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallRejected"><span class="type-annotation">void</span> <span class="parameter-name">onCallRejected</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span>, </span></li>
+<li><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../../api_room_room_store/CallRejectionReason.html">CallRejectionReason</a></span> <span class="parameter-name">reason</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallHandledByOtherDevice"><span class="type-annotation">void</span> <span class="parameter-name">onCallHandledByOtherDevice</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-isAccepted"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isAccepted</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="-param-onCallRevokedByAdmin"><span class="type-annotation">void</span> <span class="parameter-name">onCallRevokedByAdmin</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-roomInfo"><span class="type-annotation"><a href="../../api_room_room_store/RoomInfo-class.html">RoomInfo</a></span> <span class="parameter-name">roomInfo</span>, </span></li>
+<li><span class="parameter" id="param-call"><span class="type-annotation"><a href="../../api_room_room_store/RoomCall-class.html">RoomCall</a></span> <span class="parameter-name">call</span>, </span></li>
+<li><span class="parameter" id="param-operator"><span class="type-annotation"><a href="../../api_room_room_store/RoomUser-class.html">RoomUser</a></span> <span class="parameter-name">operator</span></span></li>
+</ol>)?, </span></li>
 </ol>})
     </section>
     
@@ -84,6 +108,13 @@
   this.onScheduledRoomCancelled,
   this.onScheduledRoomStartingSoon,
   this.onRoomEnded,
+  this.onCallReceived,
+  this.onCallCancelled,
+  this.onCallTimeout,
+  this.onCallAccepted,
+  this.onCallRejected,
+  this.onCallHandledByOtherDevice,
+  this.onCallRevokedByAdmin,
 });</code></pre>
 </section>
 
@@ -112,7 +143,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

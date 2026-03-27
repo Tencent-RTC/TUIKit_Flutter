@@ -63,7 +63,33 @@
 
     
 <section class="desc markdown">
-  <p>Reason for users in PK to receive PK ended notification</p>
+  <p>Reason for PK ending received by users in an ongoing PK</p>
+<p>This enum describes the reasons for PK ending.</p>
+<blockquote>
+<p><strong>Note</strong>: When the PK countdown ends or all members exit, the system will automatically trigger the PK end event.</p>
+</blockquote>
+<h3 id="response-scenarios">Response Scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timeOver</code></td>
+<td>0</td>
+<td>PK countdown ended</td>
+</tr>
+<tr>
+<td><code>allMemberExit</code></td>
+<td>1</td>
+<td>All PK members exited</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -300,7 +326,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

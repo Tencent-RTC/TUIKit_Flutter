@@ -63,7 +63,34 @@
 
     
 <section class="desc markdown">
-  <p>Reason for no response to co-hosting invitation sent by anchor or co-hosting request initiated by audience</p>
+  <p>Reason for no response to co-guest invitation sent by host or co-guest request initiated by audience</p>
+<p>This enum describes why a co-guest request or invitation did not receive a response from the other party.</p>
+<blockquote>
+<p><strong>Note</strong>: The system automatically triggers no-response events when timeout expires or certain state conflicts occur.</p>
+</blockquote>
+<h3 id="response-scenarios">Response Scenarios</h3>
+<p>The following table shows the trigger conditions for each reason</p>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>Trigger Condition</th>
+<th>Example Scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timeout</code></td>
+<td>Response timeout</td>
+<td>Host did not respond to application within 30 seconds</td>
+</tr>
+<tr>
+<td><code>alreadySeated</code></td>
+<td>Target user already on seat</td>
+<td>Audience is already co-guesting with another host</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -102,7 +129,7 @@
 
 </dt>
 <dd>
-  <p>Request timeout.</p>
+  <p>Request timeout</p>
   
 
     <div>
@@ -117,7 +144,7 @@
 
 </dt>
 <dd>
-  <p>User is already on seat.</p>
+  <p>User already on seat</p>
   
 
     <div>
@@ -300,7 +327,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

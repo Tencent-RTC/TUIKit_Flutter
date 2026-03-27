@@ -67,15 +67,16 @@
       
 <section class="desc markdown">
   <p>Create cross-room co-host view.</p>
-<p>@param seatInfo Cross-room co-host user information.
-@param viewLayer View layer.
-@return Cross-room co-host view.</p>
+<ul>
+<li><code>seatInfo</code> : Cross-room co-host user seat information.</li>
+<li><code>viewLayer</code> : View layer, foreground or background.</li>
+</ul>
 </section>
 
       
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">CoHostWidgetBuilder coHostWidgetBuilder = (BuildContext context, SeatInfo seatInfo, ViewLayer viewLayer) {
+  <pre class="language-dart"><code class="language-dart">CoHostWidgetBuilder coHostWidgetBuilder = (BuildContext context, SeatInfo seatInfo, ViewLayer viewPlayer) {
   return Container();
 };</code></pre>
 </section>
@@ -106,7 +107,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

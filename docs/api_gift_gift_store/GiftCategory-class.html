@@ -59,6 +59,44 @@
     
 <section class="desc markdown">
   <p>Gift category.</p>
+<p>Contains gift category ID, name, description, and the gift list under this category.</p>
+<h3 id="properties-overview">Properties Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api_gift_gift_store/GiftCategory/categoryID.html">categoryID</a></td>
+<td><code>String</code></td>
+<td>Category unique identifier ID</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/GiftCategory/name.html">name</a></td>
+<td><code>String</code></td>
+<td>Category display name</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/GiftCategory/desc.html">desc</a></td>
+<td><code>String</code></td>
+<td>Category description information</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/GiftCategory/extensionInfo.html">extensionInfo</a></td>
+<td><code>Map&lt;String, String&gt;</code></td>
+<td>Category extension information</td>
+</tr>
+<tr>
+<td><a href="../api_gift_gift_store/GiftCategory/giftList.html">giftList</a></td>
+<td><code>List&lt;Gift&gt;</code></td>
+<td>All gifts under the current category</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -124,7 +162,7 @@
 
 </dt>
 <dd>
-  All gift lists under the current category.
+  All gifts under the current category.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -250,7 +288,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

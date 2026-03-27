@@ -59,7 +59,83 @@
 
     
 <section class="desc markdown">
-  <p>Gift management class, used to handle gift-related business logic in live rooms/voice chat rooms.</p>
+  <p>Gift-related interface, managing gift sending, gift state synchronization, and gift event listening in live rooms/voice chat rooms.</p>
+<p><code>GiftStore</code> Gift management class for handling gift-related business logic in live rooms/voice chat rooms.
+<code>GiftStore</code> provides a complete set of gift management APIs, including sending gifts, refreshing gift lists, setting language, and listening to gift events.
+Through this class, gift interaction features can be implemented in live rooms.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Gift Sending</strong>：Support sending specified gifts to the current room</li>
+<li><strong>Gift List</strong>：Get and refresh the available gift list in the current room</li>
+<li><strong>Language Setting</strong>：Set the display language for gift information</li>
+<li><strong>Event Listening</strong>：Listen to gift receiving events</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_gift_gift_store/GiftStore/create.html">GiftStore.create</a> factory method to create a <code>GiftStore</code> instance, passing a valid live room ID.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Gift state updates are delivered through the <a href="../api_gift_gift_store/GiftStore/giftState.html">giftState</a> publisher. Subscribe to it to receive real-time updates of gift data in the room.</p>
+</blockquote>
+<h3 id="gift-operations-overview">Gift Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Instance</td>
+<td><a href="../api_gift_gift_store/GiftStore/create.html">GiftStore.create</a></td>
+<td>Create a gift management instance for the specified room</td>
+</tr>
+<tr>
+<td>Send Gift</td>
+<td><a href="../api_gift_gift_store/GiftStore/sendGift.html">sendGift</a></td>
+<td>Send a specified gift to the current room</td>
+</tr>
+<tr>
+<td>Refresh List</td>
+<td><a href="../api_gift_gift_store/GiftStore/refreshUsableGifts.html">refreshUsableGifts</a></td>
+<td>Manually refresh the available gift list in the current room</td>
+</tr>
+<tr>
+<td>Language Setting</td>
+<td><a href="../api_gift_gift_store/GiftStore/setLanguage.html">setLanguage</a></td>
+<td>Set the display language for gift information</td>
+</tr>
+<tr>
+<td>Event Listening</td>
+<td><a href="../api_gift_gift_store/GiftStore/addGiftListener.html">addGiftListener</a>/<a href="../api_gift_gift_store/GiftStore/removeGiftListener.html">removeGiftListener</a></td>
+<td>Add/remove gift event listeners</td>
+</tr>
+</tbody>
+</table>
+<h2 id="topics">Topics</h2>
+<h3 id="creating-instance">Creating Instance</h3>
+<ul>
+<li><a href="../api_gift_gift_store/GiftStore/create.html">GiftStore.create</a> : Create gift management instance</li>
+</ul>
+<h3 id="observing-state-and-events">Observing State and Events</h3>
+<ul>
+<li><a href="../api_gift_gift_store/GiftStore/giftState.html">giftState</a> : Reactive state containing available gift list</li>
+<li><a href="../api_gift_gift_store/GiftStore/addGiftListener.html">addGiftListener</a>/<a href="../api_gift_gift_store/GiftStore/removeGiftListener.html">removeGiftListener</a> : Gift event callbacks</li>
+</ul>
+<h3 id="gift-operations">Gift Operations</h3>
+<ul>
+<li><a href="../api_gift_gift_store/GiftStore/sendGift.html">sendGift</a> : Send gift</li>
+<li><a href="../api_gift_gift_store/GiftStore/refreshUsableGifts.html">refreshUsableGifts</a> : Refresh available gift list</li>
+<li><a href="../api_gift_gift_store/GiftStore/setLanguage.html">setLanguage</a> : Set display language</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_gift_gift_store/Gift-class.html">Gift</a></li>
+<li><a href="../api_gift_gift_store/GiftCategory-class.html">GiftCategory</a></li>
+<li><a href="../api_gift_gift_store/GiftState-class.html">GiftState</a></li>
+<li><a href="../api_gift_gift_store/GiftListener-class.html">GiftListener</a></li>
+</ul>
 </section>
 
 
@@ -89,7 +165,7 @@
 
 </dt>
 <dd>
-  Gift state subscription for the current room, containing information such as available gift lists. By subscribing to this state, you can get real-time updates of gift data in the room. {@link GiftState}
+  Gift state subscription for the current room, containing information such as available gift list. By subscribing to this state, real-time updates of gift data in the room can be obtained.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -135,7 +211,7 @@
 
 </dt>
 <dd>
-  Gift event publisher, through which you can subscribe/remove gift events in live rooms/voice chat rooms. After subscription, you will receive corresponding notifications when audiences send gifts. {@link GiftListener}
+  Gift event publisher. Through this publisher, you can subscribe to/remove gift events in live rooms/voice chat rooms. After subscribing, you will receive corresponding notifications when viewers send gifts.
   
 
 </dd>
@@ -161,7 +237,7 @@
 
 </dt>
 <dd>
-  Manually refresh the available gift list for the current room.
+  Manually refresh the available gift list in the current room.
   
 
 </dd>
@@ -254,7 +330,7 @@
 
 </dt>
 <dd>
-  Create a gift management instance.
+  Create gift management instance.
   
 
 </dd>
@@ -286,7 +362,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

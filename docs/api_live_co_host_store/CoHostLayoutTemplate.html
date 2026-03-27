@@ -64,6 +64,34 @@
     
 <section class="desc markdown">
   <p>Connection layout template</p>
+<p>This enum defines the available layout templates for cross-room connection.</p>
+<h3 id="response-scenarios">Response Scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Layout</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostVoiceConnection</code></td>
+<td>2</td>
+<td>Voice chat room connection layout</td>
+</tr>
+<tr>
+<td><code>hostDynamicGrid</code></td>
+<td>600</td>
+<td>Host dynamic grid layout</td>
+</tr>
+<tr>
+<td><code>hostDynamic1v6</code></td>
+<td>601</td>
+<td>Host dynamic 1v6 layout</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -95,18 +123,18 @@
       <section class="summary offset-anchor" id="values">
         <h2>Values</h2>
         <dl class="properties">
-            <dt id="hostStaticVoice6V6" class="constant">
-    <span class="name ">hostStaticVoice6V6</span>
+            <dt id="hostVoiceConnection" class="constant">
+    <span class="name ">hostVoiceConnection</span>
   <span class="signature">&#8594; const <a href="../api_live_co_host_store/CoHostLayoutTemplate.html">CoHostLayoutTemplate</a></span>
   
 
 </dt>
 <dd>
-  <p>Voice chat room 6v6 layout.</p>
+  <p>Voice chat room connection layout.</p>
   
 
     <div>
-      <span class="signature"><code>const CoHostLayoutTemplate(1)</code></span>
+      <span class="signature"><code>const CoHostLayoutTemplate(2)</code></span>
     </div>
 </dd>
 
@@ -117,7 +145,7 @@
 
 </dt>
 <dd>
-  <p>Anchor dynamic grid layout.</p>
+  <p>Host dynamic grid layout.</p>
   
 
     <div>
@@ -125,14 +153,14 @@
     </div>
 </dd>
 
-            <dt id="hostDynamic1V6" class="constant">
-    <span class="name ">hostDynamic1V6</span>
+            <dt id="hostDynamic1v6" class="constant">
+    <span class="name ">hostDynamic1v6</span>
   <span class="signature">&#8594; const <a href="../api_live_co_host_store/CoHostLayoutTemplate.html">CoHostLayoutTemplate</a></span>
   
 
 </dt>
 <dd>
-  <p>Anchor dynamic 1v6 layout.</p>
+  <p>Host dynamic 1v6 layout.</p>
   
 
     <div>
@@ -315,7 +343,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

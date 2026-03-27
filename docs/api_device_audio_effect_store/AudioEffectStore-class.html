@@ -59,7 +59,78 @@
 
     
 <section class="desc markdown">
-  <p>Audio effect management class, used to handle anchor audio effect related business.</p>
+  <p>Audio effect setting related interfaces, managing voice changer, reverb, and ear monitor features for anchors.</p>
+<p><code>AudioEffectStore</code> Audio effect management class for handling anchor audio effect related business.
+<code>AudioEffectStore</code> provides a complete set of audio effect management APIs, including voice changer effects, reverb effects, and ear monitor functionality.
+Through this class, anchors can adjust their voice effects in real-time during live streaming to enhance the experience.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Voice Changer Effects</strong>：Supports multiple voice changer effects such as child, little girl, uncle, etc.</li>
+<li><strong>Reverb Effects</strong>：Supports multiple reverb effects such as KTV, small room, auditorium, etc.</li>
+<li><strong>Ear Monitor</strong>：Anchors can hear their own voice in earphones, suitable for singing scenarios</li>
+<li><strong>Volume Control</strong>：Supports fine-grained ear monitor volume adjustment</li>
+</ul>
+<blockquote>
+<p><strong>Important</strong>: Use the <a href="../api_device_audio_effect_store/AudioEffectStore/shared.html">shared</a> singleton to get the <code>AudioEffectStore</code> instance. The set effects will automatically become invalid after leaving the room, and need to be set again for the next room entry.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note</strong>: Audio effect state updates are delivered through the <a href="../api_device_audio_effect_store/AudioEffectStore/audioEffectState.html">audioEffectState</a> publisher. Subscribe to it to receive real-time updates about voice changer, reverb, and ear monitor states.</p>
+</blockquote>
+<h3 id="usage-example">Usage Example</h3>
+<pre class="language-dart"><code class="language-dart">// Get singleton instance
+final store = AudioEffectStore.shared;
+
+// Subscribe to state changes
+store.audioEffectState.audioChangerType.addListener(() {
+    print("Current voice changer: ${store.audioEffectState.audioChangerType.value}");
+});
+
+store.audioEffectState.audioReverbType.addListener(() {
+    print("Current reverb: ${store.audioEffectState.audioReverbType.value}");
+});
+
+// Set voice changer effect
+store.setAudioChangerType(AudioChangerType.littleGirl);
+
+// Set reverb effect
+store.setAudioReverbType(AudioReverbType.ktv);
+
+// Enable ear monitor
+store.setVoiceEarMonitorEnable(true);
+store.setVoiceEarMonitorVolume(80);
+</code></pre>
+<h2 id="topics">Topics</h2>
+<h3 id="getting-instance">Getting Instance</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/shared.html">shared</a> : Get singleton instance</li>
+</ul>
+<h3 id="observing-state">Observing State</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/audioEffectState.html">audioEffectState</a> : Audio effect state data</li>
+</ul>
+<h3 id="voice-changer-settings">Voice Changer Settings</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/setAudioChangerType.html">setAudioChangerType</a> : Set voice changer effect</li>
+</ul>
+<h3 id="reverb-settings">Reverb Settings</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/setAudioReverbType.html">setAudioReverbType</a> : Set reverb effect</li>
+</ul>
+<h3 id="ear-monitor-settings">Ear Monitor Settings</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/setVoiceEarMonitorEnable.html">setVoiceEarMonitorEnable</a> : Enable/disable ear monitor</li>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/setVoiceEarMonitorVolume.html">setVoiceEarMonitorVolume</a> : Set ear monitor volume</li>
+</ul>
+<h3 id="reset">Reset</h3>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioEffectStore/reset.html">reset</a> : Reset to default state</li>
+</ul>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../api_device_audio_effect_store/AudioChangerType.html">AudioChangerType</a></li>
+<li><a href="../api_device_audio_effect_store/AudioReverbType.html">AudioReverbType</a></li>
+<li><a href="../api_device_audio_effect_store/AudioEffectState-class.html">AudioEffectState</a></li>
+</ul>
 </section>
 
 
@@ -187,7 +258,7 @@
 
 </dt>
 <dd>
-  Enable ear monitor
+  Enable/disable ear monitor
   
 
 </dd>
@@ -285,7 +356,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

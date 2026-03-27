@@ -65,6 +65,68 @@
 <section class="desc markdown">
   <p>Call end reason, used to identify how the audio/video call ended (normal hangup, rejection, timeout, etc.).</p>
 <p>This enum describes the various reasons why a call ended, helping developers understand how the call was terminated.</p>
+<h3 id="end-reason-description">End Reason Description</h3>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>Description</th>
+<th>Typical Scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unknown</code></td>
+<td>Unknown reason</td>
+<td>Unable to determine the end reason</td>
+</tr>
+<tr>
+<td><code>hangup</code></td>
+<td>Normal hangup</td>
+<td>User actively hangs up the call</td>
+</tr>
+<tr>
+<td><code>reject</code></td>
+<td>Rejected</td>
+<td>Callee rejects the incoming call</td>
+</tr>
+<tr>
+<td><code>noResponse</code></td>
+<td>No response</td>
+<td>Callee did not answer within timeout</td>
+</tr>
+<tr>
+<td><code>offline</code></td>
+<td>Offline</td>
+<td>Callee is offline</td>
+</tr>
+<tr>
+<td><code>lineBusy</code></td>
+<td>Line busy</td>
+<td>Callee is already in a call</td>
+</tr>
+<tr>
+<td><code>canceled</code></td>
+<td>Canceled</td>
+<td>Caller cancels before callee answers</td>
+</tr>
+<tr>
+<td><code>otherDeviceAccepted</code></td>
+<td>Accepted on another device</td>
+<td>The call was picked up on another device associated with the same account.</td>
+</tr>
+<tr>
+<td><code>otherDeviceReject</code></td>
+<td>Rejected on another device</td>
+<td>Call was rejected on another logged-in device</td>
+</tr>
+<tr>
+<td><code>endByServer</code></td>
+<td>Ended by server</td>
+<td>Call was terminated by the server</td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -379,7 +441,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

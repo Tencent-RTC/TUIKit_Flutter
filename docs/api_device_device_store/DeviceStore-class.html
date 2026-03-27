@@ -69,10 +69,51 @@
 <li><strong>Audio Route</strong>：Switch between speaker and earpiece</li>
 <li><strong>Screen Sharing</strong>：Start and stop screen sharing feature</li>
 <li><strong>Network Status</strong>：Real-time monitoring of network quality information</li>
+<li><strong>Smart Cellular Switch</strong>：Enable/disable smart cellular switch mode and receive recommendations</li>
 </ul>
+<blockquote>
+<p><strong>Important</strong>: Use <a href="../api_device_device_store/DeviceStore/shared.html">DeviceStore.shared</a> singleton to get the <code>DeviceStore</code> instance. Do not attempt to initialize directly.</p>
+</blockquote>
 <blockquote>
 <p><strong>Note</strong>: Device state updates are delivered through the <a href="../api_device_device_store/DeviceStore/state.html">state</a> publisher. Subscribe to it to receive real-time updates about microphone, camera, network and other states.</p>
 </blockquote>
+<h3 id="device-operations-overview">Device Operations Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microphone</td>
+<td><a href="../api_device_device_store/DeviceStore/openLocalMicrophone.html">openLocalMicrophone</a>/<a href="../api_device_device_store/DeviceStore/closeLocalMicrophone.html">closeLocalMicrophone</a></td>
+<td>Open/close local microphone</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td><a href="../api_device_device_store/DeviceStore/openLocalCamera.html">openLocalCamera</a>/<a href="../api_device_device_store/DeviceStore/closeLocalCamera.html">closeLocalCamera</a></td>
+<td>Open/close local camera</td>
+</tr>
+<tr>
+<td>Audio Route</td>
+<td><a href="../api_device_device_store/DeviceStore/setAudioRoute.html">setAudioRoute</a></td>
+<td>Switch speaker/earpiece</td>
+</tr>
+<tr>
+<td>Screen Sharing</td>
+<td><a href="../api_device_device_store/DeviceStore/startScreenShare.html">startScreenShare</a>/<a href="../api_device_device_store/DeviceStore/stopScreenShare.html">stopScreenShare</a></td>
+<td>Start/stop screen sharing</td>
+</tr>
+<tr>
+<td>Volume Control</td>
+<td><a href="../api_device_device_store/DeviceStore/setCaptureVolume.html">setCaptureVolume</a>/<a href="../api_device_device_store/DeviceStore/setOutputVolume.html">setOutputVolume</a></td>
+<td>Set capture/output volume</td>
+</tr>
+</tbody>
+</table>
 <h2 id="topics">Topics</h2>
 <h3 id="getting-instance">Getting Instance</h3>
 <ul>
@@ -82,6 +123,8 @@
 <ul>
 <li><a href="../api_device_device_store/DeviceStore/state.html">state</a> : Reactive state containing microphone, camera, network and other device states</li>
 </ul>
+<h3 id="event-listening">Event Listening</h3>
+<h3 id="smart-cellular-switch">Smart Cellular Switch</h3>
 <h3 id="microphone-operations">Microphone Operations</h3>
 <h3 id="audio-route">Audio Route</h3>
 <h3 id="camera-operations">Camera Operations</h3>
@@ -430,7 +473,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>

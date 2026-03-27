@@ -58,7 +58,7 @@
 
     
 <section class="desc markdown">
-  <p>Callback events related to PK.</p>
+  <p>PK-related callback events received</p>
 </section>
 
 
@@ -68,10 +68,11 @@
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="BattleListener" class="callable">
-          <span class="name"><a href="../api_live_battle_store/BattleListener/BattleListener.html">BattleListener</a></span><span class="signature">({<span class="parameter" id="-param-onBattleStarted"><span class="type-annotation">void</span> <span class="parameter-name">onBattleStarted</span>(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitees"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span> <span class="parameter-name">invitees</span></span>)?, </span><span class="parameter" id="-param-onBattleEnded"><span class="type-annotation">void</span> <span class="parameter-name">onBattleEnded</span>(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a>?</span> <span class="parameter-name">reason</span></span>)?, </span><span class="parameter" id="-param-onUserJoinBattle"><span class="type-annotation">void</span> <span class="parameter-name">onUserJoinBattle</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)?, </span><span class="parameter" id="-param-onUserExitBattle"><span class="type-annotation">void</span> <span class="parameter-name">onUserExitBattle</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestReceived"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestReceived</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestCancelled"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestCancelled</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestTimeout</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestAccept"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestAccept</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestReject"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestReject</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?</span>})</span>
+          <span class="name"><a href="../api_live_battle_store/BattleListener/BattleListener.html">BattleListener</a></span><span class="signature">({<span class="parameter" id="-param-onBattleStarted"><span class="type-annotation">void</span> <span class="parameter-name">onBattleStarted</span>(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitees"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span> <span class="parameter-name">invitees</span></span>)?, </span><span class="parameter" id="-param-onBattleEnded"><span class="type-annotation">void</span> <span class="parameter-name">onBattleEnded</span>(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a></span> <span class="parameter-name">reason</span></span>)?, </span><span class="parameter" id="-param-onUserJoinBattle"><span class="type-annotation">void</span> <span class="parameter-name">onUserJoinBattle</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)?, </span><span class="parameter" id="-param-onUserExitBattle"><span class="type-annotation">void</span> <span class="parameter-name">onUserExitBattle</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestReceived"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestReceived</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestCancelled"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestCancelled</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestTimeout</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestAccept"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestAccept</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?, </span><span class="parameter" id="-param-onBattleRequestReject"><span class="type-annotation">void</span> <span class="parameter-name">onBattleRequestReject</span>(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)?</span>})</span>
         </dt>
         <dd>
           
+            <div class="constructor-modifier features">const</div>
         </dd>
     </dl>
   </section>
@@ -95,109 +96,109 @@
 
         <dt id="onBattleEnded" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleEnded.html">onBattleEnded</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a>?</span> <span class="parameter-name">reason</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-reason"><span class="type-annotation"><a href="../api_live_battle_store/BattleEndedReason.html">BattleEndedReason</a></span> <span class="parameter-name">reason</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when PK ends.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when PK ends.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleRequestAccept" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleRequestAccept.html">onBattleRequestAccept</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a PK request is accepted.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a PK request is accepted.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleRequestCancelled" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleRequestCancelled.html">onBattleRequestCancelled</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a PK request is cancelled.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a PK request is cancelled.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleRequestReceived" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleRequestReceived.html">onBattleRequestReceived</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a PK request is received.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a PK request is received.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleRequestReject" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleRequestReject.html">onBattleRequestReject</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a PK request is rejected.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a PK request is rejected.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleRequestTimeout" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleRequestTimeout.html">onBattleRequestTimeout</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitee"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">invitee</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a PK request times out.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a PK request times out.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onBattleStarted" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onBattleStarted.html">onBattleStarted</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitees"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span> <span class="parameter-name">invitees</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleInfo"><span class="type-annotation"><a href="../api_live_battle_store/BattleInfo-class.html">BattleInfo</a></span> <span class="parameter-name">battleInfo</span>, </span><span class="parameter" id="param-inviter"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">inviter</span>, </span><span class="parameter" id="param-invitees"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span>&gt;</span></span> <span class="parameter-name">invitees</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when PK officially starts, notifying all participants that PK has started.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when PK officially starts, notifying all participants that PK has begun.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onUserExitBattle" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onUserExitBattle.html">onUserExitBattle</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a user exits PK.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a user exits PK.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="onUserJoinBattle" class="property">
   <span class="name"><a href="../api_live_battle_store/BattleListener/onUserJoinBattle.html">onUserJoinBattle</a></span>
-  <span class="signature">&#8596; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)</span>?</span>
+  <span class="signature">&#8594; void Function<span class="signature">(<span class="parameter" id="param-battleID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">battleID</span>, </span><span class="parameter" id="param-battleUser"><span class="type-annotation"><a href="../api_live_live_seat_store/SeatUserInfo-class.html">SeatUserInfo</a></span> <span class="parameter-name">battleUser</span></span>)</span>?</span>
   
 
 </dt>
 <dd>
-  Triggered when a user joins PK.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
+  This callback is triggered when a user joins PK.
+  <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
@@ -298,7 +299,7 @@
 <footer>
   <span class="no-break">
     atomic_x_core
-      3.6.2
+      4.0.1
   </span>
   
 </footer>
