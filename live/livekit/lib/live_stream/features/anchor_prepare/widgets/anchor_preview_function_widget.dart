@@ -7,6 +7,7 @@ import 'package:tencent_live_uikit/live_stream/features/anchor_prepare/widgets/s
 import '../../../../common/constants/constants.dart';
 import '../../../../common/language/index.dart';
 import '../../../../common/resources/index.dart';
+import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../common/widget/index.dart';
 import '../../../../component/audio_effect/index.dart';
 import '../../../../component/beauty/index.dart';
@@ -195,11 +196,17 @@ class _AnchorPreviewFunctionWidgetState extends State<AnchorPreviewFunctionWidge
 
 extension on _AnchorPreviewFunctionWidgetState {
   void _showBeautyPanel() async {
-    popupWidget(const BeautyPanelWidget(), context: context);
+    popupWidget(const BeautyPanelWidget(), context: context, barrierColor: LiveColors.designStandardTransparent);
   }
 
   void _showAudioEffectPanel() {
-    popupWidget(AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId), context: context);
+    late final BottomSheetHandler handler;
+    handler = popupWidget(
+        AudioEffectPanelWidget(
+          roomId: liveStreamManager.roomState.roomId,
+          onDone: () => handler.close(),
+        ),
+        context: context);
   }
 
   void _clickCameraFlip() {
@@ -207,8 +214,7 @@ extension on _AnchorPreviewFunctionWidgetState {
   }
 
   void _clickTemplate() {
-    popupWidget(SeatLayoutTemplateWidget(editInfo: widget.editInfo),
-        context: context, backgroundColor: Color(0xFF131417));
+    popupWidget(SeatLayoutTemplateWidget(editInfo: widget.editInfo), context: context);
   }
 
   void _clickVideoSettings() {

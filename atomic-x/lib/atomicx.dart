@@ -12,6 +12,7 @@ export 'emoji_picker/emoji_manager.dart';
 export 'emoji_picker/emoji_picker.dart';
 export 'file_picker/file_picker.dart';
 export 'image_picker/image_picker.dart';
+export 'image_uploader/image_uploader.dart';
 export 'image_viewer/image_element.dart';
 export 'image_viewer/image_viewer_widget.dart';
 export 'message_input/message_input.dart';

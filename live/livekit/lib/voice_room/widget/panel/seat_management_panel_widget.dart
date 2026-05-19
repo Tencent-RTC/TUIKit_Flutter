@@ -493,7 +493,8 @@ extension on _SeatManagementPanelWidgetState {
           seatList.where((seat) => seat.userInfo.userID.isNotEmpty && seat.userInfo.userID != selfUserId).toList();
       totalHeight = (filterSeatList.length) * 60.height;
     }
-    return totalHeight > 280.height ? 280.height : totalHeight;
+    final maxHeight = 5 * 60.height;
+    return totalHeight > maxHeight ? maxHeight : totalHeight;
   }
 
   double _calculateMicDownUserListHeight() {
@@ -502,6 +503,7 @@ extension on _SeatManagementPanelWidgetState {
     if (applicants.isNotEmpty) {
       totalHeight = applicants.length * 60.height;
     }
-    return totalHeight > 280.height ? 280.height : totalHeight;
+    final maxHeight = 5 * 60.height;
+    return totalHeight > maxHeight ? maxHeight : totalHeight;
   }
 }

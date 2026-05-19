@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:tencent_calls_uikit/src/common/metrics/key_metrics.dart';
 import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
-import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tencent_calls_uikit/src/common/widget/global.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 import 'package:tencent_calls_uikit/src/common/utils/foreground_service.dart';
 import 'package:tencent_calls_uikit/src/feature/calling_bell_feature.dart';
@@ -29,15 +29,19 @@ class TUICallKitImpl implements TUICallKit {
   final contactListStore = ContactListStore.create();
   bool isNotificationPreparing = false;
   late CallEventListener callEventListener = CallEventListener(
-    onCallStarted: (callId, mediaType) {
+    onCallStarted: (callId, mediaType) async {
+      await _prepareCallDevices(callId, mediaType, isCalled: false);
       if (GlobalState.instance.enableAITranscriber) {
         aiTranscriberConfigManager.start();
       }
     },
-    onCallReceived: (String callId, CallMediaType mediaType, String userData) {
+    onCallReceived: (String callId, CallMediaType mediaType, String userData) async {
       KeyMetrics.instance.countUV(EventId.received);
+      await _prepareCallDevices(callId, mediaType, isCalled: true);
     },
     onCallEnded: (callId, mediaType, reason, userId) {
+      DeviceStore.shared.closeLocalMicrophone();
+      aiTranscriberConfigManager.reset(preserveSettings: false);
       _closePage();
       _stopRing();
       ForegroundService.stop();
@@ -46,22 +50,23 @@ class TUICallKitImpl implements TUICallKit {
           || CallStore.shared.state.selfInfo.value.id == userId) {
         return;
       }
+      final l10n = AtomicLocalizations.of(Global.appContext());
       switch (reason) {
         case CallEndReason.hangup:
-          TUIToast.show(content: CallKit_t("otherPartyHungUp"));
+          TUIToast.show(content: l10n.callOtherPartyHungUp);
           break;
         case CallEndReason.unknown:
           break;
         case CallEndReason.reject:
-          TUIToast.show(content: CallKit_t("otherPartyDeclinedCallRequest"));
+          TUIToast.show(content: l10n.callOtherPartyDeclinedCallRequest);
           break;
         case CallEndReason.noResponse:
-          TUIToast.show(content: CallKit_t("otherPartyNoResponse"));
+          TUIToast.show(content: l10n.callOtherPartyNoResponse);
           break;
         case CallEndReason.offline:
           break;
         case CallEndReason.lineBusy:
-          TUIToast.show(content: CallKit_t("otherPartyBusy"));
+          TUIToast.show(content: l10n.callOtherPartyBusy);
           break;
         case CallEndReason.canceled:
           break;
@@ -235,6 +240,34 @@ class TUICallKitImpl implements TUICallKit {
     }
   }
 
+  Future<void> _prepareCallDevices(
+    String callId,
+    CallMediaType mediaType, {
+    required bool isCalled,
+  }) async {
+    final activeCall = CallStore.shared.state.activeCall.value;
+    final isGroupCall =
+        activeCall.inviteeIds.length > 1 || activeCall.chatGroupId.isNotEmpty;
+    final hasPermission =
+        await _getAndroidAudioAndVideoPermission(mediaType, isGroupCall);
+    if (CallStore.shared.state.activeCall.value.callId != callId) {
+      return;
+    }
+    if (!hasPermission) {
+      pageManager.handleNoPermissionAndEndCall(isCalled);
+      return;
+    }
+    DeviceStore.shared.openLocalMicrophone();
+    DeviceStore.shared.setAudioRoute(
+      mediaType == CallMediaType.audio
+          ? AudioRoute.earpiece
+          : AudioRoute.speakerphone,
+    );
+    if (mediaType == CallMediaType.video) {
+      DeviceStore.shared.openLocalCamera(true);
+    }
+  }
+
   void _subscribeState() {
     contactListStore.addListener(() async {
       final activeCall = CallStore.shared.state.activeCall.value;
@@ -251,17 +284,9 @@ class TUICallKitImpl implements TUICallKit {
       }
     });
 
-    CallStore.shared.state.selfInfo.addListener(() async {
+    CallStore.shared.state.selfInfo.addListener(() {
       final activeCall = CallStore.shared.state.activeCall.value;
-      final isCalled = CallStore.shared.state.selfInfo.value.id != activeCall.inviterId;
-      final isGroupCall = activeCall.inviteeIds.length > 1 || activeCall.chatGroupId.isNotEmpty;
-
       if (activeCall.mediaType == null) {
-        return;
-      }
-      final hasPermission = await _getAndroidAudioAndVideoPermission(activeCall.mediaType!, isGroupCall);
-      if (!hasPermission) { 
-        pageManager.handleNoPermissionAndEndCall(isCalled);
         return;
       }
 
@@ -351,7 +376,7 @@ class TUICallKitImpl implements TUICallKit {
   }
 
   void handleErrorCode(int errorCode) {
-    final errorMessage = ErrorParser.getErrorMessage(errorCode);
+    final errorMessage = ErrorParser.getErrorMessage(errorCode, AtomicLocalizations.of(Global.appContext()));
     if (errorMessage != null) {
       TUIToast.show(content: errorMessage);
     }

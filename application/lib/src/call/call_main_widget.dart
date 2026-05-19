@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import '../utils/index.dart';
+import 'call_settings_widget.dart';
 
 class CallMainWidget extends StatefulWidget {
   const CallMainWidget({Key? key}) : super(key: key);
@@ -16,289 +16,305 @@ class _CallMainWidgetState extends State<CallMainWidget> {
   String _groupId = '';
   String _userIDsStr = '';
   List<String> _userIDs = [];
-  bool _isAudioCall = true;
-  bool _enableFloatingWindow = true;
-  bool _enableIncomingBanner = false;
-  bool _enableMuteMode = false;
-  bool _enableAITranscriber = true;
-  SharedPreferences? _prefs;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _enableFloatingWindow = _prefs?.getBool('enable_floating_window') ?? true;
-      _enableIncomingBanner = _prefs?.getBool('enable_incoming_banner') ?? false;
-      _enableMuteMode = _prefs?.getBool('enable_mute_mode') ?? false;
-      _enableAITranscriber = _prefs?.getBool('enable_ai_transcriber') ?? true;
-    });
-    TUICallKit.instance.enableFloatWindow(_enableFloatingWindow);
-    TUICallKit.instance.enableAITranscriber(_enableAITranscriber);
-  }
-
-  Future<void> _saveSetting(String key, bool value) async {
-    await _prefs?.setBool(key, value);
-  }
+  bool _isAudioCall = false;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.app_call),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Text(l10n.app_call),
         leading: IconButton(
-            onPressed: () => _goBack(),
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            )),
+          onPressed: () => _goBack(),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Stack(
         children: [
           _getCallParamsWidget(),
-          _getBtnWidget()],
+          _getBtnWidget(),
+        ],
       ),
     );
   }
 
-  _getCallParamsWidget() {
+  Widget _getCallParamsWidget() {
+    final l10n = AppLocalizations.of(context)!;
     return Positioned(
-        top: 20,
-        left: 10,
-        width: MediaQuery.of(context).size.width - 20,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      top: 12,
+      left: 16,
+      right: 16,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
               children: [
-                Text(
-                  AppLocalizations.of(context)!.app_call_user_ids,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black),
-                ),
-                SizedBox(
-                    width: 200,
-                    child: TextField(
-                        autofocus: true,
-                        textAlign: TextAlign.right,
-                        decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.app_call_user_ids_separated,
-                          border: InputBorder.none,
-                        ),
-                        onChanged: ((value) => _userIDsStr = value)))
+                _buildUserIdRow(l10n),
+                _buildDivider(),
+                _buildMediaTypeRow(l10n),
+                _buildDivider(),
+                _buildOptionalParams(l10n),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.app_call_media_type,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black),
-                ),
-                Row(children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: !_isAudioCall,
-                        onChanged: (value) {
-                          setState(() {
-                            _isAudioCall = !value!;
-                          });
-                        },
-                        shape: const CircleBorder(),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.app_call_media_type_video,
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _isAudioCall,
-                        onChanged: (value) {
-                          setState(() {
-                            _isAudioCall = value!;
-                          });
-                        },
-                        shape: const CircleBorder(),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.app_call_media_type_audio,
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ])
-              ],
-            ),
-            ExpansionTile(
-              title: Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: Text(
-                  AppLocalizations.of(context)!.app_call_optional_params,
-                ),
-              ),
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.app_call_group_id,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
-                    ),
-                    SizedBox(
-                        width: 200,
-                        child: TextField(
-                            autofocus: true,
-                            textAlign: TextAlign.right,
-                            decoration: InputDecoration(
-                              hintText: _groupId.isNotEmpty
-                                  ? _groupId
-                                  : AppLocalizations.of(context)!.app_call_group_id,
-                              border: InputBorder.none,
-                            ),
-                            onChanged: ((value) => _groupId = value)))
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildSwitchItem(
-              AppLocalizations.of(context)!.app_call_enable_floating_window,
-              _enableFloatingWindow,
-              (value) {
-                setState(() {
-                  _enableFloatingWindow = value;
-                });
-                _saveSetting('enable_floating_window', value);
-                TUICallKit.instance.enableFloatWindow(value);
-              },
-            ),
-            _buildSwitchItem(
-              AppLocalizations.of(context)!.app_call_enable_incoming_banner,
-              _enableIncomingBanner,
-              (value) {
-                setState(() {
-                  _enableIncomingBanner = value;
-                });
-                _saveSetting('enable_incoming_banner', value);
-                TUICallKit.instance.enableIncomingBanner(value);
-              },
-            ),
-            _buildSwitchItem(
-              AppLocalizations.of(context)!.app_call_enable_ai_transcriber,
-              _enableAITranscriber,
-              (value) {
-                setState(() {
-                  _enableAITranscriber = value;
-                });
-                _saveSetting('enable_ai_transcriber', value);
-                TUICallKit.instance.enableAITranscriber(value);
-              },
-            ),
-            _buildSwitchItem(
-              AppLocalizations.of(context)!.app_call_enable_mute_mode,
-              _enableMuteMode,
-              (value) {
-                setState(() {
-                  _enableMuteMode = value;
-                });
-                _saveSetting('enable_mute_mode', value);
-                TUICallKit.instance.enableMuteMode(value);
-              },
-            ),
-            const SizedBox(height: 50),
-          ],
-        ));
+          ),
+          const SizedBox(height: 16),
+          _buildSettingsEntry(l10n),
+        ],
+      ),
+    );
   }
 
-  Widget _buildSwitchItem(String title, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildDivider() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(height: 1, color: Color(0xFFEEEEEE)),
+    );
+  }
+
+  Widget _buildUserIdRow(AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            title,
+            l10n.app_call_user_ids,
             style: const TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.normal,
-                color: Colors.black),
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: const Color(0xff056DF6),
+          SizedBox(
+            width: 200,
+            child: TextField(
+              autofocus: true,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                hintText: l10n.app_call_user_ids_separated,
+                border: InputBorder.none,
+              ),
+              onChanged: ((value) => _userIDsStr = value),
+            ),
           ),
         ],
       ),
     );
   }
 
-  _getBtnWidget() {
-    return Positioned(
-        left: 0,
-        bottom: 50,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 52,
-              width: MediaQuery.of(context).size.width * 5 / 6,
-              child: ElevatedButton(
-                  onPressed: () => _call(),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(const Color(0xff056DF6)),
-                    shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+  Widget _buildMediaTypeRow(AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            l10n.app_call_media_type,
+            style: const TextStyle(
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+          ),
+          Row(
+            children: [
+              _buildRadio(
+                label: l10n.app_call_media_type_video,
+                selected: !_isAudioCall,
+                onTap: () {
+                  setState(() {
+                    _isAudioCall = false;
+                  });
+                },
+              ),
+              const SizedBox(width: 16),
+              _buildRadio(
+                label: l10n.app_call_media_type_audio,
+                selected: _isAudioCall,
+                onTap: () {
+                  setState(() {
+                    _isAudioCall = true;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRadio({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(
+            selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+            color: selected ? const Color(0xff056DF6) : Colors.grey,
+            size: 20,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionalParams(AppLocalizations l10n) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        title: Text(
+          l10n.app_call_optional_params,
+          style: const TextStyle(
+            fontSize: 16,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.app_call_group_id,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.call),
-                      const SizedBox(width: 10),
-                      Text(
-                        AppLocalizations.of(context)!.app_call_initiate,
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
-                      ),
-                    ],
-                  )),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: TextField(
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      hintText: _groupId.isNotEmpty
+                          ? _groupId
+                          : l10n.app_call_group_id,
+                      border: InputBorder.none,
+                    ),
+                    onChanged: ((value) => _groupId = value),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsEntry(AppLocalizations l10n) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const CallSettingsWidget(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l10n.app_call_settings,
+              style: const TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.grey,
             ),
           ],
-        ));
+        ),
+      ),
+    );
+  }
+
+  Widget _getBtnWidget() {
+    final l10n = AppLocalizations.of(context)!;
+    return Positioned(
+      left: 0,
+      bottom: 50,
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 52,
+            width: MediaQuery.of(context).size.width * 5 / 6,
+            child: ElevatedButton(
+              onPressed: () => _call(),
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(const Color(0xff056DF6)),
+                shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.call),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.app_call_initiate,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   _goBack() {
@@ -310,14 +326,15 @@ class _CallMainWidgetState extends State<CallMainWidget> {
     if (_userIDs.isEmpty) {
       return;
     }
-    TUICallKit.instance.calls(_userIDs,
-        _isAudioCall ? CallMediaType.audio : CallMediaType.video).then((handler) {
-          if (!handler.isSuccess) {
-            final errorMessage = _getCallErrorMessage(handler.errorCode);
-            if (errorMessage != null) {
-              TUIToast.show(content: errorMessage);
-            }
-          }
+    TUICallKit.instance
+        .calls(_userIDs, _isAudioCall ? CallMediaType.audio : CallMediaType.video)
+        .then((handler) {
+      if (!handler.isSuccess) {
+        final errorMessage = _getCallErrorMessage(handler.errorCode);
+        if (errorMessage != null) {
+          TUIToast.show(content: errorMessage);
+        }
+      }
     });
   }
 
@@ -332,6 +349,4 @@ class _CallMainWidgetState extends State<CallMainWidget> {
         return null;
     }
   }
-
-
 }

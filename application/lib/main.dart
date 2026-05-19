@@ -5,6 +5,7 @@ import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
+// import 'package:te_beauty_kit/te_beauty_kit.dart';
 
 import 'src/login/index.dart';
 import 'src/utils/index.dart';
@@ -48,6 +49,7 @@ class _MyAppState extends State<MyApp> {
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             navigatorObservers: [
+              AppNavigatorObserver.instance,
               TUILiveKitNavigatorObserver.instance,
               RoomNavigatorObserver.instance,
               TUICallKit.navigatorObserver
@@ -58,6 +60,7 @@ class _MyAppState extends State<MyApp> {
               ...BarrageLocalizations.localizationsDelegates,
               ...GiftLocalizations.localizationsDelegates,
               ...RoomLocalizations.localizationsDelegates,
+              // ...TEBeautyKitLocalizations.localizationsDelegates,
               AtomicLocalizations.delegate,
             ],
             supportedLocales: const [

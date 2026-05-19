@@ -28,7 +28,6 @@ class _CoGuestManagePanelWidgetState extends State<CoGuestManagePanelWidget> {
     return Container(
       width: 1.screenWidth,
       height: 718.height,
-      padding: EdgeInsets.only(bottom: 20.height),
       decoration: BoxDecoration(
         color: LiveColors.designStandardG2,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
@@ -400,7 +399,8 @@ extension on _CoGuestManagePanelWidgetState {
           .where((seat) => seat.userInfo.userID.isNotEmpty && seat.userInfo.userID != _getSelfID());
       totalHeight = (filterCoGuestList.length) * 60.height;
     }
-    return totalHeight > 280.height ? 280.height : totalHeight;
+    final maxHeight = 5 * 60.height;
+    return totalHeight > maxHeight ? maxHeight : totalHeight;
   }
 
   double _calculateApplicantListHeight() {
@@ -409,6 +409,7 @@ extension on _CoGuestManagePanelWidgetState {
     if (applicants.isNotEmpty) {
       totalHeight = applicants.length * 60.height;
     }
-    return totalHeight > 280.height ? 280.height : totalHeight;
+    final maxHeight = 5 * 60.height;
+    return totalHeight > maxHeight ? maxHeight : totalHeight;
   }
 }

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 
 BottomSheetHandler popupWidget(Widget widget,
     {Color? barrierColor,
-    Color? backgroundColor = LiveColors.designStandardG2,
+    Color? backgroundColor,
     required BuildContext context,
     RouteSettings? routeSettings,
     bool isDismissible = true,
     VoidCallback? onDismiss}) {
+  final effectiveBackgroundColor = backgroundColor ?? BaseThemeProvider.of(context).colors.bgColorDialog;
   return BaseBottomSheet.showModalSheet(
     barrierColor: barrierColor,
-    backgroundColor: backgroundColor,
+    backgroundColor: effectiveBackgroundColor,
     isScrollControlled: true,
     isDismissible: isDismissible,
     onDismiss: onDismiss,
@@ -23,7 +25,7 @@ BottomSheetHandler popupWidget(Widget widget,
           topLeft: Radius.circular(20.radius),
           topRight: Radius.circular(20.radius),
         ),
-        color: backgroundColor,
+        color: effectiveBackgroundColor,
       ),
       child: widget,
     ),

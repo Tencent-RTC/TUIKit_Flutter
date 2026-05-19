@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../app_store/index.dart';
 import '../utils/language/index.dart';
@@ -155,10 +155,10 @@ extension _UpdateNicknameWidgetStateLogicExtension
 
   void _updateNickname() async {
     if (_inputNickname.isEmpty) {
-      makeToast(msg: AppLocalizations.of(context)!.app_enter_nickname);
+      Toast.show(context, AppLocalizations.of(context)!.app_enter_nickname);
       return;
     } else if (_inputNickname == AppStore.userName.value) {
-      makeToast(msg: AppLocalizations.of(context)!.app_enter_nickname);
+      Toast.show(context, AppLocalizations.of(context)!.app_enter_nickname);
       return;
     }
     final result =

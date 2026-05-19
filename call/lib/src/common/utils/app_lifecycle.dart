@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../tui_call_kit_impl.dart';
+import '../../view/call_page_manager.dart';
+
 class AppLifecycle with WidgetsBindingObserver {
   static final AppLifecycle _instance = AppLifecycle._internal();
   final ValueNotifier<AppLifecycleState?> _currentState = ValueNotifier(null);
@@ -25,6 +28,15 @@ class AppLifecycle with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     _currentState.value = state;
+  }
+
+  @override
+  Future<bool> didPopRoute() async {
+    CallPageType pageType = TUICallKitImpl.instance.pageManager.getCurrentPageRoute();
+    if (pageType == CallPageType.calling || pageType == CallPageType.invite) {
+      return true;
+    }
+    return false;
   }
 
   void dispose() {

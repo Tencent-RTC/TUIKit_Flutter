@@ -8,6 +8,7 @@ import '../../../../common/constants/constants.dart';
 import '../../../../common/language/index.dart';
 import '../../../../common/resources/index.dart';
 import '../../../../common/widget/index.dart';
+import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../live_define.dart';
 import '../../../manager/live_stream_manager.dart';
 import '../anchor_preview_widget_define.dart';
@@ -245,20 +246,20 @@ extension on _AnchorPreviewInfoEditWidgetState {
   }
 
   void _showLiveModeSelectPanel() {
-    List<ActionSheetModel> list = [
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default,
-          bingData: 1),
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_privacy,
-          bingData: 2),
-    ];
-    ActionSheet.show(list, (ActionSheetModel model) async {
-      final mode = model.bingData == 1 ? LiveStreamPrivacyStatus.public : LiveStreamPrivacyStatus.privacy;
-      widget.editInfo.privacyMode.value = mode;
-    }, parentContext: context);
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_stream_privacy_status_default,
+          onTap: () => widget.editInfo.privacyMode.value = LiveStreamPrivacyStatus.public,
+        ),
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_stream_privacy_status_privacy,
+          onTap: () => widget.editInfo.privacyMode.value = LiveStreamPrivacyStatus.privacy,
+        ),
+      ],
+      showCancel: false,
+    );
   }
 
   String _getPrivacyStatus(LiveStreamPrivacyStatus status) {

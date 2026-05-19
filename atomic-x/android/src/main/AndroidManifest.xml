@@ -43,6 +43,11 @@
             android:name="io.trtc.tuikit.atomicx.videoplayer.impl.VideoPlayerActivity"
             android:exported="true"
             android:theme="@style/BaseComponent.Theme.FullScreen" />
+            
+         <activity
+            android:name=".imageuploader.SystemImageSourceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ImageUploader.Transparent"/>
 
         <provider
             android:name=".basecomponent.utils.ContextProvider"
@@ -60,5 +65,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/base_component_file_paths" />
         </provider>
+        
+        <provider
+                android:name=".imageuploader.ImageUploaderFileProvider"
+                android:authorities="${applicationId}.imageuploader.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/imageuploader_file_paths" />
+        </provider>
+        
     </application>
 </manifest>

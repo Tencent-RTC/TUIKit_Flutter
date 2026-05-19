@@ -23,13 +23,9 @@ class _SettingsPanelWidgetState extends State<SettingsPanelWidget> {
   @override
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.sizeOf(context).width;
-    return Container(
+    return SizedBox(
       width: _screenWidth,
       height: 350.height,
-      decoration: BoxDecoration(
-        color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.width), topRight: Radius.circular(20.width)),
-      ),
       child: Column(children: [
         SizedBox(height: 20.height),
         _initTitleWidget(),

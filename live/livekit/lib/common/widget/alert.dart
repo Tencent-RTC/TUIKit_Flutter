@@ -1,147 +1,172 @@
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/alert_dialog.dart';
 
 class AlertInfo {
   final String description;
-  final String? imageUrl;
+  bool isDestructive;
 
-  final ({String title, Color titleColor})? cancelActionInfo;
-  final ({String title, Color titleColor}) defaultActionInfo;
+  final String? cancelText;
+  final String? defaultText;
   final VoidCallback? cancelCallback;
-  final VoidCallback defaultCallback;
+  final VoidCallback? defaultCallback;
+  final List<ButtonConfig> itemList;
 
   AlertInfo(
       {required this.description,
-      required this.defaultActionInfo,
-      required this.defaultCallback,
-      this.imageUrl,
-      this.cancelActionInfo,
-      this.cancelCallback});
+      this.defaultText,
+      this.defaultCallback,
+      this.isDestructive = false,
+      this.cancelText = '',
+      this.cancelCallback,
+      this.itemList = const []});
 }
 
 class AlertHandler {
-  BuildContext? _context;
+  NavigatorState? _navigatorState;
+  Route? _route;
+  final ValueNotifier<bool> _visible = ValueNotifier(true);
+  final String? handID;
 
-  AlertHandler();
-
-  void _setContext(BuildContext? context) {
-    _context = context;
-  }
+  AlertHandler({this.handID});
 
   bool isShowing() {
-    return _context != null && _context!.mounted;
+    if (handID != null) {
+      return AtomicAlertDialog.exists(handID!);
+    }
+    return _route?.isActive ?? false;
   }
 
   void close() {
-    if (isShowing() && Navigator.canPop(_context!)) {
-      Navigator.pop(_context!);
+    if (handID != null) {
+      AtomicAlertDialog.dismiss(handID!);
+      return;
     }
+    if (_navigatorState != null && _navigatorState!.mounted && _route != null && _route!.isActive) {
+      _navigatorState!.removeRoute(_route!);
+      _route = null;
+    }
+  }
+
+  void setContentVisible(bool show) {
+    if (handID != null) {
+      AtomicAlertDialog.setVisable(handID!, show);
+      return;
+    }
+    _visible.value = show;
   }
 }
 
 class Alert {
-  static AlertHandler showAlert(AlertInfo info, BuildContext context) {
+  static AlertHandler showAlert(
+    AlertInfo info,
+    BuildContext context, {
+    Color? barrierColor,
+    bool showContent = true,
+    bool useRootNavigator = false,
+  }) {
+    final id = AtomicAlertDialog.showWithConfig(
+      context,
+      enableHide: true,
+      rootOverlay: useRootNavigator,
+      config: AlertDialogConfig(
+        title: '',
+        content: info.description,
+        itemList: info.itemList,
+        cancelConfig: info.cancelText?.isNotEmpty == true
+            ? ButtonConfig(
+                text: info.cancelText!,
+                onClick: info.cancelCallback,
+              )
+            : null,
+        confirmConfig: info.defaultText?.isNotEmpty == true
+            ? ButtonConfig(
+                text: info.defaultText!,
+                type: info.isDestructive ? TextColorPreset.red : TextColorPreset.blue,
+                onClick: info.defaultCallback,
+              )
+            : null,
+      ),
+    );
+    AlertHandler alertHandler = AlertHandler(handID: id);
+    alertHandler.setContentVisible(showContent);
+    return alertHandler;
+  }
+
+  static AlertHandler showAlertWidget({
+    required WidgetBuilder builder,
+    required BuildContext context,
+    Color? barrierColor,
+    bool showContent = true,
+    bool useRootNavigator = false,
+  }) {
     final handler = AlertHandler();
-    showDialog(
+    handler._visible.value = showContent;
+    final barrierColor0 = barrierColor ?? Colors.black54;
+    final route = _showDialog(
       context: context,
-      useRootNavigator: false,
       barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      useRootNavigator: useRootNavigator,
       builder: (builderContext) {
-        handler._setContext(builderContext);
-        return Dialog(
-          backgroundColor: LiveColors.designStandardTransparent,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: 0.8.screenHeight,
-              minWidth: 323.width,
-            ),
-            child: SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: LiveColors.designStandardFlowkitWhite,
-                  borderRadius: BorderRadius.circular(10.height),
+        return ValueListenableBuilder<bool>(
+          valueListenable: handler._visible,
+          builder: (_, visible, __) {
+            return Offstage(
+              offstage: !visible,
+              child: Stack(children: [
+                ModalBarrier(
+                  color: barrierColor0,
+                  dismissible: false,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 45.width, top: 24.height, right: 45.width, bottom: 24.height),
-                      child: Row(
-                        children: [
-                          if (info.imageUrl != null)
-                            ClipOval(
-                              child: Image.network(
-                                info.imageUrl!,
-                                width: 24.radius,
-                                height: 24.radius,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, _) {
-                                  return Image.asset(
-                                    LiveImages.defaultAvatar,
-                                    package: Constants.pluginName,
-                                    width: 24.radius,
-                                    height: 24.radius,
-                                  );
-                                },
-                              ),
-                            ),
-                          SizedBox(width: 4.width),
-                          Expanded(
-                            child: Text(
-                              info.description,
-                              style: const TextStyle(color: LiveColors.designStandardG1, fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(height: 1.height, color: LiveColors.designStandardG7),
-                    IntrinsicHeight(
-                      child: Row(
-                        children: [
-                          if (info.cancelActionInfo != null)
-                            Expanded(
-                              child: TextButton(
-                                onPressed: info.cancelCallback,
-                                child: Text(
-                                  info.cancelActionInfo!.title,
-                                  style: TextStyle(
-                                    color: info.cancelActionInfo!.titleColor,
-                                    fontSize: 16,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ),
-                          if (info.cancelActionInfo != null)
-                            Container(
-                              width: 1.width,
-                              color: LiveColors.designStandardG7,
-                            ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: info.defaultCallback,
-                              child: Text(
-                                info.defaultActionInfo.title,
-                                style: TextStyle(
-                                  color: info.defaultActionInfo.titleColor,
-                                  fontSize: 16,
-                                ),
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                builder.call(builderContext),
+              ]),
+            );
+          },
         );
       },
-    ).whenComplete(() => handler._setContext(null));
+    );
+    final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+    handler._navigatorState = navigator;
+    handler._route = route;
     return handler;
+  }
+
+  // copy from system
+  static DialogRoute<T> _showDialog<T>({
+    required BuildContext context,
+    required WidgetBuilder builder,
+    bool barrierDismissible = true,
+    Color? barrierColor,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool useRootNavigator = true,
+    RouteSettings? routeSettings,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+  }) {
+    final CapturedThemes themes = InheritedTheme.capture(
+      from: context,
+      to: Navigator.of(
+        context,
+        rootNavigator: useRootNavigator,
+      ).context,
+    );
+    final dialogRoute = DialogRoute<T>(
+      context: context,
+      builder: builder,
+      barrierColor: barrierColor ??
+          DialogTheme.of(context).barrierColor ??
+          Theme.of(context).dialogTheme.barrierColor ??
+          Colors.black54,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      settings: routeSettings,
+      themes: themes,
+      anchorPoint: anchorPoint,
+      traversalEdgeBehavior: traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+    );
+    Navigator.of(context, rootNavigator: useRootNavigator).push<T>(dialogRoute);
+    return dialogRoute;
   }
 }

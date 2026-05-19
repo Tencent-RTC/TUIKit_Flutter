@@ -305,7 +305,7 @@ abstract class AppLocalizations {
   /// No description provided for @app_call_user_ids.
   ///
   /// In en, this message translates to:
-  /// **'Call User List'**
+  /// **'User ID'**
   String get app_call_user_ids;
 
   /// No description provided for @app_call_media_type.
@@ -329,19 +329,19 @@ abstract class AppLocalizations {
   /// No description provided for @app_call_initiate.
   ///
   /// In en, this message translates to:
-  /// **'Initiate Call'**
+  /// **'Call'**
   String get app_call_initiate;
 
   /// No description provided for @app_call_media_type_audio.
   ///
   /// In en, this message translates to:
-  /// **'Audio'**
+  /// **'Audio Call'**
   String get app_call_media_type_audio;
 
   /// No description provided for @app_call_media_type_video.
   ///
   /// In en, this message translates to:
-  /// **'Video'**
+  /// **'Video Call'**
   String get app_call_media_type_video;
 
   /// No description provided for @app_call_user_ids_separated.
@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Enable AI Transcriber'**
   String get app_call_enable_ai_transcriber;
 
+  /// No description provided for @app_call_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Settings'**
+  String get app_call_settings;
+
   /// No description provided for @app_call_error_call_self.
   ///
   /// In en, this message translates to:
@@ -397,6 +403,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Group chat/Contacts/Audio chat/Data sync'**
   String get app_chat_description;
+
+  /// No description provided for @app_can_not_start_room_during_call.
+  ///
+  /// In en, this message translates to:
+  /// **'You are in a call. Please try again after it ends.'**
+  String get app_can_not_start_room_during_call;
 }
 
 class _AppLocalizationsDelegate

@@ -2,6 +2,7 @@ import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_widget.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 
 import '../../component/float_window/index.dart';
 import '../../tencent_live_uikit.dart';
@@ -32,7 +33,8 @@ class TUILiveRoomAnchorOverlayState extends State<TUILiveRoomAnchorOverlay> {
       if (GlobalFloatWindowManager.instance.isFloating()) {
         GlobalFloatWindowState state = GlobalFloatWindowManager.instance.state;
         if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
-          makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip);
+          makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
+              type: ToastType.warning);
           if (mounted) Navigator.pop(context);
           return;
         } else {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/live_stream/live_define.dart';
 
@@ -14,16 +16,24 @@ class EditInfo {
   EditInfo({
     VideoStreamSource videoStreamSource = VideoStreamSource.camera,
     String roomName = '',
-    String coverUrl = Constants.defaultCoverUrl,
+    String? coverUrl,
     LiveStreamPrivacyStatus privacyMode = LiveStreamPrivacyStatus.public,
     LiveTemplateMode coGuestTemplateMode = LiveTemplateMode.verticalDynamicGrid,
     LiveTemplateMode coHostTemplateMode = LiveTemplateMode.verticalDynamicGrid,
   })  : videoStreamSource = ValueNotifier(videoStreamSource),
         roomName = ValueNotifier(roomName),
-        coverUrl = ValueNotifier(coverUrl),
+        coverUrl = ValueNotifier(coverUrl ?? _randomCoverUrl()),
         privacyMode = ValueNotifier(privacyMode),
         coGuestTemplateMode = ValueNotifier(coGuestTemplateMode),
         coHostTemplateMode = ValueNotifier(coHostTemplateMode);
+
+  static String _randomCoverUrl() {
+    final list = Constants.coverUrlList;
+    if (list.isEmpty) {
+      return Constants.defaultCoverUrl;
+    }
+    return list[Random().nextInt(list.length)];
+  }
 }
 
 enum Feature { beauty, audioEffect, flipCamera }

@@ -53,18 +53,19 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
   BarrageDisplayController? _barrageDisplayController;
   GiftPlayController? _giftPlayController;
   final VoiceRoomViewStore _viewStore = VoiceRoomViewStore();
-  bool _isShowingReceivedRequestAlert = false;
   AlertHandler? _receivedRequestAlertHandler;
   BottomSheetHandler? _takeSeatSheetHandler;
   BottomSheetHandler? _userManagementPanelSheetHandler;
   BottomSheetHandler? _seatInvitationPanelSheetHandler;
   BottomSheetHandler? _ownerEmptySeatOperationMenuSheetHandler;
   BottomSheetHandler? _normalUserLeaveHandler;
-  BottomSheetHandler? _exitConfirmPanelHandler;
+  AlertHandler? _exitConfirmPanelHandler;
   LiveUserInfo? inviterUserInfo;
   late Size _screenSize;
   LiveInfo? _currentLiveInfo;
   TUILiveStatisticsData _liveStatisticsData = TUILiveStatisticsData();
+  LiveEndedReason _liveEndedReason = LiveEndedReason.endedByHost;
+  late final LiveSummaryStore _liveSummaryStore;
   late final VoidCallback _seatListChangedListener = _onSeatListChange;
   late final VoidCallback _isLinkedListener = _onLinkStatusChanged;
   late final VoidCallback _selfAudioLockStatusListener = _onSelfAudioLockStatusChanged;
@@ -96,6 +97,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
   void initState() {
     super.initState();
     isOwner = widget.isCreate;
+    _liveSummaryStore = LiveSummaryStore.create(widget.liveID);
     _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
       _closeAllDialog();
     });
@@ -199,7 +201,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
         left: 16.width,
         bottom: 84.height,
         child: SizedBox(
-          width: 305.width,
+          width: 1.screenWidth - 146.width,
           height: 224.height,
           child: ValueListenableBuilder(
               valueListenable: enterRoomSuccess,
@@ -363,9 +365,10 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
                 liveDuration: _liveStatisticsData.liveDuration,
                 viewCount: _liveStatisticsData.totalViewers,
                 messageCount: _liveStatisticsData.totalMessageCount,
-                giftTotalCoins: _liveStatisticsData.totalGiftCoins,
-                giftTotalUniqueSender: _liveStatisticsData.totalUniqueGiftSenders,
-                likeTotalUniqueSender: _liveStatisticsData.totalLikesReceived);
+                giftIncome: _liveStatisticsData.totalGiftCoins,
+                giftSenderCount: _liveStatisticsData.totalUniqueGiftSenders,
+                likeCount: _liveStatisticsData.totalLikesReceived,
+                liveEndedReason: _liveEndedReason);
             return Visibility(visible: exitRoom, child: AnchorEndStatisticsWidget(endWidgetInfo: endInfo));
           } else {
             final roomId = widget.liveID;
@@ -381,8 +384,9 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
 
 extension _RoomOperation on _VoiceRoomRootWidgetState {
   void _start({required liveID}) async {
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final liveInfo = widget.prepareStore.state.liveInfo.value;
-    final result = await _liveListStore.createLive(liveInfo);
+    final result = await _liveListStore.startLive(liveInfo);
     if (result.isSuccess) {
       return _onStartSuccess(result.liveInfo);
     }
@@ -390,6 +394,7 @@ extension _RoomOperation on _VoiceRoomRootWidgetState {
   }
 
   void _join({required liveID}) async {
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final result = await _liveListStore.joinLive(liveID);
     if (result.isSuccess) {
       return _onJoinSuccess(result.liveInfo);
@@ -433,6 +438,18 @@ extension _RoomOperation on _VoiceRoomRootWidgetState {
         .showToast(LiveKitLocalizations.of(Global.appContext())!.common_server_error_room_does_not_exist);
     _closePage();
   }
+
+  TUILiveStatisticsData _buildStatisticsFromSummary() {
+    final summary = _liveSummaryStore.liveSummaryState.summaryData.value;
+    return TUILiveStatisticsData()
+      ..liveDuration = summary.totalDuration
+      ..totalViewers = summary.totalViewers
+      ..totalGiftsSent = summary.totalGiftsSent
+      ..totalUniqueGiftSenders = summary.totalGiftUniqueSenders
+      ..totalGiftCoins = summary.totalGiftCoins
+      ..totalLikesReceived = summary.totalLikesReceived
+      ..totalMessageCount = summary.totalMessageSent;
+  }
 }
 
 extension _MediaOperation on _VoiceRoomRootWidgetState {
@@ -446,6 +463,7 @@ extension _MediaOperation on _VoiceRoomRootWidgetState {
     }
 
     _deviceStore.openLocalMicrophone().then((result) {
+      TUIRoomEngine.sharedInstance().updateAudioQuality(TUIAudioQuality.audioProfileMusic);
       if (!result.isSuccess) {
         widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
@@ -488,35 +506,14 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   void _showExitConfirmPanel() {
-    const lineColor = LiveColors.designStandardWhite7;
-    const textStyle = TextStyle(
-      color: LiveColors.designStandardG2,
-      fontSize: 16,
+    final alertInfo = AlertInfo(
+      isDestructive: true,
+      description: LiveKitLocalizations.of(context)!.live_end_live_tips,
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
+      defaultText: LiveKitLocalizations.of(context)!.common_end_live,
+      defaultCallback: () => _roomOwnerLeave(),
     );
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-    final takeOrMoveSeat = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_end_live,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 1);
-    menuData.add(takeOrMoveSeat);
-
-    final cancel = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 2);
-    menuData.add(cancel);
-
-    _exitConfirmPanelHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        if (model.bingData != 1) return;
-        _roomOwnerLeave();
-      },
-      parentContext: context,
-      backgroundColor: LiveColors.designStandardFlowkitWhite,
-    );
+    _exitConfirmPanelHandler = Alert.showAlert(alertInfo, context);
   }
 
   void _roomOwnerLeave() async {
@@ -524,6 +521,7 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
     final future = _liveListStore.endLive();
     final result = await future;
     _liveStatisticsData = result.statisticsData;
+    _liveEndedReason = LiveEndedReason.endedByHost;
     if (!result.isSuccess) {
       widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
     }
@@ -537,57 +535,20 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
       return _leaveRoom();
     }
 
-    const lineColor = LiveColors.designStandardWhite7;
-    const textStyle = TextStyle(
-      color: LiveColors.designStandardG2,
-      fontSize: 16,
-    );
-
-    const endLinkNumber = 1;
-    const exitLiveNumber = 2;
-    const cancelNumber = 3;
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-    final endLink = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_end_link,
-        textStyle: const TextStyle(color: LiveColors.notStandardRed, fontSize: 16),
-        lineColor: lineColor,
-        bingData: endLinkNumber);
-    menuData.add(endLink);
-
-    final exitLive = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_exit_live,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: exitLiveNumber);
-    menuData.add(exitLive);
-
-    final cancel = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    _normalUserLeaveHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        switch (model.bingData) {
-          case endLinkNumber:
-            _leaveSeat();
-            break;
-          case exitLiveNumber:
-            _leaveRoom();
-            break;
-          default:
-            break;
-        }
-      },
-      parentContext: context,
-      title: LiveKitLocalizations.of(Global.appContext())!.common_audience_end_link_tips,
-      backgroundColor: LiveColors.designStandardFlowkitWhite,
+    _normalUserLeaveHandler = BaseBottomSheet.showWithHandler(
+      context,
+      title: LiveKitLocalizations.of(context)!.common_audience_end_link_tips,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_end_link,
+          onTap: () => _leaveSeat(),
+        ),
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_exit_live,
+          onTap: () => _leaveRoom(),
+        ),
+      ],
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
     );
   }
 
@@ -639,53 +600,27 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   void _showRoomOwnerEmptySeatOperationMenu(TUISeatInfo seatInfo) {
-    const lineColor = LiveColors.designStandardWhite7;
-    const textStyle = TextStyle(
-      color: LiveColors.designStandardG2,
-      fontSize: 16,
-    );
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
+    final isSeatLocked = seatInfo.isLocked ?? false;
+    final List<ActionSheetItem> actions = [];
+
     if (seatInfo.isLocked != null && !seatInfo.isLocked!) {
-      final inviteToTakeSeat = ActionSheetModel(
-          text: LiveKitLocalizations.of(Global.appContext())!.common_voiceroom_invite,
-          textStyle: textStyle,
-          lineColor: lineColor,
-          bingData: 1);
-      menuData.add(inviteToTakeSeat);
+      actions.add(ActionSheetItem(
+        title: LiveKitLocalizations.of(context)!.common_voiceroom_invite,
+        onTap: () => _showSeatInvitationPanel(seatInfo),
+      ));
     }
 
-    final isSeatLocked = seatInfo.isLocked ?? false;
-    final lockSeat = ActionSheetModel(
-        text: isSeatLocked
-            ? LiveKitLocalizations.of(Global.appContext())!.common_voiceroom_unlock
-            : LiveKitLocalizations.of(Global.appContext())!.common_voiceroom_lock,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 2);
-    menuData.add(lockSeat);
+    actions.add(ActionSheetItem(
+      title: isSeatLocked
+          ? LiveKitLocalizations.of(context)!.common_voiceroom_unlock
+          : LiveKitLocalizations.of(context)!.common_voiceroom_lock,
+      onTap: () => _lockSeat(seatInfo),
+    ));
 
-    final cancel = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 3);
-    menuData.add(cancel);
-
-    _ownerEmptySeatOperationMenuSheetHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        switch (model.bingData) {
-          case 1:
-            _showSeatInvitationPanel(seatInfo);
-            break;
-          case 2:
-            _lockSeat(seatInfo);
-          default:
-            break;
-        }
-      },
-      parentContext: context,
-      backgroundColor: LiveColors.designStandardFlowkitWhite,
+    _ownerEmptySeatOperationMenuSheetHandler = BaseBottomSheet.showWithHandler(
+      context,
+      actions: actions,
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
     );
   }
 
@@ -723,36 +658,19 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   void _showNormalUserEmptySeatOperationMenu(TUISeatInfo seatInfo) {
-    const lineColor = LiveColors.designStandardWhite7;
-    const textStyle = TextStyle(
-      color: LiveColors.designStandardG2,
-      fontSize: 16,
-    );
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-    final takeOrMoveSeat = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_voiceroom_take_seat,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 1);
-    menuData.add(takeOrMoveSeat);
-
-    final cancel = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: textStyle,
-        lineColor: lineColor,
-        bingData: 2);
-    menuData.add(cancel);
-
-    _takeSeatSheetHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        if (model.bingData != 1) return;
-        final isOnSeat = _liveSeatStore.liveSeatState.seatList.value
-            .any((seatInfo) => seatInfo.userInfo.userID == TUIRoomEngine.getSelfInfo().userId);
-        isOnSeat ? _moveToSeat(seatInfo) : _takeSeat(seatInfo);
-      },
-      parentContext: context,
-      backgroundColor: LiveColors.designStandardFlowkitWhite,
+    _takeSeatSheetHandler = BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_voiceroom_take_seat,
+          onTap: () {
+            final isOnSeat = _liveSeatStore.liveSeatState.seatList.value
+                .any((seat) => seat.userInfo.userID == TUIRoomEngine.getSelfInfo().userId);
+            isOnSeat ? _moveToSeat(seatInfo) : _takeSeat(seatInfo);
+          },
+        ),
+      ],
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
     );
   }
 
@@ -812,15 +730,14 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
     _liveListener = LiveListListener(onLiveEnded: (liveID, reason, message) {
       if (isOwner) {
         if (reason == LiveEndedReason.endedByHost) return;
-        widget.toastService.showToast(LiveKitLocalizations.of(Global.appContext())!.live_room_has_been_dismissed);
-        _closePage();
+        _liveStatisticsData = _buildStatisticsFromSummary();
+        _liveEndedReason = reason;
+        _exitedRoom.value = true;
       } else {
         _exitedRoom.value = true;
       }
     }, onKickedOutOfLive: (liveID, reason, message) {
-      if (reason == LiveKickedOutReason.byLoggedOnOtherDevice) {
-        return;
-      }
+      // TODO: LiveListStore not call onKickedOutOfLive
       _closePage();
     });
     _liveListStore.addLiveListListener(_liveListener);
@@ -843,31 +760,23 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
         : _liveListStore.liveState.currentLive.value.liveOwner.userID;
 
     final alertInfo = AlertInfo(
-        imageUrl: userInfo.avatarURL,
         description: LiveKitLocalizations.of(Global.appContext())!
             .common_voiceroom_receive_seat_invitation
             .replaceAll('xxx', invitorName),
-        cancelActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_reject,
-          titleColor: LiveColors.designStandardG3
-        ),
+        cancelText: LiveKitLocalizations.of(Global.appContext())!.common_reject,
         cancelCallback: () {
           _responseSeatInvitation(userInfo, false);
         },
-        defaultActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_accept,
-          titleColor: LiveColors.designStandardB1
-        ),
+        defaultText: LiveKitLocalizations.of(Global.appContext())!.common_accept,
         defaultCallback: () {
           _responseSeatInvitation(userInfo, true);
         });
 
     _receivedRequestAlertHandler = Alert.showAlert(alertInfo, context);
-    _isShowingReceivedRequestAlert = true;
   }
 
   void _responseSeatInvitation(LiveUserInfo userInfo, bool agree) async {
-    _closeReceivedRequestAlert();
+    _receivedRequestAlertHandler?.close();
 
     final result = agree
         ? await _coGuestStore.acceptInvitation(userInfo.userID)
@@ -881,14 +790,7 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
     if (requestType == RequestType.applyToTakeSeat) {
       return;
     }
-    _closeReceivedRequestAlert();
-  }
-
-  void _closeReceivedRequestAlert() {
-    if (_isShowingReceivedRequestAlert && Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-      _isShowingReceivedRequestAlert = false;
-    }
+    _receivedRequestAlertHandler?.close();
   }
 }
 
@@ -958,7 +860,7 @@ extension _SubscribeState on _VoiceRoomRootWidgetState {
     final toastMessage = isAudioLocked
         ? LiveKitLocalizations.of(context)!.common_mute_audio_by_master
         : LiveKitLocalizations.of(context)!.common_un_mute_audio_by_master;
-    makeToast(msg: toastMessage);
+    makeToast(context, toastMessage);
   }
 
   void _isFloatWindowModeChanged() {

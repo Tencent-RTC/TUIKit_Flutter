@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 
 import '../../../../../common/constants/constants.dart';
 import '../../../../../common/language/index.dart';
@@ -36,28 +37,26 @@ class _LiveInfoDetailWidgetState extends State<LiveInfoDetailWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
-      height: 241.height,
+      height: 210.height,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
           _initBackground(),
           _initAnchorAvatarWidget(),
-          _initAnchorNameWidget(),
-          _initLiveIDWidget(),
-          _initFansWidget(),
-          _initFollowWidget(),
+          _initInfoColumnWidget(),
         ],
       ),
     );
   }
 
   Widget _initBackground() {
+    final backgroundColor = BaseThemeProvider.of(context).colors.bgColorDialog;
     return Container(
         margin: EdgeInsets.only(top: 30.height),
         width: MediaQuery.sizeOf(context).width,
-        height: 211.height,
+        height: 180.height,
         decoration: BoxDecoration(
-          color: LiveColors.designStandardG2,
+          color: backgroundColor,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
         ));
   }
@@ -86,80 +85,72 @@ class _LiveInfoDetailWidgetState extends State<LiveInfoDetailWidget> {
         ));
   }
 
-  Widget _initAnchorNameWidget() {
+  Widget _initInfoColumnWidget() {
     return Positioned(
       top: 64.height,
-      child: ValueListenableBuilder(
-        valueListenable: manager.state.ownerName,
-        builder: (context, ownerName, child) {
-          return Text(
-            ownerName,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _initLiveIDWidget() {
-    return Positioned(
-      top: 94.height,
-      child: Text(
-        LiveKitLocalizations.of(Global.appContext())!.common_room_info_liveroom_id + manager.state.roomId,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
-      ),
-    );
-  }
-
-  Widget _initFansWidget() {
-    return Positioned(
-      top: 119.height,
-      child: ValueListenableBuilder(
-        valueListenable: manager.state.fansNumber,
-        builder: (context, fansNumber, child) {
-          return Text(
-            fansNumber.toString() + LiveKitLocalizations.of(Global.appContext())!.common_fan_count,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _initFollowWidget() {
-    return Positioned(
-      top: 144.height,
       width: 275.width,
-      height: 40.height,
-      child: Visibility(
-        visible: manager.state.ownerId.value != manager.state.selfUserId,
-        child: ValueListenableBuilder(
-          valueListenable: manager.state.followingList,
-          builder: (BuildContext context, value, Widget? child) {
-            return GestureDetector(
-              onTap: () {
-                _followAnchor();
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: 14.width, right: 4.width),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.radius),
-                  color: _isFollow() ? LiveColors.designStandardG3 : LiveColors.designStandardB1,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  _isFollow()
-                      ? LiveKitLocalizations.of(Global.appContext())!.common_unfollow_anchor
-                      : LiveKitLocalizations.of(Global.appContext())!.common_follow_anchor,
-                  style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ValueListenableBuilder(
+            valueListenable: manager.state.ownerName,
+            builder: (context, ownerName, child) {
+              return Text(
+                ownerName,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
+              );
+            },
+          ),
+          SizedBox(height: 14.height),
+          Text(
+            LiveKitLocalizations.of(Global.appContext())!.common_room_info_liveroom_id + manager.state.roomId,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.notStandardGrey),
+          ),
+          SizedBox(height: 11.height),
+          ValueListenableBuilder(
+            valueListenable: manager.state.fansNumber,
+            builder: (context, fansNumber, child) {
+              return Text(
+                fansNumber.toString() + LiveKitLocalizations.of(Global.appContext())!.common_fan_count,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.notStandardGrey),
+              );
+            },
+          ),
+          SizedBox(height: 14.height),
+          Visibility(
+            visible: manager.state.ownerId.value != manager.state.selfUserId,
+            child: SizedBox(
+              height: 40.height,
+              child: ValueListenableBuilder(
+                valueListenable: manager.state.followingList,
+                builder: (BuildContext context, value, Widget? child) {
+                  return GestureDetector(
+                    onTap: () {
+                      _followAnchor();
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 14.width, right: 4.width),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.radius),
+                        color: _isFollow() ? LiveColors.designStandardG3 : LiveColors.designStandardB1,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        _isFollow()
+                            ? LiveKitLocalizations.of(Global.appContext())!.common_unfollow_anchor
+                            : LiveKitLocalizations.of(Global.appContext())!.common_follow_anchor,
+                        style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -171,7 +162,7 @@ extension on _LiveInfoDetailWidgetState {
   }
 
   bool _isFollow() {
-    return manager.state.followingList.value.any((following) => following.userId == manager.state.ownerId.value);
+    return manager.isFollow();
   }
 
   void _followAnchor() {

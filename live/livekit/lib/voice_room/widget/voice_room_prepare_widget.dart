@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 
 import '../../common/index.dart';
+import '../../common/widget/base_bottom_sheet.dart';
 import '../../component/float_window/global_float_window_manager.dart';
 import '../index.dart';
 
@@ -127,6 +128,9 @@ class _VoiceRoomPrepareWidgetState extends State<VoiceRoomPrepareWidget> {
 
 extension on _VoiceRoomPrepareWidgetState {
   void _createRoom() {
+    if (BottomSheetGuard.instance.isCovered) {
+      return;
+    }
     widget.didClickStart?.call();
   }
 

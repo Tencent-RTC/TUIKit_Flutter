@@ -225,7 +225,12 @@ extension on _BottomMenuWidgetState {
             context: context);
         break;
       case SettingsItemType.audioEffect:
-        _audioEffectPanelHandler = popupWidget(AudioEffectPanelWidget(roomId: widget.liveID), context: context);
+        _audioEffectPanelHandler = popupWidget(
+            AudioEffectPanelWidget(
+              roomId: widget.liveID,
+              onDone: () => _audioEffectPanelHandler?.close(),
+            ),
+            context: context);
         break;
       default:
         break;

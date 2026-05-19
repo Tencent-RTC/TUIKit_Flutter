@@ -117,7 +117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_call_description => 'Ringtone/Floating Window/Less stutter';
 
   @override
-  String get app_call_user_ids => 'Call User List';
+  String get app_call_user_ids => 'User ID';
 
   @override
   String get app_call_media_type => 'Media Type';
@@ -129,13 +129,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_call_group_id => 'Group ID';
 
   @override
-  String get app_call_initiate => 'Initiate Call';
+  String get app_call_initiate => 'Call';
 
   @override
-  String get app_call_media_type_audio => 'Audio';
+  String get app_call_media_type_audio => 'Audio Call';
 
   @override
-  String get app_call_media_type_video => 'Video';
+  String get app_call_media_type_video => 'Video Call';
 
   @override
   String get app_call_user_ids_separated => 'IDs are separated by \',\'';
@@ -153,6 +153,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_call_enable_ai_transcriber => 'Enable AI Transcriber';
 
   @override
+  String get app_call_settings => 'Call Settings';
+
+  @override
   String get app_call_error_call_self =>
       'You cannot call yourself, please use a different user ID';
 
@@ -165,4 +168,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get app_chat_description => 'Group chat/Contacts/Audio chat/Data sync';
+
+  @override
+  String get app_can_not_start_room_during_call =>
+      'You are in a call. Please try again after it ends.';
 }

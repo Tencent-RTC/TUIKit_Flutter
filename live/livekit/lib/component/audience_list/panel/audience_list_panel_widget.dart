@@ -97,6 +97,7 @@ extension on _AudienceListPanelWidgetState {
                           children: [
                             Positioned(
                               left: 0,
+                              right: 0,
                               top: 10.height,
                               child: Row(
                                 children: [
@@ -121,9 +122,17 @@ extension on _AudienceListPanelWidgetState {
                                     width: 12.width,
                                     height: 44.height,
                                   ),
-                                  Text(
-                                    user.userName.isNotEmpty ? user.userName : user.userID,
-                                    style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 16),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        right: (isSelfRoomOwner() && widget.onClickUserItem != null) ? (24.radius + 24.width) : 0,
+                                      ),
+                                      child: Text(
+                                        user.userName.isNotEmpty ? user.userName : user.userID,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 16),
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),

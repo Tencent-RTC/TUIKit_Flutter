@@ -13,8 +13,9 @@ import 'widget/reverb_widget.dart';
 
 class AudioEffectPanelWidget extends StatefulWidget {
   final String roomId;
+  final VoidCallback? onDone;
 
-  const AudioEffectPanelWidget({super.key, required this.roomId});
+  const AudioEffectPanelWidget({super.key, required this.roomId, this.onDone});
 
   @override
   State<AudioEffectPanelWidget> createState() => _AudioEffectPanelWidgetState();
@@ -40,50 +41,47 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
   @override
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.sizeOf(context).width;
-    return Container(
-      width: _screenWidth,
-      height: 663.height,
-      decoration: BoxDecoration(
-        color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.width), topRight: Radius.circular(20.width)),
-      ),
-      child: Column(children: [
+    return SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
         _initTitleWidget(),
         _initEarMonitorWidget(),
         _initAudioSettingWidget(),
         _initChangeVoiceWidget(),
         _initReverbWidget(),
+        SizedBox(height: 20.height),
       ]),
     );
   }
 
   Widget _initTitleWidget() {
     return SizedBox(
-      height: 44.height,
+      height: 56.height,
       width: _screenWidth,
       child: Stack(
         children: [
-          Positioned(
-            left: 14.width,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                width: 44.radius,
-                height: 44.radius,
-                padding: EdgeInsets.all(10.radius),
-                child: Image.asset(
-                  LiveImages.returnArrow,
-                  package: Constants.pluginName,
-                ),
-              ),
-            ),
-          ),
           Center(
             child: Text(
-              LiveKitLocalizations.of(Global.appContext())!.common_audio_effect,
+              LiveKitLocalizations.of(Global.appContext())!.common_audio_effect_settings,
               style: const TextStyle(color: LiveColors.designStandardG7, fontSize: 16),
+            ),
+          ),
+          Positioned(
+            right: 20.width,
+            top: 0,
+            bottom: 0,
+            child: GestureDetector(
+              onTap: () {
+                widget.onDone?.call();
+              },
+              child: Center(
+                child: Text(
+                  LiveKitLocalizations.of(Global.appContext())!.common_setting_done,
+                  style: const TextStyle(color: LiveColors.designStandardB1, fontSize: 16),
+                ),
+              ),
             ),
           ),
         ],
@@ -190,7 +188,7 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
         children: [
           Text(
             LiveKitLocalizations.of(Global.appContext())!.common_audio_settings,
-            style: const TextStyle(color: LiveColors.designStandardG7, fontSize: 14),
+            style: const TextStyle(color: LiveColors.whiteAlpha8C, fontSize: 14),
           ),
           Container(
             height: 57.height,
@@ -205,7 +203,7 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 55,
+                  height: 55.height,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -261,7 +259,7 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
         children: [
           Text(
             LiveKitLocalizations.of(Global.appContext())!.common_change_voice,
-            style: const TextStyle(color: LiveColors.designStandardG7, fontSize: 14),
+            style: const TextStyle(color: LiveColors.whiteAlpha8C, fontSize: 14),
           ),
           Container(
             width: _screenWidth,
@@ -283,7 +281,7 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
         children: [
           Text(
             LiveKitLocalizations.of(Global.appContext())!.common_reverb,
-            style: const TextStyle(color: LiveColors.designStandardG7, fontSize: 14),
+            style: const TextStyle(color: LiveColors.whiteAlpha8C, fontSize: 14),
           ),
           Container(
             width: _screenWidth,

@@ -32,21 +32,7 @@ class SampleHandler: RPBroadcastSampleHandler, TXReplayKitExtDelegate {
     }
     
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
-        switch sampleBufferType {
-        case RPSampleBufferType.video:
-            // Handle video sample buffer
-            TXReplayKitExt.sharedInstance().send(sampleBuffer, with: sampleBufferType)
-            break
-        case RPSampleBufferType.audioApp:
-            // Handle audio sample buffer for app audio
-            break
-        case RPSampleBufferType.audioMic:
-            // Handle audio sample buffer for mic audio
-            break
-        @unknown default:
-            // Handle other sample buffer types
-            fatalError("Unknown type of sample buffer")
-        }
+        TXReplayKitExt.sharedInstance().send(sampleBuffer, with: sampleBufferType)
     }
     
     // MARK: - TXReplayKitExtDelegate

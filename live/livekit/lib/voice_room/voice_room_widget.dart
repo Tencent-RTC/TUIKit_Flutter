@@ -12,6 +12,7 @@ import 'package:tencent_live_uikit/seat_grid_widget/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 import 'package:tencent_live_uikit/voice_room/widget/index.dart';
 
+import '../common/resources/live_theme_manager.dart';
 import '../common/widget/float_window/float_window_controller.dart';
 
 const maxConnectedViewersCount = 10;
@@ -54,11 +55,13 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
   final ToastService _toastService = ToastServiceImpl();
   late final VoidCallback _onFullScreenChangedListener = _onFullScreenChanged;
 
+  bool _hasEnteredThemeScene = false;
+
   @override
   void initState() {
     super.initState();
     LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
-    LiveDataReporter.reportComponent(LiveComponentType.voiceRoom);
+    KeyMetrics.reportComponent(LiveComponentType.voiceRoom);
     _startForegroundService();
     liveID = widget.roomId;
     behavior = widget.behavior;
@@ -72,7 +75,19 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only switch theme on first entry
+    if (!_hasEnteredThemeScene) {
+      _hasEnteredThemeScene = true;
+      LiveThemeManager.instance.enterLiveKitScene(context);
+    }
+  }
+
+  @override
   void dispose() {
+    // Exit LiveKit scene and restore theme
+    LiveThemeManager.instance.exitLiveKitScene();
     widget.floatWindowController?.isFullScreen.removeListener(_onFullScreenChangedListener);
     _unsubscribeToast();
     seatGridController.dispose();
@@ -97,6 +112,11 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
   void _onFullScreenChanged() {
     if (widget.floatWindowController == null) return;
     bool isFullScreen = widget.floatWindowController!.isFullScreen.value;
+    if (isFullScreen) {
+      LiveThemeManager.instance.resumeTheme();
+    } else {
+      LiveThemeManager.instance.pauseTheme();
+    }
     GlobalFloatWindowManager.instance.setFloatWindowMode(isFullScreen ? FloatWindowMode.none : FloatWindowMode.inApp);
   }
 
@@ -135,7 +155,7 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
 
 extension on _TUIVoiceRoomWidgetState {
   void _subscribeToast() {
-    _toastService.subscribeToast((toast) => makeToast(msg: toast));
+    _toastService.subscribeToast((toast) => makeToast(context, toast, useRootOverlay: true));
   }
 
   void _unsubscribeToast() {

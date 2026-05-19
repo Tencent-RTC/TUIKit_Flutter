@@ -1,15 +1,16 @@
-import 'package:tuikit_atomic_x/call/call_view.dart';
 import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
 import '../../common/call_colors.dart';
 
 typedef _ViewBuilder = Widget Function();
 
+// ignore: must_be_immutable
 class SingleCallControlsWidget extends StatelessWidget {
   late final Map<String, _ViewBuilder> _viewStrategies;
+  late AtomicLocalizations _l10n;
 
   SingleCallControlsWidget({
     super.key,
@@ -19,6 +20,7 @@ class SingleCallControlsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _l10n = AtomicLocalizations.of(context);
     return ValueListenableBuilder(
       valueListenable: CallStore.shared.state.activeCall,
       builder: (context, activeCall, child) {
@@ -87,7 +89,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           _getSwitchCameraButton(),
-          _getHangupButton(),
+          _getHangupButton(tips: _l10n.callCancel),
           _getCameraControlButton(),
         ]),
       ],
@@ -111,7 +113,7 @@ class SingleCallControlsWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _getMicControlButton(),
-        _getHangupButton(),
+        _getHangupButton(tips: _l10n.callCancel),
         _getSpeakerphoneButton(),
       ],
     );
@@ -165,7 +167,7 @@ class SingleCallControlsWidget extends StatelessWidget {
   Widget _getSwitchCameraButton() {
     return ControlsButton(
       imgUrl: "call_assets/switch_camera_group.png",
-      tips: CallKit_t("switchCamera"),
+      tips: _l10n.callSwitchCamera,
       textColor: _getTextColor(),
       imgHeight: 60,
       onTap: () {
@@ -177,7 +179,7 @@ class SingleCallControlsWidget extends StatelessWidget {
   Widget _getAcceptButton() {
     return ControlsButton(
       imgUrl: "call_assets/dialing.png",
-      tips: CallKit_t("accept"),
+      tips: _l10n.callAcceptAction,
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
@@ -186,10 +188,10 @@ class SingleCallControlsWidget extends StatelessWidget {
     );
   }
 
-  Widget _getHangupButton() {
+  Widget _getHangupButton({String? tips}) {
     return ControlsButton(
       imgUrl: "call_assets/hangup.png",
-      tips: CallKit_t("hangUp"),
+      tips: tips ?? _l10n.callHangUp,
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
@@ -201,7 +203,7 @@ class SingleCallControlsWidget extends StatelessWidget {
   Widget _getRejectButton() {
     return ControlsButton(
       imgUrl: "call_assets/hangup.png",
-      tips: CallKit_t("hangUp"),
+      tips: _l10n.callHangUp,
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
@@ -216,7 +218,7 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             imgUrl: value == DeviceStatus.on ? "call_assets/mute.png" : "call_assets/mute_on.png",
-            tips: value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"),
+            tips: value == DeviceStatus.on ? _l10n.callMicrophoneIsOn : _l10n.callMicrophoneIsOff,
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {
@@ -236,7 +238,7 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             imgUrl: value == AudioRoute.speakerphone ? "call_assets/handsfree_on.png" : "call_assets/handsfree.png",
-            tips: value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"),
+            tips: value == AudioRoute.speakerphone ? _l10n.callSpeakerIsOn : _l10n.callSpeakerIsOff,
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {
@@ -256,7 +258,7 @@ class SingleCallControlsWidget extends StatelessWidget {
         builder: (context, value, child) {
           return ControlsButton(
             imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
-            tips: value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff"),
+            tips: value == DeviceStatus.on ? _l10n.callCameraIsOn : _l10n.callCameraIsOff,
             textColor: _getTextColor(),
             imgHeight: 60,
             onTap: () {

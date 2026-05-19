@@ -41,6 +41,7 @@ class LiveStreamManager {
   void setLiveID(String liveID) {
     if (liveID.isEmpty) return;
     _roomManager.setLiveID(liveID);
+    _userManager.setLiveID(liveID);
     _coGuestManager.setLiveID(liveID);
     _coHostManager.setLiveID(liveID);
     _battleManager.setLiveID(liveID);
@@ -63,6 +64,10 @@ extension LiveStreamManagerWithCommon on LiveStreamManager {
 
   Future<void> fetchRecommendedList({String cursor = ''}) {
     return _coHostManager.fetchRecommendedList(cursor: cursor);
+  }
+
+  void setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy strategy, {int? intervalSecondOnMerge}) {
+    _userManager.setUserEnterRoomNotifyStrategy(strategy, intervalSecondOnMerge: intervalSecondOnMerge);
   }
 }
 
@@ -141,18 +146,6 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
   // Other
   Future<TUIValueCallBack<TUILiveInfo>> fetchLiveInfo(String roomId) {
     return _roomManager.fetchLiveInfo(roomId);
-  }
-
-  Future<TUIValueCallBack<TUIUserInfo>> getUserInfo(String userId) {
-    return _userManager.getUserInfo(userId);
-  }
-
-  Future<TUIActionCallback> onDisableSendingMessageBtnClicked(String userId, bool isDisable) {
-    return _userManager.onDisableSendingMessageBtnClicked(userId, isDisable);
-  }
-
-  Future<TUIActionCallback> onKickedOutBtnClicked(String userId) {
-    return _userManager.onKickedOutBtnClicked(userId);
   }
 
   Future<TUIActionCallback> onLockMediaStatusBtnClicked(String userId, TUISeatLockParams params) {

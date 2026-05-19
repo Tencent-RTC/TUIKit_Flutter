@@ -9,7 +9,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   LiveKitLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get common_disconnect_guest_tips => 'XXXの接続を切断したいですか？';
+  String get common_disconnect_guest_tips => 'xxxの接続を切断したいですか？';
 
   @override
   String get common_anchor_battle => 'アンカーPK';
@@ -123,6 +123,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_more_features => 'その他の機能';
 
   @override
+  String get common_mute_audio => 'ミュート';
+
+  @override
   String get common_mute_audio_by_master => 'あなたはアンカーによってミュートされました';
 
   @override
@@ -144,6 +147,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_send_message_enable => '現在の部屋で、あなたは禁止から持ち上げられました';
 
   @override
+  String get common_setting_done => '仕上げる';
+
+  @override
   String get common_start_live => 'ライブブロードキャストを開始します';
 
   @override
@@ -160,6 +166,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
 
   @override
   String get common_un_mute_video_by_master => 'アンカーはカメラのロックを解除しました';
+
+  @override
+  String get common_unmute_audio => 'ミュート';
 
   @override
   String get common_link_guest => '聴衆でさえ';
@@ -198,6 +207,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
 
   @override
   String get livelist_exit_float_window_tip => '現在放送されています。後でもう一度やり直してください。';
+
+  @override
+  String get livelist_click_enter_room => 'クリックしてライブブロードキャストルームに入ります';
 
   @override
   String get livestreamcore_battle_error_conflict => 'アンカーはPKにあり、PKを開始できません';
@@ -262,7 +274,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
       '住宅所有者はチェックアウト操作をサポートしていません、住宅所有者は部屋を解散することしかできません';
 
   @override
-  String get common_client_error_failed => 'まだ分​​類されていない一般的なエラー';
+  String get common_client_error_failed => 'サーバーが一時的に不調です。しばらくしてから再試行してください';
 
   @override
   String get common_client_error_freq_limit => 'リクエストは制限されています。後でもう一度やり直してください';
@@ -947,6 +959,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get live_choose_music => '音楽を選択します';
 
   @override
+  String get live_cohost_application_expired => 'この申請は無効です';
+
+  @override
   String get live_failed_to_enter_room => '部屋に入ることができませんでした';
 
   @override
@@ -1167,6 +1182,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
 
   @override
   String get common_live_game => 'ゲームライブ配信中';
+
+  @override
+  String get common_end_live_by_server => '規則違反のため、ライブ配信は停止されました。';
 
   @override
   String get common_go_to_enable => '有効にする';

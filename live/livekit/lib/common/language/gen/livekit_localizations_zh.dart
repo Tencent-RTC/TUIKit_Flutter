@@ -120,6 +120,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_more_features => '更多功能';
 
   @override
+  String get common_mute_audio => '静音';
+
+  @override
   String get common_mute_audio_by_master => '您已被主播静音';
 
   @override
@@ -141,6 +144,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_send_message_enable => '当前房间内，您已被解除禁言';
 
   @override
+  String get common_setting_done => '完成';
+
+  @override
   String get common_start_live => '开始直播';
 
   @override
@@ -157,6 +163,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get common_un_mute_video_by_master => '主播解禁了你的摄像头';
+
+  @override
+  String get common_unmute_audio => '解除静音';
 
   @override
   String get common_link_guest => '连观众';
@@ -193,6 +202,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get livelist_exit_float_window_tip => '正在直播中，请稍后再试。';
+
+  @override
+  String get livelist_click_enter_room => '点击进入直播间';
 
   @override
   String get livestreamcore_battle_error_conflict => '主播正在PK中，无法发起PK';
@@ -254,7 +266,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
       '房主不支持退房操作，房主只能解散房间';
 
   @override
-  String get common_client_error_failed => '暂未归类的通用错误';
+  String get common_client_error_failed => '服务器开小差啦，请稍后重试';
 
   @override
   String get common_client_error_freq_limit => '请求被限频，请稍后重试';
@@ -920,6 +932,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get live_choose_music => '选择音乐';
 
   @override
+  String get live_cohost_application_expired => '该申请已失效';
+
+  @override
   String get live_failed_to_enter_room => '进房失败';
 
   @override
@@ -1142,6 +1157,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_live_game => '正在游戏直播中';
 
   @override
+  String get common_end_live_by_server => '直播内容违规已被强制关播';
+
+  @override
   String get common_go_to_enable => '去开启';
 
   @override
@@ -1267,6 +1285,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_more_features => '更多功能';
 
   @override
+  String get common_mute_audio => '靜音';
+
+  @override
   String get common_mute_audio_by_master => '您已被主播靜音';
 
   @override
@@ -1288,6 +1309,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_send_message_enable => '當前房間內，您已被解除禁言';
 
   @override
+  String get common_setting_done => '完成';
+
+  @override
   String get common_start_live => '開始直播';
 
   @override
@@ -1304,6 +1328,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_un_mute_video_by_master => '主播解禁了你的攝像頭';
+
+  @override
+  String get common_unmute_audio => '解除靜音';
 
   @override
   String get common_link_guest => '連觀眾';
@@ -1340,6 +1367,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get livelist_exit_float_window_tip => '正在直播中，請稍後再試。';
+
+  @override
+  String get livelist_click_enter_room => '點擊進入直播間';
 
   @override
   String get livestreamcore_battle_error_conflict => '主播正在PK中，無法發起PK';
@@ -1401,7 +1431,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
       '房主不支持退房操作，房主只能解散房間';
 
   @override
-  String get common_client_error_failed => '暫未歸類的通用錯誤';
+  String get common_client_error_failed => '伺服器開小差啦，請稍後重試';
 
   @override
   String get common_client_error_freq_limit => '請求被限頻，請稍後重試';
@@ -2067,6 +2097,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get live_choose_music => '選擇音樂';
 
   @override
+  String get live_cohost_application_expired => '該申請已失效';
+
+  @override
   String get live_failed_to_enter_room => '進房失敗';
 
   @override
@@ -2287,6 +2320,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_live_game => '遊戲直播中';
+
+  @override
+  String get common_end_live_by_server => '直播內容違規已強制關播';
 
   @override
   String get common_go_to_enable => '去開啟';

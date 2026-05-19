@@ -9,6 +9,7 @@ import 'package:replay_kit_launcher/replay_kit_launcher.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
+import '../../../component/beauty/live_beauty_store.dart';
 import '../../api/live_stream_service.dart';
 import '../../state/co_guest_state.dart';
 import '../../state/media_state.dart';
@@ -49,6 +50,7 @@ class MediaManager {
   }
 
   Future<TUIActionCallback> openLocalCamera(bool useFrontCamera) async {
+    LiveBeautyStore.shared.enableBeauty(true);
     var cameraPermission = await Permission.camera.request();
     if (!cameraPermission.isGranted) {
       return TUIActionCallback(code: TUIError.errPermissionDenied, message: 'camera permission denied');
@@ -61,7 +63,8 @@ class MediaManager {
     return TUIActionCallback(code: TUIError.errPermissionDenied, message: 'camera permission denied');
   }
 
-  void closeLocalCamera() {
+  void closeLocalCamera() async {
+    LiveBeautyStore.shared.enableBeauty(false);
     DeviceStore.shared.closeLocalCamera();
   }
 
@@ -91,10 +94,16 @@ class MediaManager {
   }
 
   void startScreenShare() {
+    if (Platform.isAndroid) {
+      TUIRoomEngine.sharedInstance().enableSystemAudioSharing(true);
+    }
     DeviceStore.shared.startScreenShare();
   }
 
   void stopScreenShare() {
+    if (Platform.isAndroid) {
+      TUIRoomEngine.sharedInstance().enableSystemAudioSharing(false);
+    }
     DeviceStore.shared.stopScreenShare();
   }
 
@@ -148,6 +157,7 @@ class MediaManager {
   }
 
   void resumeByAudience() {
+    service.setAudioPlayoutVolume(mediaState.currentPlayoutVolume.value);
     service.resumeByAudience();
     mediaState.isRemoteVideoStreamPaused.value = false;
   }
@@ -160,6 +170,7 @@ class MediaManager {
   void onSelfLeaveSeat() {
     mediaState.isAudioLocked.value = false;
     mediaState.isVideoLocked.value = false;
+    LiveBeautyStore.shared.enableBeauty(false);
   }
 
   void onUserVideoSizeChanged(String roomId, String userId, TUIVideoStreamType streamType, int width, int height) {

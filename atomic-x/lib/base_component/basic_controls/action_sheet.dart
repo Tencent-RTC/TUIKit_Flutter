@@ -3,6 +3,8 @@ import '../localizations/atomic_localizations.dart';
 import '../theme/color_scheme.dart';
 import '../theme/theme_state.dart';
 
+const double _defaultScrollControlDisabledMaxHeightRatio = 9.0 / 16.0;
+
 class ActionSheetItem {
   final String title;
   final VoidCallback onTap;
@@ -26,115 +28,154 @@ class ActionSheet {
     String? cancelText,
     bool showCancel = true,
   }) {
-    final colors = BaseThemeProvider.colorsOf(context);
-    final appLocale = AtomicLocalizations.of(context);
-
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (BuildContext context) {
-        // Calculate max height: 60% of screen height
-        final maxHeight = MediaQuery.of(context).size.height * 0.6;
-        
-        return Container(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                constraints: BoxConstraints(maxHeight: maxHeight),
-                decoration: BoxDecoration(
-                  color: colors.bgColorDialog,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (title != null || message != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                        child: Column(
-                          children: [
-                            if (title != null)
-                              Text(
-                                title,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: colors.textColorSecondary,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            if (title != null && message != null)
-                              const SizedBox(height: 4),
-                            if (message != null)
-                              Text(
-                                message,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: colors.textColorSecondary,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                          ],
-                        ),
-                      ),
-                    
-                    if (title != null || message != null)
-                      _buildDivider(colors),
+      builder: (BuildContext buildContext) {
+        return _createWidget(
+            buildContext,
+            title: title,
+            message: message,
+            actions: actions,
+            showCancel: showCancel,
+            cancelText: cancelText);
+      },
+    );
+  }
 
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: actions.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final action = entry.value;
-                            final isFirst = index == 0 && title == null && message == null;
-                            final isLast = index == actions.length - 1;
+  static ModalBottomSheetRoute showWithRoute(
+      BuildContext context, {
+        String? title,
+        String? message,
+        required List<ActionSheetItem> actions,
+        String? cancelText,
+        bool showCancel = true,
+      }) {
+    return showModalBottomSheetBySystem<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext buildContext) {
+        return _createWidget(
+            buildContext,
+            title: title,
+            message: message,
+            actions: actions,
+            showCancel: showCancel,
+            cancelText: cancelText);
+      },
+    );
+  }
 
-                            return Column(
-                              children: [
-                                _buildActionButton(
-                                  context: context,
-                                  colors: colors,
-                                  item: action,
-                                  isFirst: isFirst,
-                                  isLast: isLast,
-                                ),
-                                if (!isLast) _buildDivider(colors),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
+  static Widget _createWidget(BuildContext context, {
+    String? title,
+    String? message,
+    required List<ActionSheetItem> actions,
+    String? cancelText,
+    bool showCancel = true,
+  }) {
+    // Calculate max height: 60% of screen height
+    final maxHeight = MediaQuery.of(context).size.height * 0.6;
+    final colors = BaseThemeProvider.colorsOf(context);
+    final appLocale = AtomicLocalizations.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            decoration: BoxDecoration(
+              color: colors.bgColorDialog,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (title != null || message != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    child: Column(
+                      children: [
+                        if (title != null)
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: colors.textColorSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        if (title != null && message != null)
+                          const SizedBox(height: 4),
+                        if (message != null)
+                          Text(
+                            message,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: colors.textColorSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-
-              if (showCancel) ...[
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: colors.bgColorDialog,
-                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: _buildCancelButton(
-                    context: context,
-                    colors: colors,
-                    text: cancelText ?? appLocale.cancel,
+
+                if (title != null || message != null)
+                  _buildDivider(colors),
+
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: actions.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final action = entry.value;
+                        final isFirst = index == 0 && title == null && message == null;
+                        final isLast = index == actions.length - 1;
+
+                        return Column(
+                          children: [
+                            _buildActionButton(
+                              context: context,
+                              colors: colors,
+                              item: action,
+                              isFirst: isFirst,
+                              isLast: isLast,
+                            ),
+                            if (!isLast) _buildDivider(colors),
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ],
-
-              SizedBox(height: MediaQuery.of(context).padding.bottom),
-            ],
+            ),
           ),
-        );
-      },
+
+          if (showCancel) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: colors.bgColorDialog,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: _buildCancelButton(
+                context: context,
+                colors: colors,
+                text: cancelText ?? appLocale.cancel,
+              ),
+            ),
+          ],
+
+          SizedBox(height: MediaQuery.of(context).padding.bottom),
+        ],
+      ),
     );
   }
 
@@ -216,6 +257,64 @@ class ActionSheet {
       height: 0.5,
       color: colors.strokeColorPrimary,
     );
+  }
+
+  // copy from system
+  static ModalBottomSheetRoute showModalBottomSheetBySystem<T>({
+    required BuildContext context,
+    required WidgetBuilder builder,
+    Color? backgroundColor,
+    String? barrierLabel,
+    double? elevation,
+    ShapeBorder? shape,
+    Clip? clipBehavior,
+    BoxConstraints? constraints,
+    Color? barrierColor,
+    bool isScrollControlled = false,
+    double scrollControlDisabledMaxHeightRatio = _defaultScrollControlDisabledMaxHeightRatio,
+    bool useRootNavigator = false,
+    bool isDismissible = true,
+    bool enableDrag = true,
+    bool? showDragHandle,
+    bool useSafeArea = false,
+    RouteSettings? routeSettings,
+    AnimationController? transitionAnimationController,
+    Offset? anchorPoint,
+    AnimationStyle? sheetAnimationStyle,
+    VoidCallback? onDismiss,
+  }) {
+    assert(debugCheckHasMediaQuery(context));
+    assert(debugCheckHasMaterialLocalizations(context));
+
+    final NavigatorState navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
+    final route = ModalBottomSheetRoute<T>(
+      builder: builder,
+      capturedThemes: InheritedTheme.capture(from: context, to: navigator.context),
+      isScrollControlled: isScrollControlled,
+      scrollControlDisabledMaxHeightRatio: scrollControlDisabledMaxHeightRatio,
+      barrierLabel: barrierLabel ?? localizations.scrimLabel,
+      barrierOnTapHint: localizations.scrimOnTapHint(localizations.bottomSheetLabel),
+      backgroundColor: backgroundColor,
+      elevation: elevation,
+      shape: shape,
+      clipBehavior: clipBehavior,
+      constraints: constraints,
+      isDismissible: isDismissible,
+      modalBarrierColor: barrierColor ?? Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      enableDrag: enableDrag,
+      showDragHandle: showDragHandle,
+      settings: routeSettings,
+      transitionAnimationController: transitionAnimationController,
+      anchorPoint: anchorPoint,
+      useSafeArea: useSafeArea,
+      sheetAnimationStyle: sheetAnimationStyle,
+    );
+    navigator.push(route).whenComplete(() {
+      onDismiss?.call();
+    });
+    return route;
   }
 }
 

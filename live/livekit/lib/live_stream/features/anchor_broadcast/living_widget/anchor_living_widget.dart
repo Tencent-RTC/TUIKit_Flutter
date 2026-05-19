@@ -7,18 +7,20 @@ import 'package:tencent_live_uikit/component/float_window/global_float_window_ma
 import 'package:tencent_live_uikit/component/network_info/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_guest/anchor_co_guest_float_widget.dart';
-import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/living_widget/anchor_user_management_panel_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
+import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import '../../../../common/index.dart';
 import '../../../../component/index.dart';
 import '../../../live_define.dart';
 import '../../../manager/live_stream_manager.dart';
+import '../../../manager/module/user_manager.dart';
 import 'anchor_bottom_menu_widget.dart';
+import 'anchor_user_management_for_audience_panel.dart';
 
 class AnchorLivingWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
   final VoidCallback? onTapEnterFloatWindowInApp;
-  final void Function(TUILiveStatisticsData data) onEndLive;
+  final void Function(TUILiveStatisticsData data, LiveEndedReason reason) onEndLive;
 
   const AnchorLivingWidget({
     super.key,
@@ -40,23 +42,35 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   BarrageDisplayController? _barrageDisplayController;
   GiftPlayController? _giftPlayController;
   BottomSheetHandler? _userManagementPanelSheetHandler;
-  BottomSheetHandler? _closePanelSheetHandler;
+  AlertHandler? _closePanelSheetHandler;
   final NetworkInfoManager _networkInfoManager = NetworkInfoManager();
   late final VoidCallback _userEnterRoomListener = _onRemoteUserEnterRoom;
   late final VoidCallback _isFloatWindowModeListener = _isFloatWindowModeChanged;
   late final LiveListListener _liveListListener;
+  late final LiveSummaryStore _liveSummaryStore;
   late final VoidCallback _onScreenShareStatusListener = _onScreenShareStatusChanged;
 
   @override
   void initState() {
     super.initState();
     liveStreamManager = widget.liveStreamManager;
+    liveStreamManager.setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy.always);
     liveListStore = LiveListStore.shared;
-    _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
-      if (reason == LiveEndedReason.endedByServer) {
+    _liveSummaryStore = LiveSummaryStore.create(liveStreamManager.roomState.roomId);
+    _liveListListener = LiveListListener(
+      onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
+        if (liveID != liveStreamManager.roomState.roomId) return;
+        if (reason == LiveEndedReason.endedByServer) {
+          widget.onEndLive.call(_buildStatisticsFromSummary(), LiveEndedReason.endedByServer);
+          liveStreamManager.onStopLive();
+        }
+      },
+      onKickedOutOfLive: (String liveID, LiveKickedOutReason reason, String message) {
+        // TODO: LiveListStore not call onKickedOutOfLive
+        if (liveID != liveStreamManager.roomState.roomId) return;
         _closePage();
-      }
-    });
+      },
+    );
     liveSeatStore = LiveSeatStore.create(liveStreamManager.roomState.roomId);
     coHostStore = CoHostStore.create(liveStreamManager.roomState.roomId);
     battleStore = BattleStore.create(liveStreamManager.roomState.roomId);
@@ -105,7 +119,6 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
           return Visibility(
             visible: !isFloatWindowMode,
             child: Stack(children: [
-              _buildPureBroadcastTapWidget(),
               _buildCloseWidget(),
               _buildFloatWindowWidget(),
               _buildAudienceListWidget(),
@@ -118,16 +131,6 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
               _buildNetworkToastWidget()
             ]),
           );
-        });
-  }
-
-  Widget _buildPureBroadcastTapWidget() {
-    return ListenableBuilder(
-        listenable: Listenable.merge([liveSeatStore.liveSeatState.seatList, coHostStore.coHostState.connected]),
-        builder: (context, _) {
-          return _isPureAnchorBroadcast()
-              ? GestureDetector(onTap: () => onTapPureBroadcastTapWidget(), child: Container(color: Colors.transparent))
-              : Container();
         });
   }
 
@@ -199,8 +202,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
                     onClickUserItem: (user) {
                       _userManagementPanelSheetHandler = popupWidget(
                           context: context,
-                          AnchorUserManagementPanelWidget(
-                            panelType: AnchorUserManagementPanelType.messageAndKickOut,
+                          AnchorUserManagementForAudiencePanel(
                             user: user,
                             liveStreamManager: liveStreamManager,
                             closeCallback: () => _userManagementPanelSheetHandler?.close(),
@@ -237,7 +239,6 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
         right: 12.width,
         top: 100.height,
         height: 20.height,
-        width: 78.width,
         child: ValueListenableBuilder(
             valueListenable: liveStreamManager.roomState.liveStatus,
             builder: (context, liveStatus, _) {
@@ -270,9 +271,9 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   Widget _buildBarrageDisplayWidget() {
     return Positioned(
         left: 16.height,
-        bottom: 84.height,
-        height: 224.height,
-        width: 305.width,
+        bottom: 108.height,
+        height: 214.height,
+        width: 1.screenWidth - 146.width,
         child: ValueListenableBuilder(
           valueListenable: liveStreamManager.roomState.liveStatus,
           builder: (context, liveStatus, _) {
@@ -301,8 +302,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
                     avatarURL: barrage.sender.avatarURL);
                 _userManagementPanelSheetHandler = popupWidget(
                     context: context,
-                    AnchorUserManagementPanelWidget(
-                      panelType: AnchorUserManagementPanelType.messageAndKickOut,
+                    AnchorUserManagementForAudiencePanel(
                       user: user,
                       liveStreamManager: liveStreamManager,
                       closeCallback: () => _userManagementPanelSheetHandler?.close(),
@@ -393,12 +393,7 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _onRemoteUserEnterRoom() {
-    final userInfo = liveStreamManager.userState.enterUser.value;
-    LiveUserInfo barrageUser = LiveUserInfo();
-    barrageUser.userID = userInfo.userId;
-    barrageUser.userName = userInfo.userName;
-    barrageUser.avatarURL = userInfo.avatarUrl;
-
+    LiveUserInfo barrageUser = liveStreamManager.userState.enterUser.value;
     Barrage barrage = Barrage();
     barrage.sender = barrageUser;
     barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
@@ -412,7 +407,6 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _closeButtonClick() {
-    String title = '';
     final selfUserId = TUIRoomEngine.getSelfInfo().userId;
     final isSelfInBattle = liveStreamManager.battleState.battleUsers.value.any((user) => user.userId == selfUserId);
     final isSelfInCoHost = coHostStore.coHostState.connected.value.length > 1;
@@ -420,78 +414,80 @@ extension on _AnchorLivingWidgetState {
         .where((user) => user.userInfo.userID.isNotEmpty && user.userInfo.userID != selfUserId)
         .toList()
         .isNotEmpty;
-
-    const endBattleNumber = 1;
-    const endCoHostNumber = 2;
-    const endLiveNumber = 3;
-    const cancelNumber = 4;
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-
-    const lineColor = LiveColors.designStandardG8;
+    closeAlert() => _closePanelSheetHandler?.close();
     if (isSelfInBattle) {
-      title = LiveKitLocalizations.of(context)!.common_end_pk_tips;
-      final endBattle = ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(context)!.common_battle_end_pk,
-          textStyle: const TextStyle(color: LiveColors.notStandardRed, fontSize: 16),
-          lineColor: lineColor,
-          bingData: endBattleNumber);
-      menuData.add(endBattle);
+      final alertInfo = AlertInfo(
+        description: LiveKitLocalizations.of(context)!.common_end_pk_tips,
+        itemList: [
+          ButtonConfig(
+              text: LiveKitLocalizations.of(context)!.common_battle_end_pk,
+              type: TextColorPreset.red,
+              onClick: () {
+                closeAlert();
+                _exitBattle();
+              }),
+          ButtonConfig(
+              text: LiveKitLocalizations.of(context)!.common_end_live,
+              onClick: () {
+                closeAlert.call();
+                _stopLiveStream();
+              }),
+          ButtonConfig(
+            text: LiveKitLocalizations.of(context)!.common_cancel,
+            onClick: closeAlert,
+          ),
+        ],
+      );
+      _closePanelSheetHandler = Alert.showAlert(alertInfo, context);
     } else if (isSelfInCoHost) {
-      title = LiveKitLocalizations.of(context)!.common_end_connection_tips;
-      final endCoHost = ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(context)!.common_end_connect,
-          textStyle: const TextStyle(color: LiveColors.notStandardRed, fontSize: 16),
-          lineColor: lineColor,
-          bingData: endCoHostNumber);
-      menuData.add(endCoHost);
+      final alertInfo = AlertInfo(
+        description: LiveKitLocalizations.of(context)!.common_end_connection_tips,
+        itemList: [
+          ButtonConfig(
+              text: LiveKitLocalizations.of(context)!.common_end_connect,
+              type: TextColorPreset.red,
+              onClick: () {
+                closeAlert();
+                _exitCoHost();
+              }),
+          ButtonConfig(
+              text: LiveKitLocalizations.of(context)!.common_end_live,
+              onClick: () {
+                closeAlert();
+                _stopLiveStream();
+              }),
+          ButtonConfig(
+            text: LiveKitLocalizations.of(context)!.common_cancel,
+            onClick: closeAlert,
+          ),
+        ],
+      );
+      _closePanelSheetHandler = Alert.showAlert(alertInfo, context);
     } else if (isSelfInCoGuest) {
-      title = LiveKitLocalizations.of(context)!.common_anchor_end_link_tips;
+      final alertInfo = AlertInfo(
+        isDestructive: true,
+        description: LiveKitLocalizations.of(context)!.common_anchor_end_link_tips,
+        cancelText: LiveKitLocalizations.of(context)!.common_cancel,
+        defaultText: LiveKitLocalizations.of(context)!.common_end_live,
+        defaultCallback: () => _stopLiveStream(),
+      );
+      _closePanelSheetHandler = Alert.showAlert(alertInfo, context);
+    } else {
+      final isObsBroadcast = !liveStreamManager.roomState.liveInfo.keepOwnerOnSeat;
+      final leaveLiveText = isObsBroadcast
+          ? LiveKitLocalizations.of(context)!.common_exit_live
+          : LiveKitLocalizations.of(context)!.common_end_live;
+      final alertInfo = AlertInfo(
+        isDestructive: true,
+        description: isObsBroadcast
+            ? LiveKitLocalizations.of(context)!.live_exit_live_tips
+            : LiveKitLocalizations.of(context)!.live_end_live_tips,
+        cancelText: LiveKitLocalizations.of(context)!.common_cancel,
+        defaultText: leaveLiveText,
+        defaultCallback: () => _stopLiveStream(),
+      );
+      _closePanelSheetHandler = Alert.showAlert(alertInfo, context);
     }
-
-    final isObsBroadcast = !liveStreamManager.roomState.liveInfo.keepOwnerOnSeat;
-    final leaveLiveText = isObsBroadcast
-        ? LiveKitLocalizations.of(context)!.common_exit_live
-        : LiveKitLocalizations.of(context)!.common_end_live;
-
-    final endLive = ActionSheetModel(
-        isCenter: true,
-        text: leaveLiveText,
-        textStyle: const TextStyle(color: LiveColors.designStandardG2, fontSize: 16),
-        lineColor: lineColor,
-        bingData: endLiveNumber);
-    menuData.add(endLive);
-
-    final cancel = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: const TextStyle(color: LiveColors.designStandardG2, fontSize: 16),
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    _closePanelSheetHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        switch (model.bingData) {
-          case endBattleNumber:
-            _exitBattle();
-            break;
-          case endCoHostNumber:
-            _exitCoHost();
-            break;
-          case endLiveNumber:
-            _stopLiveStream();
-            break;
-          default:
-            break;
-        }
-      },
-      backgroundColor: LiveColors.designStandardFlowkitWhite,
-      title: title,
-      parentContext: context,
-    );
   }
 
   void _exitBattle() {
@@ -525,7 +521,7 @@ extension on _AnchorLivingWidgetState {
         liveStreamManager.toastSubject
             .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
-      widget.onEndLive.call(result.statisticsData);
+      widget.onEndLive.call(result.statisticsData, LiveEndedReason.endedByHost);
       liveStreamManager.onStopLive();
     }
   }
@@ -564,25 +560,6 @@ extension on _AnchorLivingWidgetState {
     _barrageDisplayController?.insertMessage(barrage);
   }
 
-  void onTapPureBroadcastTapWidget() {
-    _userManagementPanelSheetHandler = popupWidget(
-        context: context,
-        AnchorUserManagementPanelWidget(
-          panelType: AnchorUserManagementPanelType.pureMedia,
-          user: liveStreamManager.roomState.liveInfo.liveOwner,
-          liveStreamManager: liveStreamManager,
-          closeCallback: () => _userManagementPanelSheetHandler?.close(),
-        ));
-  }
-
-  bool _isPureAnchorBroadcast() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
-    return liveSeatStore.liveSeatState.seatList.value
-            .where((seat) => seat.userInfo.userID.isNotEmpty && seat.userInfo.userID != selfUserId)
-            .isEmpty &&
-        coHostStore.coHostState.connected.value.isEmpty;
-  }
-
   void _onScreenShareStatusChanged() {
     if (!widget.liveStreamManager.roomManager.isScreenShareLive()) return;
     DeviceStatus deviceStatus = DeviceStore.shared.state.screenStatus.value;
@@ -590,5 +567,17 @@ extension on _AnchorLivingWidgetState {
     if (deviceStatus == DeviceStatus.off) {
       _stopLiveStream();
     }
+  }
+
+  TUILiveStatisticsData _buildStatisticsFromSummary() {
+    final summary = _liveSummaryStore.liveSummaryState.summaryData.value;
+    return TUILiveStatisticsData()
+      ..liveDuration = summary.totalDuration
+      ..totalViewers = summary.totalViewers
+      ..totalGiftsSent = summary.totalGiftsSent
+      ..totalUniqueGiftSenders = summary.totalGiftUniqueSenders
+      ..totalGiftCoins = summary.totalGiftCoins
+      ..totalLikesReceived = summary.totalLikesReceived
+      ..totalMessageCount = summary.totalMessageSent;
   }
 }

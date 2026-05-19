@@ -1,6 +1,7 @@
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_operation_result.dart';
@@ -15,8 +16,14 @@ import '../../../../component/live_info/state/follow_define.dart';
 class AudienceUserManagementPanelWidget extends StatefulWidget {
   final LiveUserInfo user;
   final LiveStreamManager liveStreamManager;
+  final VoidCallback closeCallback;
 
-  const AudienceUserManagementPanelWidget({super.key, required this.user, required this.liveStreamManager});
+  const AudienceUserManagementPanelWidget({
+    super.key,
+    required this.user,
+    required this.liveStreamManager,
+    required this.closeCallback,
+  });
 
   @override
   State<AudienceUserManagementPanelWidget> createState() => _AudienceUserManagementPanelWidgetState();
@@ -28,10 +35,11 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
   final ValueNotifier<bool> _isCameraOpened = ValueNotifier(false);
 
   bool _enableFollowButton = true;
-  bool isShowingAlert = false;
+  AlertHandler? _leaveSeatAlertHandler;
 
   late final LiveSeatStore liveSeatStore;
   late final VoidCallback _onSeatListListener = _onSeatListChanged;
+  late final VoidCallback _floatWindowModeListener = _onFloatWindowModeChanged;
 
   @override
   void initState() {
@@ -40,11 +48,14 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
     liveSeatStore = LiveSeatStore.create(widget.liveStreamManager.roomState.roomId);
     liveSeatStore.liveSeatState.seatList.addListener(_onSeatListListener);
     _onSeatListChanged();
+    widget.liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_floatWindowModeListener);
   }
 
   @override
   void dispose() {
+    _leaveSeatAlertHandler?.close();
     liveSeatStore.liveSeatState.seatList.removeListener(_onSeatListListener);
+    widget.liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_floatWindowModeListener);
     super.dispose();
   }
 
@@ -84,6 +95,7 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
             Positioned(
                 top: 0,
                 left: 52.width,
+                right: 94.width,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,139 +161,62 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ListenableBuilder(
-              listenable: Listenable.merge([_isMicrophoneMuted, widget.liveStreamManager.mediaState.isAudioLocked]),
-              builder: (context, child) {
-                final isMicrophoneMuted = _isMicrophoneMuted.value;
-                final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
-                return GestureDetector(
-                  onTap: () => _microphoneButtonClicked(),
-                  child: Column(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: LiveColors.designStandardG3.withAlpha(77),
-                              borderRadius: BorderRadius.circular(12.radius)),
-                          width: 50.radius,
-                          height: 50.radius,
-                          child: Center(
-                            child: Opacity(
-                              opacity: isAudioLocked ? 0.5 : 1.0,
-                              child: Image.asset(
-                                  isMicrophoneMuted ? LiveImages.muteMicrophone : LiveImages.unmuteMicrophone,
-                                  package: Constants.pluginName,
-                                  width: 25.radius,
-                                  height: 25.radius),
-                            ),
-                          )),
-                      Text(
-                        isMicrophoneMuted
-                            ? LiveKitLocalizations.of(context)!.common_voiceroom_unmuted_seat
-                            : LiveKitLocalizations.of(context)!.common_voiceroom_mute_seat,
-                        style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-            SizedBox(width: 20.width),
-            ListenableBuilder(
-              listenable: Listenable.merge([_isCameraOpened, widget.liveStreamManager.mediaState.isVideoLocked]),
-              builder: (context, child) {
-                if (widget.liveStreamManager.roomManager.isScreenShareLive()) {
-                  return const SizedBox.shrink();
-                }
-                final isCameraOpened = _isCameraOpened.value;
-                final isVideoLocked = widget.liveStreamManager.mediaState.isVideoLocked.value;
-                return GestureDetector(
-                  onTap: () => _cameraButtonClicked(),
-                  child: Column(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: LiveColors.designStandardG3.withAlpha(77),
-                              borderRadius: BorderRadius.circular(12.radius)),
-                          width: 50.radius,
-                          height: 50.radius,
-                          child: Center(
-                            child: Opacity(
-                              opacity: isVideoLocked ? 0.5 : 1.0,
-                              child: Image.asset(isCameraOpened ? LiveImages.openCamera : LiveImages.closeCamera,
-                                  package: Constants.pluginName, width: 25.radius, height: 25.radius),
-                            ),
-                          )),
-                      Text(
-                        isCameraOpened
-                            ? LiveKitLocalizations.of(context)!.common_stop_video
-                            : LiveKitLocalizations.of(context)!.common_start_video,
-                        style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-            widget.liveStreamManager.roomManager.isScreenShareLive() ? SizedBox.shrink() : SizedBox(width: 20.width),
-            ValueListenableBuilder(
-                valueListenable: _isCameraOpened,
-                builder: (context, isCameraOpened, _) {
-                  return Visibility(
-                    visible: isCameraOpened,
-                    child: GestureDetector(
-                      onTap: () => _flipButtonClicked(),
-                      child: Column(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  color: LiveColors.designStandardG3.withAlpha(77),
-                                  borderRadius: BorderRadius.circular(12.5.radius)),
-                              width: 50.radius,
-                              height: 50.radius,
-                              child: Center(
-                                child: Image.asset(LiveImages.videoSettingsFlip,
-                                    package: Constants.pluginName, width: 25.radius, height: 25.radius),
-                              )),
-                          Text(
-                            LiveKitLocalizations.of(context)!.common_video_settings_item_flip,
-                            style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-            ValueListenableBuilder(
-                valueListenable: _isCameraOpened,
-                builder: (context, isCameraOpened, _) {
-                  return Visibility(visible: isCameraOpened, child: SizedBox(width: 20.width));
-                }),
-            GestureDetector(
-              onTap: () => _leaveSeatButtonClicked(),
-              child: Column(
-                children: [
-                  Container(
-                      decoration: BoxDecoration(
-                          color: LiveColors.designStandardG3.withAlpha(77),
-                          borderRadius: BorderRadius.circular(12.5.radius)),
-                      width: 50.radius,
-                      height: 50.radius,
-                      child: Center(
-                        child: Image.asset(LiveImages.leaveSeat,
-                            package: Constants.pluginName, width: 25.radius, height: 25.radius),
-                      )),
-                  Text(
-                    LiveKitLocalizations.of(context)!.common_end_user,
-                    style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
-                  )
-                ],
-              ),
-            )
-          ],
+          spacing: 20.width,
+          children: _buildMenuItemList(),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildMenuItemList() {
+    List<Widget> children = [];
+    children.add(ListenableBuilder(
+      listenable: Listenable.merge([_isMicrophoneMuted, widget.liveStreamManager.mediaState.isAudioLocked]),
+      builder: (context, child) {
+        final isMicrophoneMuted = _isMicrophoneMuted.value;
+        final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
+        return CommonMenuWidget(
+          imageName: isMicrophoneMuted ? LiveImages.muteMicrophone : LiveImages.unmuteMicrophone,
+          title: isMicrophoneMuted
+              ? LiveKitLocalizations.of(context)!.common_voiceroom_unmuted_seat
+              : LiveKitLocalizations.of(context)!.common_voiceroom_mute_seat,
+          opacity: isAudioLocked ? 0.5 : 1.0,
+          onTap: () => _microphoneButtonClicked(),
+        );
+      },
+    ));
+
+    if (widget.liveStreamManager.roomState.liveInfo.seatTemplate is! VideoLandscape4Seats) {
+      children.add(ListenableBuilder(
+        listenable: Listenable.merge([_isCameraOpened, widget.liveStreamManager.mediaState.isVideoLocked]),
+        builder: (context, child) {
+          final isCameraOpened = _isCameraOpened.value;
+          final isVideoLocked = widget.liveStreamManager.mediaState.isVideoLocked.value;
+          return CommonMenuWidget(
+            imageName: isCameraOpened ? LiveImages.openCamera : LiveImages.closeCamera,
+            title: isCameraOpened
+                ? LiveKitLocalizations.of(context)!.common_stop_video
+                : LiveKitLocalizations.of(context)!.common_start_video,
+            opacity: isVideoLocked ? 0.5 : 1.0,
+            onTap: () => _cameraButtonClicked(),
+          );
+        },
+      ));
+
+      if (_isCameraOpened.value) {
+        children.add(CommonMenuWidget(
+            imageName: LiveImages.videoSettingsFlip,
+            title: LiveKitLocalizations.of(context)!.common_video_settings_item_flip,
+            onTap: () => _flipButtonClicked()));
+      }
+    }
+
+    children.add(CommonMenuWidget(
+      imageName: LiveImages.leaveSeat,
+      title: LiveKitLocalizations.of(context)!.common_end_user,
+      onTap: () => _leaveSeatButtonClicked(),
+    ));
+    return children;
   }
 }
 
@@ -295,6 +230,13 @@ extension on _AudienceUserManagementPanelWidgetState {
         _isMicrophoneMuted.value = seat.userInfo.microphoneStatus != DeviceStatus.on;
         break;
       }
+    }
+  }
+
+  void _onFloatWindowModeChanged() {
+    bool isFloatWindowMode = widget.liveStreamManager.floatWindowState.isFloatWindowMode.value;
+    if (isFloatWindowMode) {
+      widget.closeCallback.call();
     }
   }
 
@@ -351,6 +293,7 @@ extension on _AudienceUserManagementPanelWidgetState {
   }
 
   void _microphoneButtonClicked() {
+    widget.closeCallback.call();
     final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
     if (isAudioLocked) {
       return;
@@ -368,10 +311,10 @@ extension on _AudienceUserManagementPanelWidgetState {
     } else {
       liveSeatStore.muteMicrophone();
     }
-    Navigator.pop(context);
   }
 
   void _cameraButtonClicked() {
+    widget.closeCallback.call();
     final isVideoLocked = widget.liveStreamManager.mediaState.isVideoLocked.value;
     if (isVideoLocked) {
       return;
@@ -389,39 +332,74 @@ extension on _AudienceUserManagementPanelWidgetState {
         }
       });
     }
-    Navigator.pop(context);
   }
 
   void _flipButtonClicked() {
+    widget.closeCallback.call();
     final isFrontCamera = DeviceStore.shared.state.isFrontCamera.value;
     DeviceStore.shared.switchCamera(!isFrontCamera);
-    Navigator.pop(context);
   }
 
   void _leaveSeatButtonClicked() {
     final alertInfo = AlertInfo(
         description: LiveKitLocalizations.of(Global.appContext())!.common_terminate_room_connection_message,
-        cancelActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          titleColor: LiveColors.designStandardG3
-        ),
-        cancelCallback: () {
-          isShowingAlert = false;
-          Navigator.pop(context);
-        },
-        defaultActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_end_link,
-          titleColor: LiveColors.notStandardRed
-        ),
+        cancelText: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
+        cancelCallback: () => _closeLeaveSeatAlert(),
+        defaultText: LiveKitLocalizations.of(Global.appContext())!.common_end_link,
         defaultCallback: () {
           CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
           coGuestStore.disconnect();
-          isShowingAlert = false;
-          Navigator.pop(context);
-          Navigator.pop(context);
+          _closeLeaveSeatAlert();
         });
 
-    Alert.showAlert(alertInfo, context);
-    isShowingAlert = true;
+    _leaveSeatAlertHandler = Alert.showAlert(alertInfo, context);
+  }
+
+  void _closeLeaveSeatAlert() {
+    _leaveSeatAlertHandler?.close();
+    widget.closeCallback.call();
+  }
+}
+
+class CommonMenuWidget extends StatelessWidget {
+  final String? imageName;
+  final String? title;
+  final double opacity;
+  final GestureTapCallback? onTap;
+
+  const CommonMenuWidget({
+    super.key,
+    this.imageName,
+    this.title,
+    this.opacity = 1,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+              decoration: BoxDecoration(
+                  color: LiveColors.designStandardG3.withAlpha(77), borderRadius: BorderRadius.circular(12.5.radius)),
+              width: 50.radius,
+              height: 50.radius,
+              child: Center(
+                child: imageName == null
+                    ? const SizedBox.square()
+                    : Opacity(
+                        opacity: opacity,
+                        child: Image.asset(imageName!,
+                            package: Constants.pluginName, width: 25.radius, height: 25.radius)),
+              )),
+          Text(
+            title ?? '',
+            style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
+          ),
+        ],
+      ),
+    );
   }
 }

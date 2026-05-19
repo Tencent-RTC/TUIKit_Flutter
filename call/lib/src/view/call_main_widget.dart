@@ -25,20 +25,16 @@ class CallMainWidget extends StatefulWidget {
 }
 
 class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObserver {
-  static double _floatViewTop = 128;
-  static double _floatViewRight = 20;
-
   final GlobalKey _callViewKey = GlobalKey();
-  double originWidth = 0;
-  double originHeight = 0;
   bool isMultiPerson = false;
   CallPageType? _currentPageType;
   bool _isInitializing = true;
 
+  double get originWidth => widget.callbacks?.getOriginScreenSize?.call().width ?? 0;
+  double get originHeight => widget.callbacks?.getOriginScreenSize?.call().height ?? 0;
+
   @override
   void initState() {
-    _floatViewTop = 128;
-    _floatViewRight = 20;
     _currentPageType = widget.callPageType;
     _isInitializing = true;
     WidgetsBinding.instance.addObserver(this);
@@ -96,8 +92,13 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
 
   @override
   Widget build(BuildContext context) {
-    originWidth = max(MediaQuery.of(context).size.width, originWidth);
-    originHeight = max(MediaQuery.of(context).size.height, originHeight);
+    final view = View.of(context);
+    final realScreenSize = view.physicalSize / view.devicePixelRatio;
+    final mediaSize = MediaQuery.of(context).size;
+    final bestWidth = max(mediaSize.width, realScreenSize.width);
+    final bestHeight = max(mediaSize.height, realScreenSize.height);
+    widget.callbacks?.setOriginScreenSize?.call(Size(bestWidth, bestHeight));
+
     final pageType = _currentPageType ?? widget.callPageType;
     
     switch (pageType) {
@@ -116,7 +117,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
   _buildPipWindowWidget() {
     final pipWidth = MediaQuery.of(context).size.width;
     final pipHeight = MediaQuery.of(context).size.height;
-    final scale = pipWidth / originWidth;
+    final scale = originWidth > 0 ? pipWidth / originWidth : 1.0;
 
     return Scaffold(
       body: SizedBox(
@@ -128,7 +129,7 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
           decoration: const BoxDecoration(color: Colors.transparent),
           child: MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                  size: Size(originWidth ?? pipWidth, originHeight ?? pipHeight)
+                  size: Size(originWidth > 0 ? originWidth : pipWidth, originHeight > 0 ? originHeight : pipHeight)
               ),
               child: ClipRect(
                 child: Transform.scale(
@@ -156,75 +157,40 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
     final screenWidth = MediaQuery.of(context).size.width;
     final scale = 120 / screenWidth;
     
-    return Stack(
-      children: [
-        Positioned(
-          top: _floatViewTop - 40,
-          right: _floatViewRight,
-          child: Stack(
-            children: [
-              Container(
-                width: 120 + 1,
-                height: 180 + 1,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8.0,
-                      spreadRadius: 2.0,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Container(
-                    width: 120,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.6),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Transform.scale(
-                        scale: scale,
-                        alignment: Alignment.center,
-                        child: OverflowBox(
-                          maxWidth: screenWidth,
-                          maxHeight: 180 / scale,
-                          alignment: Alignment.center,
-                          child: CallView(
-                            key: _callViewKey,
-                            isPipMode: true,
-                            enableAITranscriber: GlobalState.instance.enableAITranscriber,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+    return SizedBox(
+      width: 121,
+      height: 181,
+      child: Stack(
+        children: [
+          Transform.scale(
+            scale: scale,
+            alignment: Alignment.center,
+            child: OverflowBox(
+              maxWidth: screenWidth,
+              maxHeight: 180 / scale,
+              alignment: Alignment.center,
+              child: CallView(
+                key: _callViewKey,
+                isPipMode: true,
+                enableAITranscriber: GlobalState.instance.enableAITranscriber,
               ),
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: () {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      _openCallingPage();
-                    });
-                  },
-                  onPanUpdate: (DragUpdateDetails e) {
-                    _refreshViewPosition(e);
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  _openCallingPage();
+                });
+              },
+              onPanUpdate: (DragUpdateDetails e) {
+                final screenSize = MediaQuery.of(context).size;
+                widget.callbacks?.onFloatDragUpdate?.call(e, screenSize);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -300,24 +266,6 @@ class _CallMainWidgetState extends State<CallMainWidget> with WidgetsBindingObse
           )),
     )
         : const SizedBox();
-  }
-
-  _refreshViewPosition(DragUpdateDetails e) {
-    _floatViewRight -= e.delta.dx;
-    _floatViewTop += e.delta.dy;
-    if (_floatViewTop < 100) {
-      _floatViewTop = 100;
-    }
-    if (_floatViewTop > MediaQuery.of(context).size.height - 216) {
-      _floatViewTop = MediaQuery.of(context).size.height - 216;
-    }
-    if (_floatViewRight < 0) {
-      _floatViewRight = 0;
-    }
-    if (_floatViewRight > MediaQuery.of(context).size.width - 110) {
-      _floatViewRight = MediaQuery.of(context).size.width - 110;
-    }
-    setState(() {});
   }
 
   _openFloatWindow() {

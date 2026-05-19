@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/view/index.dart';
+import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,16 +26,27 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  final ThemeState _themeState = ThemeState();
+
+  @override
+  void initState() {
+    super.initState();
+    _themeState.setThemeMode(ThemeType.dark);
+  }
+
   @override
   Widget build(BuildContext context) {
     S.load(View.of(context).platformDispatcher.locale);
-    return MaterialApp(
+    return ComponentTheme(
+      themeState: _themeState,
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         navigatorObservers: [TUILiveKitNavigatorObserver.instance],
         localizationsDelegates: const [
           ...LiveKitLocalizations.localizationsDelegates,
           ...BarrageLocalizations.localizationsDelegates,
           ...GiftLocalizations.localizationsDelegates,
+          AtomicLocalizations.delegate,
         ],
         supportedLocales: const [
           Locale('en'),
@@ -42,15 +55,16 @@ class _MyAppState extends State<MyApp> {
           Locale('zh'),
         ],
         builder: (context, child) => Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: GestureDetector(
-                onTap: () {
-                  hideKeyboard(context);
-                },
-                child: child,
-              ),
-            ),
+          resizeToAvoidBottomInset: false,
+          body: GestureDetector(
+            onTap: () {
+              hideKeyboard(context);
+            },
+            child: child,
+          ),
+        ),
         home: const LoginWidget(),
+      ),
     );
   }
 
