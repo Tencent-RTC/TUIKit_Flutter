@@ -485,18 +485,12 @@ extension on _CoHostManagementPanelWidgetState {
 
     final confirmInfo = AlertInfo(
         description: LiveKitLocalizations.of(Global.appContext())!.common_disconnect_tips,
-        defaultActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_end_connect,
-          titleColor: LiveColors.designStandardB1
-        ),
+        defaultText: LiveKitLocalizations.of(Global.appContext())!.common_end_connect,
         defaultCallback: () {
           _disconnectCoHostHandler?.close();
           coHostStore.exitHostConnection();
         },
-        cancelActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          titleColor: LiveColors.designStandardG3
-        ),
+        cancelText: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
         cancelCallback: () {
           _disconnectCoHostHandler?.close();
         });

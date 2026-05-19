@@ -2,7 +2,7 @@ group = "io.trtc.tuikit.atomicx"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "2.0.20"
+    ext.kotlin_version = "2.1.10"
     repositories {
         google()
         mavenCentral()
@@ -56,7 +56,8 @@ android {
             "src/main/res",
             "src/main/res-album-picker",
             "src/main/res-base-component",
-            "src/main/res-video-recorder"
+            "src/main/res-video-recorder",
+            "src/main/res-image-uploader"
         ]
     }
 
@@ -116,10 +117,10 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
         
         // Kotlin Coroutines - required（ViewModel use Coroutines）
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
         
         // Kotlin Serialization - required（ThemeState use Serialization）
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
         
         // Media3 ExoPlayer - required（VideoPlayer use ExoPlayer）
         implementation("androidx.media3:media3-exoplayer:1.6.1")

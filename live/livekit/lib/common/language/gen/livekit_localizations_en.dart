@@ -132,6 +132,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_more_features => 'More Features';
 
   @override
+  String get common_mute_audio => 'Mute';
+
+  @override
   String get common_mute_audio_by_master => 'The anchor has muted you';
 
   @override
@@ -155,6 +158,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'You have been unmuted in the current room';
 
   @override
+  String get common_setting_done => 'Done';
+
+  @override
   String get common_start_live => 'Start Live';
 
   @override
@@ -172,6 +178,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_un_mute_video_by_master => 'The anchor enabled your video';
+
+  @override
+  String get common_unmute_audio => 'Unmute';
 
   @override
   String get common_link_guest => 'Guest';
@@ -215,6 +224,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   @override
   String get livelist_exit_float_window_tip =>
       'Live streaming in progress. Please try again later.';
+
+  @override
+  String get livelist_click_enter_room => 'Click to enter the live room';
 
   @override
   String get livestreamcore_battle_error_conflict =>
@@ -283,7 +295,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_client_error_failed =>
-      'Temporarily Unclassified General Error';
+      'Server is having a hiccup, please try again later';
 
   @override
   String get common_client_error_freq_limit =>
@@ -993,6 +1005,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get live_choose_music => 'Choose Music';
 
   @override
+  String get live_cohost_application_expired => 'The application has expired.';
+
+  @override
   String get live_failed_to_enter_room => 'Failed to enter room';
 
   @override
@@ -1216,6 +1231,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_live_game => 'Live Game';
+
+  @override
+  String get common_end_live_by_server =>
+      'The live stream was shut down due to violations of regulations.';
 
   @override
   String get common_go_to_enable => 'Go to Enable';

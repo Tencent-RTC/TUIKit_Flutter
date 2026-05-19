@@ -10,6 +10,7 @@ import 'package:tencent_live_uikit/common/resources/images.dart';
 import 'package:tencent_live_uikit/common/screen/index.dart';
 import 'package:tencent_live_uikit/common/widget/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../component/beauty/index.dart';
@@ -36,10 +37,9 @@ class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPa
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 1.screenWidth,
       height: 718.height,
-      decoration: _buildPanelDecoration(),
       child: Column(
         children: [
           SizedBox(height: 20.height),
@@ -56,14 +56,6 @@ class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPa
       ),
     );
   }
-
-  BoxDecoration _buildPanelDecoration() => BoxDecoration(
-        color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.radius),
-          topRight: Radius.circular(20.radius),
-        ),
-      );
 
   Widget _buildTitleWidget() => SizedBox(
         height: 44.height,
@@ -192,12 +184,12 @@ extension on _CoGuestVideoSettingsPanelWidgetState {
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(true);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
-    makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.common_toast_apply_link_mic);
     final result =
         await coGuestStore.applyForSeat(seatIndex: widget.seatIndex, timeout: Constants.defaultRequestTimeout);
     if (result.errorCode != TUIError.success.rawValue) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
-      makeToast(msg: ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+      makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
+          type: ToastType.error);
     }
   }
 }

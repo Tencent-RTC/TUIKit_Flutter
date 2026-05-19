@@ -63,6 +63,7 @@ class CoHostManager {
     final result = await service.fetchRecommendedList(cursor, _listCount);
     if (result.code != TUIError.success || result.data == null) {
       LiveKitLogger.error('fetchRecommendedList failed. code:${result.code}, message:${result.message}');
+      return;
     }
     final recommendListResult = result.data!;
     if (cursor.isEmpty) {

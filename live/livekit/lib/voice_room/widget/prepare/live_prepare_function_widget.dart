@@ -4,6 +4,8 @@ import 'package:tencent_live_uikit/component/audio_effect/audio_effect_panel_wid
 import 'package:tencent_live_uikit/voice_room/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/voice_room_prepare_store.dart';
 
+import '../../../common/widget/base_bottom_sheet.dart';
+
 class LivePrepareFunctionWidget extends StatefulWidget {
   final VoiceRoomPrepareStore prepareStore;
 
@@ -128,7 +130,13 @@ extension on _LivePrepareFunctionWidgetState {
   }
 
   void _showAudioEffectPanel() {
-    popupWidget(AudioEffectPanelWidget(roomId: widget.prepareStore.state.liveInfo.value.liveID), context: context);
+    late final BottomSheetHandler handler;
+    handler = popupWidget(
+        AudioEffectPanelWidget(
+          roomId: widget.prepareStore.state.liveInfo.value.liveID,
+          onDone: () => handler.close(),
+        ),
+        context: context);
   }
 
   void _showSettingsPanel() {

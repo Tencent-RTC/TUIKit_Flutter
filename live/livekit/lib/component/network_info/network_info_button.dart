@@ -60,7 +60,7 @@ class _NetworkInfoButtonState extends State<NetworkInfoButton> {
         _popupWidget(NetworkInfoWidget(manager: widget.manager, isAudience: widget.isAudience));
       },
       child: Container(
-          constraints: BoxConstraints(maxHeight: 20.height, maxWidth: 86.width),
+          constraints: BoxConstraints(maxHeight: 20.height),
           decoration: BoxDecoration(
               color: LiveColors.notStandardPureBlack.withAlpha(0x60), borderRadius: BorderRadius.circular(11.height)),
           padding: EdgeInsets.only(left: 4.width, top: 2.height, bottom: 2.height, right: 8.width),
@@ -120,23 +120,8 @@ extension on _NetworkInfoButtonState {
 }
 
 extension on _NetworkInfoButtonState {
-  void _popupWidget(Widget widget, {Color? barrierColor}) {
-    _bottomSheetHandler = BaseBottomSheet.showModalSheet(
-      barrierColor: barrierColor,
-      isScrollControlled: true,
-      context: context,
-      backgroundColor: LiveColors.designStandardTransparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.width),
-            topRight: Radius.circular(20.width),
-          ),
-          color: LiveColors.designStandardTransparent,
-        ),
-        child: widget,
-      ),
-    );
+  void _popupWidget(Widget widget) {
+    _bottomSheetHandler = popupWidget(widget, context: context);
   }
 }
 

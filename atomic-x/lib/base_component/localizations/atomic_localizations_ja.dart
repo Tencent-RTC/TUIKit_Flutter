@@ -958,6 +958,9 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String get callCancelCallee => '相手がキャンセルした';
 
   @override
+  String get callCancel => 'キャンセル';
+
+  @override
   String get stopCallTip => '通話時間';
 
   @override
@@ -1307,4 +1310,195 @@ class AtomicLocalizationsJa extends AtomicLocalizations {
   String recordCountdownTips(int seconds) {
     return '$seconds秒後に録音が停止します';
   }
+
+  @override
+  String get callWaitingForInvitationAcceptance => '相手が招待を承諾するのを待っています';
+
+  @override
+  String get callInvitedToAudioCall => '音声通話に招待する';
+
+  @override
+  String get callInvitedToVideoCall => 'ビデオ通話に招待する';
+
+  @override
+  String get callInvitedToGroupCall => 'グループ通話に招待されました';
+
+  @override
+  String get callInsufficientPermissions =>
+      '新通話の呼入がありますが、権限不足により、接听できません。カメラ/マイクの権限が有効かどうか確認してください';
+
+  @override
+  String get callInviteMembers => 'メンバーを招待';
+
+  @override
+  String get callYourself => '自分';
+
+  @override
+  String get callMicrophone => 'マイク';
+
+  @override
+  String get callHangUp => '通話終了';
+
+  @override
+  String get callSpeaker => 'スピーカー';
+
+  @override
+  String get callEarpiece => 'イヤホン';
+
+  @override
+  String get callCamera => 'カメラ';
+
+  @override
+  String get callSwitchToVoiceCall => '音声通話に切り替えます';
+
+  @override
+  String get callAcceptAction => '応答';
+
+  @override
+  String get callExceededMaximumNumber => '最大人数を超えました';
+
+  @override
+  String get callRejectAction => '通話拒否';
+
+  @override
+  String get callNoResponse => '呼び出しタイムアウト';
+
+  @override
+  String get callBusy => '相手が通話中です';
+
+  @override
+  String get callLeave => '通話を終了します';
+
+  @override
+  String get callSwitchCamera => 'カメラの切り替え';
+
+  @override
+  String get callBlurBackground => '背景をぼかす';
+
+  @override
+  String get callShowBlurBackground => '背景をぼかす';
+
+  @override
+  String get callConnected => '接続済み';
+
+  @override
+  String get callTheyAreAlsoThere => '彼らもそこにいる';
+
+  @override
+  String get callJoinIn => '参加する';
+
+  @override
+  String get callPersonIsOnTheCall => '人が通話中です';
+
+  @override
+  String get callMicrophoneIsOn => 'マイクオン';
+
+  @override
+  String get callMicrophoneIsOff => 'マイクがオフ';
+
+  @override
+  String get callSpeakerIsOn => 'スピーカーオン';
+
+  @override
+  String get callSpeakerIsOff => 'スピーカーオフ';
+
+  @override
+  String get callCameraIsOn => 'カメラオン';
+
+  @override
+  String get callCameraIsOff => 'カメラオフ';
+
+  @override
+  String get callOtherPartyNetworkLowQuality => '相手のネットワーク接続が不安定です';
+
+  @override
+  String get callSelfNetworkLowQuality => 'ネットワーク接続が不安定です';
+
+  @override
+  String get callErrorInPeerBlacklist => 'ユーザーはブラックリストに登録され、通話が開始できませんでした。';
+
+  @override
+  String get callWaiting => '応答を待っています';
+
+  @override
+  String get callYouHaveANewCall => '新しい電話があります';
+
+  @override
+  String get callApplyForMicrophonePermission => 'マイクへのアクセス許可を申請します。';
+
+  @override
+  String get callApplyForMicrophoneAndCameraPermissions => 'マイクとカメラの許可を申請する';
+
+  @override
+  String get callNeedToAccessMicrophonePermission =>
+      'マイクへのアクセス許可が必要で、音声/ビデオ通話、グループ音声/ビデオ通話などの機能に使用できます。マイクをオンにした場合のみ、録画した動画に音声が保存されます。';
+
+  @override
+  String get callNeedToAccessMicrophoneAndCameraPermissions =>
+      'カメラへのアクセス許可が必要で、ビデオ通話、グループビデオ通話などの機能に使用できます。美顔機能を使用する場合は、カメラで撮影された映像から顔の特徴点情報をリアルタイムで収集し、より自然な美しさを提供します。';
+
+  @override
+  String get callDisplayPopUpWindowPermissions =>
+      'バックグラウンドポップアップインターフェースを有効にし、同時にフローティングウィンドウ権限を表示してください。';
+
+  @override
+  String get callAnonymity => '匿名';
+
+  @override
+  String get callOtherPartyHungUp => '相手が切断、通話終了';
+
+  @override
+  String get callOtherPartyDeclinedCallRequest => '相手による通話拒否';
+
+  @override
+  String get callOtherPartyBusy => '相手が通話中です';
+
+  @override
+  String get callOtherPartyNoResponse => '呼び出しタイムアウト';
+
+  @override
+  String get callRequestDeclined => 'は通話を拒否しました';
+
+  @override
+  String get callEndedTheCall => '通話終了';
+
+  @override
+  String get callGoToSettings => '設定に移動';
+
+  @override
+  String get callFeatureRequiresAudioVideoCallingPackage =>
+      'この機能には音声/ビデオ通話パッケージが必要です。使用に影響を与えないように、Tencent Cloud Real-Time Audio and Video コンソールで無料トライアルをアクティブにするか、正式なパッケージを購入することをお勧めします';
+
+  @override
+  String get callCurrentPackageDoesNotSupportFeature =>
+      '現在のパッケージタイプではこの機能をサポートしていません。より多くの機能を利用するには、Tencent Cloud Real-Time Audio and Video コンソールでパッケージをアップグレードすることをお勧めします';
+
+  @override
+  String get callMicrophoneOrCameraPermissionNotEnabled =>
+      'マイク権限が有効になっていないため、音声通話を開始できません。\'設定 > TUICallKit\' でマイク権限を有効にしてください。カメラ権限が有効になっていないため、ビデオ通話を開始できません。\'設定 > TUICallKit\' でカメラ権限を有効にしてください';
+
+  @override
+  String get callCameraOccupiedBySystemCall => '現在のカメラはシステム通話で使用中です';
+
+  @override
+  String get callMicrophoneOccupiedBySystemCall => '現在のマイクはシステム通話で使用中です';
+
+  @override
+  String get callCurrentlyOnCallCannotInitiateAnother =>
+      '現在通話中です。新しい通話を開始する前に、現在の通話を終了してください';
+
+  @override
+  String get callFailedToInitiateCallCheckLoginStatus =>
+      '通話開始に失敗しました。ログイン状態を確認して、もう一度お試しください';
+
+  @override
+  String get callFailedToInitiateOrJoinCall => '通話開始に失敗しました / 通話参加に失敗しました';
+
+  @override
+  String get callCurrentCallSupportsMax9Participants =>
+      '現在の通話は最大9人まで同時にオンラインで参加できます。';
+
+  @override
+  String get callInviteUserErrorOrInvalidCallParameters =>
+      'ユーザー招待エラーまたは通話パラメータが無効です';
 }

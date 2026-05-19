@@ -49,36 +49,49 @@ class _SeatGridWidgetState extends State<SeatGridWidget> {
                 final rowConfig = layoutConfig.rowConfigs[row];
                 final alignment =
                     _convertToMainAxisAlignment(rowConfig.alignment);
+                final isDistributedAlignment =
+                    alignment == MainAxisAlignment.spaceAround ||
+                        alignment == MainAxisAlignment.spaceBetween ||
+                        alignment == MainAxisAlignment.spaceEvenly ||
+                        alignment == MainAxisAlignment.center;
                 return Padding(
                   padding: EdgeInsets.only(
                       top: row != 0 ? layoutConfig.rowSpacing : 0),
-                  child: Row(
-                    spacing: rowConfig.seatSpacing,
-                    mainAxisAlignment: alignment,
-                    children: List.generate(rowConfig.count, (column) {
-                      final seatWidgetState = controller.getSeatWidgetState(
-                          layoutConfig, row, column);
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      spacing: isDistributedAlignment
+                          ? 0.0
+                          : rowConfig.seatSpacing
+                              .clamp(0.0, double.infinity),
+                      mainAxisAlignment: alignment,
+                      children: List.generate(rowConfig.count, (column) {
+                        final seatWidgetState = controller.getSeatWidgetState(
+                            layoutConfig, row, column);
 
-                      return GestureDetector(
-                        onTap: () {
-                          final index = controller.getSeatIndex(
-                              layoutConfig, row, column);
-                          seatWidgetState.seatInfoNotifier.value.index = index;
-                          onSeatWidgetTap
-                              ?.call(seatWidgetState.seatInfoNotifier.value);
-                        },
-                        child: SizedBox(
-                            width: rowConfig.seatSize.width,
-                            height: rowConfig.seatSize.height,
-                            child: seatWidgetBuilder != null
-                                ? seatWidgetBuilder!(
-                                    context,
-                                    seatWidgetState.seatInfoNotifier,
-                                    seatWidgetState.volumeNotifier)
-                                : DefaultSeatWidget(
-                                    seatWidgetState: seatWidgetState)),
-                      );
-                    }),
+                        return GestureDetector(
+                          onTap: () {
+                            final index = controller.getSeatIndex(
+                                layoutConfig, row, column);
+                            seatWidgetState.seatInfoNotifier.value.index =
+                                index;
+                            onSeatWidgetTap?.call(
+                                seatWidgetState.seatInfoNotifier.value);
+                          },
+                          child: SizedBox(
+                              width: rowConfig.seatSize.width,
+                              height: rowConfig.seatSize.height,
+                              child: seatWidgetBuilder != null
+                                  ? seatWidgetBuilder!(
+                                      context,
+                                      seatWidgetState.seatInfoNotifier,
+                                      seatWidgetState.volumeNotifier)
+                                  : DefaultSeatWidget(
+                                      seatWidgetState: seatWidgetState)),
+                        );
+                      }),
+                    ),
                   ),
                 );
               });

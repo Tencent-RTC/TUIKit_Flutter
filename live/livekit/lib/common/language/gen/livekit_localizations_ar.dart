@@ -129,6 +129,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   String get common_more_features => 'المزيد من الميزات';
 
   @override
+  String get common_mute_audio => 'كتم الصوت';
+
+  @override
   String get common_mute_audio_by_master => 'قام المذيع بكتم صوتك';
 
   @override
@@ -151,6 +154,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
       'تم إلغاء كتم صوتك في الغرفة الحالية';
 
   @override
+  String get common_setting_done => 'تم';
+
+  @override
   String get common_start_live => 'بدء البث';
 
   @override
@@ -169,6 +175,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   @override
   String get common_un_mute_video_by_master =>
       'قام المذيع بتفعيل الفيديو الخاص بك';
+
+  @override
+  String get common_unmute_audio => 'إلغاء كتم الصوت';
 
   @override
   String get common_link_guest => 'ضيف';
@@ -212,6 +221,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   @override
   String get livelist_exit_float_window_tip =>
       'البث المباشر قيد التقدم. يرجى المحاولة مرة أخرى لاحقاً.';
+
+  @override
+  String get livelist_click_enter_room => 'انقر لدخول غرفة البث';
 
   @override
   String get livestreamcore_battle_error_conflict =>
@@ -279,7 +291,8 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
       'صاحب الغرفة لا يدعم مغادرة الغرفة، يمكنه فقط إغلاق الغرفة';
 
   @override
-  String get common_client_error_failed => 'خطأ عام غير مصنف مؤقتاً';
+  String get common_client_error_failed =>
+      'الخادم يواجه مشكلة مؤقتة، يرجى المحاولة لاحقاً';
 
   @override
   String get common_client_error_freq_limit =>
@@ -979,6 +992,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   String get live_choose_music => 'اختر الموسيقى';
 
   @override
+  String get live_cohost_application_expired => 'انتهت صلاحية التطبيق';
+
+  @override
   String get live_failed_to_enter_room => 'فشل دخول الغرفة';
 
   @override
@@ -1202,6 +1218,10 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
 
   @override
   String get common_live_game => 'بث مباشر للعبة';
+
+  @override
+  String get common_end_live_by_server =>
+      'تم إيقاف البث المباشر بسبب انتهاكات للوائح.';
 
   @override
   String get common_go_to_enable => 'الذهاب للتفعيل';

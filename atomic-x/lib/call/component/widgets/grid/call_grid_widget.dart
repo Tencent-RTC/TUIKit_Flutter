@@ -71,7 +71,7 @@ class _CallGridWidgetState extends State<CallGridWidget> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 240,
+              bottom: _controlsHeight + 8 + MediaQuery.of(context).padding.bottom,
               child: Container(
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.9,
@@ -83,14 +83,14 @@ class _CallGridWidgetState extends State<CallGridWidget> {
             
             if (widget.enableAITranscriber && selfInfo.status == CallParticipantStatus.accept)
               AITranscriberPanel(
-                bottomOffset: _controlsHeight + 8,
+                bottomOffset: _controlsHeight + 8 + MediaQuery.of(context).padding.bottom,
                 animationDuration: const Duration(milliseconds: _animationDuration),
               ),
               
             Positioned(
               right: 0,
               left: 0,
-              bottom: 0,
+              bottom: MediaQuery.of(context).padding.bottom,
               child: MultiCallControlsWidget(
                 onHeightChanged: (height) {
                   setState(() => _controlsHeight = height);

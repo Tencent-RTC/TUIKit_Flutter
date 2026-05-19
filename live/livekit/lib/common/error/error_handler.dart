@@ -9,19 +9,6 @@ class ErrorHandler {
     LiveError.seatNotSupportLinkMic,
   };
 
-  static void onError(int code, String? message) {
-    const success = 0;
-    if (code == success) return;
-    String? localizedMessage = convertToErrorMessage(code, message);
-    if (!interceptToastOnlyPrintLog.contains(LiveError.fromInt(code)) && localizedMessage != null) {
-      makeToast(msg: localizedMessage);
-    }
-  }
-
-  static void handleMessage(String message) {
-    makeToast(msg: message);
-  }
-
   static String? convertToErrorMessage(int code, String? message) {
     LiveKitLogger.info('ErrorHandler :[error: $code, message: $message]');
     final liveError = LiveError.fromInt(code);

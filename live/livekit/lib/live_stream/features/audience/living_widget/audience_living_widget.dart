@@ -10,10 +10,13 @@ import 'package:tencent_live_uikit/live_stream/features/decorations/co_guest/co_
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/alert_dialog.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../component/network_info/index.dart';
 import '../../../live_define.dart';
+import '../../../manager/module/user_manager.dart';
 import '../panel/audience_user_info_panel_widget.dart';
 import './player_menu_widget.dart';
 
@@ -36,13 +39,14 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
   late final VoidCallback _userEnterRoomListener = _onRemoteUserEnterRoom;
   late final VoidCallback _playbackVideoQualityChangedListener = _onPlaybackVideoQualityChanged;
   TUIVideoQuality? playbackQuality;
-  BottomSheetHandler? _closePanelSheetHandler;
+  AlertHandler? _closePanelSheetHandler;
 
   late final LiveListListener _liveListListener;
 
   @override
   void initState() {
     super.initState();
+    widget.liveStreamManager.setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy.always);
     widget.liveStreamManager.userState.enterUser.addListener(_userEnterRoomListener);
     widget.liveStreamManager.mediaState.playbackQuality.addListener(_playbackVideoQualityChangedListener);
     _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
@@ -190,7 +194,6 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
         right: 12.width,
         top: 100.height,
         height: 20.height,
-        width: 78.width,
         child: ListenableBuilder(
             listenable: Listenable.merge(
                 [widget.liveStreamManager.roomState.liveStatus, widget.liveStreamManager.coGuestState.coGuestStatus]),
@@ -229,7 +232,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
       left: orientation == Orientation.portrait ? 16.width : 35.height,
       bottom: orientation == Orientation.portrait ? 80.height : 20.width,
       height: 182.height,
-      width: screenWidth - 72.width,
+      width: screenWidth - 146.width,
       child: ValueListenableBuilder(
         valueListenable: widget.liveStreamManager.roomState.liveStatus,
         builder: (BuildContext context, value, Widget? child) {
@@ -366,14 +369,26 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
 
 extension on _AudienceLivingWidgetState {
   void _initBarrageDisPlayController() {
-    _barrageDisplayController ??= BarrageDisplayController(
-        roomId: widget.liveStreamManager.roomState.roomId,
-        ownerId: widget.liveStreamManager.roomState.liveInfo.liveOwner.userID,
-        selfUserId: TUIRoomEngine.getSelfInfo().userId,
-        selfName: TUIRoomEngine.getSelfInfo().userName,
-        onError: (code, message) {
-          makeToast(msg: ErrorHandler.convertToErrorMessage(code, message) ?? '');
-        });
+    if (_barrageDisplayController == null) {
+      _barrageDisplayController = BarrageDisplayController(
+          roomId: widget.liveStreamManager.roomState.roomId,
+          ownerId: widget.liveStreamManager.roomState.liveInfo.liveOwner.userID,
+          selfUserId: TUIRoomEngine.getSelfInfo().userId,
+          selfName: TUIRoomEngine.getSelfInfo().userName,
+          onError: (code, message) {
+            makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '', type: ToastType.error);
+          });
+      _supplementaryUserEnterRoomTipsIfNeeded();
+    }
+  }
+
+  void _supplementaryUserEnterRoomTipsIfNeeded() {
+    if (widget.liveStreamManager.userState.enterUser.value.userID.isNotEmpty) {
+      Barrage barrage = Barrage();
+      barrage.sender = widget.liveStreamManager.userState.enterUser.value;
+      barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
+      _barrageDisplayController!.insertMessage(barrage);
+    }
   }
 
   void _initGiftDisPlayController() {
@@ -393,14 +408,8 @@ extension on _AudienceLivingWidgetState {
   }
 
   void _onRemoteUserEnterRoom() {
-    final userInfo = widget.liveStreamManager.userState.enterUser.value;
-    LiveUserInfo barrageUser = LiveUserInfo();
-    barrageUser.userID = userInfo.userId;
-    barrageUser.userName = userInfo.userName.isNotEmpty ? userInfo.userName : userInfo.userId;
-    barrageUser.avatarURL = userInfo.avatarUrl;
-
     Barrage barrage = Barrage();
-    barrage.sender = barrageUser;
+    barrage.sender = widget.liveStreamManager.userState.enterUser.value;
     barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
     _barrageDisplayController?.insertMessage(barrage);
   }
@@ -452,62 +461,35 @@ extension on _AudienceLivingWidgetState {
       return;
     }
 
-    final actionSheetItems = [
-      ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_audience_end_link_tips,
-        textStyle: const TextStyle(
-          color: LiveColors.notStandardWhite30Transparency,
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-        lineHeight: 1.height,
-        bingData: 1,
+    _closePanelSheetHandler = Alert.showAlert(
+      AlertInfo(
+        description: LiveKitLocalizations.of(context)!.common_audience_end_link_tips,
+        itemList: [
+          ButtonConfig(
+            text: LiveKitLocalizations.of(context)!.common_end_link,
+            type: TextColorPreset.red,
+            onClick: () {
+              _closePanelSheetHandler?.close();
+              CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
+              coGuestStore.disconnect();
+            },
+          ),
+          ButtonConfig(
+            text: LiveKitLocalizations.of(context)!.common_exit_live,
+            onClick: () {
+              _closePanelSheetHandler?.close();
+              LiveListStore.shared.leaveLive();
+              _closePage();
+            },
+          ),
+          ButtonConfig(
+            text: LiveKitLocalizations.of(context)!.common_cancel,
+            onClick: () => _closePanelSheetHandler?.close(),
+          ),
+        ],
       ),
-      ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_end_link,
-        textStyle: const TextStyle(
-          color: LiveColors.designStandardFlowkitRed,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        lineHeight: 1.height,
-        bingData: 2,
-      ),
-      ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_exit_live,
-        textStyle: const TextStyle(
-          color: LiveColors.designStandardFlowkitWhite,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        lineHeight: 7.height,
-        bingData: 3,
-      ),
-      ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        isShowBottomLine: false,
-        bingData: 4,
-      ),
-    ];
-
-    _closePanelSheetHandler = ActionSheet.show(actionSheetItems, (ActionSheetModel model) async {
-      switch (model.bingData) {
-        case 2:
-          CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
-          coGuestStore.disconnect();
-          break;
-        case 3:
-          LiveListStore.shared.leaveLive();
-          _closePage();
-          break;
-        default:
-          break;
-      }
-    }, parentContext: context);
+      context,
+    );
   }
 
   void _onRotateButtonTapped(Orientation currentOrientation) {

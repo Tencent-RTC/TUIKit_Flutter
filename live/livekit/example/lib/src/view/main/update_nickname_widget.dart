@@ -155,10 +155,10 @@ extension _UpdateNicknameWidgetStateLogicExtension
 
   void _updateNickname() async {
     if (_inputNickname.isEmpty) {
-      makeToast(msg: S.current.app_enter_nickname);
+      makeToast(context, S.current.app_enter_nickname);
       return;
     } else if (_inputNickname == AppStore.userName.value) {
-      makeToast(msg: S.current.app_enter_nickname);
+      makeToast(context, S.current.app_enter_nickname);
       return;
     }
     final result =

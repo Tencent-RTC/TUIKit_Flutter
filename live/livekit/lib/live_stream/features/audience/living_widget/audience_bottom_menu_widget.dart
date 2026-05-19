@@ -231,56 +231,40 @@ extension on _AudienceBottomMenuWidgetState {
   }
 
   void _showCancelRequestPanelWidget() {
-    List<ActionSheetModel> list = [
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_text_cancel_link_mic_apply,
-          textStyle: const TextStyle(
-            color: LiveColors.designStandardFlowkitRed,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-          lineHeight: 3,
-          bingData: 1),
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          isShowBottomLine: false,
-          bingData: 2),
-    ];
-    ActionSheet.show(list, (ActionSheetModel model) async {
-      if (model.bingData == 1) {
-        CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
-        coGuestStore.cancelApplication();
-        widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
-      }
-    }, parentContext: context);
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_text_cancel_link_mic_apply,
+          isDestructive: true,
+          onTap: () async {
+            final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+            if (liveID.isEmpty) return;
+            CoGuestStore coGuestStore = CoGuestStore.create(liveID);
+            coGuestStore.cancelApplication();
+            widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
+          },
+        ),
+      ],
+    );
   }
 
   void _showCloseCoGuestPanelWidget() {
-    List<ActionSheetModel> list = [
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_text_close_link_mic,
-          textStyle: const TextStyle(
-            color: LiveColors.designStandardFlowkitRed,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-          lineHeight: 3,
-          bingData: 1),
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          isShowBottomLine: false,
-          bingData: 2),
-    ];
-    ActionSheet.show(list, (ActionSheetModel model) async {
-      if (model.bingData == 1) {
-        CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
-        coGuestStore.disconnect();
-      }
-    }, parentContext: context);
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_text_close_link_mic,
+          isDestructive: true,
+          onTap: () async {
+            final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+            if (liveID.isEmpty) return;
+            CoGuestStore coGuestStore = CoGuestStore.create(liveID);
+            coGuestStore.disconnect();
+          },
+        ),
+      ],
+    );
   }
 
   String _getImageByCoGuestStatus(bool isCoGuestDisabled) {

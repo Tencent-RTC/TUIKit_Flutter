@@ -1,0 +1,203 @@
+{
+  "displayName": "虚拟背景",
+  "displayNameEn": "Virtual background",
+  "downloadPath": "MotionRes/segmentMotionRes/",
+  "verticalLayout": true,
+  "propertyList": [
+    {
+      "displayName": "无",
+      "displayNameEn": "None",
+      "icon": "beauty_panel/panel_icon/beauty/none.png"
+    },
+    {
+      "displayName": "自定义背景",
+      "displayNameEn": "Custom",
+      "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_empty_segmentation",
+      "sdkParam": {
+        "extraInfo": {
+          "segType": "custom_background"
+        }
+      }
+    },
+    {
+      "displayName": "绿幕抠图V2",
+      "displayNameEn": "Green Screen V2",
+      "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_greenscreen_v2",
+      "sdkParam": {
+        "extraInfo": {
+          "segType": "green_background_v2"
+        }
+      },
+      "propertyList": [
+        {
+          "displayName": "关闭",
+          "displayNameEn": "Off",
+          "icon": "beauty_panel/panel_icon/beauty/none.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM"
+        },
+        {
+          "displayName": "导入图片",
+          "displayNameEn": "import image",
+          "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE"
+        },
+        {
+          "displayName": "相似度",
+          "displayNameEn": "Similarity",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_similarity.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.similarity",
+            "effectValue":30
+          }
+        },
+        {
+          "displayName": "平滑度",
+          "displayNameEn": "Smoothness",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_smooth.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.smooth",
+            "effectValue":20
+          }
+        },
+        {
+          "displayName": "边缘消除强度",
+          "displayNameEn": "Edge Elimination",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_corrosion.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.corrosion",
+            "effectValue":1
+          }
+        },
+        {
+          "displayName": "灰度比例",
+          "displayNameEn": "Grayscale Ratio",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_despill.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.despill",
+            "effectValue":30
+          }
+        },
+        {
+          "displayName": "去阴影",
+          "displayNameEn": "Shadow Removal",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_deshadow.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.deshadow",
+            "effectValue":1
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "蓝幕抠图",
+      "displayNameEn": "Blue Screen",
+      "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_bluescreen",
+      "sdkParam": {
+        "extraInfo": {
+          "segType": "green_background_v2"
+        }
+      },
+      "propertyList": [
+        {
+          "displayName": "关闭",
+          "displayNameEn": "Off",
+          "icon": "beauty_panel/panel_icon/beauty/none.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM"
+        },
+        {
+          "displayName": "导入图片",
+          "displayNameEn": "import image",
+          "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE"
+        },
+        {
+          "displayName": "相似度",
+          "displayNameEn": "Similarity",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_similarity.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.similarity",
+            "effectValue":35
+          }
+        },
+        {
+          "displayName": "平滑度",
+          "displayNameEn": "Smoothness",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_smooth.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.smooth",
+            "effectValue":8
+          }
+        },
+        {
+          "displayName": "边缘消除强度",
+          "displayNameEn": "Edge Elimination",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_corrosion.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.corrosion",
+            "effectValue":1
+          }
+        },
+        {
+          "displayName": "灰度比例",
+          "displayNameEn": "Grayscale Ratio",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_despill.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.despill",
+            "effectValue":10
+          }
+        },
+        {
+          "displayName": "去阴影",
+          "displayNameEn": "Shadow Removal",
+          "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_deshadow.png",
+          "uiCategory":"GREEN_BACKGROUND_V2_ITEM",
+          "sdkParam": {
+            "effectName":"green_background_v2.deshadow",
+            "effectValue":1
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "背景模糊-弱",
+      "displayNameEn": "Blur(weak)",
+      "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_blur_45.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_blur_45"
+    },
+    {
+      "displayName": "背景模糊-强",
+      "displayNameEn": "Blur(strong)",
+      "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_blur_75.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_blur_75"
+    },
+    {
+      "displayName": "背景透明",
+      "displayNameEn": "Transparent",
+      "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_transparent_bg.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_transparent_bg"
+    },
+    {
+      "displayName": "绿幕抠图",
+      "displayNameEn": "GreenScreen",
+      "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+      "resourceUri": "MotionRes/segmentMotionRes/video_greenscreen",
+      "sdkParam": {
+        "extraInfo": {
+          "segType": "green_background"
+        }
+      }
+    }
+  ]
+}

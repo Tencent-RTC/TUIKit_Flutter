@@ -149,4 +149,8 @@ class LiveImages {
   static const seatEmptyIcon = 'assets/images/live_seat_empty.png';
   static const seatPlaceHolderAvatar = 'assets/images/live_seat_placeholder_avatar.png';
   static const seatLockedIcon = 'assets/images/live_seat_locked_icon.png';
+
+  static const liveDoubleColumn = 'assets/images/live_double_column.png';
+
+  static const endByServer = 'assets/images/live_end_by_server.png';
 }

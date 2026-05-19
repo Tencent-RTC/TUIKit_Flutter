@@ -16,13 +16,8 @@ class DefaultSeatWidget extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(
-            top: -(11.width), left: -(11.width), child: _BackgroundAnimatedWidget(seatWidgetState: seatWidgetState)),
-        Positioned(
-          top: 0,
-          left: 0,
-          child: _MainWidget(seatWidgetState: seatWidgetState),
-        ),
+        Positioned(child: _BackgroundAnimatedWidget(seatWidgetState: seatWidgetState)),
+        Positioned(child: _MainWidget(seatWidgetState: seatWidgetState),),
         Positioned(top: 34.width, left: 34.width, child: _MicrophoneMutedWidget(seatWidgetState: seatWidgetState)),
         Positioned(top: 58.height, left: 0, child: _InformationWidget(seatWidgetState: seatWidgetState))
       ],
@@ -45,8 +40,8 @@ class _BackgroundAnimatedWidget extends StatelessWidget {
         final isEmptySeat = seatWidgetState.seatInfoNotifier.value.userInfo.userID.isEmpty;
         final volume = seatWidgetState.volumeNotifier.value;
         return SizedBox(
-          height: 72.width,
-          width: 72.width,
+          height: 50.width,
+          width: 50.width,
           child: Center(
             child: Visibility(
                 visible: !isEmptySeat && volume != 0,
@@ -185,8 +180,8 @@ class _InformationWidget extends StatelessWidget {
 
   Widget _buildUserOnSeatWidget({required BuildContext context, required SeatInfo seatInfo, required bool isOwner}) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Visibility(
             visible: isOwner,

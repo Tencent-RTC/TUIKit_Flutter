@@ -87,13 +87,17 @@ class GenerateTestUserSig {
     String contentToBeSigned =
         "TLS.identifier:$identifier\nTLS.sdkappid:$sdkappid\nTLS.time:$currTime\nTLS.expire:$expire\n";
     Hmac hmacSha256 = Hmac(sha256, utf8.encode(secretKey));
-    Digest hmacSha256Digest = hmacSha256.convert(utf8.encode(contentToBeSigned));
+    Digest hmacSha256Digest =
+        hmacSha256.convert(utf8.encode(contentToBeSigned));
     return base64.encode(hmacSha256Digest.bytes);
   }
 
   static String _escape({
     required String content,
   }) {
-    return content.replaceAll('+', '*').replaceAll('/', '-').replaceAll('=', '_');
+    return content
+        .replaceAll('+', '*')
+        .replaceAll('/', '-')
+        .replaceAll('=', '_');
   }
 }

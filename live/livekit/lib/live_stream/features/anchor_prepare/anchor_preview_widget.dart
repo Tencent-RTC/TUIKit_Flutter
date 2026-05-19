@@ -11,6 +11,7 @@ import 'package:rtc_room_engine/rtc_room_engine.dart';
 import '../../../common/constants/constants.dart';
 import '../../../common/language/index.dart';
 import '../../../common/resources/index.dart';
+import '../../../common/widget/base_bottom_sheet.dart';
 import '../../../common/widget/index.dart';
 import '../../manager/live_stream_manager.dart';
 import 'widgets/anchor_preview_function_widget.dart';
@@ -236,6 +237,9 @@ extension on _AnchorPreviewWidgetState {
   }
 
   void _createRoom() {
+    if (BottomSheetGuard.instance.isCovered) {
+      return;
+    }
     widget.didClickStart?.call(_editInfo);
   }
 

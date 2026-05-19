@@ -137,11 +137,13 @@ extension RoomManagerCallBack on RoomManager {
   void _onCurrentLiveChanged() {
     LiveInfo liveInfo = LiveListStore.shared.liveState.currentLive.value;
     if (liveInfo.liveID.isEmpty) {
-      roomState.liveStatus.value = LiveStatus.finished;
+      if (roomState.roomId.isEmpty) {
+        roomState.liveStatus.value = LiveStatus.finished;
+      }
       return;
     }
+    if (liveInfo.liveID != roomState.roomId) return;
     roomState.liveInfo = liveInfo;
-    roomState.roomId = liveInfo.liveID;
     roomState.createTime = liveInfo.createTime;
     roomState.roomName = liveInfo.liveName;
     roomState.coverUrl.value = liveInfo.coverURL;
@@ -155,7 +157,7 @@ extension RoomManagerCallBack on RoomManager {
     if (liveID.isEmpty || LiveListStore.shared.liveState.currentLive.value.liveID != liveID) return;
     LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
     final canvas = liveSeatStore.liveSeatState.canvas.value;
-    var isLandscape = canvas.w >= canvas.h;
+    var isLandscape = canvas.w > canvas.h;
     if (!isLandscape && roomState.roomVideoStreamIsLandscape.value) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,

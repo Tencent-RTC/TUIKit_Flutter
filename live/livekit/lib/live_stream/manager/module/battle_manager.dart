@@ -16,6 +16,15 @@ class BattleManager {
   late final Context context;
   late final LiveStreamService service;
   Timer? _timer;
+
+  // Absolute local timestamp (milliseconds) at which the current PK is expected
+  // to end. Used by the countdown tick to recompute `durationCountDown` based
+  // on elapsed wall-clock time instead of a simple `-1` per tick. This keeps
+  // the remaining value correct after the app is backgrounded / paused, since
+  // Dart `Timer.periodic` stops firing while the engine is suspended and would
+  // otherwise lag behind real time when the app returns to foreground.
+  int _pkEndLocalMs = 0;
+
   final ValueNotifier<List<SeatUserInfo>> inviteeList = ValueNotifier([]);
   late final VoidCallback onBattleScoreListener = _onBattleScoreChanged;
   late BattleListener? battleListener;
@@ -44,6 +53,7 @@ class BattleManager {
     battleState.isShowingStartWidget = false;
     battleState.isBattleRunning.value = false;
     battleState.isOnDisplayResult.value = false;
+    _pkEndLocalMs = 0;
   }
 
   void onRequestBattle(String battleId, List<SeatUserInfo> battleUserList) {
@@ -81,18 +91,27 @@ extension BattlleManagerCallback on BattleManager {
     BattleStore battleStore = BattleStore.create(liveID);
     battleStore.battleState.battleScore.addListener(onBattleScoreListener);
 
-    battleInfo.config.duration =
-        battleInfo.config.duration + battleInfo.startTime - (DateTime.now().millisecondsSinceEpoch ~/ 1000);
+    final int totalDuration = battleInfo.config.duration;
+    final int nowMs = DateTime.now().millisecondsSinceEpoch;
+    final int elapsedSec = (nowMs ~/ 1000) - battleInfo.startTime;
+    final int remaining = (totalDuration - elapsedSec).clamp(0, totalDuration);
+
+    // Anchor the PK end time to the local wall clock so the countdown can
+    // self-correct after the app returns from background. A tick based on
+    // `-1` per second would drift because Dart timers pause while the engine
+    // is suspended; recomputing remaining from `_pkEndLocalMs - now` instead
+    // keeps the UI aligned with real elapsed time.
+    _pkEndLocalMs = nowMs + remaining * 1000;
 
     battleState.battleId.value = battleInfo.battleID;
     battleState.isBattleRunning.value = true;
     battleState.isInWaiting.value = false;
     battleState.isShowingStartWidget = true;
     battleState.battleConfig = BattleConfig(
-        duration: battleInfo.config.duration,
+        duration: totalDuration,
         needResponse: battleInfo.config.needResponse,
         extensionInfo: battleInfo.config.extensionInfo);
-    battleState.durationCountDown.value = battleInfo.config.duration;
+    battleState.durationCountDown.value = remaining;
     final battleUsers = [
       ...invitees.map((battleUser) => BattleUser.fromSeatUserInfo(battleUser)),
       BattleUser.fromSeatUserInfo(inviter),
@@ -249,10 +268,18 @@ extension on BattleManager {
   }
 
   void _startCountDown() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (battleState.durationCountDown.value > 0) {
-        battleState.durationCountDown.value -= 1;
+      // Recompute remaining from the absolute PK end timestamp instead of
+      // decrementing by 1. This way, after the app returns from background
+      // (where timers are paused), the UI immediately realigns with real
+      // elapsed time on the next tick.
+      final int nowMs = DateTime.now().millisecondsSinceEpoch;
+      final int remainingSec = ((_pkEndLocalMs - nowMs) / 1000).ceil();
+      if (remainingSec > 0) {
+        battleState.durationCountDown.value = remainingSec;
       } else {
+        battleState.durationCountDown.value = 0;
         _timer?.cancel();
       }
     });

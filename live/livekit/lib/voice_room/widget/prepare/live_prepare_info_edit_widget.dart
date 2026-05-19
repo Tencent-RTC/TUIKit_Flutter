@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/voice_room/manager/voice_room_prepare_store.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/live_cover_select_panel_widget.dart';
 
@@ -233,20 +234,20 @@ extension on _LivePrepareInfoEditWidgetState {
   }
 
   void _showLiveModeSelectPanel() {
-    List<ActionSheetModel> list = [
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default,
-          bingData: 1),
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_privacy,
-          bingData: 2),
-    ];
-    ActionSheet.show(list, (ActionSheetModel model) async {
-      final mode = model.bingData == 1 ? PrivacyStatus.public : PrivacyStatus.privacy;
-      widget.prepareStore.onSetRoomPrivacy(mode);
-    }, parentContext: context);
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_stream_privacy_status_default,
+          onTap: () => widget.prepareStore.onSetRoomPrivacy(PrivacyStatus.public),
+        ),
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_stream_privacy_status_privacy,
+          onTap: () => widget.prepareStore.onSetRoomPrivacy(PrivacyStatus.privacy),
+        ),
+      ],
+      showCancel: false,
+    );
   }
 
   String _getPrivacyStatus(PrivacyStatus status) {

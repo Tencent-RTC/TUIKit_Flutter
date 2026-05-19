@@ -45,7 +45,6 @@ class _CallFloatWidgetState extends State<CallFloatWidget> {
   @override
   Widget build(BuildContext context) {
     _measureControlsHeight();
-    var activeCall = CallStore.shared.state.activeCall.value;
     return ValueListenableBuilder(
       valueListenable: CallStore.shared.state.selfInfo,
       builder: (context, self, child) {
@@ -64,7 +63,7 @@ class _CallFloatWidgetState extends State<CallFloatWidget> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: activeCall.mediaType == CallMediaType.video ? 240 : 120,
+              bottom: 40 + _controlsHeight + 8 + MediaQuery.of(context).padding.bottom,
               child: Container(
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.9,
@@ -75,12 +74,15 @@ class _CallFloatWidgetState extends State<CallFloatWidget> {
             ),
 
             if (widget.enableAITranscriber && self.status == CallParticipantStatus.accept)
-              AITranscriberPanel(bottomOffset: _controlsHeight + 48),
+              AITranscriberPanel(
+                bottomOffset: _controlsHeight + 48 + MediaQuery.of(context).padding.bottom,
+                animationDuration: Duration.zero,
+              ),
 
             Positioned(
               right: 0,
               left: 0,
-              bottom: 40,
+              bottom: 40 + MediaQuery.of(context).padding.bottom,
               child: SingleCallControlsWidget(key: _controlsKey),
             ),
             _getTimerWidget(),

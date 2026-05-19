@@ -4,8 +4,6 @@ import 'package:tuikit_atomic_x/call/component/widgets/float/call_float_widget.d
 import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_widget.dart';
 import 'package:tuikit_atomic_x/call/component/widgets/pip/call_pip_widget.dart';
 
-import '../ai/ai_transcriber.dart';
-
 class CallView extends StatefulWidget {
   final bool isPipMode;
   final bool enableAITranscriber;
@@ -26,23 +24,12 @@ class _CallViewState extends State<CallView> {
   @override
   void initState() {
     controller = CallCoreController.create();
-    DeviceStore.shared.openLocalMicrophone();
-    DeviceStore.shared.setAudioRoute(
-      CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio
-          ? AudioRoute.earpiece
-          : AudioRoute.speakerphone
-    );
-    if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
-      DeviceStore.shared.openLocalCamera(true);
-    }
     super.initState();
   }
 
   @override
   void dispose() {
-    aiTranscriberConfigManager.reset(preserveSettings: false);
     controller.dispose();
-    DeviceStore.shared.closeLocalMicrophone();
     super.dispose();
   }
 

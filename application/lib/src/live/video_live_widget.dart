@@ -1,6 +1,9 @@
+import 'package:application/src/module_assembly/module_assembly.dart';
 import 'package:flutter/material.dart';
+import 'package:tencent_live_uikit/common/widget/index.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:atomic_x_core/atomicxcore.dart' hide RoomType;
 
 import '../app_store/index.dart';
 import '../utils/language/index.dart';
@@ -14,10 +17,18 @@ class VideoLiveWidget extends StatefulWidget {
 
 class _VideoLiveWidgetState extends State<VideoLiveWidget> {
   late double _screenWidth;
+  final ValueNotifier<LiveListViewStyle> _liveListStyle =
+      ValueNotifier<LiveListViewStyle>(LiveListViewStyle.doubleColumn);
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _liveListStyle.dispose();
+    super.dispose();
   }
 
   @override
@@ -30,16 +41,54 @@ class _VideoLiveWidgetState extends State<VideoLiveWidget> {
           valueListenable: AppStore.currentFragmentIndex,
           builder: (BuildContext context, int value, Widget? child) {
             return Scaffold(
-              body: SizedBox(
+              body: Container(
+                color: Colors.black,
                 width: _screenWidth,
                 height: double.infinity,
-                child: Stack(
-                  children: [
-                    _initTopBackgroundWidget(),
-                    _initAppBarWidget(),
-                    _initContentWidget(),
-                    _initBroadcastWidget()
-                  ],
+                child: ValueListenableBuilder<LiveListViewStyle>(
+                  valueListenable: _liveListStyle,
+                  builder: (context, liveListStyle, _) {
+                    final isDoubleColumn = liveListStyle == LiveListViewStyle.doubleColumn;
+                    return Stack(
+                      children: [
+                        if (isDoubleColumn) _initAppBarWidget(liveListStyle),
+                        Positioned(
+                          key: const ValueKey('live_list'),
+                          top: isDoubleColumn ? 80 : 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: LiveListWidget(
+                            style: liveListStyle,
+                            onBackPressed: isDoubleColumn ? null : () => Navigator.of(context).pop(),
+                            onStyleToggle: isDoubleColumn ? null : _toggleLiveListStyle,
+                          ),
+                        ),
+                        if (!isDoubleColumn)
+                          Positioned(
+                            top: MediaQuery.of(context).padding.top + 8,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Container(
+                                height: 40,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(context)!.app_video,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (isDoubleColumn) _initBroadcastWidget(),
+                      ],
+                    );
+                  },
                 ),
               ),
             );
@@ -47,62 +96,56 @@ class _VideoLiveWidgetState extends State<VideoLiveWidget> {
         ));
   }
 
-  Widget _initTopBackgroundWidget() {
-    return SizedBox(
-        width: _screenWidth,
-        height: 200,
-        child: Image.asset(
-          'assets/app_top_background.png',
-          fit: BoxFit.fill,
-        ));
-  }
-
-  Widget _initAppBarWidget() {
+  Widget _initAppBarWidget(LiveListViewStyle liveListStyle) {
     return Positioned(
       left: 10,
       top: 40,
       right: 10,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Image.asset('assets/app_back.png', width: 24, height: 24)),
-          Text(
-            AppLocalizations.of(context)!.app_video,
-            style: const TextStyle(
-                fontSize: 18, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Color(0xFF000000)),
-          ),
-          GestureDetector(
-            onTap: () {
-              _launchUrl(AppStore.tuiLiveKitDocumentUrl);
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              padding: const EdgeInsets.all(8),
-              color: Colors.transparent,
-              child: Image.asset(
-                'assets/app_question_link.png',
-                width: 24,
-                height: 24,
+      child: SizedBox(
+        height: 48,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Center(
+              child: Text(
+                AppLocalizations.of(context)!.app_video,
+                style: const TextStyle(
+                    fontSize: 18, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white),
               ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 24,
+                    color: Colors.white,
+                  )),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: _toggleLiveListStyle,
+                    padding: const EdgeInsets.all(8),
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    icon: Image.asset(
+                      liveListStyle == LiveListViewStyle.doubleColumn
+                          ? 'assets/app_live_single_column.png'
+                          : 'assets/app_live_double_column.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _initContentWidget() {
-    return const Positioned(
-      top: 80,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: LiveListWidget(),
     );
   }
 
@@ -137,7 +180,18 @@ class _VideoLiveWidgetState extends State<VideoLiveWidget> {
 }
 
 extension _VideoLiveWidgetStateLogicExtension on _VideoLiveWidgetState {
+  void _toggleLiveListStyle() {
+    _liveListStyle.value = _liveListStyle.value == LiveListViewStyle.doubleColumn
+        ? LiveListViewStyle.singleColumn
+        : LiveListViewStyle.doubleColumn;
+  }
+
   void _startAnchorWidget() async {
+    if (!ModuleAssembly.canStartNewRoom()) {
+      makeToast(context, AppLocalizations.of(context)!.app_can_not_start_room_during_call);
+      return;
+    }
+
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
         // You can use TUILiveRoomAnchorWidget, but note that it does not support floating window mode.

@@ -3,21 +3,24 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../common/call_colors.dart';
 import '../../../common/constants.dart';
-import '../../../common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 import '../../../common/utils/utils.dart';
+
+// ignore_for_file: unused_import
 
 class CallGridWaitingWidget extends StatelessWidget {
   const CallGridWaitingWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AtomicLocalizations.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _getCallerInfoDisplay(),
         Text(
-          CallKit_t("invitedToGroupCall"),
+          l10n.callInvitedToGroupCall,
           textScaleFactor: 1.0,
           style: const TextStyle(fontSize: 16, color: CallColors.colorG5),
         ),
@@ -55,7 +58,7 @@ class CallGridWaitingWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                CallKit_t("theyAreAlsoThere"),
+                AtomicLocalizations.of(context).callTheyAreAlsoThere,
                 textScaleFactor: 1.0,
                 style: const TextStyle(fontSize: 15, color: CallColors.colorG5),
               ),

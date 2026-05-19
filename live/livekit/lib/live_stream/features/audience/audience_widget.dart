@@ -17,6 +17,7 @@ import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_
 import 'package:tencent_live_uikit/live_stream/features/decorations/index.dart';
 import 'package:tencent_live_uikit/live_stream/features/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../component/float_window/global_float_window_manager.dart';
 import '../../live_define.dart';
@@ -30,12 +31,19 @@ class AudienceWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
   final VoidCallback? onTapEnterFloatWindowInApp;
 
+  final ValueChanged<bool>? onJoinLiveStateChanged;
+  final ValueChanged<bool>? onCoGuestStateChanged;
+  final VoidCallback? onDispose;
+
   const AudienceWidget(
       {super.key,
       required this.roomId,
       required this.liveCoreController,
       required this.liveStreamManager,
-      this.onTapEnterFloatWindowInApp});
+      this.onTapEnterFloatWindowInApp,
+      this.onJoinLiveStateChanged,
+      this.onCoGuestStateChanged,
+      this.onDispose});
 
   @override
   State<AudienceWidget> createState() => _AudienceWidgetState();
@@ -43,8 +51,10 @@ class AudienceWidget extends StatefulWidget {
 
 class _AudienceWidgetState extends State<AudienceWidget> {
   late final VoidCallback _liveStatusListener = _onLiveStatusChange;
+
   late final VoidCallback _audioLockedListener = _onAudioLockedStatusChanged;
   late final VoidCallback _videoLockedListener = _onVideoLockedStatusChanged;
+  late final VoidCallback _coGuestStatusListener = _onCoGuestStatusChanged;
   late final StreamSubscription<void> _kickedOutSubscription;
   BottomSheetHandler? _audienceUserInfoPanelHandler;
   BottomSheetHandler? _audienceUserManagementPanelHandler;
@@ -60,37 +70,31 @@ class _AudienceWidgetState extends State<AudienceWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: PopScope(
-        canPop: false,
-        child: Container(
-          color: LiveColors.notStandardPureBlack,
-          child: Stack(
-            children: [
-              _buildBackgroundImageWidget(),
-              _buildMainWidget(),
-              AudienceLivingWidget(
-                liveCoreController: widget.liveCoreController,
-                liveStreamManager: widget.liveStreamManager,
-                onTapEnterFloatWindowInApp: widget.onTapEnterFloatWindowInApp,
-              ),
-              ValueListenableBuilder(
-                valueListenable: widget.liveStreamManager.roomState.liveStatus,
-                builder: (BuildContext context, value, Widget? child) {
-                  return Visibility(
-                    visible: widget.liveStreamManager.roomState.liveStatus.value == LiveStatus.finished,
-                    child: AudienceEndStatisticsWidget(
-                      roomId: widget.roomId,
-                      avatarUrl: widget.liveStreamManager.roomState.liveInfo.liveOwner.avatarURL,
-                      userName: widget.liveStreamManager.roomState.liveInfo.liveOwner.userName,
-                    ),
-                  );
-                },
-              ),
-            ],
+    return Container(
+      color: LiveColors.notStandardPureBlack,
+      child: Stack(
+        children: [
+          _buildBackgroundImageWidget(),
+          _buildMainWidget(),
+          AudienceLivingWidget(
+            liveCoreController: widget.liveCoreController,
+            liveStreamManager: widget.liveStreamManager,
+            onTapEnterFloatWindowInApp: widget.onTapEnterFloatWindowInApp,
           ),
-        ),
+          ValueListenableBuilder(
+            valueListenable: widget.liveStreamManager.roomState.liveStatus,
+            builder: (BuildContext context, value, Widget? child) {
+              return Visibility(
+                visible: widget.liveStreamManager.roomState.liveStatus.value == LiveStatus.finished,
+                child: AudienceEndStatisticsWidget(
+                  roomId: widget.roomId,
+                  avatarUrl: widget.liveStreamManager.roomState.liveInfo.liveOwner.avatarURL,
+                  userName: widget.liveStreamManager.roomState.liveInfo.liveOwner.userName,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -196,7 +200,13 @@ class _AudienceWidgetState extends State<AudienceWidget> {
                     avatarURL: seatInfo.userInfo.avatarURL);
                 if (isSelf) {
                   _audienceUserManagementPanelHandler = popupWidget(
-                      AudienceUserManagementPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+                      AudienceUserManagementPanelWidget(
+                        user: user,
+                        liveStreamManager: widget.liveStreamManager,
+                        closeCallback: () {
+                          _audienceUserManagementPanelHandler?.close();
+                        },
+                      ),
                       context: context);
                 } else {
                   _audienceUserInfoPanelHandler = popupWidget(
@@ -213,6 +223,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
   }
 
   CoGuestWidgetBuilder _createCoGuestWidgetBuilder() {
+    final isFloatWindowMode = widget.liveStreamManager.floatWindowState.isFloatWindowMode;
     return (context, seatInfo, viewLayer) {
       if (seatInfo.userInfo.userID.isEmpty) {
         if (viewLayer == ViewLayer.background) {
@@ -221,32 +232,34 @@ class _AudienceWidgetState extends State<AudienceWidget> {
         return Container();
       }
       if (viewLayer == ViewLayer.background) {
-        return CoGuestBackgroundWidget(
-            seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+        return CoGuestBackgroundWidget(seatInfo: seatInfo, isFloatWindowMode: isFloatWindowMode);
       } else {
-        return GestureDetector(
+        return CoGuestForegroundWidget(
+          seatInfo: seatInfo,
+          isFloatWindowMode: isFloatWindowMode,
           onTap: () {
             final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
             final user = LiveUserInfo(
                 userID: seatInfo.userInfo.userID,
                 userName: seatInfo.userInfo.userName,
                 avatarURL: seatInfo.userInfo.avatarURL);
-            if (!isSelf) {
+            if (isSelf) {
+              _audienceUserManagementPanelHandler = popupWidget(
+                  AudienceUserManagementPanelWidget(
+                    user: user,
+                    liveStreamManager: widget.liveStreamManager,
+                    closeCallback: () {
+                      _audienceUserManagementPanelHandler?.close();
+                    },
+                  ),
+                  context: context);
+            } else {
               _audienceUserInfoPanelHandler = popupWidget(
                   AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
                   context: context,
                   backgroundColor: LiveColors.designStandardTransparent);
-            } else {
-              _audienceUserManagementPanelHandler = popupWidget(
-                  AudienceUserManagementPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                  context: context);
             }
           },
-          child: Container(
-            color: Colors.transparent,
-            child: CoGuestForegroundWidget(
-                seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode),
-          ),
         );
       }
     };
@@ -278,23 +291,37 @@ extension on _AudienceWidgetState {
     });
     LiveListStore.shared.addLiveListListener(_liveListListener);
     _kickedOutSubscription = widget.liveStreamManager.kickedOutSubject.stream.listen((_) => _handleKickedOut());
-    _joinLiveStream();
+    // Defer _joinLiveStream to avoid setState() during build phase.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _joinLiveStream();
+    });
     _addLiveStatusListener();
     _addMediaLockedListener();
+    _addCoGuestStatusListener();
   }
 
   void _dispose() {
+    widget.onDispose?.call();
     LiveListStore.shared.removeLiveListListener(_liveListListener);
     _closeAllDialog();
     _kickedOutSubscription.cancel();
+    _removeCoGuestStatusListener();
     _removeMediaLockedListener();
     _removeLiveStatusListener();
-    _leaveLiveStream();
+    // Reset liveStatus to prevent stale state when PageResources are reused.
+    // Without this, a cached page returning to current index would see
+    // liveStatus == playing and render LiveCoreWidget before joinLive completes.
+    widget.liveStreamManager.roomState.liveStatus.value = LiveStatus.none;
+    // Defer _leaveLiveStream to avoid setState() when widget tree is locked.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _leaveLiveStream();
+    });
     _resetControllers();
   }
 
   void _handleKickedOut() {
-    makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.common_kicked_out_of_room_by_owner);
+    makeToast(context, LiveKitLocalizations.of(context)!.common_kicked_out_of_room_by_owner);
     _closePage();
   }
 
@@ -312,15 +339,26 @@ extension on _AudienceWidgetState {
   }
 
   void _joinLiveStream() async {
-    LiveListStore liveListStore = LiveListStore.shared;
-    var result = await liveListStore.joinLive(widget.roomId);
-    if (result.errorCode != TUIError.success.rawValue) {
-      makeToast(msg: ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
+    widget.onJoinLiveStateChanged?.call(true);
+    try {
+      LiveListStore liveListStore = LiveListStore.shared;
+      var result = await liveListStore.joinLive(widget.roomId);
+      widget.onJoinLiveStateChanged?.call(false);
+      if (result.errorCode != TUIError.success.rawValue) {
+        makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
+            type: ToastType.error, useRootOverlay: true);
+        _closePage();
+        return;
+      }
+      widget.liveStreamManager.onJoinLive(result.liveInfo);
+    } catch (e) {
+      widget.onJoinLiveStateChanged?.call(false);
+      LiveKitLogger.error('AudienceWidget _joinLiveStream error: $e');
+      makeToast(context, ErrorHandler.convertToErrorMessage(-1, e.toString()) ?? '',
+          type: ToastType.error, useRootOverlay: true);
       _closePage();
-      return;
     }
-    widget.liveStreamManager.onJoinLive(result.liveInfo);
-    widget.liveStreamManager.resumeByAudience();
   }
 
   void _leaveLiveStream() {
@@ -364,12 +402,27 @@ extension on _AudienceWidgetState {
     }
   }
 
+  void _addCoGuestStatusListener() {
+    widget.liveStreamManager.coGuestState.coGuestStatus.addListener(_coGuestStatusListener);
+  }
+
+  void _removeCoGuestStatusListener() {
+    widget.liveStreamManager.coGuestState.coGuestStatus.removeListener(_coGuestStatusListener);
+    widget.onCoGuestStateChanged?.call(false);
+  }
+
+  void _onCoGuestStatusChanged() {
+    final status = widget.liveStreamManager.coGuestState.coGuestStatus.value;
+    final shouldDisableScroll = status == CoGuestStatus.applying || status == CoGuestStatus.linking;
+    widget.onCoGuestStateChanged?.call(shouldDisableScroll);
+  }
+
   void _onAudioLockedStatusChanged() {
     final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
     final toastMessage = isAudioLocked
         ? LiveKitLocalizations.of(context)!.common_mute_audio_by_master
         : LiveKitLocalizations.of(context)!.common_un_mute_audio_by_master;
-    makeToast(msg: toastMessage);
+    makeToast(context, toastMessage);
   }
 
   void _onVideoLockedStatusChanged() {
@@ -377,6 +430,6 @@ extension on _AudienceWidgetState {
     final toastMessage = isVideoLocked
         ? LiveKitLocalizations.of(context)!.common_mute_video_by_owner
         : LiveKitLocalizations.of(context)!.common_un_mute_video_by_master;
-    makeToast(msg: toastMessage);
+    makeToast(context, toastMessage);
   }
 }

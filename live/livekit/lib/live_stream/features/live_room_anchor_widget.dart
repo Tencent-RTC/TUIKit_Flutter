@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:atomic_x_core/api/view/live/live_core_widget.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,9 @@ import 'package:live_uikit_barrage/widget/display/barrage_display_controller.dar
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../common/index.dart';
+import '../../common/resources/live_theme_manager.dart';
 import '../../common/widget/float_window/index.dart';
+import '../../component/beauty/live_beauty_store.dart';
 import '../../component/float_window/global_float_window_manager.dart';
 import '../../live_info_utils.dart';
 import '../../live_navigator_observer.dart';
@@ -48,11 +49,13 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
   final ScreenShareGuideDialog _iOSScreenShareGuideDialog = ScreenShareGuideDialog();
   late final VoidCallback _onScreenCaptureListener = _onScreenCaptureChanged;
 
+  bool _hasEnteredThemeScene = false;
+
   @override
   void initState() {
     super.initState();
     LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
-    LiveDataReporter.reportComponent(LiveComponentType.liveRoom);
+    KeyMetrics.reportComponent(LiveComponentType.liveRoom);
     _changeStatusBar2LightMode();
     _initLiveStream();
     _addObserver();
@@ -60,7 +63,19 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only switch theme on first entry
+    if (!_hasEnteredThemeScene) {
+      _hasEnteredThemeScene = true;
+      LiveThemeManager.instance.enterLiveKitScene(context);
+    }
+  }
+
+  @override
   void dispose() {
+    // Exit LiveKit scene and restore theme
+    LiveThemeManager.instance.exitLiveKitScene();
     _iOSScreenShareGuideDialog.dismiss();
     _stopWakeLock();
     _stopForegroundService();
@@ -68,7 +83,7 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
     _unInitLiveStream();
     AudioEffectStore.shared.reset();
     DeviceStore.shared.reset();
-    BaseBeautyStore.shared.reset();
+    LiveBeautyStore.shared.reset();
     BarrageDisplayController.resetState();
     super.dispose();
   }
@@ -165,6 +180,7 @@ extension on _TUILiveRoomAnchorWidgetState {
         _startCamera();
       }
     }
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final result = await LiveListStore.shared.joinLive(widget.roomId);
     if (result.errorCode != TUIError.success.rawValue) {
       _toastAndPop(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
@@ -195,7 +211,7 @@ extension on _TUILiveRoomAnchorWidgetState {
     if (privacyMode != null) {
       _liveStreamManager.onSetRoomPrivacy(privacyMode);
     }
-
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final liveInfo = LiveInfo();
     liveInfo.liveID = widget.roomId;
     liveInfo.liveName = _liveStreamManager.roomState.roomName;
@@ -207,7 +223,7 @@ extension on _TUILiveRoomAnchorWidgetState {
     liveInfo.keepOwnerOnSeat = true;
     liveInfo.seatTemplate = LiveInfoUtils.convertToSeatLayoutTemplateByID(templateMode.id);
 
-    final result = await LiveListStore.shared.createLive(liveInfo);
+    final result = await LiveListStore.shared.startLive(liveInfo);
     if (result.errorCode != TUIError.success.rawValue) {
       _toastAndPop(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       return;
@@ -237,7 +253,7 @@ extension on _TUILiveRoomAnchorWidgetState {
   }
 
   void _toastAndPop(String toast) {
-    makeToast(msg: toast);
+    makeToast(context, toast);
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.of(context).pop();
@@ -350,10 +366,12 @@ extension on _TUILiveRoomAnchorWidgetState {
     bool isFullScreen = widget.floatWindowController!.isFullScreen.value;
     FloatWindowMode floatWindowMode = _liveStreamManager.floatWindowState.floatWindowMode.value;
     if (isFullScreen) {
+      LiveThemeManager.instance.resumeTheme();
       if (floatWindowMode != FloatWindowMode.outOfApp) {
         _liveStreamManager.setFloatWindowMode(FloatWindowMode.none);
       }
     } else {
+      LiveThemeManager.instance.pauseTheme();
       _liveStreamManager.setFloatWindowMode(FloatWindowMode.inApp);
     }
   }

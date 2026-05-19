@@ -275,17 +275,28 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   void _scrollListener() {
     final positions = _itemPositionsListener.itemPositions.value;
+    if (positions.isEmpty) return;
+
+    // Single-pass: compute minIndex, maxIndex, isAtBottom in one traversal
+    int minIndex = positions.first.index;
+    int maxIndex = minIndex;
+    bool isAtBottom = minIndex <= 1;
+    for (final pos in positions) {
+      final idx = pos.index;
+      if (idx < minIndex) minIndex = idx;
+      if (idx > maxIndex) maxIndex = idx;
+      if (!isAtBottom && idx <= 1) isAtBottom = true;
+    }
 
     // Load newer messages when scrolled to top (index 0 = newest)
     if (!_isLoadingNewer && !_isNavigatingToUnread && hasMoreNewerMessages) {
-      if (_highlightedMessageId == null && positions.isNotEmpty && positions.any((pos) => pos.index <= 0)) {
+      if (_highlightedMessageId == null && minIndex <= 0) {
         _loadNewerMessages();
       }
     }
 
     // Auto-load older messages when scrolled near the oldest message (reverse list: largest index = oldest)
-    if (!isLoading && !_isReloadingLatest && hasMoreOlderMessages && positions.isNotEmpty) {
-      final maxIndex = positions.map((p) => p.index).reduce((a, b) => a > b ? a : b);
+    if (!isLoading && !_isReloadingLatest && hasMoreOlderMessages) {
       if (maxIndex >= _messages.length - _loadOlderMessagesThreshold) {
         _loadPreviousMessages();
       }
@@ -293,19 +304,13 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
     // Tongue visibility logic
     if (!widget.config.isSupportTongue) return;
-    _updateTongueState(positions);
+    _updateTongueState(minIndex, isAtBottom);
   }
 
-  void _updateTongueState(Iterable<ItemPosition> positions) {
-    if (positions.isEmpty) return;
-
+  void _updateTongueState(int minIndex, bool isAtBottom) {
     // Don't change tongue state while reloading latest messages — keep the
     // loading spinner visible until the reload finishes.
     if (_isReloadingLatest) return;
-
-    final minIndex = positions.map((p) => p.index).reduce((a, b) => a < b ? a : b);
-    final isScrolledPastThreshold = minIndex > _tongueScrollThreshold;
-    final isAtBottom = positions.any((pos) => pos.index <= 1);
 
     if (isAtBottom) {
       if (_tongueType != TongueType.none || _newMessageCount > 0) {
@@ -325,6 +330,8 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       }
       return;
     }
+
+    final isScrolledPastThreshold = minIndex > _tongueScrollThreshold;
 
     if (isScrolledPastThreshold) {
       final newType = _computeTongueType();
@@ -643,7 +650,6 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   Widget _renderItem(BuildContext context, int index) {
     if (index >= _messages.length) return Container();
-
     final message = _messages[index];
     final colors = BaseThemeProvider.colorsOf(context);
 
@@ -690,7 +696,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             message: message,
             conversationID: widget.conversationID,
             isGroup: isGroup,
-            maxWidth: MediaQuery.of(context).size.width - 32,
+            maxWidth: MediaQuery.sizeOf(context).width - 32,
             messageListStore: _messageListStore,
             isHighlighted: _highlightedMessageId == message.msgID,
             onHighlightComplete: () {
@@ -751,7 +757,6 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     // Super.build must be called; AutomaticKeepAliveClientMixin is required.
     super.build(context);
-
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     return Expanded(

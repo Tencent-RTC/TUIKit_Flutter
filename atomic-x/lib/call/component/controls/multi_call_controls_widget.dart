@@ -1,8 +1,7 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
-import 'package:tuikit_atomic_x/call/call_view.dart';
 
 import '../../common/call_colors.dart';
 
@@ -28,6 +27,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
   final int btnWidth = 100;
 
   bool isFunctionExpand = false;
+  late AtomicLocalizations _l10n;
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _l10n = AtomicLocalizations.of(context);
     return ValueListenableBuilder(
         valueListenable: CallStore.shared.state.selfInfo,
         builder: (context, selfInfo, child) {
@@ -135,9 +136,48 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
                               width: smallBtnHeight,
                             ),
                           ),
-                        ))
+                        )),
+                    AnimatedPositioned(
+                        curve: curve,
+                        duration: Duration(milliseconds: duration),
+                        left: (MediaQuery.of(context).size.width * 3 / 4 - bigBtnHeight / 2 - 20),
+                        bottom: isFunctionExpand
+                            ? bottomEdge + smallBtnHeight / 4
+                            : bottomEdge + 35,
+                        child: AnimatedOpacity(
+                          duration: Duration(milliseconds: duration),
+                          opacity: isFunctionExpand ? 1.0 : 0.0,
+                          child: IgnorePointer(
+                            ignoring: !isFunctionExpand,
+                            child: ValueListenableBuilder(
+                                valueListenable: DeviceStore.shared.state.cameraStatus,
+                                builder: (context, value, child) {
+                                  if (value != DeviceStatus.on) {
+                                    return SizedBox(width: btnWidth.toDouble(), height: 28);
+                                  }
+                                  return _getSwitchCameraSmallButton();
+                                }),
+                          ),
+                        )),
                   ],
                 ))));
+  }
+
+  Widget _getSwitchCameraSmallButton() {
+    return ValueListenableBuilder(
+        valueListenable: DeviceStore.shared.state.isFrontCamera,
+        builder: (context, value, child) {
+          return ControlsButton(
+            imgUrl: "call_assets/switch_camera.png",
+            tips: '',
+            textColor: CallColors.colorG7,
+            imgHeight: 28,
+            imgOffsetX: -16,
+            onTap: () {
+              DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
+            },
+          );
+        });
   }
 
   _functionWidgetVerticalDragUpdate(DragUpdateDetails details) {
@@ -154,7 +194,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
   Widget _getRejectButton() {
     return ControlsButton(
       imgUrl: "call_assets/hangup.png",
-      tips: CallKit_t("hangUp"),
+      tips: _l10n.callHangUp,
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
@@ -166,7 +206,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
   Widget _getAcceptButton() {
     return ControlsButton(
       imgUrl: "call_assets/dialing.png",
-      tips: CallKit_t("accept"),
+      tips: _l10n.callAcceptAction,
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
@@ -182,7 +222,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
           return ControlsButton(
             imgUrl: value == DeviceStatus.on ? "call_assets/mute.png" : "call_assets/mute_on.png",
             tips: isFunctionExpand
-                ? (value == DeviceStatus.on ? CallKit_t("microphoneIsOn") : CallKit_t("microphoneIsOff"))
+                ? (value == DeviceStatus.on ? _l10n.callMicrophoneIsOn : _l10n.callMicrophoneIsOff)
                 : '',
             textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
@@ -206,7 +246,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
           return ControlsButton(
             imgUrl: value == AudioRoute.speakerphone ? "call_assets/handsfree_on.png" : "call_assets/handsfree.png",
             tips: isFunctionExpand
-                ? (value == AudioRoute.speakerphone ? CallKit_t("speakerIsOn") : CallKit_t("speakerIsOff"))
+                ? (value == AudioRoute.speakerphone ? _l10n.callSpeakerIsOn : _l10n.callSpeakerIsOff)
                 : '',
             textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
@@ -230,7 +270,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
           return ControlsButton(
             imgUrl: value == DeviceStatus.on ? "call_assets/camera_on.png" : "call_assets/camera_off.png",
             tips:
-                isFunctionExpand ? (value == DeviceStatus.on ? CallKit_t("cameraIsOn") : CallKit_t("cameraIsOff")) : '',
+                isFunctionExpand ? (value == DeviceStatus.on ? _l10n.callCameraIsOn : _l10n.callCameraIsOff) : '',
             textColor: CallColors.colorG7,
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {

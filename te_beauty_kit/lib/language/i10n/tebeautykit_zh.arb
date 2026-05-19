@@ -1,0 +1,12 @@
+{
+  "@@locale": "zh",
+  "beauty_cancel": "取消",
+  "beauty_reset_title": "确定重置吗",
+  "beauty_reset_content": "重置会将目前所有特效恢复至默认效果，不可撤回",
+  "beauty_reset_confirm": "重置",
+  "beauty_import_image": "导入图片",
+  "beauty_import_image_tip": "请您站在xxx前，选择一张图片，将xxx替换为所选图片",
+  "beauty_pick_image": "选择图片",
+  "beauty_green_screen": "绿幕",
+  "beauty_blue_screen": "蓝幕"
+}

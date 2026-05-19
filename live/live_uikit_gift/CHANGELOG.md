@@ -1,5 +1,9 @@
 # LiveUIKitGift
 
+## 4.1.0
+
+- Upgraded `flutter_effect_player` to 3.4.1, fixed the xmagic compilation conflict issue.
+
 ## 4.0.1
 
 - Default internationalization language set to English.

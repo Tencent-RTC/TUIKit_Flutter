@@ -1,0 +1,7 @@
+arb-dir: lib/language/i10n
+template-arb-file: tebeautykit_en.arb
+output-localization-file: tebeautykit_localizations.dart
+output-dir: lib/language/gen
+output-class: TEBeautyKitLocalizations
+synthetic-package: false
+format: true

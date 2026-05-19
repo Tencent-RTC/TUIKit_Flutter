@@ -1,0 +1,12 @@
+{
+  "@@locale": "en",
+  "beauty_cancel": "Cancel",
+  "beauty_reset_title": "Are you sure you want to reset the effects?",
+  "beauty_reset_content": "The action will reset all effects and cannot be undone",
+  "beauty_reset_confirm": "Reset",
+  "beauty_import_image": "Upload background image",
+  "beauty_import_image_tip": "Please stand in front of a xxx and upload an image you want to use as the background",
+  "beauty_pick_image": "Upload",
+  "beauty_green_screen": "green screen",
+  "beauty_blue_screen": "blue screen"
+}

@@ -5,6 +5,7 @@ import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 
@@ -115,32 +116,22 @@ class _CoGuestWaitingAgreeWidgetState extends State<CoGuestWaitingAgreeWidget> {
   }
 
   void _showCancelRequestPanelWidget() {
-    List<ActionSheetModel> list = [
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_text_cancel_link_mic_apply,
-          textStyle: const TextStyle(
-            color: LiveColors.designStandardFlowkitRed,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
-          lineHeight: 3.height,
-          bingData: 1),
-      ActionSheetModel(
-          isCenter: true,
-          text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          isShowBottomLine: false,
-          bingData: 2),
-    ];
-    ActionSheet.show(list, (ActionSheetModel model) async {
-      if (model.bingData == 1) {
-        final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
-        if (liveID.isEmpty) return;
-        CoGuestStore coGuestStore = CoGuestStore.create(liveID);
-        coGuestStore.cancelApplication();
-        widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
-      }
-    }, parentContext: context);
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_text_cancel_link_mic_apply,
+          isDestructive: true,
+          onTap: () async {
+            final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+            if (liveID.isEmpty) return;
+            CoGuestStore coGuestStore = CoGuestStore.create(liveID);
+            coGuestStore.cancelApplication();
+            widget.liveStreamManager.coGuestManager.onCancelIntraRoomConnection();
+          },
+        ),
+      ],
+    );
   }
 
   void _startTimer() {

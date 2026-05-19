@@ -4,6 +4,7 @@ import 'package:rtc_room_engine/api/common/tui_common_define.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_video_setting_panel_widget.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../manager/live_stream_manager.dart';
 
@@ -37,10 +38,6 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
     return Container(
       width: 1.screenWidth,
       constraints: BoxConstraints(maxHeight: 234.height),
-      decoration: BoxDecoration(
-        color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -163,14 +160,14 @@ extension on _CoGuestTypeSelectPanelWidgetState {
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(isVideo);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
-    makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.common_toast_apply_link_mic);
     final result = await coGuestStore.applyForSeat(
       seatIndex: widget.seatIndex,
       timeout: Constants.defaultRequestTimeout,
     );
     if (result.errorCode != TUIError.success.rawValue) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
-      makeToast(msg: ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+      makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
+          type: ToastType.error);
     }
   }
 }

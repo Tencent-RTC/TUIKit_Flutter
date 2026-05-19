@@ -1,0 +1,20 @@
+{
+    "displayName":"手势贴纸",
+    "displayNameEn":"Stickerhand",
+    "downloadPath":"MotionRes/handMotionRes/",
+    "icon":"beauty_panel/panel_icon/motions_icon/motion_hand.png",
+    "propertyList":[
+        {
+            "displayName":"无",
+            "displayNameEn":"None",
+            "icon":"beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName":"樱花女孩",
+            "displayNameEn":"Sakura",
+            "id":"motiongesture_sakura",
+            "resourceUri":"MotionRes/handMotionRes/video_sakuragirl",
+            "icon":"beauty_panel/panel_icon/motions_icon/video_sakuragirl.png"
+        }
+    ]
+}

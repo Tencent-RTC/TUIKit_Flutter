@@ -66,9 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
     debugPrint("login Result code:${result.errorCode}, message:${result.errorMessage}");
     await Future.delayed(const Duration(seconds: 3));
     final liveInfo = LiveInfo(liveID: roomId);
-    final createLiveResult = await _liveListStore.createLive(liveInfo);
-    debugPrint('createLive result code:${createLiveResult.errorCode}, message:${createLiveResult.errorMessage}');
-    if (createLiveResult.isSuccess) {
+    final startLiveResult = await _liveListStore.startLive(liveInfo);
+    debugPrint('startLive result code:${startLiveResult.errorCode}, message:${startLiveResult.errorMessage}');
+    if (startLiveResult.isSuccess) {
       enterRoomSuccess.value = true;
     }
   }

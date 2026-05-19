@@ -1,3 +1,4 @@
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
@@ -56,16 +57,43 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
   }
 
   Widget _buildTitleWidget() {
+    final isEndedByServer =
+        widget.endWidgetInfo.liveEndedReason == LiveEndedReason.endedByServer;
+    final titleText = isEndedByServer
+        ? LiveKitLocalizations.of(Global.appContext())!
+            .common_end_live_by_server
+        : LiveKitLocalizations.of(Global.appContext())!.common_live_has_stop;
     return Positioned(
       top: 120.height,
+      left: isEndedByServer ? 16.width : null,
+      right: isEndedByServer ? 16.width : null,
       child: GestureDetector(
         onTap: () {
           _closeWidget();
         },
-        child: Text(
-          LiveKitLocalizations.of(Global.appContext())!.common_live_has_stop,
-          style: const TextStyle(
-              color: LiveColors.designStandardFlowkitWhite, fontSize: 20),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: isEndedByServer
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
+          children: [
+            if (isEndedByServer) ...[
+              Image.asset(
+                LiveImages.endByServer,
+                package: Constants.pluginName,
+                width: 20.width,
+                height: 20.width,
+              ),
+              SizedBox(width: 8.width),
+            ],
+            Flexible(
+              child: Text(
+                titleText,
+                style: const TextStyle(
+                    color: LiveColors.designStandardFlowkitWhite, fontSize: 20),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -76,7 +104,7 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
       top: 200.height,
       child: Container(
         width: 345.width,
-        height: 95.height,
+        height: 170.height,
         decoration: BoxDecoration(
           color: LiveColors.notStandardBlue30Transparency,
           borderRadius: BorderRadius.all(Radius.circular(20.radius)),
@@ -102,6 +130,19 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
                 children: [
                   _buildDurationWidget(),
                   _buildViewersWidget(),
+                  _buildMessageWidget(),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 70.height,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildGiftIncomeWidget(),
+                  _buildGiftGiversWidget(),
+                  _buildLikesWidget(),
                 ],
               ),
             ),
@@ -182,7 +223,7 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          '${widget.endWidgetInfo.giftTotalCoins}',
+          '${widget.endWidgetInfo.giftIncome}',
           style: const TextStyle(
               color: LiveColors.designStandardFlowkitWhite, fontSize: 12),
         ),
@@ -204,7 +245,7 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          '${widget.endWidgetInfo.giftTotalUniqueSender}',
+          '${widget.endWidgetInfo.giftSenderCount}',
           style: const TextStyle(
               color: LiveColors.designStandardFlowkitWhite, fontSize: 12),
         ),
@@ -226,7 +267,7 @@ class _AnchorEndStatisticsWidgetState extends State<AnchorEndStatisticsWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          '${widget.endWidgetInfo.likeTotalUniqueSender}',
+          '${widget.endWidgetInfo.likeCount}',
           style: const TextStyle(
               color: LiveColors.designStandardFlowkitWhite, fontSize: 12),
         ),
@@ -252,7 +293,7 @@ extension on _AnchorEndStatisticsWidgetState {
   }
 
   String getFormatDuration(int duration) {
-    if (duration <= 0) return "--:--";
+    if (duration <= 0) return "-- --";
 
     int h = duration ~/ 3600;
     int m = (duration % 3600) ~/ 60;

@@ -103,6 +103,7 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
             Positioned(
                 top: 0,
                 left: 52.width,
+                right: 94.width,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
