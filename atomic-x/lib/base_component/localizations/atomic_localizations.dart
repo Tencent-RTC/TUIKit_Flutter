@@ -1948,6 +1948,12 @@ abstract class AtomicLocalizations {
   /// **'Call canceled by caller'**
   String get callCancelCallee;
 
+  /// No description provided for @callCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get callCancel;
+
   /// No description provided for @stopCallTip.
   ///
   /// In en, this message translates to:
@@ -2613,6 +2619,366 @@ abstract class AtomicLocalizations {
   /// In en, this message translates to:
   /// **'Recording will stop in {seconds}s'**
   String recordCountdownTips(int seconds);
+
+  /// No description provided for @callWaitingForInvitationAcceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the other party to accept the invitation'**
+  String get callWaitingForInvitationAcceptance;
+
+  /// No description provided for @callInvitedToAudioCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited you to audio call'**
+  String get callInvitedToAudioCall;
+
+  /// No description provided for @callInvitedToVideoCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited you to video call'**
+  String get callInvitedToVideoCall;
+
+  /// No description provided for @callInvitedToGroupCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited you to a group call'**
+  String get callInvitedToGroupCall;
+
+  /// No description provided for @callInsufficientPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'A new call is incoming, but cannot be answered due to insufficient permissions. Please make sure the camera/microphone permission is turned on.'**
+  String get callInsufficientPermissions;
+
+  /// No description provided for @callInviteMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite members'**
+  String get callInviteMembers;
+
+  /// No description provided for @callYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'yourself'**
+  String get callYourself;
+
+  /// No description provided for @callMicrophone.
+  ///
+  /// In en, this message translates to:
+  /// **'microphone'**
+  String get callMicrophone;
+
+  /// No description provided for @callHangUp.
+  ///
+  /// In en, this message translates to:
+  /// **'hang up'**
+  String get callHangUp;
+
+  /// No description provided for @callSpeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'speaker'**
+  String get callSpeaker;
+
+  /// No description provided for @callEarpiece.
+  ///
+  /// In en, this message translates to:
+  /// **'earpiece'**
+  String get callEarpiece;
+
+  /// No description provided for @callCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'camera'**
+  String get callCamera;
+
+  /// No description provided for @callSwitchToVoiceCall.
+  ///
+  /// In en, this message translates to:
+  /// **'switch to voice call'**
+  String get callSwitchToVoiceCall;
+
+  /// No description provided for @callAcceptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'accept'**
+  String get callAcceptAction;
+
+  /// No description provided for @callExceededMaximumNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Exceeded the maximum number of people'**
+  String get callExceededMaximumNumber;
+
+  /// No description provided for @callRejectAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get callRejectAction;
+
+  /// No description provided for @callNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'no response'**
+  String get callNoResponse;
+
+  /// No description provided for @callBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy'**
+  String get callBusy;
+
+  /// No description provided for @callLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get callLeave;
+
+  /// No description provided for @callSwitchCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Camera'**
+  String get callSwitchCamera;
+
+  /// No description provided for @callBlurBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Blur Background'**
+  String get callBlurBackground;
+
+  /// No description provided for @callShowBlurBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Show blur background'**
+  String get callShowBlurBackground;
+
+  /// No description provided for @callConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get callConnected;
+
+  /// No description provided for @callTheyAreAlsoThere.
+  ///
+  /// In en, this message translates to:
+  /// **'They are also there'**
+  String get callTheyAreAlsoThere;
+
+  /// No description provided for @callJoinIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Join In'**
+  String get callJoinIn;
+
+  /// No description provided for @callPersonIsOnTheCall.
+  ///
+  /// In en, this message translates to:
+  /// **' person is on the call'**
+  String get callPersonIsOnTheCall;
+
+  /// No description provided for @callMicrophoneIsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmuted'**
+  String get callMicrophoneIsOn;
+
+  /// No description provided for @callMicrophoneIsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted'**
+  String get callMicrophoneIsOff;
+
+  /// No description provided for @callSpeakerIsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker On'**
+  String get callSpeakerIsOn;
+
+  /// No description provided for @callSpeakerIsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker Off'**
+  String get callSpeakerIsOff;
+
+  /// No description provided for @callCameraIsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera On'**
+  String get callCameraIsOn;
+
+  /// No description provided for @callCameraIsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Off'**
+  String get callCameraIsOff;
+
+  /// No description provided for @callOtherPartyNetworkLowQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'The other party\'s network connection is poor'**
+  String get callOtherPartyNetworkLowQuality;
+
+  /// No description provided for @callSelfNetworkLowQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Your network connection is poor'**
+  String get callSelfNetworkLowQuality;
+
+  /// No description provided for @callErrorInPeerBlacklist.
+  ///
+  /// In en, this message translates to:
+  /// **'The identifier is in blacklist. Failed to send this message!'**
+  String get callErrorInPeerBlacklist;
+
+  /// No description provided for @callWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get callWaiting;
+
+  /// No description provided for @callYouHaveANewCall.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a new call'**
+  String get callYouHaveANewCall;
+
+  /// No description provided for @callApplyForMicrophonePermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for microphone permission'**
+  String get callApplyForMicrophonePermission;
+
+  /// No description provided for @callApplyForMicrophoneAndCameraPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for microphone and camera permissions'**
+  String get callApplyForMicrophoneAndCameraPermissions;
+
+  /// No description provided for @callNeedToAccessMicrophonePermission.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to access your microphone permission, which can be used for voice calls, multi-person voice calls, video calls, multi-person video calls and other functions after being turned on.'**
+  String get callNeedToAccessMicrophonePermission;
+
+  /// No description provided for @callNeedToAccessMicrophoneAndCameraPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to access your microphone and camera permissions, which can be used for voice calls, multi-person voice calls, video calls, multi-person video calls, etc.'**
+  String get callNeedToAccessMicrophoneAndCameraPermissions;
+
+  /// No description provided for @callDisplayPopUpWindowPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Display pop-up window while running in the background and Display pop-up Window permissions'**
+  String get callDisplayPopUpWindowPermissions;
+
+  /// No description provided for @callAnonymity.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymity'**
+  String get callAnonymity;
+
+  /// No description provided for @callOtherPartyHungUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Other party hung up, call ended'**
+  String get callOtherPartyHungUp;
+
+  /// No description provided for @callOtherPartyDeclinedCallRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Call rejected by other party'**
+  String get callOtherPartyDeclinedCallRequest;
+
+  /// No description provided for @callOtherPartyBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Line Busy'**
+  String get callOtherPartyBusy;
+
+  /// No description provided for @callOtherPartyNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'The other party did not respond'**
+  String get callOtherPartyNoResponse;
+
+  /// No description provided for @callRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'rejected call'**
+  String get callRequestDeclined;
+
+  /// No description provided for @callEndedTheCall.
+  ///
+  /// In en, this message translates to:
+  /// **'end the call'**
+  String get callEndedTheCall;
+
+  /// No description provided for @callGoToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to settings'**
+  String get callGoToSettings;
+
+  /// No description provided for @callFeatureRequiresAudioVideoCallingPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature requires the audio and video calling capability package. To avoid affecting your usage, we recommend going to the Tencent Cloud Real-Time Audio and Video console to activate the free trial or purchase a formal package'**
+  String get callFeatureRequiresAudioVideoCallingPackage;
+
+  /// No description provided for @callCurrentPackageDoesNotSupportFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current package type does not support this feature. To unlock more capabilities, we recommend upgrading your package in the Tencent Cloud Real-Time Audio and Video console'**
+  String get callCurrentPackageDoesNotSupportFeature;
+
+  /// No description provided for @callMicrophoneOrCameraPermissionNotEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission is not enabled, unable to start audio call. Go to \'Settings > TUICallKit\' to enable microphone permission; Camera permission is not enabled, unable to start video call. Go to \'Settings > TUICallKit\' to enable camera permission'**
+  String get callMicrophoneOrCameraPermissionNotEnabled;
+
+  /// No description provided for @callCameraOccupiedBySystemCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Current camera is occupied by system call'**
+  String get callCameraOccupiedBySystemCall;
+
+  /// No description provided for @callMicrophoneOccupiedBySystemCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Current microphone is occupied by system call'**
+  String get callMicrophoneOccupiedBySystemCall;
+
+  /// No description provided for @callCurrentlyOnCallCannotInitiateAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'You are currently on a call, please end the current call before making another one'**
+  String get callCurrentlyOnCallCannotInitiateAnother;
+
+  /// No description provided for @callFailedToInitiateCallCheckLoginStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to initiate call, please check your login status and try again'**
+  String get callFailedToInitiateCallCheckLoginStatus;
+
+  /// No description provided for @callFailedToInitiateOrJoinCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to initiate call / Failed to join call'**
+  String get callFailedToInitiateOrJoinCall;
+
+  /// No description provided for @callCurrentCallSupportsMax9Participants.
+  ///
+  /// In en, this message translates to:
+  /// **'Current call supports a maximum of 9 participants online simultaneously'**
+  String get callCurrentCallSupportsMax9Participants;
+
+  /// No description provided for @callInviteUserErrorOrInvalidCallParameters.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite user error or invalid call parameters'**
+  String get callInviteUserErrorOrInvalidCallParameters;
 }
 
 class _AtomicLocalizationsDelegate

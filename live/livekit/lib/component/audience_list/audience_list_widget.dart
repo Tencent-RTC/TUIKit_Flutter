@@ -135,13 +135,7 @@ class _AudienceListWidgetState extends State<AudienceListWidget> {
                     fontWeight: FontWeight.normal,
                     fontSize: 10,
                   ),
-                ),
-                Image.asset(
-                  LiveImages.audienceListArrow,
-                  width: 8.radius,
-                  height: 8.radius,
-                  package: Constants.pluginName,
-                ),
+                )
               ],
             ),
           ),
@@ -159,21 +153,7 @@ extension on _AudienceListWidgetState {
         AudienceListPanelWidget(state: liveAudienceStore.liveAudienceState, onClickUserItem: widget.onClickUserItem));
   }
 
-  void _popupWidget(Widget widget, {Color? barrierColor}) {
-    _bottomSheetHandler = BaseBottomSheet.showModalSheet(
-      barrierColor: barrierColor,
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.radius),
-            topRight: Radius.circular(20.radius),
-          ),
-          color: LiveColors.designStandardG2,
-        ),
-        child: widget,
-      ),
-    );
+  void _popupWidget(Widget widget) {
+    _bottomSheetHandler = popupWidget(widget, context: context);
   }
 }

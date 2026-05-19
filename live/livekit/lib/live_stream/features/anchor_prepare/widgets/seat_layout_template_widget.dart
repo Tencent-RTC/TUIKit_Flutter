@@ -106,7 +106,7 @@ class SeatLayoutTemplateWidget extends StatelessWidget {
               final normalDecoration = BoxDecoration(
                   color: LiveColors.seatTemplateGray, borderRadius: BorderRadius.all(Radius.circular(8.radius)));
               final selectedDecoration = BoxDecoration(
-                  color: LiveColors.seatTemplateGray,
+                  color: LiveColors.seatTemplateSelect,
                   borderRadius: BorderRadius.all(Radius.circular(8.radius)),
                   border: Border.all(color: LiveColors.seatTemplateSelectedBorder, width: 2));
               final isSelected =

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
-import '../../../common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
 class JoinInGroupWidget extends StatefulWidget {
   final List<String> userIDs;
@@ -45,7 +45,6 @@ class _JoinInGroupWidgetState extends State<JoinInGroupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    I18nUtils.setLanguage(Localizations.localeOf(context));
     return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -78,7 +77,7 @@ class _JoinInGroupWidgetState extends State<JoinInGroupWidget> {
                         ),
                         const Padding(padding: EdgeInsets.only(left: 15)),
                         Text(
-                            '${widget.userIDs.length} ${getI18nString("personIsOnTheCall")}',
+                            '${widget.userIDs.length} ${AtomicLocalizations.of(context).callPersonIsOnTheCall}',
                             textScaleFactor: 1.0,
                         ),
                         const Spacer(),
@@ -153,7 +152,7 @@ class _JoinInGroupWidgetState extends State<JoinInGroupWidget> {
                                       height: 49,
                                       alignment: Alignment.center,
                                       child: Text(
-                                        getI18nString('joinIn'),
+                                        AtomicLocalizations.of(context).callJoinIn,
                                         textScaleFactor: 1.0,
                                         style: const TextStyle(
                                             fontSize: 16, fontWeight: FontWeight.w500),

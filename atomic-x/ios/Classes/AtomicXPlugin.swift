@@ -10,6 +10,7 @@ public class AtomicXPlugin: NSObject, FlutterPlugin {
   private var audioPlayer: AtomicAudioPlayerPlugin?
   private var filePicker: AtomicFilePickerPlugin?
   private var videoPlayer: AtomicVideoPlayerPlugin?
+  private var imageUploader: AtomicImageUploaderPlugin?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "atomic_x", binaryMessenger: registrar.messenger())
@@ -40,6 +41,9 @@ public class AtomicXPlugin: NSObject, FlutterPlugin {
     
     // Register video player module
     instance.videoPlayer = AtomicVideoPlayerPlugin.register(with: registrar) as? AtomicVideoPlayerPlugin
+    
+    // Register image uploader module
+    instance.imageUploader = AtomicImageUploaderPlugin(registrar: registrar, viewController: viewController)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -57,5 +61,6 @@ public class AtomicXPlugin: NSObject, FlutterPlugin {
     audioRecorder?.dispose()
     audioPlayer?.dispose()
     filePicker?.dispose()
+    imageUploader?.dispose()
   }
 }

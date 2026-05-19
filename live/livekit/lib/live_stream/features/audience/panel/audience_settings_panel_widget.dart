@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
+import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../component/float_window/global_float_window_manager.dart';
@@ -20,15 +21,18 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
   late final LiveStreamManager liveStreamManager;
   BottomSheetHandler? _pipConfigPanelHandler;
   BottomSheetHandler? _videoQualityPanelHandler;
+  late final VoidCallback _coGuestStatusListener = _onCoGuestStatusChanged;
 
   @override
   void initState() {
     liveStreamManager = widget.liveStreamManager;
+    liveStreamManager.coGuestState.coGuestStatus.addListener(_coGuestStatusListener);
     super.initState();
   }
 
   @override
   void dispose() {
+    liveStreamManager.coGuestState.coGuestStatus.removeListener(_coGuestStatusListener);
     _closeAllDialog();
     super.dispose();
   }
@@ -38,12 +42,21 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
     _videoQualityPanelHandler?.close();
   }
 
+  // When audience takes a seat while this panel is open, close the
+  // already-opened video quality selection sub-panel because the resolution
+  // entry is no longer applicable to a guest on seat.
+  void _onCoGuestStatusChanged() {
+    if (liveStreamManager.coGuestState.coGuestStatus.value == CoGuestStatus.linking) {
+      _videoQualityPanelHandler?.close();
+      _videoQualityPanelHandler = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: 1.screenWidth,
         height: 198.height,
-        color: LiveColors.designBgColorOperate,
         child: Column(
           children: [
             SizedBox(height: 20.height),
@@ -57,15 +70,25 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
             )),
             SizedBox(height: 20.height),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.width),
-              child: Row(
-                children: [
-                  _buildVideoSettingsItemWidget(context),
-                  SizedBox(width: 12.width),
-                  GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()
-                      ? _buildPipItemWidget(context)
-                      : const SizedBox.shrink()
-                ],
+              padding: EdgeInsets.symmetric(horizontal: 20.width),
+              child: ValueListenableBuilder(
+                valueListenable: liveStreamManager.coGuestState.coGuestStatus,
+                builder: (context, coGuestStatus, _) {
+                  // Video resolution entry is only available for audience
+                  // members who are NOT on seat (off-mic). Once an audience
+                  // takes a seat (becomes a guest), this entry must be hidden.
+                  final isOnSeat = coGuestStatus == CoGuestStatus.linking;
+                  final showPip = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature();
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 20.width,
+                    children: [
+                      if (!isOnSeat) _buildVideoSettingsItemWidget(context),
+                      if (showPip) _buildPipItemWidget(context),
+                    ],
+                  );
+                },
               ),
             )
           ],
@@ -106,12 +129,15 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
               )),
         ),
         SizedBox(height: 6.height),
-        Center(
-            child: Text(title,
-                style: TextStyle(
-                    color: LiveColors.designStandardFlowkitWhite.withAlpha(230),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400)))
+        Flexible(
+            child: Center(
+                child: Text(title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: LiveColors.designStandardFlowkitWhite.withAlpha(230),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400))))
       ]),
     );
   }
@@ -119,45 +145,16 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
 
 extension on _AudienceSettingsPanelWidgetState {
   void _showVideoQualitySelectionPanel() {
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-
-    const lineColor = LiveColors.designBgColorInput;
-    final textColor = LiveColors.designStandardFlowkitWhite.withAlpha(230);
     final playbackQualityList = liveStreamManager.mediaState.playbackQualityList.value;
-    final Map<int, TUIVideoQuality> videoQualityMap = {};
-    for (int i = 0; i < playbackQualityList.length; i++) {
-      final videoQualityItemNumber = i + 1;
-      final videoQuality = playbackQualityList[i];
-      videoQualityMap[videoQualityItemNumber] = videoQuality;
-      final videoQualityItem = ActionSheetModel(
-          isCenter: true,
-          text: _getVideoQualityString(videoQuality),
-          textStyle: TextStyle(color: textColor, fontSize: 16),
-          lineColor: lineColor,
-          bingData: videoQualityItemNumber);
-      menuData.add(videoQualityItem);
-    }
-    final cancelNumber = playbackQualityList.length + 1;
-
-    final cancel = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    _videoQualityPanelHandler = ActionSheet.show(
-      menuData,
-      (model) {
-        if (!videoQualityMap.containsKey(model.bingData)) {
-          return;
-        }
-        final TUIVideoQuality videoQuality = videoQualityMap[model.bingData]!;
-        liveStreamManager.switchPlaybackQuality(videoQuality);
-      },
-      backgroundColor: LiveColors.designBgColorOperate,
-      parentContext: context,
+    final actions = [
+      ...playbackQualityList.map((videoQuality) => ActionSheetItem(
+            title: _getVideoQualityString(videoQuality),
+            onTap: () => liveStreamManager.switchPlaybackQuality(videoQuality),
+          )),
+    ];
+    _videoQualityPanelHandler = BaseBottomSheet.showWithHandler(
+      context,
+      actions: actions,
     );
   }
 

@@ -9,14 +9,12 @@ class BattleCountDownWidget extends StatefulWidget {
   final int countdownTime;
   final VoidCallback? onTimeEnd;
   final VoidCallback? onCancel;
-  final ValueListenable<bool>? isFloatWindowMode;
 
   const BattleCountDownWidget({
     super.key,
     required this.countdownTime,
     this.onTimeEnd,
     this.onCancel,
-    this.isFloatWindowMode,
   });
 
   @override
@@ -83,17 +81,6 @@ class _BattleCountDownWidgetState extends State<BattleCountDownWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isFloatWindowMode == null) {
-      return buildContent(context);
-    }
-    return ValueListenableBuilder(
-        valueListenable: widget.isFloatWindowMode!,
-        builder: (context, isFloatWindowMode, child) {
-          return Visibility(visible: !isFloatWindowMode, child: buildContent(context));
-        });
-  }
-
-  Widget buildContent(BuildContext context) {
     return Center(
       child: Stack(
         alignment: Alignment.center,

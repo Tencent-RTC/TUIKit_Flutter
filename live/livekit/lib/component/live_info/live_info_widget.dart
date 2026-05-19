@@ -25,17 +25,19 @@ class _LiveInfoWidgetState extends State<LiveInfoWidget> {
   final LiveInfoManager manager = LiveInfoManager();
   late final LiveInfoIMObserver imObserver = LiveInfoIMObserver(manager: WeakReference(manager));
   late final VoidCallback _floatWindowModeChangedListener = _onFloatWindowModeChanged;
+  late final VoidCallback _onCurrentLiveListener = _onCurrentLiveChanged;
 
   @override
   void initState() {
     super.initState();
-    manager.initRoomInfo(widget.roomId);
     TencentImSDKPlugin.v2TIMManager.getFriendshipManager().addFriendListener(listener: imObserver);
     widget.isFloatWindowMode?.addListener(_floatWindowModeChangedListener);
     _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
       _closeLiveInfoDetailWidget();
     });
     LiveListStore.shared.addLiveListListener(_liveListListener);
+    LiveListStore.shared.liveState.currentLive.addListener(_onCurrentLiveListener);
+    _onCurrentLiveChanged();
   }
 
   @override
@@ -44,6 +46,7 @@ class _LiveInfoWidgetState extends State<LiveInfoWidget> {
     super.dispose();
     widget.isFloatWindowMode?.removeListener(_floatWindowModeChangedListener);
     LiveListStore.shared.removeLiveListListener(_liveListListener);
+    LiveListStore.shared.liveState.currentLive.removeListener(_onCurrentLiveListener);
     manager.dispose();
   }
 
@@ -170,7 +173,7 @@ class _LiveInfoWidgetState extends State<LiveInfoWidget> {
 
 extension on _LiveInfoWidgetState {
   bool _isFollow() {
-    return manager.state.followingList.value.any((following) => following.userId == manager.state.ownerId.value);
+    return manager.isFollow();
   }
 
   void _followAnchor() {
@@ -215,5 +218,12 @@ extension on _LiveInfoWidgetState {
         _closeLiveInfoDetailWidget();
       }
     }
+  }
+
+  void _onCurrentLiveChanged() {
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    if (liveInfo.liveID != widget.roomId) return;
+    if (manager.state.roomId == liveInfo.liveID) return;
+    manager.initRoomInfo(liveInfo);
   }
 }

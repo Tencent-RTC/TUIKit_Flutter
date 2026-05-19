@@ -1,7 +1,6 @@
 import 'package:application/src/live/voice_room_widget.dart';
 import 'package:application/src/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/index.dart';
 
 import 'video_live_widget.dart';
 
@@ -21,9 +20,8 @@ class _LiveMainWidgetState extends State<LiveMainWidget> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Container(
-              padding: EdgeInsets.only(left: context.adapter.getWidth(80)),
-              child: Text(AppLocalizations.of(context)!.app_video, textAlign: TextAlign.center)),
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.app_video, textAlign: TextAlign.center),
         ),
         body: Container(
           color: Colors.white,

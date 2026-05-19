@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 import 'package:tencent_calls_uikit/src/tui_call_kit_impl.dart';
 import 'package:tencent_cloud_uikit_core/tencent_cloud_uikit_core.dart';
 import 'package:tencent_calls_uikit/src/common/platform/call_kit_platform_interface.dart';
@@ -27,6 +28,7 @@ class Bootloader extends NavigatorObserver {
   };
 
   _bootstrap() {
+    AppLifecycle.instance;
     EventBusHandler.instance;
     TUICallKitPlatform.instance;
 

@@ -1,6 +1,7 @@
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/component/network_info/state/network_info_state.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
@@ -33,7 +34,6 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
       padding: EdgeInsets.only(top: 16.height, left: 20.width, right: 20.width),
       constraints: BoxConstraints(maxHeight: 457.height),
       decoration: const BoxDecoration(
-        color: LiveColors.designBgColorOperate,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -492,66 +492,23 @@ class _NetworkInfo extends StatelessWidget {
 
 extension on _NetworkInfoWidgetState {
   void _closeMusicMode() {
-    const defaultModeNumber = 1;
-    const musicModeNumber = 2;
-    const speechModeNumber = 3;
-    const cancelNumber = 4;
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-
-    const lineColor = LiveColors.designBgColorInput;
-    final textColor = LiveColors.designStandardFlowkitWhite.withAlpha(0xE6);
-
-    final defaultMode = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(context)!.common_audio_mode_default,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: defaultModeNumber);
-    menuData.add(defaultMode);
-
-    final musicMode = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(context)!.common_audio_mode_music,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: musicModeNumber);
-    menuData.add(musicMode);
-
-    final speechMode = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(context)!.common_audio_mode_speech,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: speechModeNumber);
-    menuData.add(speechMode);
-
-    final cancel = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(context)!.common_cancel,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    ActionSheet.show(
-      menuData,
-      (model) {
-        switch (model.bingData) {
-          case defaultModeNumber:
-            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileDefault);
-            break;
-          case musicModeNumber:
-            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileMusic);
-            break;
-          case speechModeNumber:
-            widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileSpeech);
-            break;
-          default:
-            break;
-        }
-      },
-      parentContext: context,
-      backgroundColor: LiveColors.designBgColorOperate,
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_audio_mode_default,
+          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileDefault),
+        ),
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_audio_mode_music,
+          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileMusic),
+        ),
+        ActionSheetItem(
+          title: LiveKitLocalizations.of(context)!.common_audio_mode_speech,
+          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileSpeech),
+        ),
+      ],
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
     );
   }
 }

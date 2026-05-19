@@ -1,5 +1,5 @@
 class Constants {
-  static const String pluginVersion = '4.0.1';
+  static const String pluginVersion = '4.1.0';
   static const String pluginName = 'tencent_live_uikit';
 
   static const String liveKitLog = 'LiveKitLog';

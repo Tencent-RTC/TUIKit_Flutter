@@ -1,3 +1,9 @@
+## 4.1.0
+* Added AI subtitles and AI real-time meeting summary features.
+* Optimized the BottomSheet dialog.
+* Fixed the message list lag issue when the keyboard is shown or hidden.
+* Fixed other known issues.
+
 ## 4.0.2
 * Optimized input box styling and voice recording animations.
 * Enhanced the visual design of read receipts.

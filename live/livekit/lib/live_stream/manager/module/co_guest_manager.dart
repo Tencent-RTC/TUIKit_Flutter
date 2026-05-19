@@ -126,12 +126,13 @@ extension on CoGuestManager {
   }
 
   void _onSeatListChanged() {
+    bool isSelfOnSeat = coGuestState.coGuestStatus.value == CoGuestStatus.linking;
     final liveID = _getLiveID();
     LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
     final seatList = liveSeatStore.liveSeatState.seatList.value;
     _updateCoGuestStatusBySeatList(seatList);
     _updateMediaLockStatus(seatList);
-    if (!seatList.any((seat) => seat.userInfo.userID == _getSelfID())) {
+    if (!seatList.any((seat) => seat.userInfo.userID == _getSelfID()) && isSelfOnSeat) {
       context.mediaManager.target?.onSelfLeaveSeat();
     }
   }

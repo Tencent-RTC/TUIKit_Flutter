@@ -12,11 +12,13 @@ import '../../../../common/widget/index.dart';
 class CoHostForegroundWidget extends StatefulWidget {
   final SeatInfo seatInfo;
   final ValueListenable<bool> isFloatWindowMode;
+  final GestureTapCallback? onTap;
 
   const CoHostForegroundWidget({
     super.key,
     required this.seatInfo,
     required this.isFloatWindowMode,
+    this.onTap,
   });
 
   @override
@@ -39,7 +41,8 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
                   alignment: Alignment.center,
                   children: [
                     _buildConnectionStatusWidget(),
-                    _buildMicAndNameWidget(),
+                    _buildMicAndNameWidget(constraint.maxWidth),
+                    _buildGestureDetector(),
                   ],
                 ),
               );
@@ -48,47 +51,59 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
         });
   }
 
-  Widget _buildMicAndNameWidget() {
+  Widget _buildMicAndNameWidget(double maxWidth) {
     final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
     if (liveID.isEmpty) return const SizedBox.shrink();
     CoHostStore coHostStore = CoHostStore.create(liveID);
-    return Visibility(
-      visible: coHostStore.coHostState.connected.value.length > 1,
-      child: Positioned(
-        left: 10.width,
-        bottom: 4.height,
-        child: Container(
-          padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
-          decoration: BoxDecoration(
-            color: LiveColors.userNameBlackColor,
-            borderRadius: BorderRadius.circular(37.radius),
-          ),
-          child: Row(
-            children: [
-              Visibility(
-                visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
-                child: SizedBox(
-                  width: 12.width,
-                  height: 12.width,
-                  child: Image.asset(
-                    LiveImages.muteMicrophone,
-                    package: Constants.pluginName,
-                  ),
+    return ValueListenableBuilder(
+      valueListenable: coHostStore.coHostState.connected,
+      builder: (context, connected, _) {
+        return Visibility(
+          visible: connected.length > 1,
+          child: Positioned(
+            left: 10.width,
+            bottom: 4.height,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth - 20.width),
+              child: Container(
+                padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
+                decoration: BoxDecoration(
+                  color: LiveColors.userNameBlackColor,
+                  borderRadius: BorderRadius.circular(37.radius),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Visibility(
+                      visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
+                      child: SizedBox(
+                        width: 12.width,
+                        height: 12.width,
+                        child: Image.asset(
+                          LiveImages.muteMicrophone,
+                          package: Constants.pluginName,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2.width,
+                    ),
+                    Flexible(
+                      child: Text(
+                        (widget.seatInfo.userInfo.userName.isNotEmpty)
+                            ? widget.seatInfo.userInfo.userName
+                            : widget.seatInfo.userInfo.userID,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                width: 2.width,
-              ),
-              Text(
-                (widget.seatInfo.userInfo.userName.isNotEmpty)
-                    ? widget.seatInfo.userInfo.userName
-                    : widget.seatInfo.userInfo.userID,
-                style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
-              )
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -121,6 +136,22 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
                   ),
                 ));
           }),
+    );
+  }
+
+  Widget _buildGestureDetector() {
+    final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    if (liveID.isEmpty) return const SizedBox.shrink();
+    CoHostStore coHostStore = CoHostStore.create(liveID);
+    return ValueListenableBuilder(
+      valueListenable: coHostStore.coHostState.connected,
+      builder: (context, connected, _) {
+        if (connected.isEmpty) return const SizedBox.shrink();
+        return GestureDetector(
+          onTap: () => widget.onTap?.call(),
+          child: Container(color: Colors.transparent),
+        );
+      },
     );
   }
 }

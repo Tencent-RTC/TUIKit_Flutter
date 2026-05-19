@@ -1120,7 +1120,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    _bottomPadding = MediaQuery.of(context).padding.bottom;
+    _bottomPadding = MediaQuery.paddingOf(context).bottom;
     atomicLocale = AtomicLocalizations.of(context);
     localeProvider = Provider.of<LocaleProvider>(context);
 

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/widget/display/custom_barrage_builder.dart';
-import 'package:tencent_live_uikit/common/screen/index.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 
 import '../../common/constants/constants.dart';
@@ -50,63 +49,62 @@ class GiftBarrageItemBuilder extends CustomBarrageBuilder {
             color: LiveColors.notStandard40G1,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(width: 4.width),
-              Text(
-                senderUserName,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: LiveColors.barrageUserNameColor),
-              ),
-              SizedBox(width: 4.width),
-              Text(
-                LiveKitLocalizations.of(context)!.common_sent,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white),
-              ),
-              SizedBox(width: 4.width),
-              Text(
-                receiverUserName,
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: LiveColors.barrageUserNameColor),
-              ),
-              SizedBox(width: 4.width),
-              Text(
-                giftName,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: giftMessageColor[Random().nextInt(7)]),
-              ),
-              SizedBox(width: 4.width),
-              Padding(
-                padding: const EdgeInsets.only(top: 3.0),
-                child: CachedNetworkImage(
-                  width: 13,
-                  height: 13,
-                  imageUrl: giftUrl,
-                  fit: BoxFit.fitWidth,
-                  placeholder: (context, url) => _buildDefaultGift(),
-                  errorWidget: (context, url, error) => _buildDefaultGift(),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: senderUserName,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: LiveColors.barrageUserNameColor),
                 ),
-              ),
-              SizedBox(width: 4.width),
-              Text(
-                "x$giftCount",
-                style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white),
-              ),
-            ],
+                const TextSpan(text: ' '),
+                TextSpan(
+                  text: LiveKitLocalizations.of(context)!.common_sent,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white),
+                ),
+                const TextSpan(text: ' '),
+                TextSpan(
+                  text: receiverUserName,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: LiveColors.barrageUserNameColor),
+                ),
+                const TextSpan(text: ' '),
+                TextSpan(
+                  text: giftName,
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: giftMessageColor[Random().nextInt(7)]),
+                ),
+                const TextSpan(text: ' '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: CachedNetworkImage(
+                    width: 13,
+                    height: 13,
+                    imageUrl: giftUrl,
+                    fit: BoxFit.fitWidth,
+                    placeholder: (context, url) => _buildDefaultGift(),
+                    errorWidget: (context, url, error) => _buildDefaultGift(),
+                  ),
+                ),
+                const TextSpan(text: ' '),
+                TextSpan(
+                  text: "x$giftCount",
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white),
+                ),
+              ],
+            ),
           ),
         ),
       ],

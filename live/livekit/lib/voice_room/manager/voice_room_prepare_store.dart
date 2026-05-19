@@ -1,9 +1,19 @@
+import 'dart:math';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tencent_live_uikit/common/constants/constants.dart';
 
 import '../voice_room_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
+
+String _randomCoverUrl() {
+  final list = Constants.coverUrlList;
+  if (list.isEmpty) {
+    return Constants.defaultCoverUrl;
+  }
+  return list[Random().nextInt(list.length)];
+}
 
 enum PrivacyStatus { public, privacy }
 
@@ -15,7 +25,7 @@ class VoiceRoomPrepareState {
   }) : liveInfo = liveInfo != liveInfo
             ? ValueNotifier(liveInfo!)
             : ValueNotifier(LiveInfo(
-                coverURL: Constants.defaultCoverUrl,
+                coverURL: _randomCoverUrl(),
                 backgroundURL: Constants.defaultBackgroundUrl,
                 keepOwnerOnSeat: true,
                 seatTemplate: const AudioSalon(10)));

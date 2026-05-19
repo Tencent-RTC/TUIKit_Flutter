@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_calls_uikit_example/src/login_widget.dart';
 import 'generate/app_localizations.dart';
@@ -17,13 +18,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    TUICallKit.instance.enableAITranscriber(true);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        localizationsDelegates: const [
+          ...AppLocalizations.localizationsDelegates,
+          AtomicLocalizations.delegate,
+        ],
         supportedLocales: AppLocalizations.supportedLocales,
         navigatorObservers: [TUICallKit.navigatorObserver],
         builder: (context, child) => Scaffold(

@@ -1,5 +1,20 @@
 # TUILiveKit
 
+## 4.1.0
+
+- Added support for Tencent Effect beauty filters.
+- Added swipe-to-switch live rooms.
+- Added single/double column view switching for the live list.
+- Added live stream preview feature.
+- Added support for co-anchors to mute remote anchors' audio streams.
+- The streaming start API has been changed from `createLive` to `startLive`.
+- UI optimizations including the introduction of AtomicX components.
+
+## 4.0.2
+
+- Update livestream room cover and background image.
+- Fixed issue with voice chat streaming parameters not taking effect.
+
 ## 4.0.1
 - atomic_x_core upgraded to 4.0.1.
 - tencent_rtc_sdk upgraded to 13.2.

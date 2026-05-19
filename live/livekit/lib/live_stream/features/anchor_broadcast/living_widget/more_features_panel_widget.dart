@@ -49,13 +49,9 @@ class _MoreFeaturesPanelWidgetState extends State<MoreFeaturesPanelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 1.screenWidth,
-      height: 350.height,
-      decoration: BoxDecoration(
-        color: LiveColors.designStandardG2,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
-      ),
+      height: 200.height,
       child: Column(children: [
         SizedBox(height: 24.height),
         _buildTitleWidget(),
@@ -85,7 +81,7 @@ class _MoreFeaturesPanelWidgetState extends State<MoreFeaturesPanelWidget> {
   Widget _buildFeaturesListWidget() {
     return SizedBox(
       width: 1.screenWidth,
-      height: 79.height,
+      height: 85.width,
       child: Center(
         child: ListView.separated(
           shrinkWrap: true,
@@ -98,8 +94,8 @@ class _MoreFeaturesPanelWidgetState extends State<MoreFeaturesPanelWidget> {
               onTap: () => _onTapIndex(index),
               child: SizedBox(
                 width: 56.width,
-                height: 79.height,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       width: 56.width,
@@ -146,7 +142,10 @@ extension on _MoreFeaturesPanelWidgetState {
         break;
       case FeaturesItemType.audioEffect:
         _audioEffectSheetHandler =
-            popupWidget(context: context, AudioEffectPanelWidget(roomId: liveStreamManager.roomState.roomId));
+            popupWidget(context: context, AudioEffectPanelWidget(
+              roomId: liveStreamManager.roomState.roomId,
+              onDone: () => _audioEffectSheetHandler?.close(),
+            ));
         break;
       case FeaturesItemType.flip:
         DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);

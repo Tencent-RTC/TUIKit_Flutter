@@ -1,14 +1,13 @@
+import 'package:application/src/module_assembly/module_assembly.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
-import 'package:tencent_live_uikit/common/index.dart';
-
+import 'package:tencent_live_uikit/common/widget/toast.dart';
 import '../app_store/index.dart';
 import '../call/call_main_widget.dart';
 import '../chat/index.dart';
 import '../live/index.dart';
 import '../mine/me_widget.dart';
-import '../utils/language/index.dart';
-import '../utils/constant.dart';
+import '../utils/index.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({super.key});
@@ -152,6 +151,7 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   void _enterLiveWidget() {
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kDemoClickLive);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const LiveMainWidget();
@@ -160,6 +160,12 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   void _enterRoomWidget() {
+    if (!ModuleAssembly.canStartNewRoom()) {
+      makeToast(context, AppLocalizations.of(context)!.app_can_not_start_room_during_call);
+      return;
+    }
+
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kDemoClickRoom);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const RoomHomeWidget();
@@ -168,6 +174,7 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   void _enterCallWidget() {
+    KeyMetrics.reportKeyMetrics(KeyMetrics.kDemoClickCall);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const CallMainWidget();

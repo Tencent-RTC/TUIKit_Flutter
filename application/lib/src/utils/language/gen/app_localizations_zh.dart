@@ -113,7 +113,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_call_description => '响铃通知·通话悬浮窗·通话卡顿优化';
 
   @override
-  String get app_call_user_ids => '通话列表';
+  String get app_call_user_ids => 'User ID';
 
   @override
   String get app_call_media_type => '媒体类型';
@@ -125,13 +125,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_call_group_id => '群组ID';
 
   @override
-  String get app_call_initiate => '发起通话';
+  String get app_call_initiate => '拨打';
 
   @override
-  String get app_call_media_type_audio => '语音';
+  String get app_call_media_type_audio => '语音通话';
 
   @override
-  String get app_call_media_type_video => '视频';
+  String get app_call_media_type_video => '视频通话';
 
   @override
   String get app_call_user_ids_separated => 'ID 使用\',\'隔开';
@@ -149,6 +149,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_call_enable_ai_transcriber => '开启 AI 字幕';
 
   @override
+  String get app_call_settings => '通话设置';
+
+  @override
   String get app_call_error_call_self => '您无法向自己发起通话，请您更换新的用户 ID';
 
   @override
@@ -159,4 +162,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get app_chat_description => '群组聊天·好友通讯录·语音消息·资料多端同步';
+
+  @override
+  String get app_can_not_start_room_during_call => '当前正在通话中，请结束后再试';
 }

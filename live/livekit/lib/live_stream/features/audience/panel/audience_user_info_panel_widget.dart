@@ -95,9 +95,11 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
   Widget _buildUserNameWidget() {
     return Positioned(
       top: 64.height,
+      width: 1.screenWidth,
       child: Text(
         widget.user.userName.isNotEmpty ? widget.user.userName : widget.user.userID,
         overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
       ),
     );
@@ -106,10 +108,12 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
   Widget _buildLiveIDWidget() {
     return Positioned(
       top: 94.height,
+      width: 1.screenWidth,
       child: Text(
         LiveKitLocalizations.of(Global.appContext())!.common_room_info_liveroom_id +
             widget.liveStreamManager.roomState.roomId,
         overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
       ),
     );
@@ -118,12 +122,14 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
   Widget _buildFansWidget() {
     return Positioned(
       top: 119.height,
+      width: 275.width,
       child: ValueListenableBuilder(
         valueListenable: _fansNumber,
         builder: (context, fansNumber, child) {
           return Text(
             fansNumber.toString() + LiveKitLocalizations.of(Global.appContext())!.common_fan_count,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
           );
         },

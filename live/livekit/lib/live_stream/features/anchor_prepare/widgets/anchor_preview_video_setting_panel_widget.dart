@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
+import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../manager/live_stream_manager.dart';
 
 class AnchorPreviewVideoSettingPanelWidget extends StatefulWidget {
@@ -18,10 +19,9 @@ class AnchorPreviewVideoSettingPanelWidget extends StatefulWidget {
 class _AnchorPreviewVideoSettingPanelWidgetState extends State<AnchorPreviewVideoSettingPanelWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 252.height,
       width: 1.screenWidth,
-      decoration: const BoxDecoration(color: LiveColors.designBgColorOperate),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -58,25 +58,26 @@ class _AnchorPreviewVideoSettingPanelWidgetState extends State<AnchorPreviewVide
                         color: LiveColors.designStandardFlowkitWhite.withAlpha(230),
                         fontSize: 16,
                         fontWeight: FontWeight.w400)),
-                ValueListenableBuilder(
-                    valueListenable: DeviceStore.shared.state.localMirrorType,
-                    builder: (context, isMirror, _) {
-                      return SizedBox(
-                        height: 32.height,
-                        child: FittedBox(
-                          child: CupertinoSwitch(
-                              inactiveTrackColor: LiveColors.designStandardG3,
-                              activeTrackColor: LiveColors.designStandardB1,
-                              value: DeviceStore.shared.state.localMirrorType.value == MirrorType.enable,
-                              onChanged: (value) {
-                                if (value == (DeviceStore.shared.state.localMirrorType.value == MirrorType.enable)) {
-                                  return;
-                                }
-                                DeviceStore.shared.switchMirror(value ? MirrorType.enable : MirrorType.disable);
-                              }),
-                        ),
-                      );
-                    }),
+                GestureDetector(
+                  onTap: () {
+                    _showMirrorSelectionPanel();
+                  },
+                  child: ValueListenableBuilder(
+                      valueListenable: DeviceStore.shared.state.localMirrorType,
+                      builder: (context, videoQuality, _) {
+                        return Row(
+                          spacing: 4.width,
+                          children: [
+                            Text(_getMirrorString(DeviceStore.shared.state.localMirrorType.value),
+                                style: TextStyle(
+                                    color: LiveColors.designStandardFlowkitWhite.withAlpha(230),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400)),
+                            Image.asset(LiveImages.downArrow, package: Constants.pluginName)
+                          ],
+                        );
+                      }),
+                )
               ],
             ),
           ),
@@ -125,54 +126,18 @@ class _AnchorPreviewVideoSettingPanelWidgetState extends State<AnchorPreviewVide
 
 extension on _AnchorPreviewVideoSettingPanelWidgetState {
   void _showVideoQualitySelectionPanel() {
-    const videoQuality1080PNumber = 1;
-    const videoQuality720PNumber = 2;
-    const cancelNumber = 3;
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-
-    const lineColor = LiveColors.designBgColorInput;
-    final textColor = LiveColors.designStandardFlowkitWhite.withAlpha(230);
-
-    final videoQuality1080P = ActionSheetModel(
-        isCenter: true,
-        text: _getVideoQualityString(VideoQuality.quality1080P),
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: videoQuality1080PNumber);
-    menuData.add(videoQuality1080P);
-
-    final videoQuality720P = ActionSheetModel(
-        isCenter: true,
-        text: _getVideoQualityString(VideoQuality.quality720P),
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: videoQuality720PNumber);
-    menuData.add(videoQuality720P);
-
-    final cancel = ActionSheetModel(
-        isCenter: true,
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: TextStyle(color: textColor, fontSize: 16),
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    ActionSheet.show(
-      menuData,
-      (model) {
-        switch (model.bingData) {
-          case videoQuality1080PNumber:
-            widget.liveStreamManager.updateVideoQuality(VideoQuality.quality1080P);
-            break;
-          case videoQuality720PNumber:
-            widget.liveStreamManager.updateVideoQuality(VideoQuality.quality720P);
-            break;
-          default:
-            break;
-        }
-      },
-      parentContext: context,
-      backgroundColor: LiveColors.designBgColorOperate,
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: _getVideoQualityString(VideoQuality.quality1080P),
+          onTap: () => widget.liveStreamManager.updateVideoQuality(VideoQuality.quality1080P),
+        ),
+        ActionSheetItem(
+          title: _getVideoQualityString(VideoQuality.quality720P),
+          onTap: () => widget.liveStreamManager.updateVideoQuality(VideoQuality.quality720P),
+        ),
+      ],
     );
   }
 
@@ -189,5 +154,36 @@ extension on _AnchorPreviewVideoSettingPanelWidgetState {
       default:
         return 'unknown';
     }
+  }
+
+  void _showMirrorSelectionPanel() {
+    BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.auto),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.auto),
+        ),
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.enable),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.enable),
+        ),
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.disable),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.disable),
+        ),
+      ],
+    );
+  }
+
+  String _getMirrorString(MirrorType mirrorType) {
+    switch (mirrorType) {
+      case MirrorType.auto:
+        return LiveKitLocalizations.of(context)!.mirror_type_auto;
+      case MirrorType.enable:
+        return LiveKitLocalizations.of(context)!.mirror_type_enable;
+      case MirrorType.disable:
+        return LiveKitLocalizations.of(context)!.mirror_type_disable;
+      }
   }
 }

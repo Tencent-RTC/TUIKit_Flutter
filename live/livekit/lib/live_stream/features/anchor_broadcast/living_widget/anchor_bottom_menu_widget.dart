@@ -320,59 +320,20 @@ extension on _AnchorBottomMenuWidgetState {
   }
 
   void _confirmToExitBattle() {
-    const terminateBattleNumber = 1;
-    const cancelNumber = 2;
-    const lineColor = LiveColors.designStandardG8;
-    final List<ActionSheetModel> menuData = List.empty(growable: true);
-    final terminateBattle = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_battle_end_pk,
-        textStyle: const TextStyle(
-          color: LiveColors.notStandardRed,
-          fontSize: 16,
-        ),
-        lineColor: lineColor,
-        bingData: terminateBattleNumber,
-        autoPopSheet: false);
-    menuData.add(terminateBattle);
-
-    final cancel = ActionSheetModel(
-        text: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-        textStyle: const TextStyle(
-          color: LiveColors.designStandardG2,
-          fontSize: 16,
-        ),
-        lineColor: lineColor,
-        bingData: cancelNumber);
-    menuData.add(cancel);
-
-    ActionSheet.show(parentContext: context, menuData, (model) async {
-      if (model.bingData != terminateBattleNumber) return;
-      Navigator.of(context).pop();
-      _showExitBattleAlert();
-    }, backgroundColor: LiveColors.designStandardFlowkitWhite);
-  }
-
-  void _showExitBattleAlert() {
     if (_exitBattleAlertHandler?.isShowing() == true) {
       return;
     }
-
     final alertInfo = AlertInfo(
-        description: LiveKitLocalizations.of(Global.appContext())!.common_battle_end_pk_tips,
-        cancelActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_cancel,
-          titleColor: LiveColors.designStandardG3
-        ),
-        cancelCallback: () => _exitBattleAlertHandler?.close(),
-        defaultActionInfo: (
-          title: LiveKitLocalizations.of(Global.appContext())!.common_battle_end_pk,
-          titleColor: LiveColors.notStandardRed
-        ),
-        defaultCallback: () {
-          battleStore.exitBattle(liveStreamManager.battleState.battleId.value);
-          _exitBattleAlertHandler?.close();
-        });
-
+      isDestructive: true,
+      description: LiveKitLocalizations.of(context)!.common_battle_end_pk_tips,
+      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
+      cancelCallback: () => _exitBattleAlertHandler?.close(),
+      defaultText: LiveKitLocalizations.of(context)!.common_battle_end_pk,
+      defaultCallback: () {
+        battleStore.exitBattle(liveStreamManager.battleState.battleId.value);
+        _exitBattleAlertHandler?.close();
+      },
+    );
     _exitBattleAlertHandler = Alert.showAlert(alertInfo, context);
   }
 
@@ -394,6 +355,7 @@ extension on _AnchorBottomMenuWidgetState {
     _moreFeaturesPanelSheetHandler = popupWidget(
         context: context,
         MoreFeaturesPanelWidget(liveStreamManager: liveStreamManager),
+        barrierColor: LiveColors.designStandardTransparent,
         routeSettings: RouteSettings(name: kMoreFeaturesPanelWidgetName));
   }
 }

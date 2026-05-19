@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:tuikit_atomic_x/atomicx.dart';
-import 'package:tuikit_atomic_x/call/common/i18n/i18n_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/call_colors.dart';
@@ -44,18 +43,19 @@ class _HintWidgetState extends State<HintWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AtomicLocalizations.of(context);
     return ValueListenableBuilder(
       valueListenable: CallStore.shared.state.selfInfo,
       builder: (context, selfInfo, child) {
-        return _buildConnectionHint(selfInfo) ??
-            _buildStatusHint(selfInfo) ??
-            _buildNetworkQualityHint(selfInfo) ??
+        return _buildConnectionHint(selfInfo, l10n) ??
+            _buildStatusHint(selfInfo, l10n) ??
+            _buildNetworkQualityHint(selfInfo, l10n) ??
             const SizedBox.shrink();
       },
     );
   }
 
-  Widget? _buildConnectionHint(CallParticipantInfo selfInfo) {
+  Widget? _buildConnectionHint(CallParticipantInfo selfInfo, AtomicLocalizations l10n) {
     final activeCall = CallStore.shared.state.activeCall.value;
     final callId = activeCall.callId;
     
@@ -73,7 +73,7 @@ class _HintWidgetState extends State<HintWidget> {
     });
 
     return Text(
-      CallKit_t('connected'),
+      l10n.callConnected,
       style: const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
@@ -82,7 +82,7 @@ class _HintWidgetState extends State<HintWidget> {
     );
   }
 
-  Widget? _buildStatusHint(CallParticipantInfo selfInfo) {
+  Widget? _buildStatusHint(CallParticipantInfo selfInfo, AtomicLocalizations l10n) {
     if (selfInfo.status != CallParticipantStatus.waiting) {
       return null;
     }
@@ -91,7 +91,7 @@ class _HintWidgetState extends State<HintWidget> {
     
     if (selfInfo.id == activeCall.inviterId) {
       return Text(
-        CallKit_t('waitingForInvitationAcceptance'),
+        l10n.callWaitingForInvitationAcceptance,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -100,8 +100,8 @@ class _HintWidgetState extends State<HintWidget> {
       );
     } else {
       final hintText = activeCall.mediaType == CallMediaType.audio
-          ? CallKit_t("invitedToAudioCall")
-          : CallKit_t("invitedToVideoCall");
+          ? l10n.callInvitedToAudioCall
+          : l10n.callInvitedToVideoCall;
 
       return Text(
         hintText,
@@ -114,11 +114,11 @@ class _HintWidgetState extends State<HintWidget> {
     }
   }
 
-  Widget? _buildNetworkQualityHint(CallParticipantInfo selfInfo) {
+  Widget? _buildNetworkQualityHint(CallParticipantInfo selfInfo, AtomicLocalizations l10n) {
     return ValueListenableBuilder(
       valueListenable: CallStore.shared.state.networkQualities,
       builder: (context, networkQualities, child) {
-        final hintText = _getNetworkQualityHintText(selfInfo, networkQualities);
+        final hintText = _getNetworkQualityHintText(selfInfo, networkQualities, l10n);
         return hintText.isNotEmpty
             ? Text(
           hintText,
@@ -135,16 +135,17 @@ class _HintWidgetState extends State<HintWidget> {
 
   String _getNetworkQualityHintText(
       CallParticipantInfo selfInfo,
-      Map<String, NetworkQuality> networkQualities
+      Map<String, NetworkQuality> networkQualities,
+      AtomicLocalizations l10n,
       ) {
     final selfNetwork = networkQualities[selfInfo.id];
     if (selfNetwork != null && _isBadNetwork(selfNetwork)) {
-      return CallKit_t("selfNetworkLowQuality");
+      return l10n.callSelfNetworkLowQuality;
     }
 
     for (var entry in networkQualities.entries) {
       if (entry.key != selfInfo.id && _isBadNetwork(entry.value)) {
-        return CallKit_t("otherPartyNetworkLowQuality");
+        return l10n.callOtherPartyNetworkLowQuality;
       }
     }
 

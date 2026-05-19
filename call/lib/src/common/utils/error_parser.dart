@@ -1,29 +1,29 @@
-import 'package:tencent_calls_uikit/src/common/i18n/i18n_utils.dart';
-import 'package:tencent_cloud_uikit_core/tencent_cloud_uikit_core.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
 class ErrorParser {
-  static String? getErrorMessage(int errorCode) {
+  static String? getErrorMessage(int errorCode, AtomicLocalizations? l10n) {
+    if (l10n == null) return null;
     switch (errorCode) {
       case -1001:
-        return getI18nString('featureRequiresAudioVideoCallingPackage');
+        return l10n.callFeatureRequiresAudioVideoCallingPackage;
       case -1002:
-        return getI18nString('currentPackageDoesNotSupportFeature');
+        return l10n.callCurrentPackageDoesNotSupportFeature;
       case -1101:
-        return getI18nString('microphoneOrCameraPermissionNotEnabled');
+        return l10n.callMicrophoneOrCameraPermissionNotEnabled;
       case -1316:
-        return getI18nString('cameraOccupiedBySystemCall');
+        return l10n.callCameraOccupiedBySystemCall;
       case -1319:
-        return getI18nString('microphoneOccupiedBySystemCall');
+        return l10n.callMicrophoneOccupiedBySystemCall;
       case -1203:
-        return getI18nString('currentlyOnCallCannotInitiateAnother');
+        return l10n.callCurrentlyOnCallCannotInitiateAnother;
       case -1201:
-        return getI18nString('failedToInitiateCallCheckLoginStatus');
+        return l10n.callFailedToInitiateCallCheckLoginStatus;
       case -3301:
-        return getI18nString('failedToInitiateOrJoinCall');
+        return l10n.callFailedToInitiateOrJoinCall;
       case 101010:
-        return getI18nString('currentCallSupportsMax9Participants');
+        return l10n.callCurrentCallSupportsMax9Participants;
       case 101002:
-        return getI18nString('inviteUserErrorOrInvalidCallParameters');
+        return l10n.callInviteUserErrorOrInvalidCallParameters;
     }
     return null;
   }

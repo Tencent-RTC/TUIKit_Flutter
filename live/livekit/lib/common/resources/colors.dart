@@ -109,7 +109,6 @@ class LiveColors {
   static const Color notStandardPinkColor = Color(0xFFF15065);
   static const Color notStandardBlueColor = Color(0xFF5592EE);
 
-
   /// barrage color-->
   static const Color barrageColorMsg1 = Color(0xFF3074FD);
   static const Color barrageColorMsg2 = Color(0xFF3CCFA5);
@@ -136,5 +135,6 @@ class LiveColors {
   static const Color whiteAlphaE6 = Color(0xE6FFFFFF);
   static const Color whiteAlpha8C = Color(0x8CFFFFFF);
   static const Color seatTemplateGray = Color(0xFF2B2C30);
+  static const Color seatTemplateSelect = Color(0xFF243047);
   static const Color seatTemplateSelectedBorder = Color(0xFF2B6AD6);
 }

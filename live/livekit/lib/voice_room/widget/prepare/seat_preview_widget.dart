@@ -11,54 +11,63 @@ class SeatPreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final perRow = _itemsPerRow(seatCount);
+    final rowCount = (seatCount / perRow).ceil();
+
     return Column(
-      children: [_initPreviewSeatsOfPerRow(context), _initPreviewSeatsOfPerRow(context)],
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(rowCount, (rowIndex) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: rowIndex == rowCount - 1 ? 0 : 12.height),
+          child: _buildRow(perRow),
+        );
+      }),
     );
   }
 
-  Widget _initPreviewSeatsOfPerRow(BuildContext context) {
+  Widget _buildRow(int perRow) {
     return SizedBox(
+      width: double.infinity,
       height: itemSize.height,
       child: Row(
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        spacing: getHorizontalMargin(context),
-        children: List.generate(5, (index) {
-          return Container(
-            decoration: BoxDecoration(
-                color: LiveColors.designStandardWhite7.withAlpha(0x1A),
-                border: Border.all(color: LiveColors.designStandardWhite7.withAlpha(0x1A), width: 0.5.width),
-                shape: BoxShape.circle),
-            width: 50.radius,
-            height: 50.radius,
-            child: Center(
-              child:
-                  Image.asset(LiveImages.emptySeat, package: Constants.pluginName, width: 22.radius, height: 22.radius),
-            ),
-          );
-        }),
+        children: List.generate(perRow, (_) => _buildSeatItem()),
       ),
     );
   }
 
-  double getHorizontalMargin(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
+  Widget _buildSeatItem() {
+    return Container(
+      decoration: BoxDecoration(
+          color: LiveColors.designStandardWhite7.withAlpha(0x1A),
+          border: Border.all(color: LiveColors.designStandardWhite7.withAlpha(0x1A), width: 0.5.width),
+          shape: BoxShape.circle),
+      width: 50.radius,
+      height: 50.radius,
+      child: Center(
+        child: Image.asset(LiveImages.emptySeat, package: Constants.pluginName, width: 22.radius, height: 22.radius),
+      ),
+    );
+  }
 
-    switch (seatCount) {
+  int _itemsPerRow(int count) {
+    switch (count) {
       case 3:
       case 6:
       case 9:
-        return (screenWidth - itemSize.width * 3) / 4;
+        return 3;
       case 4:
       case 8:
       case 12:
       case 16:
-        return (screenWidth - itemSize.width * 4) / 5;
+        return 4;
       case 5:
       case 10:
       case 15:
-        return (screenWidth - itemSize.width * 5) / 6;
+        return 5;
       default:
-        return (screenWidth - itemSize.width * 5) / 6;
+        return 5;
     }
   }
 }

@@ -54,6 +54,8 @@ class LanguageDisplayConfig {
         return locale.aiSubtitleSpeakChinese;
       case SourceLanguage.english:
         return locale.aiSubtitleSpeakEnglish;
+      default:
+        return locale.aiSubtitleAutoDetectChineseEnglish;
     }
   }
 

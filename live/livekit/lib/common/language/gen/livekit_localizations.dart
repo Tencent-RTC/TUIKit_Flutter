@@ -65,8 +65,7 @@ import 'livekit_localizations_zh.dart';
 /// property.
 abstract class LiveKitLocalizations {
   static LiveKitLocalizations? defaultLocalizations;
-  LiveKitLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  LiveKitLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -333,6 +332,12 @@ abstract class LiveKitLocalizations {
   /// **'More Features'**
   String get common_more_features;
 
+  /// No description provided for @common_mute_audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get common_mute_audio;
+
   /// No description provided for @common_mute_audio_by_master.
   ///
   /// In en, this message translates to:
@@ -375,6 +380,12 @@ abstract class LiveKitLocalizations {
   /// **'You have been unmuted in the current room'**
   String get common_send_message_enable;
 
+  /// No description provided for @common_setting_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get common_setting_done;
+
   /// No description provided for @common_start_live.
   ///
   /// In en, this message translates to:
@@ -410,6 +421,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'The anchor enabled your video'**
   String get common_un_mute_video_by_master;
+
+  /// No description provided for @common_unmute_audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get common_unmute_audio;
 
   /// No description provided for @common_link_guest.
   ///
@@ -482,6 +499,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'Live streaming in progress. Please try again later.'**
   String get livelist_exit_float_window_tip;
+
+  /// No description provided for @livelist_click_enter_room.
+  ///
+  /// In en, this message translates to:
+  /// **'Click to enter the live room'**
+  String get livelist_click_enter_room;
 
   /// No description provided for @livestreamcore_battle_error_conflict.
   ///
@@ -594,7 +617,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_client_error_failed.
   ///
   /// In en, this message translates to:
-  /// **'Temporarily Unclassified General Error'**
+  /// **'Server is having a hiccup, please try again later'**
   String get common_client_error_failed;
 
   /// No description provided for @common_client_error_freq_limit.
@@ -1829,6 +1852,12 @@ abstract class LiveKitLocalizations {
   /// **'Choose Music'**
   String get live_choose_music;
 
+  /// No description provided for @live_cohost_application_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'The application has expired.'**
+  String get live_cohost_application_expired;
+
   /// No description provided for @live_failed_to_enter_room.
   ///
   /// In en, this message translates to:
@@ -2266,6 +2295,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'Live Game'**
   String get common_live_game;
+
+  /// No description provided for @common_end_live_by_server.
+  ///
+  /// In en, this message translates to:
+  /// **'The live stream was shut down due to violations of regulations.'**
+  String get common_end_live_by_server;
 
   /// No description provided for @common_go_to_enable.
   ///

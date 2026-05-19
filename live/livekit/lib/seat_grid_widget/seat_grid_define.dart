@@ -2,29 +2,25 @@ import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 
+import '../common/screen/screen_adapter.dart';
+import '../common/widget/global.dart';
+
 typedef SeatWidgetBuilder = Widget Function(
-    BuildContext context,
-    ValueNotifier<SeatInfo> seatInfoNotifier,
-    ValueNotifier<int> volumeNotifier);
+    BuildContext context, ValueNotifier<SeatInfo> seatInfoNotifier, ValueNotifier<int> volumeNotifier);
 typedef OnSeatWidgetTap = void Function(SeatInfo);
 
 typedef RequestOnAccepted = Function(TUIUserInfo userInfo);
 typedef RequestOnRejected = Function(TUIUserInfo userInfo);
 typedef RequestOnCancelled = Function(TUIUserInfo userInfo);
 typedef RequestOnTimeout = Function(TUIUserInfo userInfo);
-typedef RequestOnError = Function(
-    TUIUserInfo userInfo, TUIError code, String message);
+typedef RequestOnError = Function(TUIUserInfo userInfo, TUIError code, String message);
 
 typedef OnRoomDismissed = void Function(String roomId);
-typedef OnKickedOutOfRoom = void Function(
-    String roomId, TUIKickedOutOfRoomReason reason, String message);
-typedef OnSeatRequestReceived = void Function(
-    RequestType type, TUIUserInfo userInfo);
-typedef OnSeatRequestCancelled = void Function(
-    RequestType type, TUIUserInfo userInfo);
+typedef OnKickedOutOfRoom = void Function(String roomId, TUIKickedOutOfRoomReason reason, String message);
+typedef OnSeatRequestReceived = void Function(RequestType type, TUIUserInfo userInfo);
+typedef OnSeatRequestCancelled = void Function(RequestType type, TUIUserInfo userInfo);
 typedef OnKickedOffSeat = void Function(TUIUserInfo userInfo);
-typedef OnUserAudioStateChanged = void Function(
-    TUIUserInfo userInfo, bool hasAudio, TUIChangeReason reason);
+typedef OnUserAudioStateChanged = void Function(TUIUserInfo userInfo, bool hasAudio, TUIChangeReason reason);
 
 const int defaultMaxSeatCount = 10;
 const int defaultTimeout = 30;
@@ -64,11 +60,12 @@ class RequestCallback {
   RequestResultType type;
   TUIUserInfo userInfo;
 
-  RequestCallback(
-      {required this.code,
-      required this.message,
-      required this.type,
-      required this.userInfo});
+  RequestCallback({
+    required this.code,
+    required this.message,
+    required this.type,
+    required this.userInfo,
+  });
 
   @override
   String toString() {
@@ -82,11 +79,17 @@ class SeatWidgetLayoutRowConfig {
   final Size seatSize;
   final SeatWidgetLayoutRowAlignment alignment;
 
-  SeatWidgetLayoutRowConfig(
-      {this.count = 5,
-      this.seatSpacing = 20.0,
-      this.seatSize = const Size(50.0, 72.0),
-      this.alignment = SeatWidgetLayoutRowAlignment.center});
+  SeatWidgetLayoutRowConfig({
+    this.count = 5,
+    double? seatSpacing,
+    Size? seatSize,
+    this.alignment = SeatWidgetLayoutRowAlignment.spaceEvenly,
+  })  : seatSpacing = seatSpacing ?? ScreenAdapter.getWidth(Global.appContext(), 20.0),
+        seatSize = seatSize ??
+            Size(
+              ScreenAdapter.getWidth(Global.appContext(), 50.0),
+              ScreenAdapter.getWidth(Global.appContext(), 72.0),
+            );
 
   @override
   String toString() {
@@ -98,10 +101,9 @@ class SeatWidgetLayoutConfig {
   final List<SeatWidgetLayoutRowConfig> rowConfigs;
   final double rowSpacing;
 
-  SeatWidgetLayoutConfig(
-      {List<SeatWidgetLayoutRowConfig>? rowConfigs, this.rowSpacing = 22})
-      : rowConfigs = rowConfigs ??
-            [SeatWidgetLayoutRowConfig(), SeatWidgetLayoutRowConfig()];
+  SeatWidgetLayoutConfig({List<SeatWidgetLayoutRowConfig>? rowConfigs, double? rowSpacing})
+      : rowSpacing = rowSpacing ?? ScreenAdapter.getWidth(Global.appContext(), 22.0),
+        rowConfigs = rowConfigs ?? [SeatWidgetLayoutRowConfig(), SeatWidgetLayoutRowConfig()];
 
   @override
   String toString() {
@@ -111,15 +113,11 @@ class SeatWidgetLayoutConfig {
 
 class SeatGridWidgetObserver {
   OnRoomDismissed onRoomDismissed = (String roomId) {};
-  OnKickedOutOfRoom onKickedOutOfRoom =
-      (String roomId, TUIKickedOutOfRoomReason reason, String message) {};
-  OnSeatRequestReceived onSeatRequestReceived =
-      (RequestType type, TUIUserInfo userInfo) {};
-  OnSeatRequestCancelled onSeatRequestCancelled =
-      (RequestType type, TUIUserInfo userInfo) {};
+  OnKickedOutOfRoom onKickedOutOfRoom = (String roomId, TUIKickedOutOfRoomReason reason, String message) {};
+  OnSeatRequestReceived onSeatRequestReceived = (RequestType type, TUIUserInfo userInfo) {};
+  OnSeatRequestCancelled onSeatRequestCancelled = (RequestType type, TUIUserInfo userInfo) {};
   OnKickedOffSeat onKickedOffSeat = (TUIUserInfo userInfo) {};
-  OnUserAudioStateChanged onUserAudioStateChanged =
-      (TUIUserInfo userInfo, bool hasAudio, TUIChangeReason reason) {};
+  OnUserAudioStateChanged onUserAudioStateChanged = (TUIUserInfo userInfo, bool hasAudio, TUIChangeReason reason) {};
 
   SeatGridWidgetObserver(
       {OnRoomDismissed? onRoomDismissed,

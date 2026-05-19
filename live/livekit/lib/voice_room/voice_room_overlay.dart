@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/voice_room/voice_room_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../common/widget/float_window/float_window_widget.dart';
 import '../../component/float_window/index.dart';
@@ -35,7 +36,8 @@ class TUIVoiceRoomOverlayState extends State<TUIVoiceRoomOverlay> {
       if (GlobalFloatWindowManager.instance.isFloating()) {
         GlobalFloatWindowState state = GlobalFloatWindowManager.instance.state;
         if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
-          makeToast(msg: LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip);
+          makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
+              type: ToastType.warning);
           if (mounted) Navigator.pop(context);
           return;
         } else {

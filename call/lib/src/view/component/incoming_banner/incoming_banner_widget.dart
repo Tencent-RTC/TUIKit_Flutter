@@ -4,7 +4,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencent_calls_uikit/src/common/constants.dart';
-import 'package:tencent_calls_uikit/src/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
 class IncomingBannerWidget extends StatefulWidget {
   final VoidCallback? onShowCalling;
@@ -44,7 +44,6 @@ class _IncomingBannerWidgetState extends State<IncomingBannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    I18nUtils.setLanguage(Localizations.localeOf(context));
     final activeCall = CallStore.shared.state.activeCall.value;
     if (activeCall.callId.isEmpty) {
       return const SizedBox.shrink();
@@ -126,12 +125,13 @@ class _IncomingBannerWidgetState extends State<IncomingBannerWidget> {
           }
 
           var invitationInfo = '';
+          final l10n = AtomicLocalizations.of(context);
           if (CallStore.shared.state.activeCall.value.inviteeIds.length >= 2) {
-            invitationInfo = getI18nString('invitedToGroupCall');
-          } else if (CallStore.shared.state.activeCall.value.mediaType == TUICallMediaType.audio) {
-            invitationInfo = getI18nString('invitedToAudioCall');
-          } else if (CallStore.shared.state.activeCall.value.mediaType == TUICallMediaType.video) {
-            invitationInfo = getI18nString('invitedToVideoCall');
+            invitationInfo = l10n.callInvitedToGroupCall;
+          } else if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.audio) {
+            invitationInfo = l10n.callInvitedToAudioCall;
+          } else if (CallStore.shared.state.activeCall.value.mediaType == CallMediaType.video) {
+            invitationInfo = l10n.callInvitedToVideoCall;
           }
 
           return Expanded(

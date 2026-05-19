@@ -6,43 +6,45 @@ import '../../api/live_stream_service.dart';
 import '../../state/user_state.dart';
 import '../live_stream_manager.dart';
 
+// for remote user
+enum UserEnterRoomNotifyStrategy {
+  always, // notify everytime
+  merge, // notify once per cycle
+}
+
 class UserManager {
   LSUserState userState = LSUserState();
-
+  late final LiveAudienceStore _liveAudienceStore;
+  late final LiveAudienceListener _liveAudienceListener;
   late final Context context;
   late final LiveStreamService service;
+
+  final int _volumeCanHeartMinLimit = 25;
+
+  UserEnterRoomNotifyStrategy _enterRoomNotifyStrategy = UserEnterRoomNotifyStrategy.always;
+  int _intervalSecondOnMerge = 60;
+  final Map<String, DateTime> _enterRoomUserTimestamps = {};
 
   void init(Context context) {
     this.context = context;
     service = context.service;
   }
 
-  void dispose() {}
+  void setLiveID(String liveID) {
+    _subscribeListener();
+  }
 
-  final int _volumeCanHeartMinLimit = 25;
+  void setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy strategy, {int? intervalSecondOnMerge}) {
+    _enterRoomNotifyStrategy = strategy;
+    if (intervalSecondOnMerge != null) _intervalSecondOnMerge = intervalSecondOnMerge;
+  }
+
+  void dispose() {
+    _unsubscribeListener();
+  }
 
   void onLeaveLive() {
     userState = LSUserState();
-  }
-
-  Future<TUIValueCallBack<TUIUserInfo>> getUserInfo(String userId) {
-    return service.getUserInfo(userId);
-  }
-
-  Future<TUIActionCallback> onDisableSendingMessageBtnClicked(String userId, bool isDisable) async {
-    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
-    if (liveInfo.liveID.isEmpty) return TUIActionCallback(code: TUIError.errRoomIdInvalid, message: '');
-    final liveAudienceStore = LiveAudienceStore.create(liveInfo.liveID);
-    final result = await liveAudienceStore.disableSendMessage(userID: userId, isDisable: isDisable);
-    return TUIActionCallback(code: TUIError.fromRawValue(result.errorCode), message: result.errorMessage);
-  }
-
-  Future<TUIActionCallback> onKickedOutBtnClicked(String userId) async {
-    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
-    if (liveInfo.liveID.isEmpty) return TUIActionCallback(code: TUIError.errRoomIdInvalid, message: '');
-    final liveAudienceStore = LiveAudienceStore.create(liveInfo.liveID);
-    final result = await liveAudienceStore.kickUserOutOfRoom(userId);
-    return TUIActionCallback(code: TUIError.fromRawValue(result.errorCode), message: result.errorMessage);
   }
 }
 
@@ -65,7 +67,6 @@ extension UserManagerCallback on UserManager {
     }
 
     userState.userList.value.add(userInfo);
-    userState.enterUser.value = userInfo;
   }
 
   void onRemoteUserLeaveRoom(String roomId, TUIUserInfo userInfo) {
@@ -94,5 +95,37 @@ extension UserManagerCallback on UserManager {
           : LiveKitLocalizations.of(Global.appContext())!.common_send_message_enable;
       context.toastSubject.target?.add(toast);
     }
+  }
+}
+
+extension on UserManager {
+  String _getLiveID() {
+    return context.roomManager.target!.roomState.roomId;
+  }
+
+  void _onAudienceJoined(LiveUserInfo audience) {
+    if (_enterRoomNotifyStrategy == UserEnterRoomNotifyStrategy.always) {
+      userState.enterUser.value = audience;
+    } else if (_enterRoomNotifyStrategy == UserEnterRoomNotifyStrategy.merge) {
+      final now = DateTime.now();
+      final lastTime = _enterRoomUserTimestamps[audience.userID];
+      if (lastTime != null && now.difference(lastTime) < Duration(seconds: _intervalSecondOnMerge)) {
+        return;
+      }
+      _enterRoomUserTimestamps[audience.userID] = now;
+      userState.enterUser.value = audience;
+    }
+  }
+
+  void _subscribeListener() {
+    _liveAudienceListener = LiveAudienceListener(onAudienceJoined: (audience) {
+      _onAudienceJoined(audience);
+    });
+    _liveAudienceStore = LiveAudienceStore.create(_getLiveID());
+    _liveAudienceStore.addLiveAudienceListener(_liveAudienceListener);
+  }
+
+  void _unsubscribeListener() {
+    _liveAudienceStore.removeLiveAudienceListener(_liveAudienceListener);
   }
 }

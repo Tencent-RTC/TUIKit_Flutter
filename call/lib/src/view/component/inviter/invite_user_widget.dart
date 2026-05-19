@@ -6,7 +6,7 @@ import 'package:tencent_cloud_chat_sdk/enum/group_member_filter_enum.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_calls_uikit/src/common/constants.dart';
-import 'package:tencent_calls_uikit/src/common/i18n/i18n_utils.dart';
+import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 import 'package:tencent_calls_uikit/src/common/utils/string_stream.dart';
 import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
 
@@ -31,11 +31,12 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AtomicLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           title: Center(
             child: Text(
-              getI18nString('inviteMembers'),
+              l10n.callInviteMembers,
               textScaleFactor: 1.0,
             ),
           ),
@@ -126,7 +127,7 @@ class _InviteUserWidgetState extends State<InviteUserWidget> {
     memberInfo.userId = CallStore.shared.state.selfInfo.value.id;
     memberInfo.userName =
     '${StringStream.makeNull(CallStore.shared.state.selfInfo.value.name,
-        CallStore.shared.state.selfInfo.value.id)} (${getI18nString("yourself")})';
+        CallStore.shared.state.selfInfo.value.id)} (${AtomicLocalizations.of(context).callYourself})';
     memberInfo.avatar =
         StringStream.makeNull(CallStore.shared.state.selfInfo.value.avatarURL, Constants.defaultAvatar);
     memberInfo.isSelected = true;

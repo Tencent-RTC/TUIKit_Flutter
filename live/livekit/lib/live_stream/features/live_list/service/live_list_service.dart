@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 
@@ -10,7 +12,14 @@ class LiveListService {
   final LiveListStore liveListStore = LiveListStore.shared;
   late final LSLiveListState roomListState = LSLiveListState();
 
+  final StreamController<String> _toastController = StreamController<String>.broadcast();
+  Stream<String> get toastStream => _toastController.stream;
+
   LiveListService();
+
+  void dispose() {
+    _toastController.close();
+  }
 
   Future<void> refreshFetchList() async {
     if (roomListState.refreshStatus.value) {
@@ -42,7 +51,8 @@ extension LiveListServiceLogicExtension on LiveListService {
           result.errorMessage!.contains('exceed frequency limit')) {
         LiveKitLogger.error(
             "${LiveListService.tag} _initData [code:${result.errorCode},message:${result.errorMessage}]");
-        ErrorHandler.onError(result.errorCode, result.errorMessage ?? '');
+        final message = ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage ?? '');
+        if (message != null) _toastController.add(message);
       }
       roomListState.loadStatus.value = false;
       roomListState.refreshStatus.value = false;
@@ -62,7 +72,8 @@ extension LiveListServiceLogicExtension on LiveListService {
     if (!result.isSuccess) {
       LiveKitLogger.error(
           "${LiveListService.tag} _initData [code:${result.errorCode},message:${result.errorMessage}]");
-      ErrorHandler.onError(result.errorCode, result.errorMessage);
+      final message = ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage);
+      if (message != null) _toastController.add(message);
       roomListState.loadStatus.value = false;
       roomListState.isHaveMoreData.value = false;
     } else {

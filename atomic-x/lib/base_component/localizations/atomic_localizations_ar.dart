@@ -970,6 +970,9 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String get callCancelCallee => 'تم الإلغاء من الطرف الآخر';
 
   @override
+  String get callCancel => 'إلغاء';
+
+  @override
   String get stopCallTip => 'مدة المكالمة';
 
   @override
@@ -1321,4 +1324,202 @@ class AtomicLocalizationsAr extends AtomicLocalizations {
   String recordCountdownTips(int seconds) {
     return 'سيتوقف التسجيل بعد $seconds ثانية';
   }
+
+  @override
+  String get callWaitingForInvitationAcceptance =>
+      'في انتظار قبول الطرف الآخر للدعوة';
+
+  @override
+  String get callInvitedToAudioCall => 'دعاك لإجراء مكالمة صوتية';
+
+  @override
+  String get callInvitedToVideoCall => 'دعاك لإجراء مكالمة فيديو';
+
+  @override
+  String get callInvitedToGroupCall => 'دعاك لإجراء مكالمة جماعية';
+
+  @override
+  String get callInsufficientPermissions =>
+      'مكالمة واردة جديدة، ولكن لا يمكن الرد عليها بسبب عدم كفاية الأذونات. يرجى التأكد من تشغيل إذن الكاميرا/الميكروفون.';
+
+  @override
+  String get callInviteMembers => 'دعوة أعضاء';
+
+  @override
+  String get callYourself => 'أنت';
+
+  @override
+  String get callMicrophone => 'الميكروفون';
+
+  @override
+  String get callHangUp => 'إنهاء المكالمة';
+
+  @override
+  String get callSpeaker => 'مكبر الصوت';
+
+  @override
+  String get callEarpiece => 'سماعة الأذن';
+
+  @override
+  String get callCamera => 'الكاميرا';
+
+  @override
+  String get callSwitchToVoiceCall => 'التبديل إلى مكالمة صوتية';
+
+  @override
+  String get callAcceptAction => 'قبول';
+
+  @override
+  String get callExceededMaximumNumber => 'تم تجاوز الحد الأقصى لعدد الأشخاص';
+
+  @override
+  String get callRejectAction => 'رفض';
+
+  @override
+  String get callNoResponse => 'لا استجابة';
+
+  @override
+  String get callBusy => 'مشغول';
+
+  @override
+  String get callLeave => 'مغادرة';
+
+  @override
+  String get callSwitchCamera => 'تبديل الكاميرا';
+
+  @override
+  String get callBlurBackground => 'تمويه الخلفية';
+
+  @override
+  String get callShowBlurBackground => 'إظهار تمويه الخلفية';
+
+  @override
+  String get callConnected => 'متصل';
+
+  @override
+  String get callTheyAreAlsoThere => 'هم أيضاً هناك';
+
+  @override
+  String get callJoinIn => 'انضمام';
+
+  @override
+  String get callPersonIsOnTheCall => ' شخص في المكالمة';
+
+  @override
+  String get callMicrophoneIsOn => 'الميكروفون مفعل';
+
+  @override
+  String get callMicrophoneIsOff => 'الميكروفون مكتوم';
+
+  @override
+  String get callSpeakerIsOn => 'مكبر الصوت';
+
+  @override
+  String get callSpeakerIsOff => 'سماعة الأذن';
+
+  @override
+  String get callCameraIsOn => 'الكاميرا مفعلة';
+
+  @override
+  String get callCameraIsOff => 'الكاميرا مغلقة';
+
+  @override
+  String get callOtherPartyNetworkLowQuality =>
+      'اتصال الطرف الآخر بالشبكة ضعيف';
+
+  @override
+  String get callSelfNetworkLowQuality => 'اتصالك بالشبكة ضعيف';
+
+  @override
+  String get callErrorInPeerBlacklist =>
+      'المعرف في القائمة السوداء. فشل في إرسال هذه الرسالة!';
+
+  @override
+  String get callWaiting => 'في الانتظار';
+
+  @override
+  String get callYouHaveANewCall => 'لديك مكالمة جديدة';
+
+  @override
+  String get callApplyForMicrophonePermission => 'طلب إذن الميكروفون';
+
+  @override
+  String get callApplyForMicrophoneAndCameraPermissions =>
+      'طلب أذونات الميكروفون والكاميرا';
+
+  @override
+  String get callNeedToAccessMicrophonePermission =>
+      'تحتاج إلى الوصول إلى إذن الميكروفون الخاص بك، والذي يمكن استخدامه للمكالمات الصوتية ومكالمات الفيديو وغيرها من الوظائف بعد تشغيله.';
+
+  @override
+  String get callNeedToAccessMicrophoneAndCameraPermissions =>
+      'تحتاج إلى الوصول إلى أذونات الميكروفون والكاميرا، والتي يمكن استخدامها للمكالمات الصوتية ومكالمات الفيديو وغيرها.';
+
+  @override
+  String get callDisplayPopUpWindowPermissions =>
+      'عرض النافذة المنبثقة أثناء التشغيل في الخلفية وعرض أذونات النافذة المنبثقة';
+
+  @override
+  String get callAnonymity => 'مجهول';
+
+  @override
+  String get callOtherPartyHungUp => 'أغلق الطرف الآخر، انتهت المكالمة';
+
+  @override
+  String get callOtherPartyDeclinedCallRequest => 'رفض الطرف الآخر المكالمة';
+
+  @override
+  String get callOtherPartyBusy => 'الطرف الآخر مشغول';
+
+  @override
+  String get callOtherPartyNoResponse => 'لم يستجب الطرف الآخر';
+
+  @override
+  String get callRequestDeclined => 'رفض المكالمة';
+
+  @override
+  String get callEndedTheCall => 'أنهى المكالمة';
+
+  @override
+  String get callGoToSettings => 'الذهاب إلى الإعدادات';
+
+  @override
+  String get callFeatureRequiresAudioVideoCallingPackage =>
+      'تتطلب هذه الميزة حزمة إمكانيات المكالمات الصوتية والمرئية. لتجنب التأثير على استخدامك، نوصي بالانتقال إلى وحدة تحكم Tencent Cloud للصوت والفيديو في الوقت الفعلي لتفعيل النسخة التجريبية المجانية أو شراء حزمة رسمية';
+
+  @override
+  String get callCurrentPackageDoesNotSupportFeature =>
+      'نوع حزمتك الحالية لا يدعم هذه الميزة. لفتح المزيد من الإمكانيات، نوصي بترقية حزمتك في وحدة تحكم Tencent Cloud للصوت والفيديو في الوقت الفعلي';
+
+  @override
+  String get callMicrophoneOrCameraPermissionNotEnabled =>
+      'لم يتم تمكين إذن الميكروفون، لا يمكن بدء مكالمة صوتية. انتقل إلى \'الإعدادات > TUICallKit\' لتمكين إذن الميكروفون؛ لم يتم تمكين إذن الكاميرا، لا يمكن بدء مكالمة فيديو. انتقل إلى \'الإعدادات > TUICallKit\' لتمكين إذن الكاميرا';
+
+  @override
+  String get callCameraOccupiedBySystemCall =>
+      'الكاميرا الحالية مشغولة بمكالمة النظام';
+
+  @override
+  String get callMicrophoneOccupiedBySystemCall =>
+      'الميكروفون الحالي مشغول بمكالمة النظام';
+
+  @override
+  String get callCurrentlyOnCallCannotInitiateAnother =>
+      'أنت حالياً في مكالمة، يرجى إنهاء المكالمة الحالية قبل إجراء مكالمة أخرى';
+
+  @override
+  String get callFailedToInitiateCallCheckLoginStatus =>
+      'فشل في بدء المكالمة، يرجى التحقق من حالة تسجيل الدخول والمحاولة مرة أخرى';
+
+  @override
+  String get callFailedToInitiateOrJoinCall =>
+      'فشل في بدء المكالمة / فشل في الانضمام إلى المكالمة';
+
+  @override
+  String get callCurrentCallSupportsMax9Participants =>
+      'تدعم المكالمة الحالية 9 مشاركين كحد أقصى عبر الإنترنت في نفس الوقت';
+
+  @override
+  String get callInviteUserErrorOrInvalidCallParameters =>
+      'خطأ في دعوة المستخدم أو معلمات المكالمة غير صالحة';
 }
