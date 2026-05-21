@@ -88,4 +88,18 @@ class RoomImages {
   static const String arrowRight = '$_basePath/room_arrow_right.png';
 
   static const String screenShare = '$_basePath/screen_share_icon.png';
+
+  static const String aiTools = '$_basePath/room_ai_tools.png';
+
+  static const String aiSubtitle = '$_basePath/room_ai_subtitle.png';
+
+  static const String aiMinutes = '$_basePath/room_ai_minutes.png';
+
+  static const String aiRightArrow =
+      '$_basePath/room_ai_subtitle_right_arrow.png';
+
+  static const String aiRecord = '$_basePath/room_ai_record.png';
+
+  static const String aiRecordRightArrow =
+      '$_basePath/room_ai_record_right_arrow.png';
 }

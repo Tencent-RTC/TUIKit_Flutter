@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:tencent_conference_uikit/base/index.dart';
 import 'package:tuikit_atomic_x/atomicx.dart' hide IconButton;
 
+import 'ai_transcription/repository/ai_transcriber_repository.dart';
 import 'participant_manager/name_card_input_sheet.dart';
 
 class RoomParticipantManagerWidget extends StatefulWidget {
@@ -9,6 +10,14 @@ class RoomParticipantManagerWidget extends StatefulWidget {
   final RoomParticipant? participant;
   final RoomUser? audience;
   final BuildContext? parentContext;
+
+  static AITranscriberRepository? _sharedRepository;
+  static VoidCallback? _sharedHideAISubtitleCallback;
+
+  static void bindRepository(AITranscriberRepository repository, {VoidCallback? hideAISubtitleCallback}) {
+    _sharedRepository = repository;
+    _sharedHideAISubtitleCallback = hideAISubtitleCallback;
+  }
 
   const RoomParticipantManagerWidget({
     super.key,
@@ -424,24 +433,44 @@ extension _RoomMemberControlWidgetStatePrivate on _RoomParticipantManagerWidgetS
   }
 
   void _handleTransferOwner(RoomParticipant participant) {
+    final isTranscriptionStart = RoomParticipantManagerWidget._sharedRepository?.isTranscriptionStart == true;
+    final content = isTranscriptionStart
+        ? RoomLocalizations.of(context)!.roomkit_transfer_host_with_asr_warning
+        : '${RoomLocalizations.of(context)!.roomkit_msg_transfer_owner_tip}？';
     AtomicAlertDialog.show(
       context,
       title: RoomLocalizations.of(context)!.roomkit_msg_transfer_owner_to.replaceAll('xxx', participant.displayName),
-      content: '${RoomLocalizations.of(context)!.roomkit_msg_transfer_owner_tip}？',
+      content: content,
       confirmText: RoomLocalizations.of(context)!.roomkit_confirm,
       cancelText: RoomLocalizations.of(context)!.roomkit_cancel,
       onConfirm: () async {
-        final result = await _participantStore.transferOwner(participant.userID);
-        if (result.isSuccess) {
-          Toast.success(
-              widget.parentContext ?? context,
-              RoomLocalizations.of(widget.parentContext ?? context)!
-                  .roomkit_toast_owner_transferred
-                  .replaceAll('xxx', participant.displayName),
-              useRootOverlay: true);
+        if (isTranscriptionStart) {
+          RoomParticipantManagerWidget._sharedRepository?.stopTranscription();
+          _transferOwner(participant, completion: (success) {
+            if (success) {
+              RoomParticipantManagerWidget._sharedHideAISubtitleCallback?.call();
+            }
+          });
+        } else {
+          _transferOwner(participant);
         }
       },
     );
+  }
+
+  void _transferOwner(RoomParticipant participant, {void Function(bool)? completion}) async {
+    final result = await _participantStore.transferOwner(participant.userID);
+    if (result.isSuccess) {
+      Toast.success(
+          widget.parentContext ?? context,
+          RoomLocalizations.of(widget.parentContext ?? context)!
+              .roomkit_toast_owner_transferred
+              .replaceAll('xxx', participant.displayName),
+          useRootOverlay: true);
+      completion?.call(true);
+    } else {
+      completion?.call(false);
+    }
   }
 
   void _handleAdminControl({required String userID, required String displayName, required bool isAdmin}) async {

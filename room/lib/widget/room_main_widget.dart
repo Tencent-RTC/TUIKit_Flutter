@@ -9,6 +9,11 @@ import 'main/room_widget.dart';
 import 'main/room_widget/room_exit_widget.dart';
 import 'main/room_top_bar_widget.dart';
 import 'main/room_bottom_bar_widget.dart';
+import 'main/ai_transcription/subtitle/ai_subtitle_widget.dart';
+import 'main/ai_transcription/repository/ai_transcriber_repository.dart';
+import 'main/ai_transcription/ai_transcription_setting_page_widget.dart';
+import 'main/ai_transcription/ai_minutes_page_widget.dart';
+import 'main/room_participant_manager_widget.dart';
 
 sealed class RoomBehavior {
   const RoomBehavior();
@@ -63,24 +68,38 @@ class _RoomMainWidgetState extends State<RoomMainWidget> {
   BarrageDisplayController? _barrageDisplayController;
   BarrageSendController? _barrageSendController;
 
+  late final AITranscriberRepository _aiTranscriberRepository;
+  final ValueNotifier<bool> _isAISubtitleVisible = ValueNotifier(false);
+
+  SourceLanguage? _lastSourceLanguage;
+  bool _lastIsTranscriptionStart = false;
+
   final double scale = 9 / 16;
 
   @override
   void initState() {
     super.initState();
+    _aiTranscriberRepository = AITranscriberRepository(roomID: widget.roomID);
+    RoomParticipantManagerWidget.bindRepository(_aiTranscriberRepository, hideAISubtitleCallback: _hideAISubtitleView);
     _createOrEnterRoom();
     _initStore();
     _enableWakeLock();
     _startForegroundService();
     _participantStore.addRoomParticipantListener(_participantListener);
     _roomStore.addRoomListener(_roomListener);
+    _lastSourceLanguage = _aiTranscriberRepository.selectedSourceLanguage;
+    _aiTranscriberRepository.addListener(_onRepositoryChanged);
   }
 
   @override
   void dispose() {
     _participantStore.removeRoomParticipantListener(_participantListener);
     _roomStore.removeRoomListener(_roomListener);
+    _aiTranscriberRepository.removeListener(_onRepositoryChanged);
+    _aiTranscriberRepository.stopTranscription();
     _deviceStore.reset();
+    _aiTranscriberRepository.dispose();
+    _isAISubtitleVisible.dispose();
     _disableWakeLock();
     _stopForegroundService();
     super.dispose();
@@ -113,6 +132,29 @@ class _RoomMainWidgetState extends State<RoomMainWidget> {
 }
 
 extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
+  void _onRepositoryChanged() {
+    final newSourceLanguage = _aiTranscriberRepository.selectedSourceLanguage;
+    if (_lastSourceLanguage != null && _lastSourceLanguage != newSourceLanguage) {
+      final localParticipant = _participantStore.state.localParticipant.value;
+      if (localParticipant != null && localParticipant.role != ParticipantRole.owner) {
+        if (mounted) {
+          Toast.info(
+            context,
+            RoomLocalizations.of(context)!.roomkit_transcription_owner_changed_source_language,
+            useRootOverlay: true,
+          );
+        }
+      }
+    }
+    _lastSourceLanguage = newSourceLanguage;
+
+    final newIsTranscriptionStart = _aiTranscriberRepository.isTranscriptionStart;
+    if (_lastIsTranscriptionStart && !newIsTranscriptionStart && _isAISubtitleVisible.value) {
+      _hideAISubtitleView();
+    }
+    _lastIsTranscriptionStart = newIsTranscriptionStart;
+  }
+
   Widget _buildContent(Orientation orientation) {
     final roomWidgetHeight = orientation == Orientation.portrait
         ? (widget.roomID.isWebinar ? MediaQuery.of(context).size.width * scale : 621.height)
@@ -140,7 +182,23 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
             const Expanded(child: SizedBox()),
             Visibility(
               visible: !widget.roomID.isWebinar,
-              child: RoomBottomBarWidget(roomId: widget.roomID, orientation: orientation),
+              child: _buildAISubtitleView(),
+            ),
+            Visibility(
+              visible: !widget.roomID.isWebinar,
+              child: ListenableBuilder(
+                listenable: _isAISubtitleVisible,
+                builder: (context, _) {
+                  return RoomBottomBarWidget(
+                    roomId: widget.roomID,
+                    orientation: orientation,
+                    isAISubtitleVisible: _isAISubtitleVisible.value,
+                    onEnableAISubtitle: _showAISubtitleView,
+                    onDisableAISubtitle: _hideAISubtitleView,
+                    onOpenMinutes: _openMinutes,
+                  );
+                },
+              ),
             ),
             Visibility(
               visible: widget.roomID.isWebinar,
@@ -204,7 +262,14 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
                   ),
                 ),
                 Expanded(child: SizedBox()),
-                RoomBottomBarWidget(roomId: widget.roomID, orientation: Orientation.portrait),
+                RoomBottomBarWidget(
+                  roomId: widget.roomID,
+                  orientation: Orientation.portrait,
+                  isAISubtitleVisible: _isAISubtitleVisible.value,
+                  onEnableAISubtitle: _showAISubtitleView,
+                  onDisableAISubtitle: _hideAISubtitleView,
+                  onOpenMinutes: _openMinutes,
+                ),
                 SizedBox(width: 11.width)
               ],
             ),
@@ -301,6 +366,9 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
   void _onOwnerChanged(RoomUser newOwner, RoomUser oldOwner) {
     if (mounted && isSelf(newOwner)) {
       Toast.info(context, RoomLocalizations.of(context)!.roomkit_toast_you_are_owner, useRootOverlay: true);
+      if (_isAISubtitleVisible.value) {
+        _hideAISubtitleView();
+      }
     }
   }
 
@@ -334,11 +402,16 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
     String message = '';
     switch (device) {
       case DeviceType.microphone:
-        message = RoomLocalizations.of(context)!.roomkit_toast_muted_by_host;
+        message = RoomLocalizations.of(context)!.roomkit_toast_muted_by_host.replaceAll("xxx", operator.displayName);
         break;
       case DeviceType.camera:
-        message = RoomLocalizations.of(context)!.roomkit_toast_camera_closed_by_host;
+        message =
+            RoomLocalizations.of(context)!.roomkit_toast_camera_closed_by_host.replaceAll("xxx", operator.displayName);
         break;
+      case DeviceType.screenShare:
+        message = RoomLocalizations.of(context)!
+            .roomkit_toast_screen_share_closed_by_host
+            .replaceAll("xxx", operator.displayName);
       default:
         break;
     }
@@ -537,5 +610,53 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
 
   bool isSelf(RoomUser user) {
     return user.userID == LoginStore.shared.loginState.loginUserInfo?.userID;
+  }
+
+  Widget _buildAISubtitleView() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isAISubtitleVisible,
+      builder: (context, isVisible, _) {
+        if (!isVisible) return const SizedBox.shrink();
+        return Padding(
+          padding: EdgeInsets.only(left: 12.width, right: 12.width, bottom: 8.height),
+          child: AISubtitleWidget(
+            repository: _aiTranscriberRepository,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => AITranscriptionSettingPageWidget(repository: _aiTranscriberRepository),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAISubtitleView() {
+    _isAISubtitleVisible.value = true;
+    final localParticipant = _participantStore.state.localParticipant.value;
+    if (localParticipant != null && localParticipant.role == ParticipantRole.owner) {
+      _aiTranscriberRepository.startTranscription();
+    }
+  }
+
+  void _hideAISubtitleView() {
+    _isAISubtitleVisible.value = false;
+  }
+
+  void _openMinutes() {
+    final localParticipant = _participantStore.state.localParticipant.value;
+    if (localParticipant != null && localParticipant.role == ParticipantRole.owner) {
+      _aiTranscriberRepository.startTranscription();
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AIMinutesPageWidget(
+          repository: _aiTranscriberRepository,
+        ),
+      ),
+    );
   }
 }

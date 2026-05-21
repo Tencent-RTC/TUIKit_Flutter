@@ -4,12 +4,25 @@ import 'package:tencent_conference_uikit/base/index.dart';
 
 import 'room_widget/room_button_item_widget.dart';
 import 'room_participant_list_widget.dart';
+import 'ai_transcription/ai_action_sheet_widget/ai_action_sheet_widget.dart';
 
 class RoomBottomBarWidget extends StatefulWidget {
   final String roomId;
   final Orientation orientation;
+  final bool isAISubtitleVisible;
+  final VoidCallback onEnableAISubtitle;
+  final VoidCallback onDisableAISubtitle;
+  final VoidCallback onOpenMinutes;
 
-  const RoomBottomBarWidget({super.key, required this.roomId, required this.orientation});
+  const RoomBottomBarWidget({
+    super.key,
+    required this.roomId,
+    required this.orientation,
+    required this.isAISubtitleVisible,
+    required this.onEnableAISubtitle,
+    required this.onDisableAISubtitle,
+    required this.onOpenMinutes,
+  });
 
   @override
   State<RoomBottomBarWidget> createState() => _RoomBottomBarWidgetState();
@@ -57,6 +70,7 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
                     _buildMemberButton(),
                     _buildMicrophoneButton(),
                     _buildCameraButton(),
+                    _buildAIToolsButton(),
                   ],
                 ),
               ),
@@ -160,6 +174,14 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
     );
   }
 
+  Widget _buildAIToolsButton() {
+    return RoomButtonItemWidget(
+      iconPath: RoomImages.aiTools,
+      text: RoomLocalizations.of(context)!.roomkit_transcription_ai_tools,
+      onPressed: _handleAIToggle,
+    );
+  }
+
   void _handleMembersPressed() {
     popupWidget(RoomParticipantListWidget(roomId: widget.roomId), backgroundColor: RoomColors.g2);
   }
@@ -182,5 +204,22 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
     } else {
       DeviceOperator.unmuteMicrophone(context: context, participantStore: _roomParticipantStore);
     }
+  }
+
+  void _handleAIToggle() async {
+    popupWidget(
+      AIActionSheetWidget(
+        isAISubtitleVisible: widget.isAISubtitleVisible,
+        onEnableAISubtitle: () {
+          widget.onEnableAISubtitle();
+        },
+        onDisableAISubtitle: () {
+          widget.onDisableAISubtitle();
+        },
+        onOpenMinutes: () {
+          widget.onOpenMinutes();
+        },
+      ),
+    );
   }
 }

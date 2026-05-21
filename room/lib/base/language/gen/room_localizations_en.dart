@@ -72,6 +72,9 @@ class RoomLocalizationsEn extends RoomLocalizations {
   String get roomkit_user_room => 'xxx\'s room';
 
   @override
+  String get roomkit_user_webinar_room => 'xxx\'s webinar room';
+
+  @override
   String get roomkit_screen_share => 'Screen share';
 
   @override
@@ -296,17 +299,18 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_toast_camera_closed_by_host =>
-      'You were closed camera by the host.';
+      'Your camera has been disabled by xxx';
 
   @override
-  String get roomkit_toast_muted_by_host => 'You were muted by the host.';
+  String get roomkit_toast_muted_by_host =>
+      'Your microphone has been disabled by xxx';
 
   @override
   String get roomkit_enter_nickname => 'Enter nickname';
 
   @override
   String get roomkit_tip_all_muted_cannot_unmute =>
-      'All on mute audio unable to turn on microphone';
+      'Muted by host. Unmute disabled.';
 
   @override
   String get roomkit_tip_all_video_off_cannot_start =>
@@ -344,6 +348,247 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_set_audience => 'Set as audience';
+
+  @override
+  String get roomkit_transcription_open_subtitle => 'Turn On AI Subtitles';
+
+  @override
+  String get roomkit_transcription_open_minutes => 'View AI Meeting Minutes';
+
+  @override
+  String get roomkit_transcription_close_subtitle => 'Turn Off AI Subtitles';
+
+  @override
+  String get roomkit_transcription_close_minutes =>
+      'Turn Off AI Meeting Minutes';
+
+  @override
+  String get roomkit_transcription_ai_minutes_title => 'AI Meeting Minutes';
+
+  @override
+  String get roomkit_transcription_enable_first =>
+      'Please enable AI transcription first';
+
+  @override
+  String get roomkit_transfer_host_with_asr_warning =>
+      'After transferring room ownership, you will become a general member. Real-time Subtitles and AI Meeting Minutes will stop and must be re-enabled by the new host.';
+
+  @override
+  String get roomkit_transcription_ai_tools => 'AI Tools';
+
+  @override
+  String get roomkit_transcription_recording => 'Recording...';
+
+  @override
+  String get roomkit_transcription_ai_subtitle_placeholder =>
+      'AI Real-time Subtitles';
+
+  @override
+  String get roomkit_transcription_ai_subtitle_settings =>
+      'AI Subtitle Settings';
+
+  @override
+  String get roomkit_transcription_recognition_and_translation =>
+      'Recognition and Translation Settings';
+
+  @override
+  String get roomkit_transcription_identify_language => 'Identify language';
+
+  @override
+  String get roomkit_transcription_owner_only_modify_language =>
+      'Only allow owner to modify identify language';
+
+  @override
+  String get roomkit_transcription_owner_changed_source_language =>
+      'Owner changed subtitle identify language';
+
+  @override
+  String get roomkit_transcription_translate_language => 'Translate language';
+
+  @override
+  String get roomkit_transcription_bilingual_subtitle =>
+      'Show Bilingual Subtitles';
+
+  @override
+  String get roomkit_transcription_select_recognition_language =>
+      'Please Select Recognition Language';
+
+  @override
+  String get roomkit_transcription_auto_detect_chinese_english =>
+      'Auto-detect (Chinese/English)';
+
+  @override
+  String get roomkit_transcription_speaking_chinese => 'Speaking Chinese';
+
+  @override
+  String get roomkit_transcription_speaking_english => 'Speaking English';
+
+  @override
+  String get roomkit_transcription_speaking_cantonese => 'Speaking Cantonese';
+
+  @override
+  String get roomkit_transcription_speaking_vietnamese => 'Speaking Vietnamese';
+
+  @override
+  String get roomkit_transcription_speaking_japanese => 'Speaking Japanese';
+
+  @override
+  String get roomkit_transcription_speaking_korean => 'Speaking Korean';
+
+  @override
+  String get roomkit_transcription_speaking_indonesian => 'Speaking Indonesian';
+
+  @override
+  String get roomkit_transcription_speaking_thai => 'Speaking Thai';
+
+  @override
+  String get roomkit_transcription_speaking_portuguese => 'Speaking Portuguese';
+
+  @override
+  String get roomkit_transcription_speaking_turkish => 'Speaking Turkish';
+
+  @override
+  String get roomkit_transcription_speaking_arabic => 'Speaking Arabic';
+
+  @override
+  String get roomkit_transcription_speaking_spanish => 'Speaking Spanish';
+
+  @override
+  String get roomkit_transcription_speaking_hindi => 'Speaking Hindi';
+
+  @override
+  String get roomkit_transcription_speaking_french => 'Speaking French';
+
+  @override
+  String get roomkit_transcription_speaking_malay => 'Speaking Malay';
+
+  @override
+  String get roomkit_transcription_speaking_filipino => 'Speaking Filipino';
+
+  @override
+  String get roomkit_transcription_speaking_german => 'Speaking German';
+
+  @override
+  String get roomkit_transcription_speaking_italian => 'Speaking Italian';
+
+  @override
+  String get roomkit_transcription_speaking_russian => 'Speaking Russian';
+
+  @override
+  String get roomkit_transcription_select_translation_language =>
+      'Please Select Translation Language';
+
+  @override
+  String get roomkit_transcription_no_translation => 'No Translation';
+
+  @override
+  String get roomkit_transcription_language_chinese => '简体中文(Chinese)';
+
+  @override
+  String get roomkit_transcription_language_english => 'English(English)';
+
+  @override
+  String get roomkit_transcription_language_vietnamese =>
+      'Tiếng Việt(Vietnamese)';
+
+  @override
+  String get roomkit_transcription_language_japanese => '日本語(Japanese)';
+
+  @override
+  String get roomkit_transcription_language_korean => '한국어(Korean)';
+
+  @override
+  String get roomkit_transcription_language_indonesian =>
+      'Bahasa Indonesia(Indonesian)';
+
+  @override
+  String get roomkit_transcription_language_thai => 'ภาษาไทย(Thai)';
+
+  @override
+  String get roomkit_transcription_language_portuguese =>
+      'Português(Portuguese)';
+
+  @override
+  String get roomkit_transcription_language_arabic => 'العربية(Arabic)';
+
+  @override
+  String get roomkit_transcription_language_spanish => 'Español(Spanish)';
+
+  @override
+  String get roomkit_transcription_language_french => 'Français(French)';
+
+  @override
+  String get roomkit_transcription_language_malay => 'Bahasa Melayu(Malay)';
+
+  @override
+  String get roomkit_transcription_language_german => 'Deutsch(German)';
+
+  @override
+  String get roomkit_transcription_language_italian => 'Italiano(Italian)';
+
+  @override
+  String get roomkit_transcription_language_russian => 'Русский(Russian)';
+
+  @override
+  String get roomkit_screen_sharing_tip => 'Screen sharing in progress';
+
+  @override
+  String get roomkit_room_type_meeting => 'Meeting room';
+
+  @override
+  String get roomkit_room_type_webinar => 'Webinar room';
+
+  @override
+  String get roomkit_start_screen_share => 'Screen share';
+
+  @override
+  String get roomkit_stop_screen_share => 'Stop sharing';
+
+  @override
+  String get roomkit_btn_stop => 'Stop';
+
+  @override
+  String get roomkit_video_share_occupied =>
+      'The speaker seat is already occupied. Unable to enable the camera.';
+
+  @override
+  String get roomkit_screen_share_occupied =>
+      'The speaker seat is already occupied. Unable to start screen sharing.';
+
+  @override
+  String get roomkit_camera_blocked_by_screen_share =>
+      'Currently screen sharing. Unable to turn on video. Please stop screen sharing first';
+
+  @override
+  String get roomkit_screen_share_blocked_by_camera =>
+      'Currently streaming video. Unable to start screen sharing. Please turn off video first';
+
+  @override
+  String get roomkit_screen_share_start_message =>
+      'Someone is currently presenting. Starting screen sharing will interrupt their presentation. Continue?';
+
+  @override
+  String get roomkit_video_start_message =>
+      'Someone is currently presenting. Turning on your video will interrupt their presentation. Continue?';
+
+  @override
+  String get roomkit_toast_screen_share_closed_by_host =>
+      'Your screen sharing has been stopped by xxx';
+
+  @override
+  String get roomkit_screen_sharing_status => 'Screen sharing';
+
+  @override
+  String get roomkit_hands_up => 'Raise hand';
+
+  @override
+  String get roomkit_hands_down => 'Lower hand';
+
+  @override
+  String get roomkit_hands_up_list => 'Raised hands list';
+
+  @override
+  String get roomkit_hands_up_empty => 'No raised hands';
 
   @override
   String get roomkit_err_0_success => 'Operation successful';
@@ -648,6 +893,10 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_err_100251_seat_list_is_empty => 'The seat list is empty';
+
+  @override
+  String get roomkit_err_100253_speaker_seat_occupied =>
+      'The speaker seat is already occupied. Unable to enable the device';
 
   @override
   String get roomkit_err_100500_room_metadata_key_limit =>

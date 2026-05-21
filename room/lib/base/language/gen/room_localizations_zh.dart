@@ -72,6 +72,9 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_user_room => 'xxx的房间';
 
   @override
+  String get roomkit_user_webinar_room => 'xxx的研讨会房间';
+
+  @override
   String get roomkit_screen_share => '屏幕分享';
 
   @override
@@ -273,16 +276,16 @@ class RoomLocalizationsZh extends RoomLocalizations {
   String get roomkit_reject => '拒绝';
 
   @override
-  String get roomkit_toast_camera_closed_by_host => '您已被关闭摄像头';
+  String get roomkit_toast_camera_closed_by_host => 'xxx已关闭您的摄像头';
 
   @override
-  String get roomkit_toast_muted_by_host => '您已被静音';
+  String get roomkit_toast_muted_by_host => 'xxx已关闭您的麦克风';
 
   @override
   String get roomkit_enter_nickname => '请输入昵称';
 
   @override
-  String get roomkit_tip_all_muted_cannot_unmute => '全员静音中，无法开启麦克风';
+  String get roomkit_tip_all_muted_cannot_unmute => '全员静音中，无法解除静音';
 
   @override
   String get roomkit_tip_all_video_off_cannot_start => '全员禁画中，无法开启摄像头';
@@ -316,6 +319,231 @@ class RoomLocalizationsZh extends RoomLocalizations {
 
   @override
   String get roomkit_set_audience => '设为观众';
+
+  @override
+  String get roomkit_transcription_open_subtitle => '开启 AI 实时字幕';
+
+  @override
+  String get roomkit_transcription_open_minutes => '查看 AI 实时会议记录';
+
+  @override
+  String get roomkit_transcription_close_subtitle => '关闭 AI 实时字幕';
+
+  @override
+  String get roomkit_transcription_close_minutes => '关闭 AI 实时会议记录';
+
+  @override
+  String get roomkit_transcription_ai_minutes_title => 'AI 实时会议记录';
+
+  @override
+  String get roomkit_transcription_enable_first => '请先开启AI字幕';
+
+  @override
+  String get roomkit_transfer_host_with_asr_warning =>
+      '转交房主后，您将成为普通成员。实时字幕 / AI 会议纪要将停止，需由新房主重新开启';
+
+  @override
+  String get roomkit_transcription_ai_tools => 'AI 工具';
+
+  @override
+  String get roomkit_transcription_recording => '记录中...';
+
+  @override
+  String get roomkit_transcription_ai_subtitle_placeholder => 'AI 实时字幕';
+
+  @override
+  String get roomkit_transcription_ai_subtitle_settings => 'AI 字幕设置';
+
+  @override
+  String get roomkit_transcription_recognition_and_translation => '识别与翻译设置';
+
+  @override
+  String get roomkit_transcription_identify_language => '识别语言';
+
+  @override
+  String get roomkit_transcription_owner_only_modify_language => '仅允许房主修改识别语言';
+
+  @override
+  String get roomkit_transcription_owner_changed_source_language =>
+      '房主已修改字幕识别语言类型';
+
+  @override
+  String get roomkit_transcription_translate_language => '翻译语言';
+
+  @override
+  String get roomkit_transcription_bilingual_subtitle => '字幕显示双语';
+
+  @override
+  String get roomkit_transcription_select_recognition_language => '请选择识别语言';
+
+  @override
+  String get roomkit_transcription_auto_detect_chinese_english => '自动识别 (中英)';
+
+  @override
+  String get roomkit_transcription_speaking_chinese => '说中文';
+
+  @override
+  String get roomkit_transcription_speaking_english => '说英语';
+
+  @override
+  String get roomkit_transcription_speaking_cantonese => '说粤语';
+
+  @override
+  String get roomkit_transcription_speaking_vietnamese => '说越南语';
+
+  @override
+  String get roomkit_transcription_speaking_japanese => '说日语';
+
+  @override
+  String get roomkit_transcription_speaking_korean => '说韩语';
+
+  @override
+  String get roomkit_transcription_speaking_indonesian => '说印尼语';
+
+  @override
+  String get roomkit_transcription_speaking_thai => '说泰语';
+
+  @override
+  String get roomkit_transcription_speaking_portuguese => '说葡萄牙语';
+
+  @override
+  String get roomkit_transcription_speaking_turkish => '说土耳其语';
+
+  @override
+  String get roomkit_transcription_speaking_arabic => '说阿拉伯语';
+
+  @override
+  String get roomkit_transcription_speaking_spanish => '说西班牙语';
+
+  @override
+  String get roomkit_transcription_speaking_hindi => '说印地语';
+
+  @override
+  String get roomkit_transcription_speaking_french => '说法语';
+
+  @override
+  String get roomkit_transcription_speaking_malay => '说马来语';
+
+  @override
+  String get roomkit_transcription_speaking_filipino => '说菲律宾语';
+
+  @override
+  String get roomkit_transcription_speaking_german => '说德语';
+
+  @override
+  String get roomkit_transcription_speaking_italian => '说意大利语';
+
+  @override
+  String get roomkit_transcription_speaking_russian => '说俄语';
+
+  @override
+  String get roomkit_transcription_select_translation_language => '请选择翻译语言';
+
+  @override
+  String get roomkit_transcription_no_translation => '不翻译';
+
+  @override
+  String get roomkit_transcription_language_chinese => '简体中文(简体中文)';
+
+  @override
+  String get roomkit_transcription_language_english => 'English(英语)';
+
+  @override
+  String get roomkit_transcription_language_vietnamese => 'Tiếng Việt(越南语)';
+
+  @override
+  String get roomkit_transcription_language_japanese => '日本語(日语)';
+
+  @override
+  String get roomkit_transcription_language_korean => '한국어(韩语)';
+
+  @override
+  String get roomkit_transcription_language_indonesian =>
+      'Bahasa Indonesia(印尼语)';
+
+  @override
+  String get roomkit_transcription_language_thai => 'ภาษาไทย(泰语)';
+
+  @override
+  String get roomkit_transcription_language_portuguese => 'Português(葡萄牙语)';
+
+  @override
+  String get roomkit_transcription_language_arabic => 'العربية(阿拉伯语)';
+
+  @override
+  String get roomkit_transcription_language_spanish => 'Español(西班牙语)';
+
+  @override
+  String get roomkit_transcription_language_french => 'Français(法语)';
+
+  @override
+  String get roomkit_transcription_language_malay => 'Bahasa Melayu(马来语)';
+
+  @override
+  String get roomkit_transcription_language_german => 'Deutsch(德语)';
+
+  @override
+  String get roomkit_transcription_language_italian => 'Italiano(意大利语)';
+
+  @override
+  String get roomkit_transcription_language_russian => 'Русский(俄语)';
+
+  @override
+  String get roomkit_screen_sharing_tip => '您正在屏幕分享';
+
+  @override
+  String get roomkit_room_type_meeting => '会议房间';
+
+  @override
+  String get roomkit_room_type_webinar => '研讨会房间';
+
+  @override
+  String get roomkit_start_screen_share => '屏幕分享';
+
+  @override
+  String get roomkit_stop_screen_share => '停止分享';
+
+  @override
+  String get roomkit_btn_stop => '停止';
+
+  @override
+  String get roomkit_video_share_occupied => '主讲嘉宾席位已被占用，无法开启摄像头。';
+
+  @override
+  String get roomkit_screen_share_occupied => '主讲嘉宾席位已被占用，无法开启屏幕分享。';
+
+  @override
+  String get roomkit_camera_blocked_by_screen_share =>
+      '当前正在屏幕分享中，无法打开视频，请先关闭屏幕分享';
+
+  @override
+  String get roomkit_screen_share_blocked_by_camera =>
+      '当前正在视频推流，无法开启屏幕分享，请先关闭视频';
+
+  @override
+  String get roomkit_screen_share_start_message =>
+      '当前有人正在主讲，开始屏幕分享后将中断其主讲，是否继续？';
+
+  @override
+  String get roomkit_video_start_message => '当前有人正在主讲，打开视频后将中断其主讲，是否继续？';
+
+  @override
+  String get roomkit_toast_screen_share_closed_by_host => 'xxx已停止您的屏幕共享';
+
+  @override
+  String get roomkit_screen_sharing_status => '屏幕分享中';
+
+  @override
+  String get roomkit_hands_up => '举手';
+
+  @override
+  String get roomkit_hands_down => '手放下';
+
+  @override
+  String get roomkit_hands_up_list => '举手列表';
+
+  @override
+  String get roomkit_hands_up_empty => '暂无举手请求';
 
   @override
   String get roomkit_err_0_success => '操作成功';
@@ -574,6 +802,9 @@ class RoomLocalizationsZh extends RoomLocalizations {
 
   @override
   String get roomkit_err_100251_seat_list_is_empty => '连麦列表为空';
+
+  @override
+  String get roomkit_err_100253_speaker_seat_occupied => '主讲嘉宾席位已被占用，无法开启设备';
 
   @override
   String get roomkit_err_100500_room_metadata_key_limit =>

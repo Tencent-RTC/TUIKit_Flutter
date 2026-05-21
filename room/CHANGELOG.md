@@ -1,5 +1,9 @@
 ## Changelog
 
+### 4.1.0(2026-05-21)
+- Added AI real-time subtitles and AI real-time meeting transcription.
+- Upgraded rtc_room_engine dependencies.
+
 ### 4.0.1(2026-03-10)
 - Webinar Mode Support: You can now join webinar rooms created via the web platform.
 - Bug Fixes: Fixed several known issues.

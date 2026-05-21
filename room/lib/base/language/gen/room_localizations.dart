@@ -228,6 +228,12 @@ abstract class RoomLocalizations {
   /// **'xxx\'s room'**
   String get roomkit_user_room;
 
+  /// No description provided for @roomkit_user_webinar_room.
+  ///
+  /// In en, this message translates to:
+  /// **'xxx\'s webinar room'**
+  String get roomkit_user_webinar_room;
+
   /// No description provided for @roomkit_screen_share.
   ///
   /// In en, this message translates to:
@@ -633,13 +639,13 @@ abstract class RoomLocalizations {
   /// No description provided for @roomkit_toast_camera_closed_by_host.
   ///
   /// In en, this message translates to:
-  /// **'You were closed camera by the host.'**
+  /// **'Your camera has been disabled by xxx'**
   String get roomkit_toast_camera_closed_by_host;
 
   /// No description provided for @roomkit_toast_muted_by_host.
   ///
   /// In en, this message translates to:
-  /// **'You were muted by the host.'**
+  /// **'Your microphone has been disabled by xxx'**
   String get roomkit_toast_muted_by_host;
 
   /// No description provided for @roomkit_enter_nickname.
@@ -651,7 +657,7 @@ abstract class RoomLocalizations {
   /// No description provided for @roomkit_tip_all_muted_cannot_unmute.
   ///
   /// In en, this message translates to:
-  /// **'All on mute audio unable to turn on microphone'**
+  /// **'Muted by host. Unmute disabled.'**
   String get roomkit_tip_all_muted_cannot_unmute;
 
   /// No description provided for @roomkit_tip_all_video_off_cannot_start.
@@ -719,6 +725,444 @@ abstract class RoomLocalizations {
   /// In en, this message translates to:
   /// **'Set as audience'**
   String get roomkit_set_audience;
+
+  /// No description provided for @roomkit_transcription_open_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn On AI Subtitles'**
+  String get roomkit_transcription_open_subtitle;
+
+  /// No description provided for @roomkit_transcription_open_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'View AI Meeting Minutes'**
+  String get roomkit_transcription_open_minutes;
+
+  /// No description provided for @roomkit_transcription_close_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Off AI Subtitles'**
+  String get roomkit_transcription_close_subtitle;
+
+  /// No description provided for @roomkit_transcription_close_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Off AI Meeting Minutes'**
+  String get roomkit_transcription_close_minutes;
+
+  /// No description provided for @roomkit_transcription_ai_minutes_title.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Meeting Minutes'**
+  String get roomkit_transcription_ai_minutes_title;
+
+  /// No description provided for @roomkit_transcription_enable_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable AI transcription first'**
+  String get roomkit_transcription_enable_first;
+
+  /// No description provided for @roomkit_transfer_host_with_asr_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'After transferring room ownership, you will become a general member. Real-time Subtitles and AI Meeting Minutes will stop and must be re-enabled by the new host.'**
+  String get roomkit_transfer_host_with_asr_warning;
+
+  /// No description provided for @roomkit_transcription_ai_tools.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Tools'**
+  String get roomkit_transcription_ai_tools;
+
+  /// No description provided for @roomkit_transcription_recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording...'**
+  String get roomkit_transcription_recording;
+
+  /// No description provided for @roomkit_transcription_ai_subtitle_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Real-time Subtitles'**
+  String get roomkit_transcription_ai_subtitle_placeholder;
+
+  /// No description provided for @roomkit_transcription_ai_subtitle_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Subtitle Settings'**
+  String get roomkit_transcription_ai_subtitle_settings;
+
+  /// No description provided for @roomkit_transcription_recognition_and_translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition and Translation Settings'**
+  String get roomkit_transcription_recognition_and_translation;
+
+  /// No description provided for @roomkit_transcription_identify_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify language'**
+  String get roomkit_transcription_identify_language;
+
+  /// No description provided for @roomkit_transcription_owner_only_modify_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Only allow owner to modify identify language'**
+  String get roomkit_transcription_owner_only_modify_language;
+
+  /// No description provided for @roomkit_transcription_owner_changed_source_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner changed subtitle identify language'**
+  String get roomkit_transcription_owner_changed_source_language;
+
+  /// No description provided for @roomkit_transcription_translate_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate language'**
+  String get roomkit_transcription_translate_language;
+
+  /// No description provided for @roomkit_transcription_bilingual_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Bilingual Subtitles'**
+  String get roomkit_transcription_bilingual_subtitle;
+
+  /// No description provided for @roomkit_transcription_select_recognition_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Select Recognition Language'**
+  String get roomkit_transcription_select_recognition_language;
+
+  /// No description provided for @roomkit_transcription_auto_detect_chinese_english.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-detect (Chinese/English)'**
+  String get roomkit_transcription_auto_detect_chinese_english;
+
+  /// No description provided for @roomkit_transcription_speaking_chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Chinese'**
+  String get roomkit_transcription_speaking_chinese;
+
+  /// No description provided for @roomkit_transcription_speaking_english.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking English'**
+  String get roomkit_transcription_speaking_english;
+
+  /// No description provided for @roomkit_transcription_speaking_cantonese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Cantonese'**
+  String get roomkit_transcription_speaking_cantonese;
+
+  /// No description provided for @roomkit_transcription_speaking_vietnamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Vietnamese'**
+  String get roomkit_transcription_speaking_vietnamese;
+
+  /// No description provided for @roomkit_transcription_speaking_japanese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Japanese'**
+  String get roomkit_transcription_speaking_japanese;
+
+  /// No description provided for @roomkit_transcription_speaking_korean.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Korean'**
+  String get roomkit_transcription_speaking_korean;
+
+  /// No description provided for @roomkit_transcription_speaking_indonesian.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Indonesian'**
+  String get roomkit_transcription_speaking_indonesian;
+
+  /// No description provided for @roomkit_transcription_speaking_thai.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Thai'**
+  String get roomkit_transcription_speaking_thai;
+
+  /// No description provided for @roomkit_transcription_speaking_portuguese.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Portuguese'**
+  String get roomkit_transcription_speaking_portuguese;
+
+  /// No description provided for @roomkit_transcription_speaking_turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Turkish'**
+  String get roomkit_transcription_speaking_turkish;
+
+  /// No description provided for @roomkit_transcription_speaking_arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Arabic'**
+  String get roomkit_transcription_speaking_arabic;
+
+  /// No description provided for @roomkit_transcription_speaking_spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Spanish'**
+  String get roomkit_transcription_speaking_spanish;
+
+  /// No description provided for @roomkit_transcription_speaking_hindi.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Hindi'**
+  String get roomkit_transcription_speaking_hindi;
+
+  /// No description provided for @roomkit_transcription_speaking_french.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking French'**
+  String get roomkit_transcription_speaking_french;
+
+  /// No description provided for @roomkit_transcription_speaking_malay.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Malay'**
+  String get roomkit_transcription_speaking_malay;
+
+  /// No description provided for @roomkit_transcription_speaking_filipino.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Filipino'**
+  String get roomkit_transcription_speaking_filipino;
+
+  /// No description provided for @roomkit_transcription_speaking_german.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking German'**
+  String get roomkit_transcription_speaking_german;
+
+  /// No description provided for @roomkit_transcription_speaking_italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Italian'**
+  String get roomkit_transcription_speaking_italian;
+
+  /// No description provided for @roomkit_transcription_speaking_russian.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Russian'**
+  String get roomkit_transcription_speaking_russian;
+
+  /// No description provided for @roomkit_transcription_select_translation_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Select Translation Language'**
+  String get roomkit_transcription_select_translation_language;
+
+  /// No description provided for @roomkit_transcription_no_translation.
+  ///
+  /// In en, this message translates to:
+  /// **'No Translation'**
+  String get roomkit_transcription_no_translation;
+
+  /// No description provided for @roomkit_transcription_language_chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'简体中文(Chinese)'**
+  String get roomkit_transcription_language_chinese;
+
+  /// No description provided for @roomkit_transcription_language_english.
+  ///
+  /// In en, this message translates to:
+  /// **'English(English)'**
+  String get roomkit_transcription_language_english;
+
+  /// No description provided for @roomkit_transcription_language_vietnamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiếng Việt(Vietnamese)'**
+  String get roomkit_transcription_language_vietnamese;
+
+  /// No description provided for @roomkit_transcription_language_japanese.
+  ///
+  /// In en, this message translates to:
+  /// **'日本語(Japanese)'**
+  String get roomkit_transcription_language_japanese;
+
+  /// No description provided for @roomkit_transcription_language_korean.
+  ///
+  /// In en, this message translates to:
+  /// **'한국어(Korean)'**
+  String get roomkit_transcription_language_korean;
+
+  /// No description provided for @roomkit_transcription_language_indonesian.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Indonesia(Indonesian)'**
+  String get roomkit_transcription_language_indonesian;
+
+  /// No description provided for @roomkit_transcription_language_thai.
+  ///
+  /// In en, this message translates to:
+  /// **'ภาษาไทย(Thai)'**
+  String get roomkit_transcription_language_thai;
+
+  /// No description provided for @roomkit_transcription_language_portuguese.
+  ///
+  /// In en, this message translates to:
+  /// **'Português(Portuguese)'**
+  String get roomkit_transcription_language_portuguese;
+
+  /// No description provided for @roomkit_transcription_language_arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية(Arabic)'**
+  String get roomkit_transcription_language_arabic;
+
+  /// No description provided for @roomkit_transcription_language_spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español(Spanish)'**
+  String get roomkit_transcription_language_spanish;
+
+  /// No description provided for @roomkit_transcription_language_french.
+  ///
+  /// In en, this message translates to:
+  /// **'Français(French)'**
+  String get roomkit_transcription_language_french;
+
+  /// No description provided for @roomkit_transcription_language_malay.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahasa Melayu(Malay)'**
+  String get roomkit_transcription_language_malay;
+
+  /// No description provided for @roomkit_transcription_language_german.
+  ///
+  /// In en, this message translates to:
+  /// **'Deutsch(German)'**
+  String get roomkit_transcription_language_german;
+
+  /// No description provided for @roomkit_transcription_language_italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano(Italian)'**
+  String get roomkit_transcription_language_italian;
+
+  /// No description provided for @roomkit_transcription_language_russian.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский(Russian)'**
+  String get roomkit_transcription_language_russian;
+
+  /// No description provided for @roomkit_screen_sharing_tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen sharing in progress'**
+  String get roomkit_screen_sharing_tip;
+
+  /// No description provided for @roomkit_room_type_meeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting room'**
+  String get roomkit_room_type_meeting;
+
+  /// No description provided for @roomkit_room_type_webinar.
+  ///
+  /// In en, this message translates to:
+  /// **'Webinar room'**
+  String get roomkit_room_type_webinar;
+
+  /// No description provided for @roomkit_start_screen_share.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen share'**
+  String get roomkit_start_screen_share;
+
+  /// No description provided for @roomkit_stop_screen_share.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop sharing'**
+  String get roomkit_stop_screen_share;
+
+  /// No description provided for @roomkit_btn_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get roomkit_btn_stop;
+
+  /// No description provided for @roomkit_video_share_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'The speaker seat is already occupied. Unable to enable the camera.'**
+  String get roomkit_video_share_occupied;
+
+  /// No description provided for @roomkit_screen_share_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'The speaker seat is already occupied. Unable to start screen sharing.'**
+  String get roomkit_screen_share_occupied;
+
+  /// No description provided for @roomkit_camera_blocked_by_screen_share.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently screen sharing. Unable to turn on video. Please stop screen sharing first'**
+  String get roomkit_camera_blocked_by_screen_share;
+
+  /// No description provided for @roomkit_screen_share_blocked_by_camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently streaming video. Unable to start screen sharing. Please turn off video first'**
+  String get roomkit_screen_share_blocked_by_camera;
+
+  /// No description provided for @roomkit_screen_share_start_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone is currently presenting. Starting screen sharing will interrupt their presentation. Continue?'**
+  String get roomkit_screen_share_start_message;
+
+  /// No description provided for @roomkit_video_start_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone is currently presenting. Turning on your video will interrupt their presentation. Continue?'**
+  String get roomkit_video_start_message;
+
+  /// No description provided for @roomkit_toast_screen_share_closed_by_host.
+  ///
+  /// In en, this message translates to:
+  /// **'Your screen sharing has been stopped by xxx'**
+  String get roomkit_toast_screen_share_closed_by_host;
+
+  /// No description provided for @roomkit_screen_sharing_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen sharing'**
+  String get roomkit_screen_sharing_status;
+
+  /// No description provided for @roomkit_hands_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise hand'**
+  String get roomkit_hands_up;
+
+  /// No description provided for @roomkit_hands_down.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower hand'**
+  String get roomkit_hands_down;
+
+  /// No description provided for @roomkit_hands_up_list.
+  ///
+  /// In en, this message translates to:
+  /// **'Raised hands list'**
+  String get roomkit_hands_up_list;
+
+  /// No description provided for @roomkit_hands_up_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No raised hands'**
+  String get roomkit_hands_up_empty;
 
   /// No description provided for @roomkit_err_0_success.
   ///
@@ -1193,6 +1637,12 @@ abstract class RoomLocalizations {
   /// In en, this message translates to:
   /// **'The seat list is empty'**
   String get roomkit_err_100251_seat_list_is_empty;
+
+  /// No description provided for @roomkit_err_100253_speaker_seat_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'The speaker seat is already occupied. Unable to enable the device'**
+  String get roomkit_err_100253_speaker_seat_occupied;
 
   /// No description provided for @roomkit_err_100500_room_metadata_key_limit.
   ///

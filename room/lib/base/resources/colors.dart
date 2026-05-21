@@ -52,4 +52,18 @@ class RoomColors {
   static const Color buttonGrey = Color(0xFF4F5861);
 
   static const Color adminOrange = Color(0xFFF06C4B);
+
+  static const Color secondaryLabel = Color(0xFF8F8F94);
+
+  static const Color separator = Color(0xFFEBEBED);
+
+  static const Color settingBackground = Color(0xFFF5F5FA);
+
+  static const Color tintBlue = Color(0xFF007AFF);
+
+  static const Color aiRecordBorder = Color(0xFF4E5461);
+
+  static const Color aiRecordBg = Color(0xFF22262E);
+
+  static const Color aiRecordText = Color(0xFFF2F5FC);
 }
