@@ -11,26 +11,26 @@ class AtomicAlbumPickerPlugin: NSObject, FlutterStreamHandler {
     private var albumPickerHandler: AlbumPickerHandler?
     private var eventSink: FlutterEventSink?
     
-    init(registrar: FlutterPluginRegistrar, viewController: UIViewController?) {
+    init(registrar: FlutterPluginRegistrar) {
         super.init()
-        
+
         methodChannel = FlutterMethodChannel(
             name: AtomicAlbumPickerPlugin.channelName,
             binaryMessenger: registrar.messenger()
         )
-        
+
         eventChannel = FlutterEventChannel(
             name: AtomicAlbumPickerPlugin.eventChannelName,
             binaryMessenger: registrar.messenger()
         )
-        
+
         eventChannel?.setStreamHandler(self)
-        
-        albumPickerHandler = AlbumPickerHandler(registrar: registrar, viewController: viewController,
+
+        albumPickerHandler = AlbumPickerHandler(registrar: registrar,
          eventSink: { [weak self] event in
             self?.eventSink?(event)
         })
-        
+
         methodChannel?.setMethodCallHandler { [weak self] (call, result) in
             self?.handleMethodCall(call, result: result)
         }

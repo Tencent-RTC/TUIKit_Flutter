@@ -6,14 +6,43 @@ import AlbumPicker
 /// and relays delegate callbacks back via EventChannel.
 class AlbumPickerHandler: NSObject {
     fileprivate weak var registrar: FlutterPluginRegistrar?
-    fileprivate weak var viewController: UIViewController?
     private var eventSink: ((Any) -> Void)?
     private var pendingResult: FlutterResult?
     private var delegateProxies: [String: AlbumPickerDelegateProxy] = [:]
 
-    init(registrar: FlutterPluginRegistrar?, viewController: UIViewController?, eventSink: @escaping (Any) -> Void) {
+    /// Supports both traditional AppDelegate.window and UIScene lifecycle.
+    fileprivate var viewController: UIViewController? {
+        var rootVC: UIViewController?
+        if #available(iOS 15.0, *) {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene,
+                   let keyWindow = windowScene.keyWindow {
+                    rootVC = keyWindow.rootViewController
+                    break
+                }
+            }
+        }
+        if rootVC == nil {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene,
+                   let window = windowScene.windows.first(where: { $0.isKeyWindow }) ?? windowScene.windows.first {
+                    rootVC = window.rootViewController
+                    break
+                }
+            }
+        }
+        if rootVC == nil {
+            rootVC = UIApplication.shared.delegate?.window??.rootViewController
+        }
+        guard var topVC = rootVC else { return nil }
+        while let presented = topVC.presentedViewController {
+            topVC = presented
+        }
+        return topVC
+    }
+
+    init(registrar: FlutterPluginRegistrar?, eventSink: @escaping (Any) -> Void) {
         self.registrar = registrar
-        self.viewController = viewController
         self.eventSink = eventSink
         super.init()
     }
@@ -112,9 +141,21 @@ class AlbumPickerHandler: NSObject {
                 return
             }
 
+            if Bundle.main.object(forInfoDictionaryKey: "NSPhotoLibraryUsageDescription") == nil {
+                let alert = UIAlertController(
+                    title: "Configuration Error",
+                    message: "NSPhotoLibraryUsageDescription is not declared in Info.plist. Please add this key with a usage description to access the photo library.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                viewController.present(alert, animated: true)
+                self.completeWithError(code: "MISSING_PERMISSION_DESCRIPTION",
+                                       message: "NSPhotoLibraryUsageDescription is not declared in Info.plist")
+                return
+            }
+
             let albumPickerView = AlbumPickerView()
 
-            // Create a delegate proxy that captures sessionId for this pick session.
             let proxy = AlbumPickerDelegateProxy(
                 sessionId: sessionId,
                 handler: self

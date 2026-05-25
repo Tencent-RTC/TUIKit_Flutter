@@ -15,13 +15,11 @@ class AtomicImageUploaderPlugin: NSObject, FlutterStreamHandler {
     private var methodChannel: FlutterMethodChannel?
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
-    private weak var viewController: UIViewController?
     private let imageSource = SystemImageSource()
-    
-    init(registrar: FlutterPluginRegistrar, viewController: UIViewController?) {
+
+    init(registrar: FlutterPluginRegistrar) {
         super.init()
-        self.viewController = viewController
-        
+
         methodChannel = FlutterMethodChannel(
             name: AtomicImageUploaderPlugin.channelName,
             binaryMessenger: registrar.messenger()
@@ -63,7 +61,7 @@ class AtomicImageUploaderPlugin: NSObject, FlutterStreamHandler {
         let args = call.arguments as? [String: Any]
         let source = args?["source"] as? String ?? "gallery"
         
-        guard let presenter = viewController ?? topMostViewController() else {
+        guard let presenter = topMostViewController() else {
             sendPickResult(nil)
             result(nil)
             return

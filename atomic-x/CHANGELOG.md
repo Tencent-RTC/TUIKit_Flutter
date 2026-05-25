@@ -1,4 +1,7 @@
-## 4.1.1
+## 4.1.2
+* Fix UIScene lifecycle support for VideoRecorder and AlbumPicker window presentation. 
+
+# 4.1.1
 * Replaced with a new custom album picker. 
 * The new picker supports video compression with configurable target file size, provides comprehensive photo library permission handling, and allows UI customization through parameters such as background color and primary color.
 

@@ -17,17 +17,9 @@ public class AtomicXPlugin: NSObject, FlutterPlugin {
     let instance = AtomicXPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
 
-    // Get root view controller
-    let viewController = UIApplication.shared.delegate?.window??.rootViewController
-
-    // Register permission module
     instance.permission = Permission(registrar: registrar)
     instance.device = Device(registrar: registrar)
-
-    // Register album picker module
-    instance.albumPicker = AtomicAlbumPickerPlugin(registrar: registrar, viewController: viewController)
-    
-    // Register video recorder module
+    instance.albumPicker = AtomicAlbumPickerPlugin(registrar: registrar)
     instance.videoRecorder = AtomicVideoRecorderPlugin(registrar: registrar)
     
     // Register audio recorder module
@@ -43,7 +35,7 @@ public class AtomicXPlugin: NSObject, FlutterPlugin {
     instance.videoPlayer = AtomicVideoPlayerPlugin.register(with: registrar) as? AtomicVideoPlayerPlugin
     
     // Register image uploader module
-    instance.imageUploader = AtomicImageUploaderPlugin(registrar: registrar, viewController: viewController)
+    instance.imageUploader = AtomicImageUploaderPlugin(registrar: registrar)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

@@ -7,13 +7,41 @@ import SwiftUI
  * 处理 Flutter 层的 VideoRecorder 调用
  */
 class VideoRecorderHandler: NSObject {
-    private weak var viewController: UIViewController?
     private var pendingResult: FlutterResult?
     private let languageState = LanguageState()
     private let themeState = ThemeState()
-    
-    init(viewController: UIViewController?) {
-        self.viewController = viewController
+
+    private var viewController: UIViewController? {
+        var rootVC: UIViewController?
+        if #available(iOS 15.0, *) {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene,
+                   let keyWindow = windowScene.keyWindow {
+                    rootVC = keyWindow.rootViewController
+                    break
+                }
+            }
+        }
+        if rootVC == nil {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene,
+                   let window = windowScene.windows.first(where: { $0.isKeyWindow }) ?? windowScene.windows.first {
+                    rootVC = window.rootViewController
+                    break
+                }
+            }
+        }
+        if rootVC == nil {
+            rootVC = UIApplication.shared.delegate?.window??.rootViewController
+        }
+        guard var topVC = rootVC else { return nil }
+        while let presented = topVC.presentedViewController {
+            topVC = presented
+        }
+        return topVC
+    }
+
+    override init() {
         super.init()
     }
     

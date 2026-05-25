@@ -11,19 +11,11 @@ class AtomicVideoRecorderPlugin: NSObject {
             name: "atomic_x/video_recorder",
             binaryMessenger: registrar.messenger()
         )
-        
-        // 获取根视图控制器
-        var rootViewController: UIViewController?
-        if #available(iOS 13.0, *) {
-            rootViewController = UIApplication.shared.windows.first?.rootViewController
-        } else {
-            rootViewController = UIApplication.shared.keyWindow?.rootViewController
-        }
-        
-        self.videoRecorderHandler = VideoRecorderHandler(viewController: rootViewController)
-        
+
+        self.videoRecorderHandler = VideoRecorderHandler()
+
         super.init()
-        
+
         registrar.addMethodCallDelegate(self, channel: methodChannel)
     }
     
