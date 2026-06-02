@@ -25,8 +25,7 @@ dependencies:
   tencent_cloud_chat_sdk: any
   tencent_rtc_sdk: any
 
-  atomic_x_core:
-    path: ../../../../tuikit_engine/atomicx/flutter/atomicxcore
+  atomic_x_core: ^4.1.0
   
 dev_dependencies:
   flutter_test:
