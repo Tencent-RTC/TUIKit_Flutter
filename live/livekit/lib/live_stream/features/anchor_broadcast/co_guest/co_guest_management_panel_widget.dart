@@ -206,7 +206,7 @@ class _CoGuestManagePanelWidgetState extends State<CoGuestManagePanelWidget> {
                 height: 40.radius,
                 child: ClipOval(
                   child: Image.network(
-                    seat.userInfo.avatarURL ?? "",
+                    seat.userInfo.avatarURL,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(

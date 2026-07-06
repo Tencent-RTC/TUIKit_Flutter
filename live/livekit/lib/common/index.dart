@@ -1,4 +1,3 @@
-library common;
 
 export 'boot/index.dart';
 export 'constants/index.dart';

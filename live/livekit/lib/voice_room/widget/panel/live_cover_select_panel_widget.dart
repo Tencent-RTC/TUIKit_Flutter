@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/voice_room/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/voice_room_prepare_store.dart';
 
 import '../../../common/index.dart';

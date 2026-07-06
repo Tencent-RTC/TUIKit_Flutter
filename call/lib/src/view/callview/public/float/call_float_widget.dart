@@ -1,14 +1,14 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../ai/ai_transcriber.dart';
-import '../../../common/call_colors.dart';
-import '../../../common/constants.dart';
-import '../../aisubtitle/ai_subtitle.dart';
-import '../../../common/utils/utils.dart';
-import '../../controls/single_call_controls_widget.dart';
-import '../../hint/hint_widget.dart';
-import '../../hint/timer_widget.dart';
+import 'package:tuikit_atomic_x/ai/ai_transcriber.dart';
+import '../../core/common/call_colors.dart';
+import '../../core/common/constants.dart';
+import '../transcriber/ai_subtitle.dart';
+import '../../core/common/utils/utils.dart';
+import '../controls/single_call_controls_widget.dart';
+import '../hint/hint_widget.dart';
+import '../hint/timer_widget.dart';
 
 class CallFloatWidget extends StatefulWidget {
   final CallCoreController controller;

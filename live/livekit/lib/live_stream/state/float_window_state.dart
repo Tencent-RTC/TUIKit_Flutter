@@ -7,4 +7,5 @@ class LSFloatWindowState {
   final ValueListenable<FloatWindowMode> floatWindowMode = ValueNotifier(FloatWindowMode.none);
   final ValueListenable<bool> isFloatWindowMode = ValueNotifier(false);
   final ValueListenable<bool> enablePipMode = ValueNotifier(false);
+  final ValueListenable<bool> isLandscape = ValueNotifier(false);
 }

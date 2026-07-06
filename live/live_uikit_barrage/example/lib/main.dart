@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
     debugPrint("LoginStore login code：${result.errorCode}, message:${result.errorMessage}");
     await Future.delayed(const Duration(seconds: 3));
     final liveInfo = LiveInfo(liveID: roomId);
-    final startLiveResult = await _liveListStore.createLive(liveInfo);
+    final startLiveResult = await _liveListStore.startLive(liveInfo);
 
     debugPrint("startLive result：${startLiveResult.errorCode}-${startLiveResult.errorMessage}");
     if (startLiveResult.isSuccess) {

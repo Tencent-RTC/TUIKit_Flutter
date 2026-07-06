@@ -244,6 +244,7 @@
   "common_server_error_this_member_has_been_banned": "このメンバーは禁止されています",
   "common_server_error_this_member_has_been_muted": "このメンバーは禁止されています",
   "common_server_error_user_is_already_on_the_mic_seat": "マイクにはすでにユーザーがいます",
+  "common_server_error_im_sensitive_words_ban": "このメッセージまたは文書には機密情報が含まれているため、送信は禁止されています。",
   "common_set_as_background": "背景として設定します",
   "common_set_as_cover": "カバーとして設定します",
   "common_settings": "設定",
@@ -367,5 +368,10 @@
   "common_end_live_by_server": "規則違反のため、ライブ配信は停止されました。",
   "common_go_to_enable": "有効にする",
   "common_live_screen": "画面をライブ配信",
-  "common_select_app_to_live": "アプリを選択してライブを開始"
+  "common_select_app_to_live": "アプリを選択してライブを開始",
+  "common_violation_alert_toast": "現在のコンテンツにはプラットフォーム規約に違反するリスクがあります。ご注意ください",
+  "live_song_unknown_artist": "不明",
+  "live_anchor_manager_set_featured_host": "メインホストに設定",
+  "live_anchor_manager_revoke_featured_host": "メインホストを解除",
+  "common_enter_anchor_live_room": "配信ルームへ"
 }

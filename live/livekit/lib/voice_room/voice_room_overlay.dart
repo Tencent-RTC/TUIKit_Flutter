@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +54,11 @@ class TUIVoiceRoomOverlayState extends State<TUIVoiceRoomOverlay> {
   }
 
   Widget buildOverlayContent() {
+    final Size fullScreenSize = Size(min(1.screenWidth, 1.screenHeight), max(1.screenWidth, 1.screenHeight));
     final width = 60.width;
     return FloatWindowWidget(
+        x: fullScreenSize.width - width,
+        y: (fullScreenSize.height - width) / 2,
         padding: 0,
         size: Size(width, width),
         borderRadius: BorderRadius.circular(width / 2),

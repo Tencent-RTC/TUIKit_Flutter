@@ -1,4 +1,3 @@
-library widget;
 
 export 'alert.dart';
 export 'debounce_gesture_recognizer.dart';

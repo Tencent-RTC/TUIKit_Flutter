@@ -163,6 +163,7 @@ extension _UpdateNicknameWidgetStateLogicExtension
     }
     final result =
         await AppManager.setSelfInfo(AppStore.userAvatar, _inputNickname);
+    if (!mounted) return;
     if (result.code == 0) {
       Navigator.of(context).pop();
     }

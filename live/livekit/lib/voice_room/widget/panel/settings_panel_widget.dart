@@ -107,12 +107,10 @@ extension on _SettingsPanelWidgetState {
     final item = list[index];
     switch (item.type) {
       case SettingsItemType.background:
-        widget.onTapSettingsPanelItem?.call(SettingsItemType.background);
+        widget.onTapSettingsPanelItem.call(SettingsItemType.background);
         break;
       case SettingsItemType.audioEffect:
-        widget.onTapSettingsPanelItem?.call(SettingsItemType.audioEffect);
-        break;
-      default:
+        widget.onTapSettingsPanelItem.call(SettingsItemType.audioEffect);
         break;
     }
   }
@@ -125,7 +123,7 @@ extension on _SettingsPanelWidgetState {
           type: SettingsItemType.background),
       SettingsItem(
           title: LiveKitLocalizations.of(Global.appContext())!.common_audio_effect,
-          icon: LiveImages.settingsItemMusic,
+          icon: LiveImages.settingsItemAudioEffect,
           type: SettingsItemType.audioEffect)
     ];
   }

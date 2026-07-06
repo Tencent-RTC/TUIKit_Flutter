@@ -18,9 +18,9 @@ import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.SettingsManager;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.ThermalManager;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.NetworkManager;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.PictureInPictureManager;
-import com.trtc.tuikit.common.foregroundservice.AudioForegroundService;
-import com.trtc.tuikit.common.foregroundservice.MediaForegroundService;
-import com.trtc.tuikit.common.foregroundservice.VideoForegroundService;
+import io.trtc.tuikit.atomicx.foregroundservice.AudioForegroundService;
+import io.trtc.tuikit.atomicx.foregroundservice.MediaForegroundService;
+import io.trtc.tuikit.atomicx.foregroundservice.VideoForegroundService;
 
 import java.lang.reflect.Method;
 

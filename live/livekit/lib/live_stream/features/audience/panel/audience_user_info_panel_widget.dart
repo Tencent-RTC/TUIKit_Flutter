@@ -1,11 +1,14 @@
+import 'package:atomic_x_core/api/live/co_host_store.dart';
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_info.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_operation_result.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_type_check_result.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
+import 'package:tencent_live_uikit/common/error/error_handler.dart';
+import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 
 import '../../../../../common/constants/constants.dart';
@@ -14,32 +17,62 @@ import '../../../../../common/resources/colors.dart';
 import '../../../../../common/resources/images.dart';
 import '../../../../../common/widget/index.dart';
 import '../../../../../common/screen/index.dart';
+import '../../../../common/logger/logger.dart';
 import '../../../../component/live_info/state/follow_define.dart';
+import '../../../../live_navigator_observer.dart';
 
 class AudienceUserInfoPanelWidget extends StatefulWidget {
   final LiveUserInfo user;
+  final String? liveID;
   final LiveStreamManager liveStreamManager;
+  final VoidCallback? onExitRoom;
+  final VoidCallback? onClose;
+  final bool enableFollow;
+  final bool enableEnterRoom;
 
-  const AudienceUserInfoPanelWidget({super.key, required this.user, required this.liveStreamManager});
+  const AudienceUserInfoPanelWidget({
+    super.key,
+    required this.user,
+    required this.liveStreamManager,
+    this.liveID,
+    this.onExitRoom,
+    this.onClose,
+    this.enableFollow = true,
+    this.enableEnterRoom = false,
+  });
 
   @override
   State<AudienceUserInfoPanelWidget> createState() => _AudienceUserInfoPanelWidgetState();
 }
 
 class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidget> {
+  late final String liveID;
   final ValueNotifier<bool> _isFollow = ValueNotifier(false);
   final ValueNotifier<int> _fansNumber = ValueNotifier(0);
-  bool _enableFollowButton = true;
+
+  late final VoidCallback _coHostConnectedListener = _onCoHostConnectedChanged;
+
+  CoHostStore? _coHostStore;
 
   @override
   void initState() {
     super.initState();
+    liveID = widget.liveID ?? widget.liveStreamManager.roomState.roomId;
     _getFansCount();
     _checkFollowType();
+    if (widget.enableEnterRoom) {
+      final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+      if (liveInfo.liveID.isEmpty) return;
+      _coHostStore = CoHostStore.create(liveInfo.liveID);
+      _coHostStore!.coHostState.connected.addListener(_coHostConnectedListener);
+    }
   }
 
   @override
   void dispose() {
+    _isFollow.dispose();
+    _fansNumber.dispose();
+    _coHostStore?.coHostState.connected.removeListener(_coHostConnectedListener);
     super.dispose();
   }
 
@@ -47,7 +80,7 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
-      height: 241.height,
+      height: 281.height,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -57,6 +90,7 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
           _buildLiveIDWidget(),
           _buildFansWidget(),
           _buildFollowWidget(),
+          _buildEnterRoomWidget(),
         ],
       ),
     );
@@ -66,7 +100,7 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
     return Container(
         margin: EdgeInsets.only(top: 30.height),
         width: MediaQuery.sizeOf(context).width,
-        height: 211.height,
+        height: 251.height,
         decoration: BoxDecoration(
           color: LiveColors.designStandardG2,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.radius), topRight: Radius.circular(20.radius)),
@@ -110,8 +144,7 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
       top: 94.height,
       width: 1.screenWidth,
       child: Text(
-        LiveKitLocalizations.of(Global.appContext())!.common_room_info_liveroom_id +
-            widget.liveStreamManager.roomState.roomId,
+        LiveKitLocalizations.of(Global.appContext())!.common_room_info_liveroom_id + liveID,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 12, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
@@ -143,7 +176,7 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
       width: 275.width,
       height: 40.height,
       child: Visibility(
-        visible: TUIRoomEngine.getSelfInfo().userId != widget.user.userID,
+        visible: widget.enableFollow,
         child: ValueListenableBuilder(
           valueListenable: _isFollow,
           builder: (context, isFollow, child) {
@@ -167,6 +200,32 @@ class _AudienceUserInfoPanelWidgetState extends State<AudienceUserInfoPanelWidge
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnterRoomWidget() {
+    return Positioned(
+      top: 200.height,
+      width: 275.width,
+      height: 40.height,
+      child: Visibility(
+        visible: widget.enableEnterRoom,
+        child: GestureDetector(
+          onTap: () => _gotoNewLiveRoom(),
+          child: Container(
+            margin: EdgeInsets.only(left: 14.width, right: 4.width),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.radius),
+              color: LiveColors.designStandardB1,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              LiveKitLocalizations.of(Global.appContext())!.common_enter_anchor_live_room,
+              style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: LiveColors.designStandardG7),
+            ),
+          ),
         ),
       ),
     );
@@ -203,10 +262,6 @@ extension on _AudienceUserInfoPanelWidgetState {
   }
 
   void _followButtonClicked() async {
-    if (_enableFollowButton == false) {
-      return;
-    }
-    _enableFollowButton = false;
     final friendshipManager = TencentImSDKPlugin.v2TIMManager.getFriendshipManager();
     final userId = widget.user.userID;
     if (userId.isEmpty) {
@@ -225,7 +280,6 @@ extension on _AudienceUserInfoPanelWidgetState {
       }
       _fansNumber.value += 1;
       _isFollow.value = true;
-      _enableFollowButton = true;
     } else {
       final result = await friendshipManager.unfollowUser(userIDList: [userId]);
       if (result.code != 0) {
@@ -238,7 +292,38 @@ extension on _AudienceUserInfoPanelWidgetState {
       }
       _fansNumber.value -= 1;
       _isFollow.value = false;
-      _enableFollowButton = true;
     }
+  }
+
+  void _gotoNewLiveRoom() async {
+    LiveKitLogger.info("_gotoNewLiveRoom enter");
+    widget.onClose?.call();
+    if (widget.onExitRoom == null || widget.liveID == null) {
+      LiveKitLogger.warning("onExitRoom or liveID is null");
+      return;
+    }
+    try {
+      final result = await LiveListStore.shared.fetchLiveInfo(widget.liveID!);
+      if (!result.isSuccess) {
+        makeToast(Global.appContext(), ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+        return;
+      }
+      TUILiveKitNavigatorObserver.instance.enteringRoomID.value = result.liveInfo.liveID;
+      await LiveListStore.shared.leaveLive();
+      if (mounted) widget.onExitRoom!.call();
+      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
+        GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
+      }
+      TUILiveKitNavigatorObserver.instance.enterLiveRoomPage(Global.appContext(), result.liveInfo);
+    } on Exception catch (e) {
+      LiveKitLogger.error(e.toString());
+      TUILiveKitNavigatorObserver.instance.enteringRoomID.value = '';
+    }
+  }
+
+  void _onCoHostConnectedChanged() {
+    if (_coHostStore == null) return;
+    bool isHost = _coHostStore!.coHostState.connected.value.any((user) => user.liveID == widget.liveID);
+    if (!isHost) widget.onClose?.call();
   }
 }

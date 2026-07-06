@@ -1,4 +1,3 @@
-library seat_grid_widget;
 
 export 'seat_grid_controller.dart';
 export 'seat_grid_define.dart';
@@ -119,8 +118,6 @@ class _SeatGridWidgetState extends State<SeatGridWidget> {
         break;
       case SeatWidgetLayoutRowAlignment.center:
         alignment = MainAxisAlignment.center;
-        break;
-      default:
         break;
     }
     return alignment;

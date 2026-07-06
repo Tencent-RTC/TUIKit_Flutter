@@ -162,7 +162,7 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
 
     try {
       final jsonString = json.encode(jsonObject);
-      final result = await roomEngine.invokeExperimentalAPI(jsonString);
+      await roomEngine.invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error pauseByAudience');
     }
@@ -174,7 +174,7 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
 
     try {
       final jsonString = json.encode(jsonObject);
-      final result = await roomEngine.invokeExperimentalAPI(jsonString);
+      await roomEngine.invokeExperimentalAPI(jsonString);
     } catch (e) {
       LiveKitLogger.error('Error resumeByAudience');
     }

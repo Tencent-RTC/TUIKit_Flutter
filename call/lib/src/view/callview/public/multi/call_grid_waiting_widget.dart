@@ -1,10 +1,10 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../../common/call_colors.dart';
-import '../../../common/constants.dart';
+import '../../core/common/call_colors.dart';
+import '../../core/common/constants.dart';
 import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
-import '../../../common/utils/utils.dart';
+import '../../core/common/utils/utils.dart';
 
 // ignore_for_file: unused_import
 

@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:atomic_x_core/api/login/login_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
-import 'package:atomic_x_core/api/view/live/live_core_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,7 +10,6 @@ import 'package:tuikit_atomic_x/atomicx.dart' hide RoomType;
 import '../../../common/index.dart';
 import '../../../tencent_live_uikit.dart';
 import '../audience/pager/live_core_preview_controller.dart';
-import 'live_list_define.dart';
 import 'live_list_preview_manager.dart';
 import 'service/live_list_service.dart';
 import 'widget/single_column_widget.dart';
@@ -63,6 +59,11 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
   /// Tracks current page index in single-column mode.
   int _currentPageInSingleColumn = 0;
 
+  /// In-flight refresh future used to dedupe concurrent _onRefresh() calls.
+  /// While a refresh is running, subsequent calls reuse the same Future
+  /// instead of triggering another network request / preload schedule.
+  Future<void>? _refreshingFuture;
+
   /// GlobalKeys for double-column items (index → key) to find top visible row.
   final Map<int, GlobalKey> _itemKeys = {};
 
@@ -87,12 +88,12 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     super.initState();
     _initData();
     _addListener();
-    _toastSubscription =
-        _liveListService.toastStream.listen((toast) => makeToast(context, toast, type: ToastType.error));
+    _toastSubscription = _liveListService.toastStream.listen((toast) {
+      if (!mounted) return;
+      makeToast(context, toast, type: ToastType.error);
+    });
     GlobalFloatWindowManager.instance.setOverlayClosedCallback(() {
-      _isEnteringRoom = false;
       _isOverlayMode = false;
-      _previewManager.setBlocked(false);
       _onRefresh();
     });
     _onRefresh();
@@ -123,8 +124,6 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
       // still watching the live stream in the Overlay.
       return;
     }
-    _isEnteringRoom = false;
-    _previewManager.setBlocked(false);
     _onRefresh();
   }
 
@@ -161,47 +160,50 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     if (_currentStyle.value == newStyle) return;
     LiveKitLogger.info('LiveListWidget switchStyle: ${_currentStyle.value} -> $newStyle');
 
-    final liveInfoList = _liveListService.roomListState.liveInfoList.value;
+    newStyle == LiveListViewStyle.singleColumn ? _switchToSingleColumnStyle() : _switchToDoubleColumnStyle();
+  }
 
-    if (newStyle == LiveListViewStyle.singleColumn) {
-      // Find the first item currently being previewed in double-column mode.
-      // Falls back to the most visible item if no preview is active.
-      final targetIndex = _findFirstDoublePlayingIndex(liveInfoList) ?? _findMostVisibleDoubleColumnIndex(liveInfoList);
-      _previewManager.stopAllPreviews();
-      _currentPageInSingleColumn = targetIndex;
-      _currentStyle.value = newStyle;
+  void _switchToSingleColumnStyle() {
+    final liveInfoList = _liveListService.roomListState.liveInfoList.value;
+    // Find the first item currently being previewed in double-column mode.
+    // Falls back to the most visible item if no preview is active.
+    final targetIndex = _findFirstDoublePlayingIndex(liveInfoList) ?? _findMostVisibleDoubleColumnIndex(liveInfoList);
+    _previewManager.stopAllPreviews();
+    _currentPageInSingleColumn = targetIndex;
+    _currentStyle.value = LiveListViewStyle.singleColumn;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pageController.hasClients) {
+        _pageController.jumpToPage(targetIndex);
+      }
+      // Start preview for current page.
+      if (targetIndex < liveInfoList.length) {
+        _previewManager.startPreview(liveInfoList[targetIndex], isMuteAudio: false);
+      }
+    });
+  }
+
+  void _switchToDoubleColumnStyle() {
+    // Switching to double-column: stop all single-column previews.
+    _previewManager.stopAllPreviews();
+    final targetIndex = _currentPageInSingleColumn;
+    _currentStyle.value = LiveListViewStyle.doubleColumn;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Scroll to approximate position of the item that was visible.
+      if (targetIndex > 0 && _scrollController.hasClients) {
+        final rowIndex = targetIndex ~/ 2;
+        final estimatedOffset = rowIndex * (cellHeight + 8.height);
+        _scrollController.jumpTo(estimatedOffset.clamp(
+          0.0,
+          _scrollController.position.maxScrollExtent,
+        ));
+      }
+      // Wait one more frame so the sliver finishes re-laying out after
+      // jumpTo; otherwise item local offsets read by _triggerDoubleColumnPreload
+      // still reflect the pre-jump positions.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_pageController.hasClients) {
-          _pageController.jumpToPage(targetIndex);
-        }
-        // Start preview for current page.
-        if (targetIndex < liveInfoList.length) {
-          _previewManager.startPreview(liveInfoList[targetIndex], isMuteAudio: false);
-        }
+        _triggerDoubleColumnPreload();
       });
-    } else {
-      // Switching to double-column: stop all single-column previews.
-      _previewManager.stopAllPreviews();
-      final targetIndex = _currentPageInSingleColumn;
-      _currentStyle.value = newStyle;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Scroll to approximate position of the item that was visible.
-        if (targetIndex > 0 && _scrollController.hasClients) {
-          final rowIndex = targetIndex ~/ 2;
-          final estimatedOffset = rowIndex * (cellHeight + 8.height);
-          _scrollController.jumpTo(estimatedOffset.clamp(
-            0.0,
-            _scrollController.position.maxScrollExtent,
-          ));
-        }
-        // Wait one more frame so the sliver finishes re-laying out after
-        // jumpTo; otherwise item local offsets read by _triggerDoubleColumnPreload
-        // still reflect the pre-jump positions.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _triggerDoubleColumnPreload();
-        });
-      });
-    }
+    });
   }
 
   /// Find the most visible item index in double-column mode.
@@ -347,12 +349,21 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
                     // Start preview for the new current page.
                     if (index < liveInfoList.length) {
                       final currentLiveInfo = liveInfoList[index];
-                      if (!_previewManager.isPreviewActive(currentLiveInfo.liveID)) {
-                        _previewManager.startPreview(currentLiveInfo, isMuteAudio: false);
+                      if (TUILiveKitNavigatorObserver.instance.enteringRoomID.value == currentLiveInfo.liveID) {
+                        LiveKitLogger.info(
+                            'entering room, startPreload ignore, roomId: ${currentLiveInfo.liveID}');
+                      } else if (!_isCurrentRoomInFloatWindowMode(currentLiveInfo.liveID)) {
+                        if (!_previewManager.isPreviewActive(currentLiveInfo.liveID)) {
+                          _previewManager.startPreview(currentLiveInfo, isMuteAudio: false);
+                        } else {
+                          // Unmute the current page's preview.
+                          final controller = _previewManager.getPreviewController(currentLiveInfo.liveID);
+                          controller?.startPreview(currentLiveInfo.liveID, false);
+                        }
                       } else {
-                        // Unmute the current page's preview.
-                        final controller = _previewManager.getPreviewController(currentLiveInfo.liveID);
-                        controller?.startPreview(currentLiveInfo.liveID, false);
+                        LiveKitLogger.info(
+                            'float window view is showing, startPreload ignore, roomId: ${currentLiveInfo
+                                .liveID}');
                       }
                     }
                     // Load more when approaching end.
@@ -555,10 +566,27 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
           fullyVisibleItems.where((item) => (item.top - minTop).abs() < 1).map((item) => item.roomId).toList();
     }
 
+    final filterTopRowRoomIDs = _filterPreloadRoomIDsIfNeeded(topRowRoomIds);
+
     _previewManager.preloadTopRow(
-      topRowRoomIds: topRowRoomIds,
+      topRowRoomIds: filterTopRowRoomIDs,
       allVisibleRoomIds: allVisibleRoomIds,
     );
+  }
+
+  List<String> _filterPreloadRoomIDsIfNeeded(List<String> preloadRoomIDs) {
+    final enteringID = TUILiveKitNavigatorObserver.instance.enteringRoomID.value;
+    if (enteringID.isNotEmpty && preloadRoomIDs.contains(enteringID)) {
+      preloadRoomIDs.remove(enteringID);
+      LiveKitLogger.info('entering room, startPreload ignore, roomId: $enteringID');
+    }
+
+    final currentLiveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    if (preloadRoomIDs.contains(currentLiveID)) {
+      preloadRoomIDs.remove(currentLiveID);
+      LiveKitLogger.info('has entered same room, startPreload ignore, roomId: $currentLiveID');
+    }
+    return preloadRoomIDs;
   }
 
   /// Ensures the current page's preview is active and unmuted in single-column mode.
@@ -581,6 +609,17 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     if (currentIndex >= liveInfoList.length) return;
 
     final roomId = liveInfoList[currentIndex].liveID;
+
+    if (TUILiveKitNavigatorObserver.instance.enteringRoomID.value == roomId) {
+      LiveKitLogger.info('entering room, startPreload ignore, roomId: $roomId');
+      return;
+    }
+
+    if (_isCurrentRoomInFloatWindowMode(roomId)) {
+      LiveKitLogger.info('float window view is showing, startPreload ignore, roomId: $roomId');
+      return;
+    }
+
     if (_previewManager.isPreviewActive(roomId)) {
       // Preview exists, just ensure audio is unmuted.
       final controller = _previewManager.getPreviewController(roomId);
@@ -590,6 +629,13 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
       // previewStateNotifier change and cause the PageView to rebuild.
       _previewManager.startPreview(liveInfoList[currentIndex], isMuteAudio: false);
     }
+  }
+
+  bool _isCurrentRoomInFloatWindowMode(String roomId) {
+    if (!GlobalFloatWindowManager.instance.isFloating()) {
+      return false;
+    }
+    return GlobalFloatWindowManager.instance.state.roomId.value == roomId;
   }
 
   void _initData() {
@@ -618,15 +664,30 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     }
   }
 
-  Future<void> _onRefresh() async {
-    if (TUIRoomEngine.getSelfInfo().userId.isEmpty) {
-      LiveKitLogger.error("engine login not finish");
-      return;
+  Future<void> _onRefresh() {
+    // Dedupe: if a refresh is already in flight, reuse the same Future.
+    if (_refreshingFuture != null) {
+      return _refreshingFuture!;
     }
+    final future = _doRefresh();
+    _refreshingFuture = future;
+    future.whenComplete(() {
+      // Only clear when the cleared future is still the latest one.
+      if (identical(_refreshingFuture, future)) {
+        _refreshingFuture = null;
+      }
+    });
+    return future;
+  }
+
+  Future<void> _doRefresh() async {
+    if (TUILiveKitNavigatorObserver.instance.enteringRoomID.value.isNotEmpty) return;
     _previewManager.stopAllPreviews();
     await _liveListService.refreshFetchList();
+    if (!mounted) return;
     // After refresh, trigger preload based on current view style.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       if (_currentStyle.value == LiveListViewStyle.singleColumn) {
         _triggerSingleColumnPreload();
       } else {
@@ -640,17 +701,26 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
 
     final liveInfo = _liveListService.roomListState.liveInfoList.value[index];
     final roomType = LiveIdentityGenerator.instance.getIDType(liveInfo.liveID);
-
     _isOverlayMode = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature();
-    _previewManager.setBlocked(true);
-    _previewManager.cancelPreloadTimer();
-    _previewManager.stopAllPreviews();
 
+    _preventPreload();
+    _isEnteringRoom = true;
     if (roomType == RoomType.voice) {
-      _isEnteringRoom = await TUILiveKitNavigatorObserver.instance.enterVoiceRoomPage(context, liveInfo);
+      await TUILiveKitNavigatorObserver.instance.enterVoiceRoomPage(context, liveInfo);
     } else {
-      _isEnteringRoom = await TUILiveKitNavigatorObserver.instance.enterLiveRoomPage(context, liveInfo);
+      await TUILiveKitNavigatorObserver.instance.enterLiveRoomPage(context, liveInfo);
     }
+    _isEnteringRoom = false;
+    _allowPreload();
+  }
+
+  void _preventPreload() {
+    _previewManager.setBlocked(true);
+    _previewManager.stopAllPreviews();
+  }
+
+  void _allowPreload() {
+    _previewManager.setBlocked(false);
   }
 
   Widget _buildSingleColumnEmptyWidget() {
@@ -895,7 +965,7 @@ class LiveListWidgetState extends State<LiveListWidget> with RouteAware {
     try {
       Uri parsedUri = Uri.parse(urlString);
       return parsedUri.scheme.isNotEmpty && parsedUri.host.isNotEmpty;
-    } on FormatException catch (e) {
+    } on FormatException {
       return false;
     }
   }

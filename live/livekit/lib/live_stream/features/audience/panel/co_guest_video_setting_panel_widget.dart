@@ -186,6 +186,7 @@ extension on _CoGuestVideoSettingsPanelWidgetState {
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
     final result =
         await coGuestStore.applyForSeat(seatIndex: widget.seatIndex, timeout: Constants.defaultRequestTimeout);
+    if (!mounted) return;
     if (result.errorCode != TUIError.success.rawValue) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
       makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',

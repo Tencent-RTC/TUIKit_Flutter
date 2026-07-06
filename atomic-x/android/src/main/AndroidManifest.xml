@@ -15,6 +15,11 @@
     <!-- System alert window / Display over other apps permission -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
     <application>
         <activity
             android:name="io.trtc.tuikit.atomicx.albumpicker.AlbumPickerHostActivity"
@@ -53,6 +58,20 @@
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/imageuploader_file_paths" />
         </provider>
-        
+        <service
+            android:name="io.trtc.tuikit.atomicx.foregroundservice.AudioForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <service
+            android:name="io.trtc.tuikit.atomicx.foregroundservice.VideoForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="camera|microphone" />
+
+        <service
+            android:name="io.trtc.tuikit.atomicx.foregroundservice.MediaForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 </manifest>

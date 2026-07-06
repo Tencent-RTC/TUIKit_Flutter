@@ -1,9 +1,7 @@
-import 'package:atomic_x_core/api/device/audio_effect_store.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/index.dart';
 import '../../../../common/language/index.dart';
 import '../../../../common/resources/index.dart';
 import '../../../../common/widget/index.dart';

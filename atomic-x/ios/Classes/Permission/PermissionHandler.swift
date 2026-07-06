@@ -84,7 +84,11 @@ class PermissionHandler {
       case .restricted:
         return "denied"
       case .notDetermined:
-        return "denied"
+        // The user has never been asked. Keep this distinct from `denied`
+        // so the Dart layer can tell "first-time access" apart from
+        // "previously refused" and avoid wrongly steering the user to the
+        // system Settings page.
+        return "notDetermined"
       @unknown default:
         return "denied"
       }
@@ -131,7 +135,7 @@ class PermissionHandler {
       case .restricted:
         return "denied"
       case .notDetermined:
-        return "denied"
+        return "notDetermined"
       @unknown default:
         return "denied"
       }
@@ -145,7 +149,7 @@ class PermissionHandler {
       case .restricted:
         return "denied"
       case .notDetermined:
-        return "denied"
+        return "notDetermined"
       @unknown default:
         return "denied"
       }
@@ -212,7 +216,11 @@ class PermissionHandler {
     case .denied:
       return "permanentlyDenied"
     case .undetermined:
-      return "denied"
+      // The user has never been asked. Keep this distinct from `denied`
+      // so the Dart layer can tell "first-time access" apart from
+      // "previously refused" and avoid wrongly steering the user to the
+      // system Settings page.
+      return "notDetermined"
     @unknown default:
       return "denied"
     }
@@ -244,7 +252,7 @@ class PermissionHandler {
       case .denied:
         status = "permanentlyDenied"
       case .notDetermined:
-        status = "denied"
+        status = "notDetermined"
       case .provisional, .ephemeral:
         status = "limited"
       @unknown default:

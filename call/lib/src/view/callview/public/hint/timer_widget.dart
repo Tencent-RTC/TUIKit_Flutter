@@ -1,7 +1,7 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/call_colors.dart';
+import '../../core/common/call_colors.dart';
 
 class TimerWidget extends StatelessWidget {
   final double? fontSize;

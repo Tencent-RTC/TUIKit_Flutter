@@ -2,7 +2,6 @@ import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../manager/live_stream_manager.dart';
@@ -151,8 +150,6 @@ extension on _AnchorPreviewVideoSettingPanelWidgetState {
         return '540P';
       case VideoQuality.quality360P:
         return '360P';
-      default:
-        return 'unknown';
     }
   }
 

@@ -1,4 +1,3 @@
-library seat_grid_widget;
 
 export 'seat_grid_controller.dart';
 export 'seat_grid_define.dart';

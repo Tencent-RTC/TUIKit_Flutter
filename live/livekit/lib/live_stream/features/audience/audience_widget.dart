@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:atomic_x_core/api/view/live/live_core_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
@@ -11,6 +10,7 @@ import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_navigator_observer.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/living_widget/audience_empty_seat_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/living_widget/audience_living_widget.dart';
+import 'package:tencent_live_uikit/live_stream/features/audience/living_widget/host_absent_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/audience_user_info_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/audience_user_management_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_type_select_panel_widget.dart';
@@ -51,15 +51,14 @@ class AudienceWidget extends StatefulWidget {
 
 class _AudienceWidgetState extends State<AudienceWidget> {
   late final VoidCallback _liveStatusListener = _onLiveStatusChange;
-
-  late final VoidCallback _audioLockedListener = _onAudioLockedStatusChanged;
-  late final VoidCallback _videoLockedListener = _onVideoLockedStatusChanged;
   late final VoidCallback _coGuestStatusListener = _onCoGuestStatusChanged;
-  late final StreamSubscription<void> _kickedOutSubscription;
+  late final VoidCallback _isFloatWindowModeListener = _isFloatWindowModeChanged;
+
   BottomSheetHandler? _audienceUserInfoPanelHandler;
   BottomSheetHandler? _audienceUserManagementPanelHandler;
 
   late final LiveListListener _liveListListener;
+  late final LiveSeatListener _liveSeatListener;
 
   @override
   void initState() {
@@ -124,44 +123,83 @@ class _AudienceWidgetState extends State<AudienceWidget> {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
         final isFloating = widget.liveStreamManager.floatWindowState.isFloatWindowMode.value;
-        double height = isPortrait ? 9 / 16.0 * screenWidth : screenHeight;
-        double top = isFloating ? (screenHeight - height) / 2 : (isPortrait ? 120.height : 0);
+        double height = isFloating ? screenHeight : (isPortrait ? 9 / 16.0 * screenWidth : screenHeight);
+        double top = isFloating ? 0 : (isPortrait ? 120.height : 0);
         return Container(
-          color: Colors.black,
+          color: isFloating ? Colors.transparent : Colors.black,
           margin: EdgeInsets.only(top: top),
           width: screenWidth,
           height: height,
-          child: LiveCoreWidget(controller: widget.liveCoreController),
+          child: Stack(
+            children: [
+              LiveCoreWidget(controller: widget.liveCoreController),
+              HostAbsentWidget(liveStreamManager: widget.liveStreamManager),
+            ],
+          ),
         );
       });
     } else {
-      return LiveCoreWidget(
-        controller: widget.liveCoreController,
-        videoWidgetBuilder: VideoWidgetBuilder(
-            coGuestWidgetBuilder: _createCoGuestWidgetBuilder(),
-            coHostWidgetBuilder: (context, seatInfo, viewLayer) {
-              if (viewLayer == ViewLayer.background) {
-                return CoHostBackgroundWidget(
-                    seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-              } else {
-                return CoHostForegroundWidget(
-                    seatInfo: seatInfo, isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-              }
-            },
-            battleWidgetBuilder: (context, seatInfo) {
-              return BattleMemberInfoWidget(
-                  liveStreamManager: widget.liveStreamManager,
-                  battleUserId: seatInfo.userInfo.userID,
-                  isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-            },
-            battleContainerWidgetBuilder: (context) {
-              return BattleInfoWidget(
-                  liveStreamManager: widget.liveStreamManager,
-                  isOwner: false,
-                  isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
-            }),
+      return Stack(
+        children: [
+          LiveCoreWidget(
+            controller: widget.liveCoreController,
+            videoWidgetBuilder: VideoWidgetBuilder(
+                coGuestWidgetBuilder: _createCoGuestWidgetBuilder(),
+                coHostWidgetBuilder: (context, seatInfo, viewLayer) {
+                  if (viewLayer == ViewLayer.background) {
+                    return CoHostBackgroundWidget(
+                        seatInfo: seatInfo,
+                        isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                  } else {
+                    return CoHostForegroundWidget(
+                      seatInfo: seatInfo,
+                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode,
+                      onTap: () => _onTapCoHostForegroundWidget(seatInfo),
+                    );
+                  }
+                },
+                battleWidgetBuilder: (context, seatInfo) {
+                  return BattleMemberInfoWidget(
+                      liveStreamManager: widget.liveStreamManager,
+                      battleUserId: seatInfo.userInfo.userID,
+                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                },
+                battleContainerWidgetBuilder: (context) {
+                  return BattleInfoWidget(
+                      liveStreamManager: widget.liveStreamManager,
+                      isOwner: false,
+                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                }),
+          ),
+          HostAbsentWidget(liveStreamManager: widget.liveStreamManager),
+        ],
       );
     }
+  }
+
+  void _onTapCoHostForegroundWidget(SeatInfo seatInfo) {
+    LiveUserInfo userInfo = LiveUserInfo();
+    userInfo.userID = seatInfo.userInfo.userID;
+    userInfo.userName = seatInfo.userInfo.userName;
+    userInfo.avatarURL = seatInfo.userInfo.avatarURL;
+    _audienceUserInfoPanelHandler = popupWidget(
+        AudienceUserInfoPanelWidget(
+          user: userInfo,
+          liveID: seatInfo.userInfo.liveID,
+          liveStreamManager: widget.liveStreamManager,
+          enableEnterRoom: LiveListStore.shared.liveState.currentLive.value.liveID != seatInfo.userInfo.liveID,
+          onClose: () {
+            _audienceUserInfoPanelHandler?.close();
+            _audienceUserInfoPanelHandler = null;
+          },
+          onExitRoom: () {
+            _audienceUserInfoPanelHandler?.close();
+            _audienceUserInfoPanelHandler = null;
+            _closePage();
+          },
+        ),
+        context: context,
+        backgroundColor: LiveColors.designStandardTransparent);
   }
 
   Widget _buildSeatListWidget() {
@@ -286,28 +324,53 @@ class _AudienceWidgetState extends State<AudienceWidget> {
 
 extension on _AudienceWidgetState {
   void _init() {
-    _liveListListener = LiveListListener(onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
-      _closeAllDialog();
-    });
+    _liveListListener = LiveListListener(
+      onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
+        _closeAllDialog();
+      },
+      onKickedOutOfLive: (String liveID, LiveKickedOutReason reason, String message) {
+        _handleKickedOut();
+      },
+    );
     LiveListStore.shared.addLiveListListener(_liveListListener);
-    _kickedOutSubscription = widget.liveStreamManager.kickedOutSubject.stream.listen((_) => _handleKickedOut());
     // Defer _joinLiveStream to avoid setState() during build phase.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _joinLiveStream();
     });
     _addLiveStatusListener();
-    _addMediaLockedListener();
     _addCoGuestStatusListener();
+    widget.liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
+    _liveSeatListener = LiveSeatListener(onLocalCameraClosedByAdmin: () {
+      widget.liveStreamManager.mediaManager.closeLocalCamera();
+      if (!mounted) return;
+      final toastMessage = LiveKitLocalizations.of(context)!.common_mute_video_by_owner;
+      makeToast(context, toastMessage);
+    }, onLocalCameraOpenedByAdmin: (DeviceControlPolicy policy) {
+      if (policy == DeviceControlPolicy.unlockOnly) {
+        if (!mounted) return;
+        final toastMessage = LiveKitLocalizations.of(context)!.common_un_mute_video_by_master;
+        makeToast(context, toastMessage);
+      }
+    }, onLocalMicrophoneClosedByAdmin: () {
+      if (!mounted) return;
+      final toastMessage = LiveKitLocalizations.of(context)!.common_mute_audio_by_master;
+      makeToast(context, toastMessage);
+    }, onLocalMicrophoneOpenedByAdmin: (DeviceControlPolicy policy) {
+      if (policy == DeviceControlPolicy.unlockOnly) {
+        if (!mounted) return;
+        final toastMessage = LiveKitLocalizations.of(context)!.common_un_mute_audio_by_master;
+        makeToast(context, toastMessage);
+      }
+    });
+    LiveSeatStore.create(widget.roomId).addLiveSeatEventListener(_liveSeatListener);
   }
 
   void _dispose() {
     widget.onDispose?.call();
     LiveListStore.shared.removeLiveListListener(_liveListListener);
     _closeAllDialog();
-    _kickedOutSubscription.cancel();
     _removeCoGuestStatusListener();
-    _removeMediaLockedListener();
     _removeLiveStatusListener();
     // Reset liveStatus to prevent stale state when PageResources are reused.
     // Without this, a cached page returning to current index would see
@@ -318,6 +381,8 @@ extension on _AudienceWidgetState {
       _leaveLiveStream();
     });
     _resetControllers();
+    widget.liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
+    LiveSeatStore.create(widget.roomId).removeLiveSeatEventListener(_liveSeatListener);
   }
 
   void _handleKickedOut() {
@@ -327,7 +392,9 @@ extension on _AudienceWidgetState {
 
   void _closeAllDialog() {
     _audienceUserInfoPanelHandler?.close();
+    _audienceUserInfoPanelHandler = null;
     _audienceUserManagementPanelHandler?.close();
+    _audienceUserManagementPanelHandler = null;
   }
 
   void _closePage() {
@@ -345,6 +412,7 @@ extension on _AudienceWidgetState {
       LiveListStore liveListStore = LiveListStore.shared;
       var result = await liveListStore.joinLive(widget.roomId);
       widget.onJoinLiveStateChanged?.call(false);
+      if (!mounted) return;
       if (result.errorCode != TUIError.success.rawValue) {
         makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
             type: ToastType.error, useRootOverlay: true);
@@ -353,6 +421,7 @@ extension on _AudienceWidgetState {
       }
       widget.liveStreamManager.onJoinLive(result.liveInfo);
     } catch (e) {
+      if (!mounted) return;
       widget.onJoinLiveStateChanged?.call(false);
       LiveKitLogger.error('AudienceWidget _joinLiveStream error: $e');
       makeToast(context, ErrorHandler.convertToErrorMessage(-1, e.toString()) ?? '',
@@ -363,6 +432,10 @@ extension on _AudienceWidgetState {
 
   void _leaveLiveStream() {
     LiveListStore liveListStore = LiveListStore.shared;
+    if (liveListStore.liveState.currentLive.value.liveID.isEmpty) {
+      LiveKitLogger.warning('AudienceWidget _leaveLiveStream currentLive is Empty');
+      return;
+    }
     liveListStore.leaveLive();
   }
 
@@ -372,16 +445,6 @@ extension on _AudienceWidgetState {
 
   void _removeLiveStatusListener() {
     widget.liveStreamManager.roomState.liveStatus.removeListener(_liveStatusListener);
-  }
-
-  void _addMediaLockedListener() {
-    widget.liveStreamManager.mediaState.isAudioLocked.addListener(_audioLockedListener);
-    widget.liveStreamManager.mediaState.isVideoLocked.addListener(_videoLockedListener);
-  }
-
-  void _removeMediaLockedListener() {
-    widget.liveStreamManager.mediaState.isAudioLocked.removeListener(_audioLockedListener);
-    widget.liveStreamManager.mediaState.isVideoLocked.removeListener(_videoLockedListener);
   }
 
   void _resetControllers() {
@@ -417,19 +480,9 @@ extension on _AudienceWidgetState {
     widget.onCoGuestStateChanged?.call(shouldDisableScroll);
   }
 
-  void _onAudioLockedStatusChanged() {
-    final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
-    final toastMessage = isAudioLocked
-        ? LiveKitLocalizations.of(context)!.common_mute_audio_by_master
-        : LiveKitLocalizations.of(context)!.common_un_mute_audio_by_master;
-    makeToast(context, toastMessage);
-  }
-
-  void _onVideoLockedStatusChanged() {
-    final isVideoLocked = widget.liveStreamManager.mediaState.isVideoLocked.value;
-    final toastMessage = isVideoLocked
-        ? LiveKitLocalizations.of(context)!.common_mute_video_by_owner
-        : LiveKitLocalizations.of(context)!.common_un_mute_video_by_master;
-    makeToast(context, toastMessage);
+  void _isFloatWindowModeChanged() {
+    if (widget.liveStreamManager.floatWindowState.isFloatWindowMode.value) {
+      _closeAllDialog();
+    }
   }
 }

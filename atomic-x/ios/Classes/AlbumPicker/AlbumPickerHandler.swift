@@ -384,16 +384,16 @@ class AlbumPickerHandler: NSObject {
 
 // MARK: - AlbumPickerDelegateProxy
 
-/// Per-session delegate that captures sessionId and injects it into every event.
-/// This is the iOS equivalent of Android's `val capturedSessionId = sessionId`
-/// closure capture in `createAlbumPickerListener`.
 class AlbumPickerDelegateProxy: NSObject, AlbumPickerDelegate {
     let sessionId: String
     private weak var handler: AlbumPickerHandler?
 
+    private let serialQueue: DispatchQueue
+
     init(sessionId: String, handler: AlbumPickerHandler) {
         self.sessionId = sessionId
         self.handler = handler
+        self.serialQueue = DispatchQueue(label: "com.albumpicker.event-queue.\(sessionId)", qos: .userInitiated)
         super.init()
     }
 
@@ -404,33 +404,30 @@ class AlbumPickerDelegateProxy: NSObject, AlbumPickerDelegate {
             handler?.viewController?.dismiss(animated: true)
         }
 
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        serialQueue.async { [weak self] in
             guard let self = self else { return }
-            let group = DispatchGroup()
 
             for media in pickedAlbumMedias {
                 guard media.videoThumbnailPath == nil else { continue }
-                group.enter()
-                DispatchQueue.global(qos: .userInitiated).async {
-                    if let path = self.handler?.generateThumbnailForMedia(media) {
-                        media.videoThumbnailPath = path
-                    }
-                    group.leave()
+                if let path = self.handler?.generateThumbnailForMedia(media) {
+                    media.videoThumbnailPath = path
                 }
             }
 
-            group.notify(queue: .main) {
-                var event: [String: Any] = [
-                    "type": "onPickConfirm",
-                    "sessionId": self.sessionId,
-                    "pickedAlbumMedias": pickedAlbumMedias.map { self.handler?.buildMediaDataDict(albumMedia: $0) ?? [:] },
-                ]
-                if let textMessage = textMessage {
-                    event["textMessage"] = textMessage
-                }
-                self.handler?.sendEvent(event)
+            var event: [String: Any] = [
+                "type": "onPickConfirm",
+                "sessionId": self.sessionId,
+                "pickedAlbumMedias": pickedAlbumMedias.map { self.handler?.buildMediaDataDict(albumMedia: $0) ?? [:] },
+            ]
+            if let textMessage = textMessage {
+                event["textMessage"] = textMessage
+            }
+            print("[AlbumPickerHandler] onPickConfirm dispatching to Flutter, sessionId=\(self.sessionId)")
+            self.handler?.sendEvent(event)
 
-                if pickedAlbumMedias.isEmpty {
+            if pickedAlbumMedias.isEmpty {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     self.handler?.completeSession(sessionId: self.sessionId)
                 }
             }
@@ -444,24 +441,32 @@ class AlbumPickerDelegateProxy: NSObject, AlbumPickerDelegate {
               + " path=\(albumMedia.mediaPath ?? "nil"),"
               + " sessionId=\(sessionId)")
 
-        handler?.sendEvent([
-            "type": "onMediaProcessing",
-            "sessionId": sessionId,
-            "data": handler?.buildMediaDataDict(albumMedia: albumMedia) ?? [:],
-            "progress": Double(progress),
-            "error": error,
-        ])
+        serialQueue.async { [weak self] in
+            guard let self = self else { return }
+            self.handler?.sendEvent([
+                "type": "onMediaProcessing",
+                "sessionId": self.sessionId,
+                "data": self.handler?.buildMediaDataDict(albumMedia: albumMedia) ?? [:],
+                "progress": Double(progress),
+                "error": error,
+            ])
+        }
     }
 
     func onMediaProcessed() {
         print("[AlbumPickerHandler] onMediaProcessed, sessionId=\(sessionId)")
 
-        handler?.sendEvent([
-            "type": "onMediaProcessed",
-            "sessionId": sessionId,
-        ])
-
-        handler?.completeSession(sessionId: sessionId)
+        serialQueue.async { [weak self] in
+            guard let self = self else { return }
+            self.handler?.sendEvent([
+                "type": "onMediaProcessed",
+                "sessionId": self.sessionId,
+            ])
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.handler?.completeSession(sessionId: self.sessionId)
+            }
+        }
     }
 
     func onCancel() {

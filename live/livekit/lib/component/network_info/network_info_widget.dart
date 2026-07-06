@@ -73,10 +73,6 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                       statusText = LiveKitLocalizations.of(context)!.common_exception;
                       iconName = LiveImages.networkInfoVideoError;
                       break;
-                    default:
-                      statusText = LiveKitLocalizations.of(context)!.common_exception;
-                      iconName = LiveImages.networkInfoVideoError;
-                      break;
                   }
                   return Row(
                     children: [
@@ -107,9 +103,6 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                       detailText = LiveKitLocalizations.of(context)!.common_video_stream_smooth;
                       break;
                     case VideoState.exception:
-                      detailText = LiveKitLocalizations.of(context)!.common_video_stream_freezing;
-                      break;
-                    default:
                       detailText = LiveKitLocalizations.of(context)!.common_video_stream_freezing;
                       break;
                   }
@@ -155,9 +148,6 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                   case AudioState.exception:
                     statusText = LiveKitLocalizations.of(context)!.common_exception;
                     break;
-                  default:
-                    statusText = LiveKitLocalizations.of(context)!.common_exception;
-                    break;
                 }
                 return Row(
                   children: [
@@ -176,81 +166,51 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
           ),
           Visibility(
             visible: !widget.isAudience,
-            child: ValueListenableBuilder(
-                valueListenable: widget.manager.state.audioQuality,
-                builder: (context, audioQuality, _) {
-                  final audioQuality = widget.manager.state.audioQuality.value;
-                  late String qualityText;
-                  switch (audioQuality) {
-                    case TUIAudioQuality.audioProfileDefault:
-                      qualityText = LiveKitLocalizations.of(context)!.common_audio_mode_default;
-                      break;
-                    case TUIAudioQuality.audioProfileSpeech:
-                      qualityText = LiveKitLocalizations.of(context)!.common_audio_mode_speech;
-                      break;
-                    case TUIAudioQuality.audioProfileMusic:
-                      qualityText = LiveKitLocalizations.of(context)!.common_audio_mode_music;
-                      break;
-                    default:
-                      qualityText = LiveKitLocalizations.of(context)!.common_audio_mode_default;
-                      break;
-                  }
-                  return Padding(
-                    padding: EdgeInsets.only(left: 26.width, top: 4.height),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Text('${LiveKitLocalizations.of(context)!.common_audio_tips_proper_volume} ',
+            child: Padding(
+              padding: EdgeInsets.only(left: 26.width, top: 4.height),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${LiveKitLocalizations.of(context)!.common_audio_tips_proper_volume} ',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C))),
+                  SizedBox(height: 7.height),
+                  ValueListenableBuilder(
+                      valueListenable: widget.manager.state.volume,
+                      builder: (context, volume, _) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: 280.width,
+                              height: 14.height,
+                              child: Slider(
+                                value: volume.toDouble(),
+                                min: 0,
+                                max: 100,
+                                activeColor: LiveColors.designSliderColorFilled,
+                                inactiveColor: LiveColors.designSliderColorEmpty,
+                                thumbColor: LiveColors.designStandardFlowkitWhite,
+                                onChanged: (value) {
+                                  widget.manager.handleAudioSliderChanged(value.toInt());
+                                },
+                              ),
+                            ),
+                            Text(
+                              '$volume',
                               style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C))),
-                          GestureDetector(
-                            onTap: () => _closeMusicMode(),
-                            child: Text('| $qualityText >',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C))),
-                          ),
-                        ]),
-                        SizedBox(height: 7.height),
-                        ValueListenableBuilder(
-                            valueListenable: widget.manager.state.volume,
-                            builder: (context, volume, _) {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: 280.width,
-                                    height: 14.height,
-                                    child: Slider(
-                                      value: volume.toDouble(),
-                                      min: 0,
-                                      max: 100,
-                                      activeColor: LiveColors.designSliderColorFilled,
-                                      inactiveColor: LiveColors.designSliderColorEmpty,
-                                      thumbColor: LiveColors.designStandardFlowkitWhite,
-                                      onChanged: (value) {
-                                        widget.manager.handleAudioSliderChanged(value.toInt());
-                                      },
-                                    ),
-                                  ),
-                                  Text(
-                                    '$volume',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C)),
-                                  ),
-                                ],
-                              );
-                            })
-                      ],
-                    ),
-                  );
-                }),
+                                  color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C)),
+                            ),
+                          ],
+                        );
+                      })
+                ],
+              ),
+            ),
           ),
           SizedBox(height: 24.height),
           ValueListenableBuilder(
@@ -486,29 +446,6 @@ class _NetworkInfo extends StatelessWidget {
               fontSize: 12, fontWeight: FontWeight.w400, color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C)),
         ),
       ],
-    );
-  }
-}
-
-extension on _NetworkInfoWidgetState {
-  void _closeMusicMode() {
-    BaseBottomSheet.showWithHandler(
-      context,
-      actions: [
-        ActionSheetItem(
-          title: LiveKitLocalizations.of(context)!.common_audio_mode_default,
-          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileDefault),
-        ),
-        ActionSheetItem(
-          title: LiveKitLocalizations.of(context)!.common_audio_mode_music,
-          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileMusic),
-        ),
-        ActionSheetItem(
-          title: LiveKitLocalizations.of(context)!.common_audio_mode_speech,
-          onTap: () => widget.manager.onAudioQualityChanged(TUIAudioQuality.audioProfileSpeech),
-        ),
-      ],
-      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
     );
   }
 }

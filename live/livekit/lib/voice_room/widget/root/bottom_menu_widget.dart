@@ -232,8 +232,6 @@ extension on _BottomMenuWidgetState {
             ),
             context: context);
         break;
-      default:
-        break;
     }
   }
 

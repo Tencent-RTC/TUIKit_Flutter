@@ -244,6 +244,7 @@
   "common_server_error_this_member_has_been_banned": "该成员已经被封禁",
   "common_server_error_this_member_has_been_muted": "该成员已经被禁言",
   "common_server_error_user_is_already_on_the_mic_seat": "已经有用户在麦位上",
+  "common_server_error_im_sensitive_words_ban": "消息或者资料中文本存在敏感内容，禁止下发。",
   "common_set_as_background": "设为背景",
   "common_set_as_cover": "设为封面",
   "common_settings": "设置",
@@ -367,5 +368,10 @@
   "common_end_live_by_server": "直播内容违规已被强制关播",
   "common_go_to_enable": "去开启",
   "common_live_screen": "直播屏幕",
-  "common_select_app_to_live": "选择应用并开始直播"
+  "common_select_app_to_live": "选择应用并开始直播",
+  "common_violation_alert_toast": "当前画面或内容存在违规风险，请注意平台规范",
+  "live_song_unknown_artist": "未知",
+  "live_anchor_manager_set_featured_host": "设为主咖",
+  "live_anchor_manager_revoke_featured_host": "取消主咖",
+  "common_enter_anchor_live_room": "去TA的直播间"
 }

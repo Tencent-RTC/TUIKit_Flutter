@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
@@ -20,6 +23,7 @@ import 'package:tencent_live_uikit/voice_room/widget/end_statistics/end_statisti
 import 'package:tencent_live_uikit/voice_room/widget/panel/seat_invitation_panel_widget.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/user_management_panel_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 import '../../component/float_window/global_float_window_manager.dart';
 
 typedef ShowEndViewCallback = void Function(Map<String, dynamic> endInfo, bool isAnchor);
@@ -92,6 +96,8 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
   late LiveAudienceListener _liveAudienceListener;
   late final LiveListListener _liveListListener;
   late HostListener _hostListener;
+  late final VoidCallback _loginStatusListener = _onLoginStatusChanged;
+  late final StreamSubscription<LoginEvent> _loginEventSubscription;
 
   @override
   void initState() {
@@ -108,10 +114,20 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
       _join(liveID: widget.liveID);
     }
     _addObserver();
+    _loginEventSubscription = LoginStore.shared.loginEventStream.listen((event) {
+      switch (event) {
+        case LoginEvent.kickedOffline:
+        case LoginEvent.loginExpired:
+          LiveKitLogger.warning("LoginEvent => $event");
+          _closePage();
+          break;
+      }
+    });
   }
 
   @override
   void dispose() {
+    _loginEventSubscription.cancel();
     _imStore.unInit();
     _removeObserver();
     _onDispose();
@@ -216,7 +232,11 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
                     roomId: currentLive.liveID,
                     ownerId: currentLive.liveOwner.userID,
                     selfUserId: selfInfo.userId,
-                    selfName: selfInfo.userName ?? selfInfo.userId);
+                    selfName: selfInfo.userName ?? selfInfo.userId,
+                    onError: (code, message) {
+                      makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '',
+                          type: ToastType.error);
+                    });
                 _barrageDisplayController?.setCustomBarrageBuilder(GiftBarrageItemBuilder(selfUserId: selfInfo.userId));
                 return BarrageDisplayWidget(controller: _barrageDisplayController!);
               }),
@@ -363,7 +383,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
             var endInfo = AnchorEndStatisticsWidgetInfo(
                 roomId: widget.liveID,
                 liveDuration: _liveStatisticsData.liveDuration,
-                viewCount: _liveStatisticsData.totalViewers,
+                viewCount: max(_liveStatisticsData.totalViewers - 1, 0),
                 messageCount: _liveStatisticsData.totalMessageCount,
                 giftIncome: _liveStatisticsData.totalGiftCoins,
                 giftSenderCount: _liveStatisticsData.totalUniqueGiftSenders,
@@ -500,8 +520,6 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
       case TopWidgetTapEvent.floatWindow:
         widget.floatWindowController?.onTapSwitchFloatWindowInApp.call(true);
         break;
-      default:
-        break;
     }
   }
 
@@ -563,6 +581,14 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
     final result = await future;
     if (!result.isSuccess) {
       widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+    }
+  }
+
+  void _onLoginStatusChanged() {
+    final loginStatus = LoginStore.shared.loginState.loginStatus;
+    if (loginStatus == LoginStatus.unlogin) {
+      LiveKitLogger.warning("LoginStatus => unlogin");
+      _closePage();
     }
   }
 
@@ -710,6 +736,7 @@ extension _ObserverOperation on _VoiceRoomRootWidgetState {
     _liveSeatStore.liveSeatState.seatList.addListener(_seatListChangedListener);
     widget.floatWindowController?.isFullScreen.addListener(_isFloatWindowModeListener);
     LiveListStore.shared.addLiveListListener(_liveListListener);
+    LoginStore.shared.addListener(_loginStatusListener);
   }
 
   void _removeObserver() {
@@ -722,6 +749,7 @@ extension _ObserverOperation on _VoiceRoomRootWidgetState {
     _liveListStore.removeLiveListListener(_liveListener);
     widget.floatWindowController?.isFullScreen.removeListener(_isFloatWindowModeListener);
     LiveListStore.shared.removeLiveListListener(_liveListListener);
+    LoginStore.shared.removeListener(_loginStatusListener);
   }
 }
 
@@ -737,7 +765,6 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
         _exitedRoom.value = true;
       }
     }, onKickedOutOfLive: (liveID, reason, message) {
-      // TODO: LiveListStore not call onKickedOutOfLive
       _closePage();
     });
     _liveListStore.addLiveListListener(_liveListener);

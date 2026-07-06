@@ -1,11 +1,9 @@
 import 'package:atomic_x_core/api/barrage/barrage_store.dart';
-import 'package:tencent_cloud_chat_sdk/enum/V2TimAdvancedMsgListener.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 
 import '../state/store.dart';
 
 class BarrageManager {
-  late V2TimAdvancedMsgListener listener;
   bool isInit = false;
   late BarrageStore barrageStore;
 

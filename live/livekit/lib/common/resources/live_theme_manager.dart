@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 
+import '../logger/logger.dart';
+
 /// LiveKit theme manager.
 /// Switches theme when entering LiveKit scene and restores when exiting.
 /// Also supports pausing theme in float window mode.
@@ -19,11 +21,13 @@ class LiveThemeManager {
 
   /// Safely set theme mode, avoiding calls during build phase.
   void _safeSetThemeMode(ThemeState themeState, ThemeType themeType) {
+    LiveKitLogger.info("_safeSetThemeMode, currentType=${themeState.currentType}, newType=$themeType");
     if (themeState.currentType == themeType) {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (themeState.currentType != themeType) {
+        LiveKitLogger.info("_safeSetThemeMode:$themeType");
         themeState.setThemeMode(themeType);
       }
     });
@@ -33,22 +37,25 @@ class LiveThemeManager {
   /// [context] is used to get ThemeState.
   /// [targetTheme] is the target theme, defaults to dark.
   void enterLiveKitScene(BuildContext context, {ThemeType targetTheme = ThemeType.dark}) {
+    LiveKitLogger.info("enterLiveKitScene, _referenceCount=$_referenceCount, _isPaused=$_isPaused");
     _referenceCount++;
     _targetThemeType = targetTheme;
 
-    if (_referenceCount == 1) {
+    // First time entering: capture the original theme as the one to restore on exit.
+    if (_themeState == null || _previousThemeType == null) {
       _themeState = BaseThemeProvider.of(context);
       _previousThemeType = _themeState?.currentType;
-      _isPaused = false;
-
-      if (_themeState != null) {
-        _safeSetThemeMode(_themeState!, targetTheme);
-      }
+      LiveKitLogger.info("ThemeState current ThemeType: $_previousThemeType");
+    }
+    _isPaused = false;
+    if (_themeState != null) {
+      _safeSetThemeMode(_themeState!, targetTheme);
     }
   }
 
   /// Called when exiting LiveKit scene.
   void exitLiveKitScene() {
+    LiveKitLogger.info("exitLiveKitScene, _referenceCount=$_referenceCount");
     if (_referenceCount > 0) {
       _referenceCount--;
     }
@@ -63,6 +70,7 @@ class LiveThemeManager {
 
   /// Called when entering float window mode, temporarily restores the previous theme.
   void pauseTheme() {
+    LiveKitLogger.info("pauseTheme");
     if (_isPaused || _themeState == null || _previousThemeType == null) {
       return;
     }
@@ -72,6 +80,7 @@ class LiveThemeManager {
 
   /// Called when returning from float window to fullscreen, restores LiveKit theme.
   void resumeTheme() {
+    LiveKitLogger.info("resumeTheme");
     if (!_isPaused || _themeState == null) {
       return;
     }
@@ -81,6 +90,7 @@ class LiveThemeManager {
 
   /// Force reset state (for exceptional cases).
   void forceReset() {
+    LiveKitLogger.info("forceReset");
     if (_previousThemeType != null && _themeState != null) {
       _safeSetThemeMode(_themeState!, _previousThemeType!);
     }
