@@ -316,7 +316,4 @@ extension on BattleManager {
     return context.roomManager.target?.roomState.roomId ?? '';
   }
 
-  String _getSelfID() {
-    return TUIRoomEngine.getSelfInfo().userId;
-  }
 }

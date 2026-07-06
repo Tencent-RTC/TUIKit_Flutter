@@ -154,6 +154,28 @@ class _AnchorCoGuestUserManagementPanelState extends State<AnchorCoGuestUserMana
       );
     }
 
+    // featured host (only for VideoFixedFloat7Seats template, and only owner can operate)
+    final selfID = LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
+    final ownerID = widget.liveStreamManager.roomState.liveInfo.liveOwner.userID;
+    final isSelfOwner = selfID.isNotEmpty && selfID == ownerID;
+    if (isSelfOwner && widget.liveStreamManager.roomState.liveInfo.seatTemplate is VideoFixedFloat7Seats) {
+      children.add(
+        ValueListenableBuilder(
+          valueListenable: liveSeatStore.liveSeatState.seatList,
+          builder: (context, seatList, _) {
+            final isFeaturedHost = _isUserFeaturedHost();
+            return CommonMenuWidget(
+              imageName: isFeaturedHost ? LiveImages.revokeFeaturedHost : LiveImages.setFeaturedHost,
+              title: isFeaturedHost
+                  ? LiveKitLocalizations.of(context)!.live_anchor_manager_revoke_featured_host
+                  : LiveKitLocalizations.of(context)!.live_anchor_manager_set_featured_host,
+              onTap: () => _featuredHostButtonClicked(),
+            );
+          },
+        ),
+      );
+    }
+
     // kickout
     children.add(CommonMenuWidget(
       imageName: LiveImages.leaveSeat,
@@ -196,22 +218,6 @@ extension on _AnchorCoGuestUserManagementPanelState {
       });
     } else {
       liveSeatStore.muteMicrophone();
-    }
-    widget.closeCallback.call();
-  }
-
-  void _localCameraButtonClicked() {
-    final isCameraOpened = _isCameraOpened.value;
-    if (isCameraOpened) {
-      widget.liveStreamManager.mediaManager.closeLocalCamera();
-    } else {
-      final isFrontCamera = DeviceStore.shared.state.isFrontCamera.value;
-      widget.liveStreamManager.mediaManager.openLocalCamera(isFrontCamera).then((result) {
-        if (result.code != TUIError.success) {
-          widget.liveStreamManager.toastSubject
-              .add(ErrorHandler.convertToErrorMessage(result.code.rawValue, result.message) ?? '');
-        }
-      });
     }
     widget.closeCallback.call();
   }
@@ -279,5 +285,24 @@ extension on _AnchorCoGuestUserManagementPanelState {
 
   bool _isVideoLocked() {
     return widget.liveStreamManager.coGuestState.lockVideoUserList.value.contains(user.userID);
+  }
+
+  bool _isUserFeaturedHost() {
+    return liveSeatStore.liveSeatState.seatList.value
+        .any((seat) => seat.userInfo.userID == user.userID && seat.isFeaturedHost);
+  }
+
+  void _featuredHostButtonClicked() {
+    final isFeaturedHost = _isUserFeaturedHost();
+    final future = isFeaturedHost
+        ? liveSeatStore.revokeFeaturedHost(user.userID)
+        : liveSeatStore.setFeaturedHost(user.userID);
+    future.then((result) {
+      if (result.errorCode != TUIError.success.rawValue) {
+        widget.liveStreamManager.toastSubject
+            .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+      }
+    });
+    widget.closeCallback.call();
   }
 }

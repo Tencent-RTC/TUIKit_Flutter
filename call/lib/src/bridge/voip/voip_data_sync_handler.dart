@@ -1,25 +1,26 @@
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:tencent_calls_uikit/src/manager/call_manager.dart';
 
 class VoIPDataSyncHandler {
   void handleVoipChangeMute(bool mute) {
     if (mute) {
-      DeviceStore.shared.closeLocalMicrophone();
+      CallManager.instance.closeLocalMicrophone();
     } else {
-      DeviceStore.shared.openLocalMicrophone();
+      CallManager.instance.openLocalMicrophone();
     }
   }
 
   void handleVoipChangeAudioPlaybackDevice(AudioRoute audioDevice) {
-    DeviceStore.shared.setAudioRoute(audioDevice);
+    CallManager.instance.setAudioRoute(audioDevice);
   }
 
   void handleVoipHangup() {
-    CallStore.shared.hangup();
+    CallManager.instance.hangup();
   }
 
   void handleVoipAccept() {
-    CallStore.shared.accept();
+    CallManager.instance.accept();
   }
 }

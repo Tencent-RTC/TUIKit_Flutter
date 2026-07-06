@@ -256,8 +256,6 @@ extension on _LivePrepareInfoEditWidgetState {
         return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default;
       case PrivacyStatus.privacy:
         return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_privacy;
-      default:
-        return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default;
     }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:tuikit_atomic_x/call/component/widgets/float/call_float_widget.dart';
-import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_widget.dart';
-import 'package:tuikit_atomic_x/call/component/widgets/pip/call_pip_widget.dart';
+import 'package:tencent_calls_uikit/src/view/callview/public/float/call_float_widget.dart';
+import 'package:tencent_calls_uikit/src/view/callview/public/multi/call_grid_widget.dart';
+import 'package:tencent_calls_uikit/src/view/callview/public/pip/call_pip_widget.dart';
 
 class CallView extends StatefulWidget {
   final bool isPipMode;

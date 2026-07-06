@@ -34,13 +34,14 @@ class NetworkInfoManager extends TUIRoomObserver {
         return;
       }
       final matchedInfo = networkMap[userId];
-      state.rtt.value = matchedInfo!.delay;
-      state.downLoss.value = matchedInfo!.downLoss;
-      state.upLoss.value = matchedInfo!.upLoss;
+      if (matchedInfo == null) return;
+      state.rtt.value = matchedInfo.delay;
+      state.downLoss.value = matchedInfo.downLoss;
+      state.upLoss.value = matchedInfo.upLoss;
       if (_isNetworkAvailable) {
-        state.networkQuality.value = matchedInfo!.quality;
+        state.networkQuality.value = matchedInfo.quality;
       }
-      _handleNetworkQualityChanged(matchedInfo!.quality);
+      _handleNetworkQualityChanged(matchedInfo.quality);
     };
 
     super.onUserAudioStateChanged = (userId, hasAudio, reason) {
@@ -84,11 +85,6 @@ extension NetowrkInfoManagerWithCallback on NetworkInfoManager {
     _poorNetworkTimer?.cancel();
     _poorNetworkTimer = null;
     state.showToast.value = false;
-  }
-
-  void onAudioQualityChanged(TUIAudioQuality quality) {
-    _service.updateAudioQuality(quality);
-    state.audioQuality.value = quality;
   }
 }
 

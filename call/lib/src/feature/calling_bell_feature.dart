@@ -4,7 +4,6 @@ import 'package:file/local.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:tencent_calls_uikit/src/common/utils/logger.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_calls_uikit/src/state/global_state.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tencent_calls_uikit/src/common/utils/preference.dart';
@@ -29,16 +28,55 @@ class CallingBellFeature {
   bool isPlaying = false;
   bool isVibrating = false;
 
+  VoidCallback? _selfInfoListener;
+  bool _initialized = false;
+
   CallingBellFeature._();
 
-  Future<void> startRing() async {
+  void init() {
+    if (_initialized) {
+      return;
+    }
+    _initialized = true;
+    _selfInfoListener = _onSelfInfoChanged;
+    CallStore.shared.state.selfInfo.addListener(_selfInfoListener!);
+  }
+
+  void dispose() {
+    if (!_initialized) {
+      return;
+    }
+    if (_selfInfoListener != null) {
+      CallStore.shared.state.selfInfo.removeListener(_selfInfoListener!);
+      _selfInfoListener = null;
+    }
+    _initialized = false;
+    _stopRing();
+  }
+
+  void _onSelfInfoChanged() {
+    final activeCall = CallStore.shared.state.activeCall.value;
+    if (activeCall.mediaType == null) {
+      _stopRing();
+      return;
+    }
+
+    final status = CallStore.shared.state.selfInfo.value.status;
+    if (status == CallParticipantStatus.waiting) {
+      _startRing();
+    } else {
+      _stopRing();
+    }
+  }
+
+  Future<void> _startRing() async {
     if (isPlaying) {
       return;
     }
-    
+
     Logger.info('CallingBellFeature startRing');
     isPlaying = true;
-    
+
     final filePath = await _getRingFilePath();
     if (filePath.isEmpty) {
       isPlaying = false;
@@ -53,11 +91,11 @@ class CallingBellFeature {
     }
   }
 
-  Future<void> stopRing() async {
+  Future<void> _stopRing() async {
     if (!isPlaying) {
       return;
     }
-    
+
     Logger.info('CallingBellFeature stopRing');
     isPlaying = false;
 
@@ -65,6 +103,7 @@ class CallingBellFeature {
 
     if (isVibrating) {
       TUICallKitPlatform.instance.stopVibration();
+      isVibrating = false;
     }
   }
 
@@ -73,17 +112,18 @@ class CallingBellFeature {
       if (GlobalState.instance.enableMuteMode) {
         return "";
       }
-      
+
       final customAssetName = GlobalState.instance.callingBellAssetName;
       if (customAssetName != null && customAssetName.isNotEmpty) {
         return await getAssetsFilePath(customAssetName);
       }
-      
-      final customFilePath = await PreferenceUtils.getInstance().getString(_keyRingPath);
+
+      final customFilePath =
+          await PreferenceUtils.getInstance().getString(_keyRingPath);
       if (customFilePath.isNotEmpty) {
         return customFilePath;
       }
-      
+
       return await _getAssetsFilePath(_calledRingName);
     } else {
       return await _getAssetsFilePath(_callerRingName);
@@ -96,23 +136,21 @@ class CallingBellFeature {
     return userId != inviterId;
   }
 
-
-
   Future<String> getAssetsFilePath(String assetName) async {
     if (assetName.isEmpty) {
       return "";
     }
-    
+
     final tempDirectory = await getTempDirectory();
     final filePath = "$tempDirectory/$assetName";
     final file = fileSystem.file(filePath);
-    
+
     if (!await file.exists()) {
       final byteData = await loadAsset(assetName);
       await file.create(recursive: true);
       await file.writeAsBytes(byteData.buffer.asUint8List());
     }
-    
+
     return file.path;
   }
 
@@ -125,7 +163,8 @@ class CallingBellFeature {
     final trtcCloud = await TRTCCloud.sharedInstance();
     final audioEffectManager = trtcCloud.getAudioEffectManager();
 
-    final param = AudioMusicParam(id: _musicId, path: filePath, loopCount: _loopCount);
+    final param =
+        AudioMusicParam(id: _musicId, path: filePath, loopCount: _loopCount);
     param.publish = false;
     audioEffectManager.startPlayMusic(param);
     audioEffectManager.setMusicPlayoutVolume(_musicId, _volume);
@@ -141,5 +180,6 @@ class CallingBellFeature {
   Future<ByteData> loadAsset(String path) => rootBundle.load(path);
 
   @visibleForTesting
-  Future<String> getTempDirectory() async => (await getTemporaryDirectory()).path;
+  Future<String> getTempDirectory() async =>
+      (await getTemporaryDirectory()).path;
 }

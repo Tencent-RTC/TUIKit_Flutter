@@ -52,22 +52,6 @@ class _BaseBeautyPanelWidgetState extends State<BaseBeautyPanelWidget> {
       width: 1.screenWidth,
       child: Stack(
         children: [
-          Positioned(
-            left: 24.width,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: SizedBox(
-                width: 24.height,
-                height: 24.height,
-                child: Image.asset(
-                  LiveImages.returnArrow,
-                  package: Constants.pluginName,
-                ),
-              ),
-            ),
-          ),
           Center(
             child: Text(
               LiveKitLocalizations.of(Global.appContext())!.common_beauty_panel_title,
@@ -163,9 +147,15 @@ class _BaseBeautyPanelWidgetState extends State<BaseBeautyPanelWidget> {
                       ),
                     ),
                     SizedBox(height: 2.height),
-                    Text(
-                      list[index].title,
-                      style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
+                    SizedBox(
+                      width: 56.width,
+                      child: Text(
+                        list[index].title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 12),
+                      ),
                     ),
                   ],
                 ),
@@ -210,8 +200,6 @@ extension on _BaseBeautyPanelWidgetState {
         break;
       case BeautyItemType.ruddy:
         sliderValue.value = _baseBeautyStore.baseBeautyState.ruddyLevel.value.toInt();
-        break;
-      default:
         break;
     }
   }

@@ -1,5 +1,4 @@
 import 'package:atomic_x_core/api/live/co_host_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/error/error_handler.dart';
@@ -401,10 +400,6 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
 extension on _CoHostManagementPanelWidgetState {
   String _getSelfID() {
     return TUIRoomEngine.getSelfInfo().userId;
-  }
-
-  String _getLiveID() {
-    return liveStreamManager.roomState.roomId;
   }
 
   void _addObserver() {

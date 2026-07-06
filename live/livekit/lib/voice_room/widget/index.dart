@@ -1,4 +1,3 @@
-library widget;
 
 export 'panel/index.dart';
 export 'prepare/index.dart';

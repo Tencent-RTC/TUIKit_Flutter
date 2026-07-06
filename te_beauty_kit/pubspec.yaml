@@ -16,7 +16,7 @@ dependencies:
   image_picker: ^1.1.0
   package_info_plus: ^8.3.0
   shared_preferences: ^2.5.3
-  tencent_cloud_uikit_core: ^1.7.0
+  tencent_cloud_uikit_core: ^2.0.0
   tencent_effect_flutter: ^4.2.0-14
 
 dev_dependencies:

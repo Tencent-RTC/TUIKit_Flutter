@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/component/index.dart';
 
 enum TopWidgetTapEvent { stop, audienceList, liveInfo, floatWindow }

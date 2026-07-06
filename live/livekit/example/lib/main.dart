@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/view/index.dart';
-import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
 
 void main() {

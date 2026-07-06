@@ -64,24 +64,26 @@ import 'livekit_localizations_zh.dart';
 /// be consistent with the languages listed in the LiveKitLocalizations.supportedLocales
 /// property.
 abstract class LiveKitLocalizations {
-  static LiveKitLocalizations? defaultLocalizations;
   LiveKitLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
+  // ---- CUSTOM PATCH (keep after each `flutter gen-l10n`) ----
+  // Fallback to English bundle when no Localizations ancestor is found,
+  // so call sites never crash at runtime.
+  static LiveKitLocalizations? defaultLocalizations;
+
   static LiveKitLocalizations? of(BuildContext context) {
     LiveKitLocalizations? localizations = Localizations.of<LiveKitLocalizations>(context, LiveKitLocalizations);
     if (localizations == null) {
-      if (defaultLocalizations == null) {
-        defaultLocalizations = LiveKitLocalizationsEn();
-      }
+      defaultLocalizations ??= LiveKitLocalizationsEn();
       return defaultLocalizations;
     }
     return localizations;
   }
+  // ---- END CUSTOM PATCH ----
 
-  static const LocalizationsDelegate<LiveKitLocalizations> delegate =
-      _LiveKitLocalizationsDelegate();
+  static const LocalizationsDelegate<LiveKitLocalizations> delegate = _LiveKitLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -93,8 +95,7 @@ abstract class LiveKitLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -1362,8 +1363,7 @@ abstract class LiveKitLocalizations {
   ///
   /// In en, this message translates to:
   /// **'It\'s not allowed to cancel battle for room in battle'**
-  String
-      get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle;
+  String get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle;
 
   /// No description provided for @common_server_error_metadata_no_valid_keys.
   ///
@@ -1387,8 +1387,7 @@ abstract class LiveKitLocalizations {
   ///
   /// In en, this message translates to:
   /// **'The size of key in the room\'s Metadata exceeds the maximum byte limit'**
-  String
-      get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit;
+  String get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit;
 
   /// No description provided for @common_server_error_metadata_total_size_exceeds_the_limit.
   ///
@@ -1575,6 +1574,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'The user is already on the seat'**
   String get common_server_error_user_is_already_on_the_mic_seat;
+
+  /// No description provided for @common_server_error_im_sensitive_words_ban.
+  ///
+  /// In en, this message translates to:
+  /// **'The message or document contains sensitive content and is prohibited from being sent.'**
+  String get common_server_error_im_sensitive_words_ban;
 
   /// No description provided for @common_set_as_background.
   ///
@@ -2319,21 +2324,48 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'Select App and Start Live'**
   String get common_select_app_to_live;
+
+  /// No description provided for @common_violation_alert_toast.
+  ///
+  /// In en, this message translates to:
+  /// **'Current content may violate platform guidelines, please follow the rules'**
+  String get common_violation_alert_toast;
+
+  /// No description provided for @live_song_unknown_artist.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get live_song_unknown_artist;
+
+  /// No description provided for @live_anchor_manager_set_featured_host.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Featured'**
+  String get live_anchor_manager_set_featured_host;
+
+  /// No description provided for @live_anchor_manager_revoke_featured_host.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke Featured'**
+  String get live_anchor_manager_revoke_featured_host;
+
+  /// No description provided for @common_enter_anchor_live_room.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Live Room'**
+  String get common_enter_anchor_live_room;
 }
 
-class _LiveKitLocalizationsDelegate
-    extends LocalizationsDelegate<LiveKitLocalizations> {
+class _LiveKitLocalizationsDelegate extends LocalizationsDelegate<LiveKitLocalizations> {
   const _LiveKitLocalizationsDelegate();
 
   @override
   Future<LiveKitLocalizations> load(Locale locale) {
-    return SynchronousFuture<LiveKitLocalizations>(
-        lookupLiveKitLocalizations(locale));
+    return SynchronousFuture<LiveKitLocalizations>(lookupLiveKitLocalizations(locale));
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'ja', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'en', 'ja', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_LiveKitLocalizationsDelegate old) => false;
@@ -2364,8 +2396,7 @@ LiveKitLocalizations lookupLiveKitLocalizations(Locale locale) {
       return LiveKitLocalizationsZh();
   }
 
-  throw FlutterError(
-      'LiveKitLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+  throw FlutterError('LiveKitLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
       'an issue with the localizations generation tool. Please file an issue '
       'on GitHub with a reproducible sample app and the gen-l10n configuration '
       'that was used.');

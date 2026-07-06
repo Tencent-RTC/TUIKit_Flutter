@@ -1,4 +1,3 @@
-library tencent_live_uilit;
 
 export 'live_stream/features/index.dart';
 export 'voice_room/voice_room_widget.dart';

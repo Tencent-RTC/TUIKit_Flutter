@@ -6,19 +6,20 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_type_check_result.da
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit/component/live_info/state/follow_define.dart';
 
 class AnchorUserManagementPanelBase extends StatefulWidget {
   final LiveUserInfo user;
   final LiveStreamManager liveStreamManager;
   final Widget? child;
+  final bool? enableFollow;
 
   const AnchorUserManagementPanelBase({
     super.key,
     required this.user,
     required this.liveStreamManager,
     this.child,
+    this.enableFollow,
   });
 
   @override
@@ -27,7 +28,6 @@ class AnchorUserManagementPanelBase extends StatefulWidget {
 
 class _AnchorUserManagementPanelBaseState extends State<AnchorUserManagementPanelBase> {
   final ValueNotifier<bool> _isFollow = ValueNotifier(false);
-  bool _enableFollowButton = true;
 
   @override
   void initState() {
@@ -59,6 +59,7 @@ class _AnchorUserManagementPanelBaseState extends State<AnchorUserManagementPane
   }
 
   Widget _buildUserInfoWidget() {
+    bool enableFollow = widget.enableFollow ?? widget.user.userID != LoginStore.shared.loginState.loginUserInfo?.userID;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.width),
       child: SizedBox(
@@ -77,7 +78,7 @@ class _AnchorUserManagementPanelBaseState extends State<AnchorUserManagementPane
             Positioned(
                 top: 0,
                 left: 52.width,
-                right: widget.user.userID != LoginStore.shared.loginState.loginUserInfo?.userID ? 94.width : 0,
+                right: enableFollow ? 94.width : 0,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +98,7 @@ class _AnchorUserManagementPanelBaseState extends State<AnchorUserManagementPane
                 bottom: 4.height,
                 right: 0,
                 child: Visibility(
-                  visible: widget.user.userID != LoginStore.shared.loginState.loginUserInfo?.userID,
+                  visible: enableFollow,
                   child: ValueListenableBuilder(
                     valueListenable: _isFollow,
                     builder: (context, isFollow, child) {
@@ -153,8 +154,6 @@ extension on _AnchorUserManagementPanelBaseState {
   }
 
   void _followButtonClicked() async {
-    if (!_enableFollowButton) return;
-    _enableFollowButton = false;
     final friendshipManager = TencentImSDKPlugin.v2TIMManager.getFriendshipManager();
     final userId = widget.user.userID;
     if (userId.isEmpty) return;
@@ -170,7 +169,6 @@ extension on _AnchorUserManagementPanelBaseState {
         return;
       }
       _isFollow.value = false;
-      _enableFollowButton = true;
     } else {
       final result = await friendshipManager.followUser(userIDList: [userId]);
       if (result.code != 0) {
@@ -182,7 +180,6 @@ extension on _AnchorUserManagementPanelBaseState {
         return;
       }
       _isFollow.value = true;
-      _enableFollowButton = true;
     }
   }
 }

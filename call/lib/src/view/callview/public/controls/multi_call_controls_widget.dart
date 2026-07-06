@@ -1,9 +1,10 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
-import 'package:tuikit_atomic_x/call/common/widget/controls_button.dart';
+import 'package:tencent_calls_uikit/src/manager/call_manager.dart';
+import 'package:tencent_calls_uikit/src/view/callview/core/common/widget/controls_button.dart';
 
-import '../../common/call_colors.dart';
+import '../../core/common/call_colors.dart';
 
 class MultiCallControlsWidget extends StatefulWidget {
   final ValueChanged<double>? onHeightChanged;
@@ -174,7 +175,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             imgHeight: 28,
             imgOffsetX: -16,
             onTap: () {
-              DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
+              CallManager.instance.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
             },
           );
         });
@@ -198,7 +199,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
-        CallStore.shared.reject();
+        CallManager.instance.reject();
       },
     );
   }
@@ -210,7 +211,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       textColor: CallColors.colorG7,
       imgHeight: 60,
       onTap: () {
-        CallStore.shared.accept();
+        CallManager.instance.accept();
       },
     );
   }
@@ -228,9 +229,9 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == DeviceStatus.on) {
-                DeviceStore.shared.closeLocalMicrophone();
+                CallManager.instance.closeLocalMicrophone();
               } else {
-                DeviceStore.shared.openLocalMicrophone();
+                CallManager.instance.openLocalMicrophone();
               }
             },
             useAnimation: true,
@@ -252,9 +253,9 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == AudioRoute.speakerphone) {
-                DeviceStore.shared.setAudioRoute(AudioRoute.earpiece);
+                CallManager.instance.setAudioRoute(AudioRoute.earpiece);
               } else {
-                DeviceStore.shared.setAudioRoute(AudioRoute.speakerphone);
+                CallManager.instance.setAudioRoute(AudioRoute.speakerphone);
               }
             },
             useAnimation: true,
@@ -275,9 +276,9 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
             imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
             onTap: () {
               if (value == DeviceStatus.on) {
-                DeviceStore.shared.closeLocalCamera();
+                CallManager.instance.closeLocalCamera();
               } else {
-                DeviceStore.shared.openLocalCamera(DeviceStore.shared.state.isFrontCamera.value);
+                CallManager.instance.openLocalCamera(DeviceStore.shared.state.isFrontCamera.value);
               }
             },
             useAnimation: true,
@@ -292,7 +293,7 @@ class _MultiCallControlsWidgetState extends State<MultiCallControlsWidget> {
       textColor: CallColors.colorG7,
       imgHeight: isFunctionExpand ? bigBtnHeight : smallBtnHeight,
       onTap: () {
-        CallStore.shared.hangup();
+        CallManager.instance.hangup();
       },
       useAnimation: true,
       duration: Duration(milliseconds: duration),

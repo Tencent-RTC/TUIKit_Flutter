@@ -36,7 +36,7 @@ class LiveBeautyStore {
 
   Widget? getTEBeautyPanel(Color backgroundColor) {
     Map<String, dynamic> param = {
-      'backgroundColor' : backgroundColor.value,
+      'backgroundColor' : backgroundColor.toARGB32(),
     };
     const beautyPanel = 'beautyPanel';
     TUICore.instance.callService(kTEBeautyService, kGetBeautyPanel, param);

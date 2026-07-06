@@ -172,6 +172,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
     } else {
       LiveKitLogger.error("LoginStore login fail, {code:${result.errorCode}, message:${result.errorMessage}");
+      if (!mounted) return;
       makeToast(context, "code:${result.errorCode} message:${result.errorMessage}");
     }
     _isButtonEnabled = true;

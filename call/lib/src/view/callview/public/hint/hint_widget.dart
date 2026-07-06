@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/call_colors.dart';
+import '../../core/common/call_colors.dart';
 
 class _HintDisplayTracker {
   static String? _currentCallId;

@@ -164,6 +164,7 @@ extension on _CoGuestTypeSelectPanelWidgetState {
       seatIndex: widget.seatIndex,
       timeout: Constants.defaultRequestTimeout,
     );
+    if (!mounted) return;
     if (result.errorCode != TUIError.success.rawValue) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
       makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',

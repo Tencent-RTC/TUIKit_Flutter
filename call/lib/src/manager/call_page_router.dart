@@ -9,9 +9,9 @@ import 'package:flutter/widgets.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
 import '../common/metrics/key_metrics.dart';
-import 'call_main_widget.dart';
-import 'component/incoming_banner/incoming_banner_widget.dart';
-import 'component/inviter/invite_user_widget.dart';
+import '../view/call_main_widget.dart';
+import '../view/component/incoming_banner/incoming_banner_widget.dart';
+import '../view/component/inviter/invite_user_widget.dart';
 
 enum CallPageType {
   none,
@@ -50,7 +50,7 @@ class InviteUserCallbacks {
   });
 }
 
-class CallPageManager {
+class CallPageRouter {
   final GlobalKey<NavigatorState> _callNavigatorKey = GlobalKey<NavigatorState>();
   final NavigatorState? Function() _navigatorGetter;
   final AndroidPipFeature pipController = AndroidPipFeature();
@@ -83,7 +83,7 @@ class CallPageManager {
   
   NavigatorState? get callNavigator => _callNavigatorKey.currentState;
  
-  CallPageManager({
+  CallPageRouter({
     required NavigatorState? Function() navigatorGetter,
   })  : _navigatorGetter = navigatorGetter;
 
@@ -434,78 +434,78 @@ class CallPageManager {
     );
   }
 
-  void handleNoPermissionAndEndCall(bool isCalled) async {
+  void handleNoPermissionAndEndCall() async {
     final overlay = _navigatorGetter()?.overlay;
-    if (overlay == null) {
-      if (isCalled) {
-        CallStore.shared.hangup();
-      }
-      return;
+    bool? goSettings;
+    if (overlay != null) {
+      goSettings = await _showPermissionSettingsOverlay(overlay);
     }
 
-    final completer = Completer<bool?>();
+    final selfStatus = CallStore.shared.state.selfInfo.value.status;
+    if (selfStatus == CallParticipantStatus.waiting) {
+      CallStore.shared.reject();
+    }
+
+    if (goSettings == true) {
+      await Permission.openAppSettings();
+    }
+  }
+
+  Future<bool> _showPermissionSettingsOverlay(OverlayState overlay) {
+    final completer = Completer<bool>();
     OverlayEntry? overlayEntry;
 
     overlayEntry = OverlayEntry(
       builder: (context) {
         final l10n = AtomicLocalizations.of(context);
         return Material(
-        color: Colors.black54,
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 40),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.callNeedToAccessMicrophoneAndCameraPermissions,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        overlayEntry?.remove();
-                        completer.complete(false);
-                      },
-                      child: Text(l10n.cancel),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () async {
-                        overlayEntry?.remove();
-                        completer.complete(true);
-                      },
-                      child: Text(l10n.callGoToSettings),
-                    ),
-                  ],
-                ),
-              ],
+          color: Colors.black54,
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.callNeedToAccessMicrophoneAndCameraPermissions,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          overlayEntry?.remove();
+                          if (!completer.isCompleted) completer.complete(false);
+                        },
+                        child: Text(l10n.cancel),
+                      ),
+                      const SizedBox(width: 10),
+                      TextButton(
+                        onPressed: () {
+                          overlayEntry?.remove();
+                          if (!completer.isCompleted) completer.complete(true);
+                        },
+                        child: Text(l10n.callGoToSettings),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
       },
     );
 
     overlay.insert(overlayEntry);
-
-    final goSettings = await completer.future;
-
-    if (goSettings == true) {
-      await Permission.openAppSettings();
-    }
-
-    if (isCalled) {
-      CallStore.shared.reject();
-    }
+    return completer.future;
   }
 
 }

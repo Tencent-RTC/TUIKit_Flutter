@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 
 import '../../../../common/index.dart';
@@ -28,6 +27,7 @@ class LiveListService {
     roomListState.refreshStatus.value = true;
     roomListState.cursor = "";
     await _fetchLiveList();
+    roomListState.refreshStatus.value = false;
   }
 
   Future<void> loadMoreData() async {
@@ -37,7 +37,8 @@ class LiveListService {
       return;
     }
     roomListState.loadStatus.value = true;
-    _loadMoreData();
+    await _fetchLiveList();
+    roomListState.loadStatus.value = false;
   }
 }
 
@@ -46,44 +47,12 @@ extension LiveListServiceLogicExtension on LiveListService {
     final String cursor = roomListState.cursor;
     final result = await liveListStore.fetchLiveList(cursor: cursor, count: fetchListCount);
     if (!result.isSuccess) {
-      if (result.errorCode != TUIError.errFailed.rawValue &&
-          result.errorMessage != null &&
-          result.errorMessage!.contains('exceed frequency limit')) {
-        LiveKitLogger.error(
-            "${LiveListService.tag} _initData [code:${result.errorCode},message:${result.errorMessage}]");
-        final message = ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage ?? '');
-        if (message != null) _toastController.add(message);
-      }
-      roomListState.loadStatus.value = false;
-      roomListState.refreshStatus.value = false;
+      final message = ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage ?? '');
+      if (message != null) _toastController.add(message);
       roomListState.isHaveMoreData.value = false;
     } else {
       roomListState.liveInfoList.value = liveListStore.liveState.liveList.value;
       roomListState.cursor = liveListStore.liveState.liveListCursor.value;
-      roomListState.loadStatus.value = false;
-      roomListState.refreshStatus.value = false;
-      roomListState.isHaveMoreData.value = liveListStore.liveState.liveListCursor.value.isNotEmpty;
-    }
-  }
-
-  Future<void> _loadMoreData() async {
-    final String cursor = roomListState.cursor;
-    final result = await liveListStore.fetchLiveList(cursor: cursor, count: fetchListCount);
-    if (!result.isSuccess) {
-      LiveKitLogger.error(
-          "${LiveListService.tag} _initData [code:${result.errorCode},message:${result.errorMessage}]");
-      final message = ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage);
-      if (message != null) _toastController.add(message);
-      roomListState.loadStatus.value = false;
-      roomListState.isHaveMoreData.value = false;
-    } else {
-      List<LiveInfo> liveInfoList = [
-        ...roomListState.liveInfoList.value,
-        ...liveListStore.liveState.liveList.value
-      ];
-      roomListState.liveInfoList.value = liveInfoList;
-      roomListState.cursor = liveListStore.liveState.liveListCursor.value;
-      roomListState.loadStatus.value = false;
       roomListState.isHaveMoreData.value = liveListStore.liveState.liveListCursor.value.isNotEmpty;
     }
   }
