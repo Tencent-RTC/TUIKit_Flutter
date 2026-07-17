@@ -17,6 +17,7 @@ tencent_chat_uikit is a chat-specific UI library built on top of tuikit_atomic_x
   s.dependency 'Flutter'
   s.dependency 'tuikit_atomic_x'
   s.dependency 'Masonry'
+  s.dependency 'AlbumPickerCore', '~> 1.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
   s.platform = :ios, '14.0'
