@@ -55,19 +55,37 @@ enum PermissionType {
 
 /// Permission status returned by the platform.
 enum PermissionStatus {
-  /// 完全授权：功能可用
+  /// Fully granted — the feature is available.
   granted('granted'),
 
-  /// 拒绝或未授权：功能不可用，包含可重试（Deny）和系统受限（Restricted/Unknown）状态
+  /// Denied or unauthorized — the feature is unavailable. Covers both
+  /// retryable denials and system-restricted states (Restricted / Unknown).
   denied('denied'),
 
-  /// 永久拒绝：功能不可用，需引导用户至系统设置
+  /// Permanently denied — the feature is unavailable and the user must be
+  /// guided to the system Settings to re-enable it.
   permanentlyDenied('permanentlyDenied'),
 
-  /// 部分授权：功能受限可用
-  /// - iOS: 相册（Photos）的部分访问权限（iOS 14+），通知的临时授权
-  /// - Android: 相册（Photos）的部分访问权限（Android 14+，用户选择"仅允许访问选定的照片和视频"）
-  limited('limited');
+  /// Partially granted — the feature works with reduced scope.
+  /// - iOS: Photos limited access (iOS 14+); provisional / ephemeral
+  ///   notifications.
+  /// - Android: Photos partial access (Android 14+, "Allow access to
+  ///   selected photos and videos only").
+  limited('limited'),
+
+  /// Not yet determined — the user has never been asked for this permission.
+  /// - iOS: Maps to the native `notDetermined` / `undetermined` state.
+  ///   The OS will surface its native prompt the next time the permission
+  ///   is requested (or, for some APIs, when the underlying resource is
+  ///   first accessed by the SDK).
+  /// - Android: Currently unused (Android distinguishes the first-ask state
+  ///   via `shouldShowRationale` plus a persisted flag and does not expose
+  ///   this value).
+  ///
+  /// Callers deciding whether to send the user to the system Settings should
+  /// EXCLUDE this state — `notDetermined` is not a refusal, just an absence
+  /// of prior interaction.
+  notDetermined('notDetermined');
 
   const PermissionStatus(this.value);
 
@@ -84,6 +102,10 @@ enum PermissionStatus {
         return PermissionStatus.permanentlyDenied;
       case 'limited':
         return PermissionStatus.limited;
+      case 'notdetermined':
+      case 'not_determined':
+      case 'undetermined':
+        return PermissionStatus.notDetermined;
       case 'denied':
       case 'restricted':
       case 'unknown':

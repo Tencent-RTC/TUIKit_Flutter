@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,6 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
   late final LiveStreamManager liveStreamManager;
   late final LiveCoreController liveCoreController;
   late final StreamSubscription<String> _toastSubscription;
-  late final StreamSubscription<void> _kickedOutSubscription;
   late final VoidCallback _connectionRequestListener = _handleConnectionRequest;
   late final VoidCallback _battleRequestListener = _handleBattleRequest;
   late final VoidCallback _battleWaitingStatusListener = _handleBattleWaitingStatusChanged;
@@ -129,13 +129,21 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
           ),
         );
       }
-      return Container(
-        color: Colors.black,
-        margin: EdgeInsets.only(top: 120.height),
-        width: 1.screenWidth,
-        height: 9 / 16.0 * 1.screenWidth,
-        child: LiveCoreWidget(controller: widget.liveCoreController),
-      );
+      return LayoutBuilder(builder: (context, constraints) {
+        final isPortrait = MediaQuery.orientationOf(context) == Orientation.portrait;
+        final screenWidth = constraints.maxWidth;
+        final screenHeight = constraints.maxHeight;
+        final isFloating = widget.liveStreamManager.floatWindowState.isFloatWindowMode.value;
+        double height = isFloating ? screenHeight : (isPortrait ? 9 / 16.0 * screenWidth : screenHeight);
+        double top = isFloating ? 0 : (isPortrait ? 120.height : 0);
+        return Container(
+          color: isFloating ? Colors.transparent : Colors.black,
+          margin: EdgeInsets.only(top: top),
+          width: screenWidth,
+          height: height,
+          child: LiveCoreWidget(controller: widget.liveCoreController),
+        );
+      });
     } else {
       return _buildCoreWidget();
     }
@@ -243,7 +251,7 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
           var endInfo = AnchorEndStatisticsWidgetInfo(
               roomId: liveStreamManager.roomState.roomId,
               liveDuration: statisticsData.liveDuration,
-              viewCount: statisticsData.totalViewers,
+              viewCount: max(statisticsData.totalViewers - 1, 0),
               messageCount: statisticsData.totalMessageCount,
               giftIncome: statisticsData.totalGiftCoins,
               giftSenderCount: statisticsData.totalUniqueGiftSenders,
@@ -263,8 +271,10 @@ extension on _AnchorBroadcastWidgetState {
     liveStreamManager.battleState.isInWaiting.addListener(_battleWaitingStatusListener);
     liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
 
-    _toastSubscription = liveStreamManager.toastSubject.stream.listen((toast) => makeToast(context, toast));
-    _kickedOutSubscription = liveStreamManager.kickedOutSubject.stream.listen((_) => _handleKickedOut());
+    _toastSubscription = liveStreamManager.toastSubject.stream.listen((toast) {
+      if (!mounted) return;
+      makeToast(context, toast);
+    });
   }
 
   void _removeObserver() {
@@ -276,7 +286,6 @@ extension on _AnchorBroadcastWidgetState {
     liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
 
     _toastSubscription.cancel();
-    _kickedOutSubscription.cancel();
   }
 
   void _handleConnectionRequest() {
@@ -416,8 +425,6 @@ extension on _AnchorBroadcastWidgetState {
       );
     }
   }
-
-  void _handleKickedOut() {}
 
   void _isFloatWindowModeChanged() {
     bool isFloatWindowMode = liveStreamManager.floatWindowState.isFloatWindowMode.value;

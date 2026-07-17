@@ -1,8 +1,8 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../../common/constants.dart';
-import '../../hint/timer_widget.dart';
+import '../../core/common/constants.dart';
+import '../hint/timer_widget.dart';
 
 class CallPipWidget extends StatefulWidget {
   final CallCoreController controller;

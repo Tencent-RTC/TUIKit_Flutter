@@ -106,6 +106,8 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
             liveStreamManager: _liveStreamManager,
             liveCoreController: _liveCoreController,
             onTapEnterFloatWindowInApp: () {
+              final isLandscape = _liveStreamManager.floatWindowState.isLandscape.value;
+              widget.floatWindowController?.setScreenOrientation(isLandscape);
               widget.floatWindowController?.onTapSwitchFloatWindowInApp(true);
             },
           );

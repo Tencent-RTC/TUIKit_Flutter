@@ -45,10 +45,6 @@ class NetworkInfoService {
     final trtcCloud = await _getTRTCCloud();
     trtcCloud.setVideoEncoderParam(params);
   }
-
-  void updateAudioQuality(TUIAudioQuality quality) {
-    roomEngine.updateAudioQuality(quality);
-  }
 }
 
 extension on NetworkInfoService {

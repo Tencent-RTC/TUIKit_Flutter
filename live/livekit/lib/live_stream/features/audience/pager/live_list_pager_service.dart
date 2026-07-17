@@ -11,8 +11,7 @@ class LiveListPagerService {
   final LiveListPagerState state = LiveListPagerState();
   final LiveListStore _liveListStore;
 
-  LiveListPagerService({LiveListStore? liveListStore})
-      : _liveListStore = liveListStore ?? LiveListStore.shared;
+  LiveListPagerService({LiveListStore? liveListStore}) : _liveListStore = liveListStore ?? LiveListStore.shared;
 
   Future<void> initWithCurrentLive(LiveInfo currentLiveInfo) async {
     state.liveInfoList.value = [currentLiveInfo];
@@ -22,6 +21,41 @@ class LiveListPagerService {
     state.isLoadingMore.value = false;
 
     await _fetchNextPage(excludeLiveId: currentLiveInfo.liveID);
+  }
+
+  Future<void> initWithRoomId(String roomId) async {
+    final placeholder = LiveInfo()..liveID = roomId;
+    state.liveInfoList.value = [placeholder];
+    state.currentPageIndex.value = 0;
+    state.cursor = '';
+    state.hasMoreData.value = true;
+    state.isLoadingMore.value = false;
+
+    await Future.wait([
+      _loadLiveInfo(roomId),
+      _fetchNextPage(excludeLiveId: roomId),
+    ]);
+  }
+
+  Future<void> _loadLiveInfo(String roomId) async {
+    try {
+      final result = await _liveListStore.fetchLiveInfo(roomId);
+      if (!result.isSuccess) {
+        LiveKitLogger.error('$tag _loadLiveInfo failed [code:${result.errorCode}, message:${result.errorMessage}]');
+        return;
+      }
+      final fetched = result.liveInfo;
+      if (fetched.liveID != roomId) return;
+
+      final current = state.liveInfoList.value;
+      if (current.isEmpty) {
+        state.liveInfoList.value = [fetched];
+      } else {
+        state.liveInfoList.value = [fetched, ...current.sublist(1)];
+      }
+    } catch (e) {
+      LiveKitLogger.error('$tag _loadLiveInfo error: $e');
+    }
   }
 
   Future<void> loadMore() async {
@@ -52,8 +86,7 @@ class LiveListPagerService {
       );
 
       if (!result.isSuccess) {
-        LiveKitLogger.error(
-            '$tag _fetchNextPage failed [code:${result.errorCode}, message:${result.errorMessage}]');
+        LiveKitLogger.error('$tag _fetchNextPage failed [code:${result.errorCode}, message:${result.errorMessage}]');
         state.hasMoreData.value = false;
         state.isLoadingMore.value = false;
         return;
@@ -63,14 +96,10 @@ class LiveListPagerService {
       final newCursor = _liveListStore.liveState.liveListCursor.value;
 
       final existingIds = state.liveInfoList.value.map((info) => info.liveID).toSet();
-      List<LiveInfo> deduplicatedList = fetchedList
-          .where((info) => !existingIds.contains(info.liveID))
-          .toList();
+      List<LiveInfo> deduplicatedList = fetchedList.where((info) => !existingIds.contains(info.liveID)).toList();
 
       if (excludeLiveId != null) {
-        deduplicatedList = deduplicatedList
-            .where((info) => info.liveID != excludeLiveId)
-            .toList();
+        deduplicatedList = deduplicatedList.where((info) => info.liveID != excludeLiveId).toList();
       }
 
       state.liveInfoList.value = [

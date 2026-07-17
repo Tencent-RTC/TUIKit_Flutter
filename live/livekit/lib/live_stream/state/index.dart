@@ -1,4 +1,3 @@
-library state;
 
 export 'battle_state.dart';
 export 'co_guest_state.dart';

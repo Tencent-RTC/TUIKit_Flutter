@@ -6,18 +6,12 @@ import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
-import 'package:tencent_live_uikit/common/error/error_handler.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/common/screen/index.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_host/co_host_management_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/living_widget/more_features_panel_widget.dart';
 
-import '../../../../common/constants/constants.dart';
-import '../../../../common/language/index.dart';
-import '../../../../common/resources/index.dart';
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../common/widget/float_window/float_window_mode.dart';
-import '../../../../common/widget/index.dart';
 import '../../../live_define.dart';
 import '../../../manager/live_stream_manager.dart';
 import '../co_guest/co_guest_management_panel_widget.dart';

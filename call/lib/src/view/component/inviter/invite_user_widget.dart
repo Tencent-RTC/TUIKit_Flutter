@@ -8,7 +8,7 @@ import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_calls_uikit/src/common/constants.dart';
 import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 import 'package:tencent_calls_uikit/src/common/utils/string_stream.dart';
-import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
+import 'package:tencent_calls_uikit/src/manager/call_page_router.dart';
 
 class InviteUserWidget extends StatefulWidget {
   final InviteUserCallbacks? callbacks;

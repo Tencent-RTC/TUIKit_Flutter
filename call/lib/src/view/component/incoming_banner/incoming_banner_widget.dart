@@ -4,6 +4,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencent_calls_uikit/src/common/constants.dart';
+import 'package:tencent_calls_uikit/src/manager/call_manager.dart';
 import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
 
 class IncomingBannerWidget extends StatefulWidget {
@@ -29,12 +30,12 @@ class _IncomingBannerWidgetState extends State<IncomingBannerWidget> {
   }
 
   Future<void> _onAccept() async {
-    await CallStore.shared.accept();
+    await CallManager.instance.accept();
     widget.onShowCalling?.call();
   }
 
   Future<void> _onReject() async {
-    await CallStore.shared.reject();
+    await CallManager.instance.reject();
     widget.onCloseAll?.call();
   }
   

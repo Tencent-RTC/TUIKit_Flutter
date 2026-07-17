@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_calls_uikit/src/bridge/voip/fcm_data_sync_handler.dart';
 import 'package:tencent_calls_uikit/src/common/utils/foreground_service.dart';
 import 'package:tencent_calls_uikit/src/state/global_state.dart';
-import 'package:tencent_calls_uikit/src/view/call_page_manager.dart';
+import 'package:tencent_calls_uikit/src/manager/call_page_router.dart';
+import 'package:tencent_calls_uikit/src/view/callview/call_view.dart';
 
 
 class CallMainWidget extends StatefulWidget {

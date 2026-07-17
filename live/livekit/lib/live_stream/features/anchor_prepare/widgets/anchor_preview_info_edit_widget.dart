@@ -268,8 +268,6 @@ extension on _AnchorPreviewInfoEditWidgetState {
         return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default;
       case LiveStreamPrivacyStatus.privacy:
         return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_privacy;
-      default:
-        return LiveKitLocalizations.of(Global.appContext())!.common_stream_privacy_status_default;
     }
   }
 }

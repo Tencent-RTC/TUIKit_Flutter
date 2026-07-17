@@ -98,6 +98,7 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
   }
 
   void onStartLive(bool isJoinSelf, LiveInfo liveInfo) {
+    _floatWindowManager.setScreenOrientation(liveInfo.seatTemplate is VideoLandscape4Seats);
     return _roomManager.onStartLive(isJoinSelf, liveInfo);
   }
 
@@ -188,6 +189,7 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
 
 extension LiveStreamManagerWithAudience on LiveStreamManager {
   void onJoinLive(LiveInfo liveInfo) {
+    _floatWindowManager.setScreenOrientation(liveInfo.seatTemplate is VideoLandscape4Seats);
     _mediaManager.onJoinLive(liveInfo);
     return _roomManager.onJoinLive(liveInfo);
   }

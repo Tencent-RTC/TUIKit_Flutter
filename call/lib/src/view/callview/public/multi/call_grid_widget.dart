@@ -1,14 +1,14 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tuikit_atomic_x/call/component/widgets/grid/call_grid_waiting_widget.dart';
+import 'package:tencent_calls_uikit/src/view/callview/public/multi/call_grid_waiting_widget.dart';
 
-import '../../../../ai/ai_transcriber.dart';
-import '../../../common/constants.dart';
-import '../../../common/utils/utils.dart';
-import '../../aisubtitle/ai_subtitle.dart';
-import '../../controls/multi_call_controls_widget.dart';
-import '../../hint/timer_widget.dart';
+import 'package:tuikit_atomic_x/ai/ai_transcriber.dart';
+import '../../core/common/constants.dart';
+import '../../core/common/utils/utils.dart';
+import '../transcriber/ai_subtitle.dart';
+import '../controls/multi_call_controls_widget.dart';
+import '../hint/timer_widget.dart';
 
 class CallGridWidget extends StatefulWidget {
   final CallCoreController controller;

@@ -14,7 +14,6 @@ import '../../api/live_stream_service.dart';
 import '../../state/co_guest_state.dart';
 import '../../state/media_state.dart';
 import '../live_stream_manager.dart';
-import '../../../common/platform/index.dart';
 
 const kIOSAppGroup = ''; //'group.com.tencent.fx.livekit'
 

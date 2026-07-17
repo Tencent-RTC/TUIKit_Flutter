@@ -10,6 +10,8 @@ typedef ContentWidgetBuilder = Widget Function(BuildContext context, FloatWindow
 class FloatWindowWidget extends StatefulWidget {
   final ContentWidgetBuilder builder;
   final double? padding;
+  final double? x;
+  final double? y;
   final Size? size;
   final BorderRadius? borderRadius;
 
@@ -17,6 +19,8 @@ class FloatWindowWidget extends StatefulWidget {
     super.key,
     required this.builder,
     this.padding,
+    this.x,
+    this.y,
     this.size,
     this.borderRadius,
   });
@@ -31,9 +35,10 @@ class _FloatWindowWidgetState extends State<FloatWindowWidget> with SingleTicker
   final double floatWindowRadius = 15.radius;
   late final double floatWindowPadding = widget.padding ?? 10.width;
   final Size fullScreenSize = Size(min(1.screenWidth, 1.screenHeight), max(1.screenWidth, 1.screenHeight));
-  late final Size floatWindowSize = widget.size ??
+  late final Size floatWindowPortraitSize = widget.size ??
       Size(fullScreenSize.width * 0.3 + 2 * floatWindowPadding,
           fullScreenSize.width * 0.3 * 16 / 9 + 2 * floatWindowPadding);
+  late Size floatWindowSize = floatWindowPortraitSize;
   late final BorderRadius floatWindowBorderRadius =
       widget.borderRadius ?? BorderRadius.all(Radius.circular(floatWindowRadius));
   late Rect fullScreenRect = Rect.fromLTWH(0, 0, fullScreenSize.width, fullScreenSize.height);
@@ -91,6 +96,7 @@ class _FloatWindowWidgetState extends State<FloatWindowWidget> with SingleTicker
                 padding:
                     (_isFullScreen.value || _isPipMode.value) ? EdgeInsets.zero : EdgeInsets.all(floatWindowPadding),
                 child: ClipRRect(
+                  clipBehavior: (_isFullScreen.value || _isPipMode.value) ? Clip.antiAlias : Clip.antiAliasWithSaveLayer,
                   borderRadius: (_isFullScreen.value || _isPipMode.value) ? BorderRadius.zero : floatWindowBorderRadius,
                   child: Stack(
                     children: [
@@ -121,10 +127,12 @@ class _FloatWindowWidgetState extends State<FloatWindowWidget> with SingleTicker
 
   void _onEnterOverlayMode() {
     setState(() {
+      final isLandscape = floatWindowController.isLandscape.value;
+      floatWindowSize = isLandscape ? floatWindowPortraitSize.flipped : floatWindowPortraitSize;
       size = floatWindowSize;
       Size screenSize = _getCurrentScreenSize();
-      final left = screenSize.width - floatWindowSize.width;
-      final top = screenSize.height - floatWindowSize.height;
+      final left = widget.x ?? screenSize.width - floatWindowSize.width;
+      final top = widget.y ?? screenSize.height - floatWindowSize.height;
       rect = Rect.fromLTWH(left, top, floatWindowSize.width, floatWindowSize.height);
       _onTapCallback = _onTap;
       _setFullScreen(false);

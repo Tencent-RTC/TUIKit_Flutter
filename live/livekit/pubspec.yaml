@@ -4,6 +4,12 @@ version: 4.1.0
 repository: https://github.com/Tencent-RTC/TUIKit_Flutter
 homepage: https://trtc.io/
 
+topics:
+  - livestream
+  - voice room
+  - pk
+  - battle
+
 environment:
 
   sdk: '>=3.4.0 <4.0.0'
@@ -20,15 +26,15 @@ dependencies:
   cached_network_image: ^3.4.1
   tuikit_atomic_x:
     path: ../../atomic-x
-  atomic_x_core: ^4.1.0
-  rtc_room_engine: ^4.1.0
+  atomic_x_core: ^5.0.2
+  rtc_room_engine: ^4.2.0
   live_uikit_barrage: ^3.0.1
   live_uikit_gift: ^4.1.0
 #  te_beauty_kit:
 #    path: ../../te_beauty_kit
 
-  tencent_cloud_uikit_core: ^1.7.0
-  tencent_cloud_chat_sdk: ^8.0.5901
+  tencent_cloud_uikit_core: ^2.0.0
+  tencent_cloud_chat_sdk: ^9.0.7652
   tencent_rtc_sdk: '>=13.2.0'
   replay_kit_launcher: ^1.0.0
 

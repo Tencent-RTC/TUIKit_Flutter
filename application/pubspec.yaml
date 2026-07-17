@@ -57,10 +57,7 @@ dependencies:
 
 # Temporary solution, to be removed after the release of chat/live
 dependency_overrides:
-  rtc_room_engine: 4.1.0
-  live_uikit_barrage: 3.0.1
-  atomic_x_core: ^5.0.0
-  tencent_cloud_chat_sdk: ^9.0.7652
+  atomic_x_core: ^5.0.2
 
 dev_dependencies:
   flutter_test:

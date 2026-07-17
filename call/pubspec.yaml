@@ -1,6 +1,6 @@
 name: tencent_calls_uikit
 description: "TUICallKit is a UIKit about audio&video calls launched by Tencent Cloud."
-version: 4.0.8
+version: 5.0.0
 homepage:
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   tuikit_atomic_x:
     path: ../atomic-x
 
-  tencent_cloud_uikit_core: ^1.7.6
+  tencent_cloud_uikit_core: ^2.0.0
   plugin_platform_interface: ^2.1.8
   shared_preferences: ^2.5.3
   path_provider: ^2.1.5

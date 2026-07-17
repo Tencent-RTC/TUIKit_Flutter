@@ -79,12 +79,14 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
                   // takes a seat (becomes a guest), this entry must be hidden.
                   final isOnSeat = coGuestStatus == CoGuestStatus.linking;
                   final showPip = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature();
+                  final isSupportMultiplePlaybackQuality =
+                      widget.liveStreamManager.mediaState.playbackQualityList.value.length >= 2;
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 20.width,
                     children: [
-                      if (!isOnSeat) _buildVideoSettingsItemWidget(context),
+                      if (!isOnSeat && isSupportMultiplePlaybackQuality) _buildVideoSettingsItemWidget(context),
                       if (showPip) _buildPipItemWidget(context),
                     ],
                   );
@@ -168,8 +170,6 @@ extension on _AudienceSettingsPanelWidgetState {
         return '540P';
       case TUIVideoQuality.videoQuality_360P:
         return '360P';
-      default:
-        return 'unknown';
     }
   }
 

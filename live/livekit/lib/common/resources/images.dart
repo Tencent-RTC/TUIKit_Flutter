@@ -49,6 +49,7 @@ class LiveImages {
   static const selectRuddy = 'assets/images/live_select_ruddy.png';
 
   static const settingsItemBeauty = 'assets/images/live_settings_item_beauty.png';
+  static const settingsItemAudioEffect = 'assets/images/live_settings_item_audio_effect.png';
   static const settingsItemMusic = 'assets/images/live_settings_item_music.png';
   static const settingsItemFlip = 'assets/images/live_settings_item_flip.png';
   static const settingsItemMirror = 'assets/images/live_settings_item_mirror.png';
@@ -143,6 +144,8 @@ class LiveImages {
   static const closeCamera = 'assets/images/live_close_camera.png';
   static const disableCamera = 'assets/images/live_disable_camera.png';
   static const leaveSeat = 'assets/images/live_leave_seat.png';
+  static const setFeaturedHost = 'assets/images/live_set_featured_host.png';
+  static const revokeFeaturedHost = 'assets/images/live_revoke_featured_host.png';
 
   static const seatOwner = 'assets/images/live_seat_owner.png';
   static const seatAudioLockedIcon = 'assets/images/live_seat_audio_locked.png';
@@ -153,4 +156,10 @@ class LiveImages {
   static const liveDoubleColumn = 'assets/images/live_double_column.png';
 
   static const endByServer = 'assets/images/live_end_by_server.png';
+
+  static const muteImage = 'assets/images/live_muteImage.png';
+  static const muteImageEn = 'assets/images/live_muteImage_en.png';
+  static const muteImageLand = 'assets/images/live_muteImage_land.png';
+  static const muteImageEnLand = 'assets/images/live_muteImage_en_land.png';
+  static const muteImageSmall = 'assets/images/live_muteImage_small.png';
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
-import 'package:tencent_live_uikit/live_stream/features/live_room_audience_widget.dart';
-import 'package:tencent_live_uikit/live_stream/features/live_room_audience_overlay.dart';
 import 'package:tencent_live_uikit/live_stream/features/index.dart';
 import 'package:tencent_live_uikit/voice_room/index.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
@@ -23,10 +21,13 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
 
   static bool isRepeatClick = false;
 
+  final ValueNotifier<String> enteringRoomID = ValueNotifier<String>('');
+  late final VoidCallback _onCurrentLiveListener = _onCurrentLiveChanged;
+
   TUILiveKitNavigatorObserver._internal() {
     LiveKitLogger.info('TUILiveKitNavigatorObserver Init');
     Boot.instance;
-    LiveListStore.shared;
+    LiveListStore.shared.liveState.currentLive.addListener(_onCurrentLiveListener);
   }
 
   BuildContext getContext() {
@@ -44,15 +45,15 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
       GlobalFloatWindowManager floatWindowManager = GlobalFloatWindowManager.instance;
       GlobalFloatWindowState state = floatWindowManager.state;
       if (floatWindowManager.isFloating()) {
-        if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
-          makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
-              type: ToastType.warning);
-          return false;
-        }
         if (state.roomId.value == liveInfo.liveID) {
           floatWindowManager.switchToFullScreenMode();
           return false;
         } else {
+          if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
+            makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
+                type: ToastType.warning);
+            return false;
+          }
           floatWindowManager.overlayManager.closeOverlay();
         }
       }
@@ -80,6 +81,7 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
             ));
         return true;
       } else {
+        enteringRoomID.value = liveInfo.liveID;
         Navigator.push(
             getContext(),
             MaterialPageRoute(
@@ -116,20 +118,21 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
     GlobalFloatWindowManager floatWindowManager = GlobalFloatWindowManager.instance;
     GlobalFloatWindowState state = floatWindowManager.state;
     if (floatWindowManager.isFloating()) {
-      if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
-        isRepeatClick = false;
-        makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
-            type: ToastType.warning);
-        return false;
-      }
       if (state.roomId.value == liveInfo.liveID) {
         isRepeatClick = false;
         floatWindowManager.switchToFullScreenMode();
         return false;
       } else {
+        if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
+          isRepeatClick = false;
+          makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
+              type: ToastType.warning);
+          return false;
+        }
         floatWindowManager.overlayManager.closeOverlay();
       }
     }
+    enteringRoomID.value = liveInfo.liveID;
     Navigator.push(
         getContext(),
         MaterialPageRoute(
@@ -156,5 +159,13 @@ class TUILiveKitNavigatorObserver extends RouteObserver {
       }
       return false;
     });
+  }
+
+  void _onCurrentLiveChanged() {
+    final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+    if (liveInfo.liveID.isNotEmpty) {
+      LiveKitLogger.info("currentLive is ${liveInfo.liveID}, clear enteringRoomID(${enteringRoomID.value})");
+      enteringRoomID.value = "";
+    }
   }
 }

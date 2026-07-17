@@ -1,6 +1,7 @@
 import 'package:tencent_calls_uikit/src/common/platform/call_kit_platform_interface.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
 import 'package:tencent_calls_uikit/src/common/utils/app_lifecycle.dart';
+import 'package:tencent_calls_uikit/src/manager/call_manager.dart';
 
 class FcmDataSyncHandler {
   FcmDataSyncHandler() {
@@ -24,10 +25,10 @@ class FcmDataSyncHandler {
   }
 
   void handleFcmReject() {
-    CallStore.shared.reject();
+    CallManager.instance.reject();
   }
 
   void handleFcmAccept() {
-    CallStore.shared.accept();
+    CallManager.instance.accept();
   }
 }

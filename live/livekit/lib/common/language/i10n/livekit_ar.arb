@@ -244,6 +244,7 @@
   "common_server_error_this_member_has_been_banned": "تم حظر هذا العضو",
   "common_server_error_this_member_has_been_muted": "تم كتم صوت هذا العضو",
   "common_server_error_user_is_already_on_the_mic_seat": "المستخدم موجود بالفعل على المقعد",
+  "common_server_error_im_sensitive_words_ban": "تحتوي الرسالة أو الوثيقة على محتوى حساس ويُحظر إرسالها.",
   "common_set_as_background": "تعيين كخلفية",
   "common_set_as_cover": "تعيين كغلاف",
   "common_settings": "الإعدادات",
@@ -367,5 +368,10 @@
   "common_end_live_by_server": "تم إيقاف البث المباشر بسبب انتهاكات للوائح.",
   "common_go_to_enable": "الذهاب للتفعيل",
   "common_live_screen": "بث الشاشة مباشرةً",
-  "common_select_app_to_live": "بث مباشر للعبةاختر التطبيق وابدأ البث المباشر"
+  "common_select_app_to_live": "بث مباشر للعبةاختر التطبيق وابدأ البث المباشر",
+  "common_violation_alert_toast": "المحتوى الحالي قد ينتهك إرشادات المنصة، يرجى الالتزام بالقواعد",
+  "live_song_unknown_artist": "غير معروف",
+  "live_anchor_manager_set_featured_host": "تعيين كمضيف رئيسي",
+  "live_anchor_manager_revoke_featured_host": "إلغاء المضيف الرئيسي",
+  "common_enter_anchor_live_room": "الذهاب إلى غرفة البث"
 }

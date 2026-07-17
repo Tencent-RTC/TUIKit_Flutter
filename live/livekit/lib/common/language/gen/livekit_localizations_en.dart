@@ -9,8 +9,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   LiveKitLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get common_disconnect_guest_tips =>
-      'Are you sure you want to disconnect xxx?';
+  String get common_disconnect_guest_tips => 'Are you sure you want to disconnect xxx?';
 
   @override
   String get common_anchor_battle => 'Battle';
@@ -30,8 +29,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Are you sure you want to end the battle? The current result will be the final result after the end';
 
   @override
-  String get common_battle_invitation_timeout =>
-      'Battle request has been timeout';
+  String get common_battle_invitation_timeout => 'Battle request has been timeout';
 
   @override
   String get common_battle_invitee_reject => 'xxx rejected battle';
@@ -40,8 +38,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_request_rejected => 'xxx rejected';
 
   @override
-  String get common_battle_inviter_cancel =>
-      'xxx canceled battle, please try to initiate it again';
+  String get common_battle_inviter_cancel => 'xxx canceled battle, please try to initiate it again';
 
   @override
   String get common_battle_inviting => 'xxx invite you to battle together';
@@ -56,8 +53,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_battle_wait_stop => 'Cancel';
 
   @override
-  String get common_connect_conflict =>
-      'The room you are invited to connect to is connected to another room.';
+  String get common_connect_conflict => 'The room you are invited to connect to is connected to another room.';
 
   @override
   String get common_connect_error => 'Other errors, cannot connect.';
@@ -66,8 +62,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_connect_inviting => 'Waiting';
 
   @override
-  String get common_connect_inviting_append =>
-      'xxx invite you to host together';
+  String get common_connect_inviting_append => 'xxx invite you to host together';
 
   @override
   String get common_connect_invitation_timeout => 'Invitation has timed out';
@@ -79,8 +74,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_connection_list_title => 'Connecting Streamers(xxx)';
 
   @override
-  String get common_connection_room_full =>
-      'The number of co-hosting has exceeded the maximum limit.';
+  String get common_connection_room_full => 'The number of co-hosting has exceeded the maximum limit.';
 
   @override
   String get common_cover => 'Cover';
@@ -95,8 +89,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_disable_video => 'Disable Video';
 
   @override
-  String get common_disconnect_tips =>
-      'Are you sure you want to disconnect from other streamers?';
+  String get common_disconnect_tips => 'Are you sure you want to disconnect from other streamers?';
 
   @override
   String get common_enable_audio => 'Enable Audio';
@@ -115,15 +108,13 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'You are currently co-hosting with other streamers. Would you like to [End Co-host] or [End Live] ?';
 
   @override
-  String get common_end_pk_tips =>
-      'You are currently in PK mode. Would you like to [End PK] or [End Live] ?';
+  String get common_end_pk_tips => 'You are currently in PK mode. Would you like to [End PK] or [End Live] ?';
 
   @override
   String get common_kick_out_of_room => 'Remove';
 
   @override
-  String get common_kicked_out_of_room_by_owner =>
-      'You have been kicked out of the room';
+  String get common_kicked_out_of_room_by_owner => 'You have been kicked out of the room';
 
   @override
   String get common_more => 'More';
@@ -150,12 +141,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_link_mic_up_title => 'Current Mic';
 
   @override
-  String get common_send_message_disabled =>
-      'You have been muted in the current room';
+  String get common_send_message_disabled => 'You have been muted in the current room';
 
   @override
-  String get common_send_message_enable =>
-      'You have been unmuted in the current room';
+  String get common_send_message_enable => 'You have been unmuted in the current room';
 
   @override
   String get common_setting_done => 'Done';
@@ -170,8 +159,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_stop_video => 'Stop Video';
 
   @override
-  String get common_terminate_room_connection_message =>
-      'Are you sure you want to disconnect?';
+  String get common_terminate_room_connection_message => 'Are you sure you want to disconnect?';
 
   @override
   String get common_un_mute_audio_by_master => 'The anchor has unmuted you';
@@ -189,24 +177,19 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_link_host => 'Host';
 
   @override
-  String get live_barrage_error_content_is_long =>
-      'The content is too long, please reduce the content and try again';
+  String get live_barrage_error_content_is_long => 'The content is too long, please reduce the content and try again';
 
   @override
-  String get live_barrage_error_network =>
-      'The network is abnormal, please try again later';
+  String get live_barrage_error_network => 'The network is abnormal, please try again later';
 
   @override
-  String get live_barrage_error_sensitive_word =>
-      'Sensitive words are detected, please modify it and try again';
+  String get live_barrage_error_sensitive_word => 'Sensitive words are detected, please modify it and try again';
 
   @override
-  String get live_error_connection_notexit =>
-      'The room you are invited to connect to does not exist';
+  String get live_error_connection_notexit => 'The room you are invited to connect to does not exist';
 
   @override
-  String get live_error_connection_retry =>
-      'Internal error, it is recommended to try again.';
+  String get live_error_connection_retry => 'Internal error, it is recommended to try again.';
 
   @override
   String get live_error_room_mismatch =>
@@ -222,19 +205,16 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get livelist_viewed_audience_count => 'xxx people viewed';
 
   @override
-  String get livelist_exit_float_window_tip =>
-      'Live streaming in progress. Please try again later.';
+  String get livelist_exit_float_window_tip => 'Live streaming in progress. Please try again later.';
 
   @override
   String get livelist_click_enter_room => 'Click to enter the live room';
 
   @override
-  String get livestreamcore_battle_error_conflict =>
-      'The anchor is in the battle and cannot initiate the battle';
+  String get livestreamcore_battle_error_conflict => 'The anchor is in the battle and cannot initiate the battle';
 
   @override
-  String get livestreamcore_battle_error_other =>
-      'The other error, cannot initiate the battle';
+  String get livestreamcore_battle_error_other => 'The other error, cannot initiate the battle';
 
   @override
   String get common_audience_end_link_tips =>
@@ -256,8 +236,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_stream_privacy_status => 'Live Mode:';
 
   @override
-  String get common_voiceroom_kicked_out_of_seat =>
-      'Kicked out of seat by room owner';
+  String get common_voiceroom_kicked_out_of_seat => 'Kicked out of seat by room owner';
 
   @override
   String get common_like => 'Likes';
@@ -278,8 +257,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Camera has No System Authorization, Check System Authorization';
 
   @override
-  String get common_client_error_camera_occupied =>
-      'Camera is Occupied, Check if Other Process is Using Camera';
+  String get common_client_error_camera_occupied => 'Camera is Occupied, Check if Other Process is Using Camera';
 
   @override
   String get common_client_error_camera_start_fail =>
@@ -294,12 +272,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Room Owner Does Not Support Leaving the Room, Room Owner Can Only Close the Room';
 
   @override
-  String get common_client_error_failed =>
-      'Server is having a hiccup, please try again later';
+  String get common_client_error_failed => 'Server is having a hiccup, please try again later';
 
   @override
-  String get common_client_error_freq_limit =>
-      'Request Rate Limited, Please Try Again Later';
+  String get common_client_error_freq_limit => 'Request Rate Limited, Please Try Again Later';
 
   @override
   String get common_client_error_get_screen_sharing_target_failed =>
@@ -310,12 +286,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Passing illegal parameters when calling API, check if the parameters are legal';
 
   @override
-  String get common_client_error_max_seat_count_limit =>
-      'Maximum Seat Exceeds Package Quantity Limit';
+  String get common_client_error_max_seat_count_limit => 'Maximum Seat Exceeds Package Quantity Limit';
 
   @override
-  String get common_client_error_microphone_device_empty =>
-      'No Mic Device Currently';
+  String get common_client_error_microphone_device_empty => 'No Mic Device Currently';
 
   @override
   String get common_client_error_microphone_not_authorized =>
@@ -341,8 +315,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Need to Apply to Room Owner or Administrator to Open Mic';
 
   @override
-  String get common_client_error_open_microphone_need_seat_unlock =>
-      'Current Seat Audio is Locked';
+  String get common_client_error_open_microphone_need_seat_unlock => 'Current Seat Audio is Locked';
 
   @override
   String get common_client_error_open_screen_share_need_permission_from_admin =>
@@ -368,12 +341,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_client_error_repeat_operation => 'Repeat Operation';
 
   @override
-  String get common_client_error_request_id_invalid =>
-      'Signaling Request ID is Invalid or Has Been Processed';
+  String get common_client_error_request_id_invalid => 'Signaling Request ID is Invalid or Has Been Processed';
 
   @override
-  String get common_client_error_request_id_repeat =>
-      'Signal request repetition';
+  String get common_client_error_request_id_repeat => 'Signal request repetition';
 
   @override
   String get common_client_error_request_no_permission =>
@@ -392,28 +363,23 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Illegal Room Name, Maximum 30 Bytes, Must Be UTF-8 Encoding if Contains Chinese Characters';
 
   @override
-  String get common_client_error_room_not_support_preloading =>
-      'The current room does not support preloading';
+  String get common_client_error_room_not_support_preloading => 'The current room does not support preloading';
 
   @override
   String get common_client_error_sdk_app_id_not_found =>
       'Not Found SDKAppID, Please Confirm Application Info in TRTC Console';
 
   @override
-  String get common_client_error_sdk_not_initialized =>
-      'Not Logged In, Please Call Login API';
+  String get common_client_error_sdk_not_initialized => 'Not Logged In, Please Call Login API';
 
   @override
-  String get common_client_error_seat_index_not_exist =>
-      'Seat Serial Number Does Not Exist';
+  String get common_client_error_seat_index_not_exist => 'Seat Serial Number Does Not Exist';
 
   @override
-  String get common_client_error_send_message_disabled_for_all =>
-      'All Members Muted in the Current Room';
+  String get common_client_error_send_message_disabled_for_all => 'All Members Muted in the Current Room';
 
   @override
-  String get common_client_error_send_message_disabled_for_current =>
-      'You Have Been Muted in the Current Room';
+  String get common_client_error_send_message_disabled_for_current => 'You Have Been Muted in the Current Room';
 
   @override
   String get common_client_error_start_screen_sharing_failed =>
@@ -427,8 +393,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Room Owner or Administrator Permission Required for Operation';
 
   @override
-  String get common_client_error_user_need_owner_permission =>
-      'Room Owner Permission Required for Operation';
+  String get common_client_error_user_need_owner_permission => 'Room Owner Permission Required for Operation';
 
   @override
   String get common_client_error_user_not_exist => 'User is not exist';
@@ -445,8 +410,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Gift server pre-verification failed please check console configuration';
 
   @override
-  String get common_server_error_call_in_progress =>
-      'The device operation failed while in a call';
+  String get common_server_error_call_in_progress => 'The device operation failed while in a call';
 
   @override
   String get common_ear_return_volume => 'Ear Monitor Volume';
@@ -572,8 +536,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_hang_up => 'Hang Up';
 
   @override
-  String get common_kick_user_confirm_message =>
-      'Are you sure you want to remove xxx?';
+  String get common_kick_user_confirm_message => 'Are you sure you want to remove xxx?';
 
   @override
   String get common_link_mic_manager => 'Link Management';
@@ -663,20 +626,16 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_server_error_already_on_the_mic => 'Already on the seat';
 
   @override
-  String get common_server_error_already_on_the_mic_queue =>
-      'Already on the seat queue';
+  String get common_server_error_already_on_the_mic_queue => 'Already on the seat queue';
 
   @override
-  String get common_server_error_battle_does_not_exist_or_has_ended =>
-      'The battle does not exist or has ended';
+  String get common_server_error_battle_does_not_exist_or_has_ended => 'The battle does not exist or has ended';
 
   @override
-  String get common_server_error_battle_session_has_ended =>
-      'The battle session has ended';
+  String get common_server_error_battle_session_has_ended => 'The battle session has ended';
 
   @override
-  String get common_server_error_connection_does_not_exist =>
-      'The current connection does not exist or has ended';
+  String get common_server_error_connection_does_not_exist => 'The current connection does not exist or has ended';
 
   @override
   String get common_server_error_creating_battles_too_frequently =>
@@ -695,13 +654,11 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'Exceeds the upper limit, for example, the number of microphone seats, the number of PK match rooms, etc., exceeds the payment limit';
 
   @override
-  String
-      get common_server_error_has_exceeded_the_limit_in_connection_or_battle =>
-          'The room number has exceeded the limit in connection or battle';
+  String get common_server_error_has_exceeded_the_limit_in_connection_or_battle =>
+      'The room number has exceeded the limit in connection or battle';
 
   @override
-  String get common_server_error_in_other_battle =>
-      'The room is already in other battle';
+  String get common_server_error_in_other_battle => 'The room is already in other battle';
 
   @override
   String get common_server_error_insufficient_operation_permissions =>
@@ -711,17 +668,14 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_server_error_invalid_room_type => 'Invalid room type';
 
   @override
-  String get common_server_error_is_connecting_with_other_rooms =>
-      'The current room is connecting with other rooms';
+  String get common_server_error_is_connecting_with_other_rooms => 'The current room is connecting with other rooms';
 
   @override
-  String
-      get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle =>
-          'It\'s not allowed to cancel battle for room in battle';
+  String get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle =>
+      'It\'s not allowed to cancel battle for room in battle';
 
   @override
-  String get common_server_error_metadata_no_valid_keys =>
-      'There is no valid keys when delete metadata';
+  String get common_server_error_metadata_no_valid_keys => 'There is no valid keys when delete metadata';
 
   @override
   String get common_server_error_metadata_number_of_keys_exceeds_the_limit =>
@@ -740,38 +694,33 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'The total size of all value in the room\'s Metadata exceeds the maximum byte limit';
 
   @override
-  String get common_server_error_mic_seat_is_locked =>
-      'The seat is locked. You can try another seat';
+  String get common_server_error_mic_seat_is_locked => 'The seat is locked. You can try another seat';
 
   @override
   String get common_server_error_no_payment_information =>
       'No payment information, you need to purchase a package in the console';
 
   @override
-  String get common_server_error_no_rooms_in_the_battle_is_valid =>
-      'None of the rooms in the battle is valid';
+  String get common_server_error_no_rooms_in_the_battle_is_valid => 'None of the rooms in the battle is valid';
 
   @override
   String get common_server_error_not_a_room_member => 'Not a room member';
 
   @override
-  String get common_server_error_not_on_the_mic_queue =>
-      'Not on the seat queue';
+  String get common_server_error_not_on_the_mic_queue => 'Not on the seat queue';
 
   @override
   String get common_server_error_not_on_the_mic_seat => 'Not on the seat';
 
   @override
-  String get common_server_error_not_started_yet =>
-      'The battle has not started yet';
+  String get common_server_error_not_started_yet => 'The battle has not started yet';
 
   @override
   String get common_server_error_param_illegal =>
       'The parameter is illegal. Check whether the request is correct according to the error description';
 
   @override
-  String get common_server_error_requires_password =>
-      'The current room requires a password for entry';
+  String get common_server_error_requires_password => 'The current room requires a password for entry';
 
   @override
   String get common_server_error_room_admin_quantity_exceeds_the_upper_limit =>
@@ -782,16 +731,13 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'The room does not exist, or it once existed but has now been dissolved';
 
   @override
-  String get common_server_error_room_does_not_support_mic_ability =>
-      'The room does not support seat ability';
+  String get common_server_error_room_does_not_support_mic_ability => 'The room does not support seat ability';
 
   @override
-  String get common_server_error_room_entry_password_error =>
-      'Room Entry Password Error';
+  String get common_server_error_room_entry_password_error => 'Room Entry Password Error';
 
   @override
-  String get common_server_error_room_id_exists =>
-      'The room ID already exists. Please select another room ID';
+  String get common_server_error_room_id_exists => 'The room ID already exists. Please select another room ID';
 
   @override
   String get common_server_error_room_id_has_been_occupied_by_chat =>
@@ -805,56 +751,48 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_server_error_room_is_full => 'The room is full';
 
   @override
-  String get common_server_error_room_is_in_connection =>
-      'The room is already in connection';
+  String get common_server_error_room_is_in_connection => 'The room is already in connection';
 
   @override
-  String get common_server_error_seat_is_already_occupied =>
-      'The current seat is already occupied';
+  String get common_server_error_seat_is_already_occupied => 'The current seat is already occupied';
 
   @override
-  String get common_server_error_signal_request_conflict =>
-      'Signal request conflict';
+  String get common_server_error_signal_request_conflict => 'Signal request conflict';
 
   @override
-  String get common_server_error_system_internal_error =>
-      'Server internal error, please retry';
+  String get common_server_error_system_internal_error => 'Server internal error, please retry';
 
   @override
-  String get common_server_error_tag_quantity_exceeds_upper_limit =>
-      'Tag quantity Exceeds Upper limit';
+  String get common_server_error_tag_quantity_exceeds_upper_limit => 'Tag quantity Exceeds Upper limit';
 
   @override
-  String get common_server_error_the_room_is_not_in_the_battle =>
-      'The room isn‘t in the battle';
+  String get common_server_error_the_room_is_not_in_the_battle => 'The room isn‘t in the battle';
 
   @override
-  String get common_server_error_the_seat_list_is_empty =>
-      'The seat list is empty';
+  String get common_server_error_the_seat_list_is_empty => 'The seat list is empty';
 
   @override
-  String get common_server_error_the_seats_are_all_taken =>
-      'The seats are all taken.';
+  String get common_server_error_the_seats_are_all_taken => 'The seats are all taken.';
 
   @override
-  String get common_server_error_there_is_a_pending_battle_request =>
-      'There is a pending battle request for this room';
+  String get common_server_error_there_is_a_pending_battle_request => 'There is a pending battle request for this room';
 
   @override
   String get common_server_error_there_is_a_pending_connection_request =>
       'There is a pending connection request for this room';
 
   @override
-  String get common_server_error_this_member_has_been_banned =>
-      'This member has been banned';
+  String get common_server_error_this_member_has_been_banned => 'This member has been banned';
 
   @override
-  String get common_server_error_this_member_has_been_muted =>
-      'This member has been muted';
+  String get common_server_error_this_member_has_been_muted => 'This member has been muted';
 
   @override
-  String get common_server_error_user_is_already_on_the_mic_seat =>
-      'The user is already on the seat';
+  String get common_server_error_user_is_already_on_the_mic_seat => 'The user is already on the seat';
+
+  @override
+  String get common_server_error_im_sensitive_words_ban =>
+      'The message or document contains sensitive content and is prohibited from being sent.';
 
   @override
   String get common_set_as_background => 'Set as background';
@@ -887,8 +825,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_stream_privacy_status_privacy => 'Privacy';
 
   @override
-  String get common_text_cancel_link_mic_apply =>
-      'Cancel application for link mic';
+  String get common_text_cancel_link_mic_apply => 'Cancel application for link mic';
 
   @override
   String get common_text_close_link_mic => 'End Link';
@@ -903,8 +840,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_text_link_mic_video => 'Apply for video link';
 
   @override
-  String get common_tips_apply_link_mic =>
-      'The screen effect will automatically take effect after connecting';
+  String get common_tips_apply_link_mic => 'The screen effect will automatically take effect after connecting';
 
   @override
   String get common_title_link_mic_selector => 'Choose Link Mode';
@@ -945,19 +881,16 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
       'After enabling, the app will automatically enter picture-in-picture mode when moved to the background';
 
   @override
-  String get common_voiceroom_empty_view =>
-      'No users in the seat, go to invite';
+  String get common_voiceroom_empty_view => 'No users in the seat, go to invite';
 
   @override
   String get common_voiceroom_invite => 'Invite';
 
   @override
-  String get common_voiceroom_invite_seat_canceled =>
-      'Seat invitation has been canceled';
+  String get common_voiceroom_invite_seat_canceled => 'Seat invitation has been canceled';
 
   @override
-  String get common_voiceroom_invite_seat_rejected =>
-      'Seat invitation has been rejected';
+  String get common_voiceroom_invite_seat_rejected => 'Seat invitation has been rejected';
 
   @override
   String get common_voiceroom_invite_seat_timeout => 'Seat invitation timeout';
@@ -972,19 +905,16 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_voiceroom_need_agree => 'Require owner\'s consent to speak';
 
   @override
-  String get common_voiceroom_receive_seat_invitation =>
-      'xxx invites you to take seat';
+  String get common_voiceroom_receive_seat_invitation => 'xxx invites you to take seat';
 
   @override
   String get common_voiceroom_take_seat => 'Take Seat';
 
   @override
-  String get common_voiceroom_take_seat_rejected =>
-      'Take seat application has been rejected';
+  String get common_voiceroom_take_seat_rejected => 'Take seat application has been rejected';
 
   @override
-  String get common_voiceroom_take_seat_timeout =>
-      'Take seat application timeout';
+  String get common_voiceroom_take_seat_timeout => 'Take seat application timeout';
 
   @override
   String get common_voiceroom_unlock => 'Unlock Seat';
@@ -1038,12 +968,10 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_video_capture_closed => 'Video capture disabled';
 
   @override
-  String get common_audio_tips_proper_volume =>
-      'Proper volume ensures good viewing experience';
+  String get common_audio_tips_proper_volume => 'Proper volume ensures good viewing experience';
 
   @override
-  String get common_audio_tips_regular_checks =>
-      'Regular checks ensure good viewing experience';
+  String get common_audio_tips_regular_checks => 'Regular checks ensure good viewing experience';
 
   @override
   String get common_network_switch_tips => 'Avoid frequent network switching';
@@ -1185,8 +1113,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get seat_invite_battle => 'Invite Battle';
 
   @override
-  String get seat_repeat_invite_tips =>
-      'Inviting others you can withdraw the invitation and send a new one';
+  String get seat_repeat_invite_tips => 'Inviting others you can withdraw the invitation and send a new one';
 
   @override
   String get seat_end_Battle => 'End Battle';
@@ -1233,8 +1160,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_live_game => 'Live Game';
 
   @override
-  String get common_end_live_by_server =>
-      'The live stream was shut down due to violations of regulations.';
+  String get common_end_live_by_server => 'The live stream was shut down due to violations of regulations.';
 
   @override
   String get common_go_to_enable => 'Go to Enable';
@@ -1244,4 +1170,19 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_select_app_to_live => 'Select App and Start Live';
+
+  @override
+  String get common_violation_alert_toast => 'Current content may violate platform guidelines, please follow the rules';
+
+  @override
+  String get live_song_unknown_artist => 'Unknown';
+
+  @override
+  String get live_anchor_manager_set_featured_host => 'Set as Featured';
+
+  @override
+  String get live_anchor_manager_revoke_featured_host => 'Revoke Featured';
+
+  @override
+  String get common_enter_anchor_live_room => 'Enter Live Room';
 }

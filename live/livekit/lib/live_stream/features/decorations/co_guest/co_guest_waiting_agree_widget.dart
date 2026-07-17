@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:atomic_x_core/api/live/co_guest_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';

@@ -128,7 +128,7 @@ class _AnchorCoGuestFloatWidgetState extends State<AnchorCoGuestFloatWidget> {
                 child: ClipOval(
                   child: Image.network(
                     _getCoGuestState().applicants.value.length > 1
-                        ? _getCoGuestState().applicants.value.toList()[1].avatarURL ?? ""
+                        ? _getCoGuestState().applicants.value.toList()[1].avatarURL
                         : "",
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {

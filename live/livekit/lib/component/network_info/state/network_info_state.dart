@@ -6,7 +6,6 @@ class NetWorkInfoState {
   ValueNotifier<int> videoResolution = ValueNotifier(720);
 
   ValueNotifier<AudioState> audioState = ValueNotifier(AudioState.normal);
-  ValueNotifier<TUIAudioQuality> audioQuality = ValueNotifier(TUIAudioQuality.audioProfileDefault);
   ValueNotifier<int> volume = ValueNotifier(50);
 
   ValueNotifier<int> rtt = ValueNotifier(0);

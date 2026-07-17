@@ -3,21 +3,24 @@ import 'package:rtc_room_engine/rtc_room_engine.dart';
 import '../index.dart';
 
 class ErrorHandler {
-  static const Set<LiveError?> interceptToastOnlyPrintLog = {
+  static const Set<LiveError> _interceptToastOnlyPrintLogOnLive = {
     LiveError.freqLimit,
-    LiveError.repeatOperation,
-    LiveError.seatNotSupportLinkMic,
+    LiveError.roomMismatch,
+  };
+
+  static const Set<TIMError> _interceptToastOnlyPrintLogOnIM = {
+    TIMError.errSdkCommApiCallFrequencyLimit,
   };
 
   static String? convertToErrorMessage(int code, String? message) {
     LiveKitLogger.info('ErrorHandler :[error: $code, message: $message]');
     final liveError = LiveError.fromInt(code);
     if (liveError != null) {
-      return liveError.description;
+      return _interceptToastOnlyPrintLogOnLive.contains(liveError) ? '' : liveError.description;
     }
     final imError = TIMError.fromInt(code);
     if (imError != null) {
-      return imError.description;
+      return _interceptToastOnlyPrintLogOnIM.contains(imError) ? '' : imError.description;
     }
     return "code: $code, message: $message";
   }
@@ -401,7 +404,8 @@ enum TIMError {
   errSdkNetWaitSendTimeoutNoNetwork(9523),
   errSdkNetWaitAckTimeoutNoNetwork(9524),
   errSdkNetSendRemainingTimeoutNoNetwork(9525),
-  errSvrGroupShutUpDeny(10017);
+  errSvrGroupShutUpDeny(10017),
+  errSvrSensitiveWordsBan(80001);
 
   final int code;
 
@@ -441,6 +445,8 @@ extension TIMErrorWithLocalization on TIMError {
       case TIMError.errSdkNetWaitAckTimeoutNoNetwork:
       case TIMError.errSdkNetSendRemainingTimeoutNoNetwork:
         return LiveKitLocalizations.of(Global.appContext())?.live_barrage_error_network;
+      case TIMError.errSvrSensitiveWordsBan:
+        return LiveKitLocalizations.of(Global.appContext())?.common_server_error_im_sensitive_words_ban;
       default:
         return '${LiveKitLocalizations.of(Global.appContext())?.common_client_error_failed}, code: $code';
     }

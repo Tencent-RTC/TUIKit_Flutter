@@ -9,12 +9,12 @@ import 'live_room_audience_widget.dart';
 
 class TUILiveRoomAudienceOverlay extends StatefulWidget {
   final String roomId;
-  final LiveInfo liveInfo;
+  final LiveInfo? liveInfo;
 
   const TUILiveRoomAudienceOverlay({
     super.key,
     required this.roomId,
-    required this.liveInfo,
+    this.liveInfo,
   });
 
   @override

@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/component/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/living_widget/audience_bottom_menu_widget.dart';
@@ -14,9 +15,9 @@ import 'package:tuikit_atomic_x/base_component/basic_controls/alert_dialog.dart'
 import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
-import '../../../../component/network_info/index.dart';
 import '../../../live_define.dart';
 import '../../../manager/module/user_manager.dart';
+import '../panel/admin_user_management_for_audience_panel.dart';
 import '../panel/audience_user_info_panel_widget.dart';
 import './player_menu_widget.dart';
 
@@ -40,8 +41,13 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
   late final VoidCallback _playbackVideoQualityChangedListener = _onPlaybackVideoQualityChanged;
   TUIVideoQuality? playbackQuality;
   AlertHandler? _closePanelSheetHandler;
+  BottomSheetHandler? _adminUserManagementPanelHandler;
+  BottomSheetHandler? _audienceUserInfoPanelHandler;
+  BottomSheetHandler? _playerMenuPanelHandler;
 
   late final LiveListListener _liveListListener;
+  late final VoidCallback _loginStatusListener = _onLoginStatusChanged;
+  late final StreamSubscription<LoginEvent> _loginEventSubscription;
 
   @override
   void initState() {
@@ -53,10 +59,23 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
       _closeAllDialog();
     });
     LiveListStore.shared.addLiveListListener(_liveListListener);
+    LoginStore.shared.addListener(_loginStatusListener);
+    _loginEventSubscription = LoginStore.shared.loginEventStream.listen((event) {
+      switch (event) {
+        case LoginEvent.kickedOffline:
+        case LoginEvent.loginExpired:
+          LiveKitLogger.warning("LoginEvent => $event");
+          _closePage();
+          break;
+      }
+    });
   }
 
   @override
   void dispose() {
+    _closeAllDialog();
+    _loginEventSubscription.cancel();
+    LoginStore.shared.removeListener(_loginStatusListener);
     LiveListStore.shared.removeLiveListListener(_liveListListener);
     _giftPlayController?.dispose();
     _networkInfoManager.dispose();
@@ -122,8 +141,10 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
                   onClickUserItem: (user) {
                     final isSelf = TUIRoomEngine.getSelfInfo().userId == user.userID;
                     if (!isSelf) {
-                      popupWidget(AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                          context: context, backgroundColor: LiveColors.designStandardTransparent);
+                      _audienceUserInfoPanelHandler = popupWidget(
+                          AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+                          context: context,
+                          backgroundColor: LiveColors.designStandardTransparent);
                     }
                   },
                 ),
@@ -244,14 +265,33 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
           return BarrageDisplayWidget(
             controller: _barrageDisplayController!,
             onClickBarrageItem: (barrage) {
-              final isSelf = TUIRoomEngine.getSelfInfo().userId == barrage.sender.userID;
+              final currentLive = LiveListStore.shared.liveState.currentLive.value;
+              final selfID = LoginStore.shared.loginState.loginUserInfo?.userID;
+              final isSelf = selfID == barrage.sender.userID;
+              if (currentLive.liveID.isEmpty || barrage.sender.userID.isEmpty || isSelf) {
+                return;
+              }
               final user = LiveUserInfo(
                   userID: barrage.sender.userID,
                   userName: barrage.sender.userName,
                   avatarURL: barrage.sender.avatarURL);
-              if (!isSelf) {
-                popupWidget(AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                    context: context, backgroundColor: LiveColors.designStandardTransparent);
+              final adminList = LiveAudienceStore.create(currentLive.liveID).liveAudienceState.adminList.value;
+              final selfIsAdmin = adminList.any((user) => user.userID == selfID);
+              final senderIsAdmin = adminList.any((user) => user.userID == barrage.sender.userID);
+              final senderIsOwner = currentLive.liveOwner.userID == barrage.sender.userID;
+              if (selfIsAdmin && !senderIsAdmin && !senderIsOwner) {
+                _adminUserManagementPanelHandler = popupWidget(
+                    AdminUserManagementForAudiencePanel(
+                      user: user,
+                      liveStreamManager: widget.liveStreamManager,
+                      closeCallback: () => _adminUserManagementPanelHandler?.close(),
+                    ),
+                    context: context);
+              } else {
+                _audienceUserInfoPanelHandler = popupWidget(
+                    AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+                    context: context,
+                    backgroundColor: LiveColors.designStandardTransparent);
               }
             },
           );
@@ -286,7 +326,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
     }
     final orientation = MediaQuery.orientationOf(context);
     if (widget.liveStreamManager.roomState.roomVideoStreamIsLandscape.value && orientation == Orientation.landscape) {
-      popupWidget(
+      _playerMenuPanelHandler = popupWidget(
         PlayerMenuWidget(liveStreamManager: widget.liveStreamManager),
         context: context,
         barrierColor: LiveColors.designStandardTransparent,
@@ -443,6 +483,14 @@ extension on _AudienceLivingWidgetState {
     playbackQuality = playbackVideoQuality;
   }
 
+  void _onLoginStatusChanged() {
+    final loginStatus = LoginStore.shared.loginState.loginStatus;
+    if (loginStatus == LoginStatus.unlogin) {
+      LiveKitLogger.warning("LoginStatus => unlogin");
+      _closePage();
+    }
+  }
+
   void _closePage() {
     if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
@@ -515,8 +563,6 @@ extension on _AudienceLivingWidgetState {
         return '540P';
       case TUIVideoQuality.videoQuality_360P:
         return '360P';
-      default:
-        return 'Original';
     }
   }
 
@@ -528,5 +574,8 @@ extension on _AudienceLivingWidgetState {
 
   void _closeAllDialog() {
     _closePanelSheetHandler?.close();
+    _adminUserManagementPanelHandler?.close();
+    _audienceUserInfoPanelHandler?.close();
+    _playerMenuPanelHandler?.close();
   }
 }

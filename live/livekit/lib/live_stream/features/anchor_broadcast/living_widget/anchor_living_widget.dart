@@ -1,10 +1,10 @@
+import 'dart:async';
+
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
 import 'package:live_uikit_gift/live_uikit_gift.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
-import 'package:tencent_live_uikit/component/network_info/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_guest/anchor_co_guest_float_widget.dart';
 import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
@@ -49,6 +49,9 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   late final LiveListListener _liveListListener;
   late final LiveSummaryStore _liveSummaryStore;
   late final VoidCallback _onScreenShareStatusListener = _onScreenShareStatusChanged;
+  late final VoidCallback _loginStatusListener = _onLoginStatusChanged;
+  late final StreamSubscription<LoginEvent> _loginEventSubscription;
+  bool _isLiveEndedByServer = false;
 
   @override
   void initState() {
@@ -61,12 +64,12 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
       onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
         if (liveID != liveStreamManager.roomState.roomId) return;
         if (reason == LiveEndedReason.endedByServer) {
+          _isLiveEndedByServer = true;
           widget.onEndLive.call(_buildStatisticsFromSummary(), LiveEndedReason.endedByServer);
           liveStreamManager.onStopLive();
         }
       },
       onKickedOutOfLive: (String liveID, LiveKickedOutReason reason, String message) {
-        // TODO: LiveListStore not call onKickedOutOfLive
         if (liveID != liveStreamManager.roomState.roomId) return;
         _closePage();
       },
@@ -75,10 +78,20 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
     coHostStore = CoHostStore.create(liveStreamManager.roomState.roomId);
     battleStore = BattleStore.create(liveStreamManager.roomState.roomId);
     _addObserver();
+    _loginEventSubscription = LoginStore.shared.loginEventStream.listen((event) {
+      switch (event) {
+        case LoginEvent.kickedOffline:
+        case LoginEvent.loginExpired:
+          LiveKitLogger.warning("LoginEvent => $event");
+          _closePage();
+          break;
+      }
+    });
   }
 
   @override
   void dispose() {
+    _loginEventSubscription.cancel();
     _giftPlayController?.dispose();
     _networkInfoManager.dispose();
     _removeObserver();
@@ -101,6 +114,14 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   void _closeAllDialog() {
     _userManagementPanelSheetHandler?.close();
     _closePanelSheetHandler?.close();
+  }
+
+  void _onLoginStatusChanged() {
+    final loginStatus = LoginStore.shared.loginState.loginStatus;
+    if (loginStatus == LoginStatus.unlogin) {
+      LiveKitLogger.warning("LoginStatus => unlogin");
+      _closePage();
+    }
   }
 
   void _closePage() {
@@ -285,7 +306,10 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
                   roomId: liveStreamManager.roomState.roomId,
                   ownerId: liveStreamManager.roomState.liveInfo.liveOwner.userID,
                   selfUserId: TUIRoomEngine.getSelfInfo().userId,
-                  selfName: TUIRoomEngine.getSelfInfo().userName);
+                  selfName: TUIRoomEngine.getSelfInfo().userName,
+                  onError: (code, message) {
+                    makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '', type: ToastType.error);
+                  });
               _barrageDisplayController
                   ?.setCustomBarrageBuilder(GiftBarrageItemBuilder(selfUserId: TUIRoomEngine.getSelfInfo().userId));
             }
@@ -379,6 +403,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
 
 extension on _AnchorLivingWidgetState {
   void _addObserver() {
+    LoginStore.shared.addListener(_loginStatusListener);
     DeviceStore.shared.state.screenStatus.addListener(_onScreenShareStatusListener);
     liveListStore.addLiveListListener(_liveListListener);
     liveStreamManager.userState.enterUser.addListener(_userEnterRoomListener);
@@ -386,6 +411,7 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _removeObserver() {
+    LoginStore.shared.removeListener(_loginStatusListener);
     DeviceStore.shared.state.screenStatus.removeListener(_onScreenShareStatusListener);
     liveListStore.removeLiveListListener(_liveListListener);
     liveStreamManager.userState.enterUser.removeListener(_userEnterRoomListener);
@@ -499,15 +525,12 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _stopLiveStream() async {
+    if (_isLiveEndedByServer) return;
     battleStore.exitBattle(liveStreamManager.battleState.battleId.value);
     final isObsBroadcast = !liveStreamManager.roomState.liveInfo.keepOwnerOnSeat;
     if (isObsBroadcast) {
       liveListStore.leaveLive();
-      if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
-        GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
-      } else {
-        Navigator.of(context).pop();
-      }
+      _closePage();
     } else {
       if (liveStreamManager.roomState.videoStreamSource == VideoStreamSource.screenShare) {
         liveStreamManager.mediaManager.stopScreenShare();
@@ -517,6 +540,7 @@ extension on _AnchorLivingWidgetState {
       _giftPlayController?.dispose();
 
       final result = await future;
+      if (_isLiveEndedByServer) return;
       if (result.errorCode != TUIError.success.rawValue) {
         liveStreamManager.toastSubject
             .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');

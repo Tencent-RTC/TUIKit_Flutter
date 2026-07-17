@@ -25,13 +25,13 @@ import '../features/audience/pager/live_list_pager_service.dart';
 
 class TUILiveRoomAudienceWidget extends StatefulWidget {
   final String roomId;
-  final LiveInfo liveInfo;
+  final LiveInfo? liveInfo;
   final FloatWindowController? floatWindowController;
 
   const TUILiveRoomAudienceWidget({
     super.key,
     required this.roomId,
-    required this.liveInfo,
+    this.liveInfo,
     this.floatWindowController,
   });
 
@@ -75,7 +75,15 @@ class _TUILiveRoomAudienceWidgetState extends State<TUILiveRoomAudienceWidget> w
       controllerFactory: LiveCorePreviewControllerFactory(),
     );
     _scrollLockManager = LiveListPagerScrollLockManager();
-    _pagerService.initWithCurrentLive(widget.liveInfo);
+    assert(
+      widget.liveInfo == null || widget.liveInfo!.liveID == widget.roomId,
+      'liveInfo.liveID must equal roomId when both are provided',
+    );
+    if (widget.liveInfo != null) {
+      _pagerService.initWithCurrentLive(widget.liveInfo!);
+    } else {
+      _pagerService.initWithRoomId(widget.roomId);
+    }
     _startWakeLock();
   }
 
@@ -215,6 +223,8 @@ class _TUILiveRoomAudienceWidgetState extends State<TUILiveRoomAudienceWidget> w
           onJoinLiveStateChanged: _onJoinLiveStateChanged,
           onCoGuestStateChanged: _onCoGuestStateChanged,
           onTapEnterFloatWindowInApp: () {
+            final isLandscape = resources.liveStreamManager.floatWindowState.isLandscape.value;
+            widget.floatWindowController?.setScreenOrientation(isLandscape);
             widget.floatWindowController?.onTapSwitchFloatWindowInApp(true);
           },
           onDispose: () {

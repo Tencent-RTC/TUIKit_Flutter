@@ -244,8 +244,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
       '当前用户已在别的房间内，单个 roomEngine 实例只支持用户进入一个房间，如果要进入不同的房间请先退房或者使用新的 roomEngine 实例';
 
   @override
-  String get common_client_error_camera_device_empty =>
-      '当前无摄像头设备，请插入摄像头设备解决该问题';
+  String get common_client_error_camera_device_empty => '当前无摄像头设备，请插入摄像头设备解决该问题';
 
   @override
   String get common_client_error_camera_not_authorized => '摄像头没有系统授权, 检查系统授权';
@@ -254,16 +253,13 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_camera_occupied => '摄像头被占用，检查是否有其他进程使用摄像头';
 
   @override
-  String get common_client_error_camera_start_fail =>
-      '系统问题，打开摄像头失败。检查摄像头设备是否正常';
+  String get common_client_error_camera_start_fail => '系统问题，打开摄像头失败。检查摄像头设备是否正常';
 
   @override
-  String get common_client_error_connection_connecting =>
-      '被邀请连线的房间已在邀请列表或者已连线。';
+  String get common_client_error_connection_connecting => '被邀请连线的房间已在邀请列表或者已连线。';
 
   @override
-  String get common_client_error_exit_not_supported_for_room_owner =>
-      '房主不支持退房操作，房主只能解散房间';
+  String get common_client_error_exit_not_supported_for_room_owner => '房主不支持退房操作，房主只能解散房间';
 
   @override
   String get common_client_error_failed => '服务器开小差啦，请稍后重试';
@@ -272,12 +268,10 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_freq_limit => '请求被限频，请稍后重试';
 
   @override
-  String get common_client_error_get_screen_sharing_target_failed =>
-      '获取屏幕分享源（屏幕和窗口）失败，检查屏幕录制权限';
+  String get common_client_error_get_screen_sharing_target_failed => '获取屏幕分享源（屏幕和窗口）失败，检查屏幕录制权限';
 
   @override
-  String get common_client_error_invalid_parameter =>
-      '调用 API 时，传入的参数不合法，检查入参是否合法';
+  String get common_client_error_invalid_parameter => '调用 API 时，传入的参数不合法，检查入参是否合法';
 
   @override
   String get common_client_error_max_seat_count_limit => '最大麦位超出套餐包数量限制';
@@ -286,50 +280,40 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_microphone_device_empty => '当前无麦克风设备';
 
   @override
-  String get common_client_error_microphone_not_authorized =>
-      '麦克风没有系统授权，检查系统授权';
+  String get common_client_error_microphone_not_authorized => '麦克风没有系统授权，检查系统授权';
 
   @override
   String get common_client_error_microphone_occupied => '麦克风被占用';
 
   @override
-  String get common_client_error_microphone_start_fail =>
-      '系统问题，打开麦克风失败。检查麦克风设备是否正常';
+  String get common_client_error_microphone_start_fail => '系统问题，打开麦克风失败。检查麦克风设备是否正常';
 
   @override
-  String get common_client_error_open_camera_need_permission_from_admin =>
-      '需要向房主或管理员申请后打开摄像头';
+  String get common_client_error_open_camera_need_permission_from_admin => '需要向房主或管理员申请后打开摄像头';
 
   @override
-  String get common_client_error_open_camera_need_seat_unlock =>
-      '当前麦位视频被锁, 需要由房主解锁麦位后，才能打开摄像头';
+  String get common_client_error_open_camera_need_seat_unlock => '当前麦位视频被锁, 需要由房主解锁麦位后，才能打开摄像头';
 
   @override
-  String get common_client_error_open_microphone_need_permission_from_admin =>
-      '需要向房主或管理员申请后打开麦克风';
+  String get common_client_error_open_microphone_need_permission_from_admin => '需要向房主或管理员申请后打开麦克风';
 
   @override
   String get common_client_error_open_microphone_need_seat_unlock => '当前麦位音频被锁';
 
   @override
-  String get common_client_error_open_screen_share_need_permission_from_admin =>
-      '需要向房主或管理员申请后打开屏幕分享';
+  String get common_client_error_open_screen_share_need_permission_from_admin => '需要向房主或管理员申请后打开屏幕分享';
 
   @override
-  String get common_client_error_open_screen_share_need_seat_unlock =>
-      '当前麦位视频被锁, 需要由房主解锁麦位后，才能打开屏幕分享';
+  String get common_client_error_open_screen_share_need_seat_unlock => '当前麦位视频被锁, 需要由房主解锁麦位后，才能打开屏幕分享';
 
   @override
-  String get common_client_error_operation_invalid_before_enter_room =>
-      '需要进房后才可使用此功能';
+  String get common_client_error_operation_invalid_before_enter_room => '需要进房后才可使用此功能';
 
   @override
-  String get common_client_error_operation_not_supported_in_current_room_type =>
-      '当前房间类型下不支持该操作';
+  String get common_client_error_operation_not_supported_in_current_room_type => '当前房间类型下不支持该操作';
 
   @override
-  String get common_client_error_permission_denied =>
-      '获取权限失败，当前未授权音/视频权限，请查看是否开启设备权限';
+  String get common_client_error_permission_denied => '获取权限失败，当前未授权音/视频权限，请查看是否开启设备权限';
 
   @override
   String get common_client_error_repeat_operation => '重复操作';
@@ -341,27 +325,22 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_request_id_repeat => '信令请求重复';
 
   @override
-  String get common_client_error_request_no_permission =>
-      '信令请求无权限，例如取消非自己发起的邀请';
+  String get common_client_error_request_no_permission => '信令请求无权限，例如取消非自己发起的邀请';
 
   @override
-  String get common_client_error_require_payment =>
-      '该功能需要开通额外的套餐，请在 腾讯云视立方 SDK 控制台 按需开通对应套餐';
+  String get common_client_error_require_payment => '该功能需要开通额外的套餐，请在 腾讯云视立方 SDK 控制台 按需开通对应套餐';
 
   @override
-  String get common_client_error_room_id_invalid =>
-      '创建房间 ID 非法，自定义 ID 必须为可打印 ASCII 字符（0x20-0x7e），最长48个字节';
+  String get common_client_error_room_id_invalid => '创建房间 ID 非法，自定义 ID 必须为可打印 ASCII 字符（0x20-0x7e），最长48个字节';
 
   @override
-  String get common_client_error_room_name_invalid =>
-      '房间名称非法，名称最长30字节，字符编码必须是 UTF-8 ，如果包含中文';
+  String get common_client_error_room_name_invalid => '房间名称非法，名称最长30字节，字符编码必须是 UTF-8 ，如果包含中文';
 
   @override
   String get common_client_error_room_not_support_preloading => '当前房间不支持预加载';
 
   @override
-  String get common_client_error_sdk_app_id_not_found =>
-      '未找到 SDKAppID，请在 腾讯云视立方 SDK 控制台 确认应用信息';
+  String get common_client_error_sdk_app_id_not_found => '未找到 SDKAppID，请在 腾讯云视立方 SDK 控制台 确认应用信息';
 
   @override
   String get common_client_error_sdk_not_initialized => '未登录,请调用 Login 接口';
@@ -373,19 +352,16 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_send_message_disabled_for_all => '当前房间已开启全员禁言';
 
   @override
-  String get common_client_error_send_message_disabled_for_current =>
-      '当前房间内，您已被禁言';
+  String get common_client_error_send_message_disabled_for_current => '当前房间内，您已被禁言';
 
   @override
-  String get common_client_error_start_screen_sharing_failed =>
-      '开启屏幕分享失败，检查房间内是否有人正在屏幕分享';
+  String get common_client_error_start_screen_sharing_failed => '开启屏幕分享失败，检查房间内是否有人正在屏幕分享';
 
   @override
   String get common_client_error_success => '操作成功';
 
   @override
-  String get common_client_error_user_need_admin_permission =>
-      '需要房主或者管理员权限才能操作';
+  String get common_client_error_user_need_admin_permission => '需要房主或者管理员权限才能操作';
 
   @override
   String get common_client_error_user_need_owner_permission => '需要房主权限才能操作';
@@ -394,15 +370,13 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_client_error_user_not_exist => '用户不存在';
 
   @override
-  String get common_server_error_gift_ability_not_enabled =>
-      '礼物功能服务暂未开启，请检查套餐包版本';
+  String get common_server_error_gift_ability_not_enabled => '礼物功能服务暂未开启，请检查套餐包版本';
 
   @override
   String get common_server_error_gift_not_exist => '礼物不存在';
 
   @override
-  String get common_server_error_gift_server_pre_verification_failed =>
-      '礼物服务器预验证失败，请检查控制台配置';
+  String get common_server_error_gift_server_pre_verification_failed => '礼物服务器预验证失败，请检查控制台配置';
 
   @override
   String get common_server_error_call_in_progress => '正在通话中，设备操作失败';
@@ -624,8 +598,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_already_on_the_mic_queue => '已经处于排麦状态';
 
   @override
-  String get common_server_error_battle_does_not_exist_or_has_ended =>
-      '该场次 battle 不存在或已结束';
+  String get common_server_error_battle_does_not_exist_or_has_ended => '该场次 battle 不存在或已结束';
 
   @override
   String get common_server_error_battle_session_has_ended => '该 battle 场次已经结束';
@@ -634,65 +607,50 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_connection_does_not_exist => '当前连线不存在或结束';
 
   @override
-  String get common_server_error_creating_battles_too_frequently =>
-      '短时间内频繁发起 battle, 稍等一会再试';
+  String get common_server_error_creating_battles_too_frequently => '短时间内频繁发起 battle, 稍等一会再试';
 
   @override
-  String get common_server_error_creating_connections_too_frequent =>
-      '短时间内连线过于频繁，稍等一会再试';
+  String get common_server_error_creating_connections_too_frequent => '短时间内连线过于频繁，稍等一会再试';
 
   @override
-  String get common_server_error_creating_rooms_exceeds_the_frequency_limit =>
-      '频率超过限制，例如创建房间超过频率超限，同一房间 ID， 1秒内只能创建一次';
+  String get common_server_error_creating_rooms_exceeds_the_frequency_limit => '频率超过限制，例如创建房间超过频率超限，同一房间 ID， 1秒内只能创建一次';
 
   @override
-  String get common_server_error_exceeds_the_upper_limit =>
-      '超过付费上限，例如麦位数，pk场次房间数量等超过付费限制';
+  String get common_server_error_exceeds_the_upper_limit => '超过付费上限，例如麦位数，pk场次房间数量等超过付费限制';
 
   @override
-  String
-      get common_server_error_has_exceeded_the_limit_in_connection_or_battle =>
-          '超过连线和 battle 房间数量上限';
+  String get common_server_error_has_exceeded_the_limit_in_connection_or_battle => '超过连线和 battle 房间数量上限';
 
   @override
   String get common_server_error_in_other_battle => '该房间处于其他的 battle 场次中';
 
   @override
-  String get common_server_error_insufficient_operation_permissions =>
-      '您当前无法执行此操作（可能是无权限，或受场景限制等原因）';
+  String get common_server_error_insufficient_operation_permissions => '您当前无法执行此操作（可能是无权限，或受场景限制等原因）';
 
   @override
   String get common_server_error_invalid_room_type => '无效的房间类型';
 
   @override
-  String get common_server_error_is_connecting_with_other_rooms =>
-      '当前房间与其他房间连线中';
+  String get common_server_error_is_connecting_with_other_rooms => '当前房间与其他房间连线中';
 
   @override
-  String
-      get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle =>
-          '该房间处于 battle 中';
+  String get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle => '该房间处于 battle 中';
 
   @override
-  String get common_server_error_metadata_no_valid_keys =>
-      '删除房间 meta 数据时候，被删除的 key 没有一个存在';
+  String get common_server_error_metadata_no_valid_keys => '删除房间 meta 数据时候，被删除的 key 没有一个存在';
 
   @override
-  String get common_server_error_metadata_number_of_keys_exceeds_the_limit =>
-      '房间 meta 数据中的 key 数量超过上限';
+  String get common_server_error_metadata_number_of_keys_exceeds_the_limit => '房间 meta 数据中的 key 数量超过上限';
 
   @override
-  String get common_server_error_metadata_size_of_value_exceeds_the_limit =>
-      '房间 meta 数据中单个 key 对应的 val 超过最大字节数限制';
+  String get common_server_error_metadata_size_of_value_exceeds_the_limit => '房间 meta 数据中单个 key 对应的 val 超过最大字节数限制';
 
   @override
-  String
-      get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
-          '房间 meta 数据中的 key 大小超过了最大字节数限制';
+  String get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
+      '房间 meta 数据中的 key 大小超过了最大字节数限制';
 
   @override
-  String get common_server_error_metadata_total_size_exceeds_the_limit =>
-      '房间 meta数据中所有 key 对应的 val 总和超过最大字节数限制';
+  String get common_server_error_metadata_total_size_exceeds_the_limit => '房间 meta数据中所有 key 对应的 val 总和超过最大字节数限制';
 
   @override
   String get common_server_error_mic_seat_is_locked => '麦位已锁定，可以尝试换一个麦位';
@@ -701,8 +659,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_no_payment_information => '无付费信息，需在控制台购买套餐包';
 
   @override
-  String get common_server_error_no_rooms_in_the_battle_is_valid =>
-      '发起的 battle 里没有一个有效的房间';
+  String get common_server_error_no_rooms_in_the_battle_is_valid => '发起的 battle 里没有一个有效的房间';
 
   @override
   String get common_server_error_not_a_room_member => '非房间成员';
@@ -723,16 +680,13 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_requires_password => '当前房间需要密码才能进入';
 
   @override
-  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit =>
-      '管理员数量超过上限';
+  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit => '管理员数量超过上限';
 
   @override
-  String get common_server_error_room_does_not_exist =>
-      '房间不存在，或者曾经存在过，但是目前已经被解散';
+  String get common_server_error_room_does_not_exist => '房间不存在，或者曾经存在过，但是目前已经被解散';
 
   @override
-  String get common_server_error_room_does_not_support_mic_ability =>
-      '该房间不支持连麦';
+  String get common_server_error_room_does_not_support_mic_ability => '该房间不支持连麦';
 
   @override
   String get common_server_error_room_entry_password_error => '进房密码错误';
@@ -741,12 +695,10 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_room_id_exists => '房间ID 已被使用，请选择别的房间ID';
 
   @override
-  String get common_server_error_room_id_has_been_occupied_by_chat =>
-      '房间 ID 已被 IM 占用，可以换一个房间 ID 使用，或者先通过 IM 接口解散该群';
+  String get common_server_error_room_id_has_been_occupied_by_chat => '房间 ID 已被 IM 占用，可以换一个房间 ID 使用，或者先通过 IM 接口解散该群';
 
   @override
-  String get common_server_error_room_id_has_been_used =>
-      '房间 ID 已被使用，并且操作者为房主，可以直接使用';
+  String get common_server_error_room_id_has_been_used => '房间 ID 已被使用，并且操作者为房主，可以直接使用';
 
   @override
   String get common_server_error_room_is_full => '房间成员已满';
@@ -767,8 +719,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_tag_quantity_exceeds_upper_limit => '标签数量超上限';
 
   @override
-  String get common_server_error_the_room_is_not_in_the_battle =>
-      '该房间已经不在 battle 中';
+  String get common_server_error_the_room_is_not_in_the_battle => '该房间已经不在 battle 中';
 
   @override
   String get common_server_error_the_seat_list_is_empty => '连麦列表为空';
@@ -777,12 +728,10 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_the_seats_are_all_taken => '麦位已满';
 
   @override
-  String get common_server_error_there_is_a_pending_battle_request =>
-      '该房间存在待处理的 battle 请求';
+  String get common_server_error_there_is_a_pending_battle_request => '该房间存在待处理的 battle 请求';
 
   @override
-  String get common_server_error_there_is_a_pending_connection_request =>
-      '该房间存在待处理的连线请求';
+  String get common_server_error_there_is_a_pending_connection_request => '该房间存在待处理的连线请求';
 
   @override
   String get common_server_error_this_member_has_been_banned => '该成员已经被封禁';
@@ -792,6 +741,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get common_server_error_user_is_already_on_the_mic_seat => '已经有用户在麦位上';
+
+  @override
+  String get common_server_error_im_sensitive_words_ban => '消息或者资料中文本存在敏感内容，禁止下发。';
 
   @override
   String get common_set_as_background => '设为背景';
@@ -1079,8 +1031,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get live_video_resolution_changed => '清晰度已切换至';
 
   @override
-  String get common_template_601_ui_exception_toast =>
-      '该布局模板在特定机型上会显示异常，建议更换其他布局模板';
+  String get common_template_601_ui_exception_toast => '该布局模板在特定机型上会显示异常，建议更换其他布局模板';
 
   @override
   String get seat_locked => '已锁定';
@@ -1143,12 +1094,10 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_remove => '移除';
 
   @override
-  String get common_host_kick_user_after_connect =>
-      '连线成功。前 6 个麦位以外的用户已被移除。如需互动，请重新邀请。';
+  String get common_host_kick_user_after_connect => '连线成功。前 6 个麦位以外的用户已被移除。如需互动，请重新邀请。';
 
   @override
-  String get common_audience_kicked_re_apply =>
-      '连线仅显示前 6 个麦位。您已被移除，如有需要请重新申请上麦。';
+  String get common_audience_kicked_re_apply => '连线仅显示前 6 个麦位。您已被移除，如有需要请重新申请上麦。';
 
   @override
   String get common_game_live => '手游直播';
@@ -1167,6 +1116,21 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get common_select_app_to_live => '选择应用并开始直播';
+
+  @override
+  String get common_violation_alert_toast => '当前画面或内容存在违规风险，请注意平台规范';
+
+  @override
+  String get live_song_unknown_artist => '未知';
+
+  @override
+  String get live_anchor_manager_set_featured_host => '设为主咖';
+
+  @override
+  String get live_anchor_manager_revoke_featured_host => '取消主咖';
+
+  @override
+  String get common_enter_anchor_live_room => '去TA的直播间';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1409,8 +1373,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
       '當前用戶已在別的房間內，單個 roomEngine 實例只支持用戶進入一個房間，如果要進入不同的房間請先退房或者使用新的 roomEngine 實例';
 
   @override
-  String get common_client_error_camera_device_empty =>
-      '當前無攝像頭設備，請插入攝像頭設備解決該問題';
+  String get common_client_error_camera_device_empty => '當前無攝像頭設備，請插入攝像頭設備解決該問題';
 
   @override
   String get common_client_error_camera_not_authorized => '攝像頭沒有系統授權, 檢查系統授權';
@@ -1419,16 +1382,13 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_camera_occupied => '攝像頭被佔用，檢查是否有其他進程使用攝像頭';
 
   @override
-  String get common_client_error_camera_start_fail =>
-      '系統問題，打開攝像頭失敗。檢查攝像頭設備是否正常';
+  String get common_client_error_camera_start_fail => '系統問題，打開攝像頭失敗。檢查攝像頭設備是否正常';
 
   @override
-  String get common_client_error_connection_connecting =>
-      '被邀請連線的房間已在邀請列表或者已連線。';
+  String get common_client_error_connection_connecting => '被邀請連線的房間已在邀請列表或者已連線。';
 
   @override
-  String get common_client_error_exit_not_supported_for_room_owner =>
-      '房主不支持退房操作，房主只能解散房間';
+  String get common_client_error_exit_not_supported_for_room_owner => '房主不支持退房操作，房主只能解散房間';
 
   @override
   String get common_client_error_failed => '伺服器開小差啦，請稍後重試';
@@ -1437,12 +1397,10 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_freq_limit => '請求被限頻，請稍後重試';
 
   @override
-  String get common_client_error_get_screen_sharing_target_failed =>
-      '獲取屏幕分享源（屏幕和窗口）失敗，檢查屏幕錄製權限';
+  String get common_client_error_get_screen_sharing_target_failed => '獲取屏幕分享源（屏幕和窗口）失敗，檢查屏幕錄製權限';
 
   @override
-  String get common_client_error_invalid_parameter =>
-      '調用 API 時，傳入的參數不合法，檢查入參是否合法';
+  String get common_client_error_invalid_parameter => '調用 API 時，傳入的參數不合法，檢查入參是否合法';
 
   @override
   String get common_client_error_max_seat_count_limit => '最大麥位超出套餐包數量限制';
@@ -1451,50 +1409,40 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_microphone_device_empty => '當前無麥克風設備';
 
   @override
-  String get common_client_error_microphone_not_authorized =>
-      '麥克風沒有系統授權，檢查系統授權';
+  String get common_client_error_microphone_not_authorized => '麥克風沒有系統授權，檢查系統授權';
 
   @override
   String get common_client_error_microphone_occupied => '麥克風被佔用';
 
   @override
-  String get common_client_error_microphone_start_fail =>
-      '系統問題，打開麥克風失敗。檢查麥克風設備是否正常';
+  String get common_client_error_microphone_start_fail => '系統問題，打開麥克風失敗。檢查麥克風設備是否正常';
 
   @override
-  String get common_client_error_open_camera_need_permission_from_admin =>
-      '需要向房主或管理員申請後打開攝像頭';
+  String get common_client_error_open_camera_need_permission_from_admin => '需要向房主或管理員申請後打開攝像頭';
 
   @override
-  String get common_client_error_open_camera_need_seat_unlock =>
-      '當前麥位視頻被鎖, 需要由房主解鎖麥位後，才能打開攝像頭';
+  String get common_client_error_open_camera_need_seat_unlock => '當前麥位視頻被鎖, 需要由房主解鎖麥位後，才能打開攝像頭';
 
   @override
-  String get common_client_error_open_microphone_need_permission_from_admin =>
-      '需要向房主或管理員申請後打開麥克風';
+  String get common_client_error_open_microphone_need_permission_from_admin => '需要向房主或管理員申請後打開麥克風';
 
   @override
   String get common_client_error_open_microphone_need_seat_unlock => '當前麥位音頻被鎖';
 
   @override
-  String get common_client_error_open_screen_share_need_permission_from_admin =>
-      '需要向房主或管理員申請後打開屏幕分享';
+  String get common_client_error_open_screen_share_need_permission_from_admin => '需要向房主或管理員申請後打開屏幕分享';
 
   @override
-  String get common_client_error_open_screen_share_need_seat_unlock =>
-      '當前麥位視頻被鎖, 需要由房主解鎖麥位後，才能打開屏幕分享';
+  String get common_client_error_open_screen_share_need_seat_unlock => '當前麥位視頻被鎖, 需要由房主解鎖麥位後，才能打開屏幕分享';
 
   @override
-  String get common_client_error_operation_invalid_before_enter_room =>
-      '需要進房後才可使用此功能';
+  String get common_client_error_operation_invalid_before_enter_room => '需要進房後才可使用此功能';
 
   @override
-  String get common_client_error_operation_not_supported_in_current_room_type =>
-      '當前房間類型下不支持該操作';
+  String get common_client_error_operation_not_supported_in_current_room_type => '當前房間類型下不支持該操作';
 
   @override
-  String get common_client_error_permission_denied =>
-      '獲取權限失敗，當前未授權音/視頻權限，請查看是否開啟設備權限';
+  String get common_client_error_permission_denied => '獲取權限失敗，當前未授權音/視頻權限，請查看是否開啟設備權限';
 
   @override
   String get common_client_error_repeat_operation => '重複操作';
@@ -1506,27 +1454,22 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_request_id_repeat => '信令請求重複';
 
   @override
-  String get common_client_error_request_no_permission =>
-      '信令請求無權限，例如取消非自己發起的邀請';
+  String get common_client_error_request_no_permission => '信令請求無權限，例如取消非自己發起的邀請';
 
   @override
-  String get common_client_error_require_payment =>
-      '該功能需要開通額外的套餐，請在 騰訊雲視立方 SDK 控制臺 按需開通對應套餐';
+  String get common_client_error_require_payment => '該功能需要開通額外的套餐，請在 騰訊雲視立方 SDK 控制臺 按需開通對應套餐';
 
   @override
-  String get common_client_error_room_id_invalid =>
-      '創建房間 ID 非法，自定義 ID 必須為可列印 ASCII 字符（0x20-0x7e），最長48個字節';
+  String get common_client_error_room_id_invalid => '創建房間 ID 非法，自定義 ID 必須為可列印 ASCII 字符（0x20-0x7e），最長48個字節';
 
   @override
-  String get common_client_error_room_name_invalid =>
-      '房間名稱非法，名稱最長30位元組，字符編碼必須是 UTF-8 ，如果包含中文';
+  String get common_client_error_room_name_invalid => '房間名稱非法，名稱最長30位元組，字符編碼必須是 UTF-8 ，如果包含中文';
 
   @override
   String get common_client_error_room_not_support_preloading => '當前房間不支持預加載';
 
   @override
-  String get common_client_error_sdk_app_id_not_found =>
-      '未找到 SDKAppID，請在 騰訊雲視立方 SDK 控制臺 確認應用信息';
+  String get common_client_error_sdk_app_id_not_found => '未找到 SDKAppID，請在 騰訊雲視立方 SDK 控制臺 確認應用信息';
 
   @override
   String get common_client_error_sdk_not_initialized => '未登錄,請調用 Login 接口';
@@ -1538,19 +1481,16 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_send_message_disabled_for_all => '當前房間已開啟全員禁言';
 
   @override
-  String get common_client_error_send_message_disabled_for_current =>
-      '當前房間內，您已被禁言';
+  String get common_client_error_send_message_disabled_for_current => '當前房間內，您已被禁言';
 
   @override
-  String get common_client_error_start_screen_sharing_failed =>
-      '開啟屏幕分享失敗，檢查房間內是否有人正在屏幕分享';
+  String get common_client_error_start_screen_sharing_failed => '開啟屏幕分享失敗，檢查房間內是否有人正在屏幕分享';
 
   @override
   String get common_client_error_success => '操作成功';
 
   @override
-  String get common_client_error_user_need_admin_permission =>
-      '需要房主或者管理員權限才能操作';
+  String get common_client_error_user_need_admin_permission => '需要房主或者管理員權限才能操作';
 
   @override
   String get common_client_error_user_need_owner_permission => '需要房主權限才能操作';
@@ -1559,15 +1499,13 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_client_error_user_not_exist => '用戶不存在';
 
   @override
-  String get common_server_error_gift_ability_not_enabled =>
-      '禮物功能服務暫未開啟，請檢查套餐包版本';
+  String get common_server_error_gift_ability_not_enabled => '禮物功能服務暫未開啟，請檢查套餐包版本';
 
   @override
   String get common_server_error_gift_not_exist => '禮物不存在';
 
   @override
-  String get common_server_error_gift_server_pre_verification_failed =>
-      '禮物伺服器預驗證失敗，請檢查控制台配置';
+  String get common_server_error_gift_server_pre_verification_failed => '禮物伺服器預驗證失敗，請檢查控制台配置';
 
   @override
   String get common_server_error_call_in_progress => '正在通話中，設備操作失敗';
@@ -1789,8 +1727,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_already_on_the_mic_queue => '已經處於排麥狀態';
 
   @override
-  String get common_server_error_battle_does_not_exist_or_has_ended =>
-      '該場次 battle 不存在或已結束';
+  String get common_server_error_battle_does_not_exist_or_has_ended => '該場次 battle 不存在或已結束';
 
   @override
   String get common_server_error_battle_session_has_ended => '該 battle 場次已經結束';
@@ -1799,65 +1736,50 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_connection_does_not_exist => '當前連線不存在或結束';
 
   @override
-  String get common_server_error_creating_battles_too_frequently =>
-      '短時間內頻繁發起 battle, 稍等一會再試';
+  String get common_server_error_creating_battles_too_frequently => '短時間內頻繁發起 battle, 稍等一會再試';
 
   @override
-  String get common_server_error_creating_connections_too_frequent =>
-      '短時間內連線過於頻繁，稍等一會再試';
+  String get common_server_error_creating_connections_too_frequent => '短時間內連線過於頻繁，稍等一會再試';
 
   @override
-  String get common_server_error_creating_rooms_exceeds_the_frequency_limit =>
-      '頻率超過限制，例如創建房間超過頻率超限，同一房間 ID， 1秒內只能創建一次';
+  String get common_server_error_creating_rooms_exceeds_the_frequency_limit => '頻率超過限制，例如創建房間超過頻率超限，同一房間 ID， 1秒內只能創建一次';
 
   @override
-  String get common_server_error_exceeds_the_upper_limit =>
-      '超過付費上限，例如麥位數，pk場次房間數量等超過付費限制';
+  String get common_server_error_exceeds_the_upper_limit => '超過付費上限，例如麥位數，pk場次房間數量等超過付費限制';
 
   @override
-  String
-      get common_server_error_has_exceeded_the_limit_in_connection_or_battle =>
-          '超過連線和 battle 房間數量上限';
+  String get common_server_error_has_exceeded_the_limit_in_connection_or_battle => '超過連線和 battle 房間數量上限';
 
   @override
   String get common_server_error_in_other_battle => '該房間處於其他的 battle 場次中';
 
   @override
-  String get common_server_error_insufficient_operation_permissions =>
-      '您當前無法執行此操作（可能是無權限，或受場景限制等原因）';
+  String get common_server_error_insufficient_operation_permissions => '您當前無法執行此操作（可能是無權限，或受場景限制等原因）';
 
   @override
   String get common_server_error_invalid_room_type => '無效的房間類型';
 
   @override
-  String get common_server_error_is_connecting_with_other_rooms =>
-      '當前房間與其他房間連線中';
+  String get common_server_error_is_connecting_with_other_rooms => '當前房間與其他房間連線中';
 
   @override
-  String
-      get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle =>
-          '該房間處於 battle 中';
+  String get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle => '該房間處於 battle 中';
 
   @override
-  String get common_server_error_metadata_no_valid_keys =>
-      '刪除房間 meta 數據時候，被刪除的 key 沒有一個存在';
+  String get common_server_error_metadata_no_valid_keys => '刪除房間 meta 數據時候，被刪除的 key 沒有一個存在';
 
   @override
-  String get common_server_error_metadata_number_of_keys_exceeds_the_limit =>
-      '房間 meta 數據中的 key 數量超過上限';
+  String get common_server_error_metadata_number_of_keys_exceeds_the_limit => '房間 meta 數據中的 key 數量超過上限';
 
   @override
-  String get common_server_error_metadata_size_of_value_exceeds_the_limit =>
-      '房間 meta 數據中單個 key 對應的 val 超過最大字節數限制';
+  String get common_server_error_metadata_size_of_value_exceeds_the_limit => '房間 meta 數據中單個 key 對應的 val 超過最大字節數限制';
 
   @override
-  String
-      get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
-          '房間 meta 數據中的 key 大小超過了最大字節數限制';
+  String get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
+      '房間 meta 數據中的 key 大小超過了最大字節數限制';
 
   @override
-  String get common_server_error_metadata_total_size_exceeds_the_limit =>
-      '房間 meta數據中所有 key 對應的 val 總和超過最大字節數限制';
+  String get common_server_error_metadata_total_size_exceeds_the_limit => '房間 meta數據中所有 key 對應的 val 總和超過最大字節數限制';
 
   @override
   String get common_server_error_mic_seat_is_locked => '麥位已鎖定，可以嘗試換一個麥位';
@@ -1866,8 +1788,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_no_payment_information => '無付費信息，需在控制臺購買套餐包';
 
   @override
-  String get common_server_error_no_rooms_in_the_battle_is_valid =>
-      '發起的 battle 裡沒有一個有效的房間';
+  String get common_server_error_no_rooms_in_the_battle_is_valid => '發起的 battle 裡沒有一個有效的房間';
 
   @override
   String get common_server_error_not_a_room_member => '非房間成員';
@@ -1888,16 +1809,13 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_requires_password => '當前房間需要密碼才能進入';
 
   @override
-  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit =>
-      '管理員數量超過上限';
+  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit => '管理員數量超過上限';
 
   @override
-  String get common_server_error_room_does_not_exist =>
-      '房間不存在，或者曾經存在過，但是目前已經被解散';
+  String get common_server_error_room_does_not_exist => '房間不存在，或者曾經存在過，但是目前已經被解散';
 
   @override
-  String get common_server_error_room_does_not_support_mic_ability =>
-      '該房間不支持連麥';
+  String get common_server_error_room_does_not_support_mic_ability => '該房間不支持連麥';
 
   @override
   String get common_server_error_room_entry_password_error => '進房密碼錯誤';
@@ -1906,12 +1824,10 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_room_id_exists => '房間ID 已被使用，請選擇別的房間ID';
 
   @override
-  String get common_server_error_room_id_has_been_occupied_by_chat =>
-      '房間 ID 已被 IM 佔用，可以換一個房間 ID 使用，或者先通過 IM 接口解散該群';
+  String get common_server_error_room_id_has_been_occupied_by_chat => '房間 ID 已被 IM 佔用，可以換一個房間 ID 使用，或者先通過 IM 接口解散該群';
 
   @override
-  String get common_server_error_room_id_has_been_used =>
-      '房間 ID 已被使用，並且操作者為房主，可以直接使用';
+  String get common_server_error_room_id_has_been_used => '房間 ID 已被使用，並且操作者為房主，可以直接使用';
 
   @override
   String get common_server_error_room_is_full => '房間成員已滿';
@@ -1932,8 +1848,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_tag_quantity_exceeds_upper_limit => '標籤數量超上限';
 
   @override
-  String get common_server_error_the_room_is_not_in_the_battle =>
-      '該房間已經不在 battle 中';
+  String get common_server_error_the_room_is_not_in_the_battle => '該房間已經不在 battle 中';
 
   @override
   String get common_server_error_the_seat_list_is_empty => '連麥列表為空';
@@ -1942,12 +1857,10 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_the_seats_are_all_taken => '麥位已滿';
 
   @override
-  String get common_server_error_there_is_a_pending_battle_request =>
-      '該房間存在待處理的 battle 請求';
+  String get common_server_error_there_is_a_pending_battle_request => '該房間存在待處理的 battle 請求';
 
   @override
-  String get common_server_error_there_is_a_pending_connection_request =>
-      '該房間存在待處理的連線請求';
+  String get common_server_error_there_is_a_pending_connection_request => '該房間存在待處理的連線請求';
 
   @override
   String get common_server_error_this_member_has_been_banned => '該成員已經被封禁';
@@ -1957,6 +1870,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_server_error_user_is_already_on_the_mic_seat => '已經有用戶在麥位上';
+
+  @override
+  String get common_server_error_im_sensitive_words_ban => '訊息或資料中文字存在敏感內容，禁止下發。';
 
   @override
   String get common_set_as_background => '設為背景';
@@ -2244,8 +2160,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get live_video_resolution_changed => '清晰度已切換至';
 
   @override
-  String get common_template_601_ui_exception_toast =>
-      '此佈局模板在特定機型上會顯示異常，建議更換其他佈局模板';
+  String get common_template_601_ui_exception_toast => '此佈局模板在特定機型上會顯示異常，建議更換其他佈局模板';
 
   @override
   String get seat_locked => '已鎖定';
@@ -2308,12 +2223,10 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_remove => '移除';
 
   @override
-  String get common_host_kick_user_after_connect =>
-      '連線成功。前 6 個麥位以外的使用者已被移除。如需互動，請重新邀請。';
+  String get common_host_kick_user_after_connect => '連線成功。前 6 個麥位以外的使用者已被移除。如需互動，請重新邀請。';
 
   @override
-  String get common_audience_kicked_re_apply =>
-      '連線僅顯示前 6 個麥位。您已被移除，如有需要請重新申請上麥。';
+  String get common_audience_kicked_re_apply => '連線僅顯示前 6 個麥位。您已被移除，如有需要請重新申請上麥。';
 
   @override
   String get common_game_live => '手遊直播';
@@ -2332,4 +2245,19 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_select_app_to_live => '選擇應用並開始直播';
+
+  @override
+  String get common_violation_alert_toast => '當前畫面或內容存在違規風險，請注意平台規範';
+
+  @override
+  String get live_song_unknown_artist => '未知';
+
+  @override
+  String get live_anchor_manager_set_featured_host => '設為主咖';
+
+  @override
+  String get live_anchor_manager_revoke_featured_host => '取消主咖';
+
+  @override
+  String get common_enter_anchor_live_room => '去TA的直播間';
 }

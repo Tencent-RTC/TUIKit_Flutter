@@ -17,8 +17,8 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
   static const _pipEventChannel = EventChannel('tuilivekit_pip_events');
   static const _screenCaptureEventChannel = EventChannel('tuilivekit_screen_capture_events');
 
-  static const String STATE_ENTER_PIP = "state_enter_pip";
-  static const String STATE_LEAVE_PIP = "state_leave_pip";
+  static const String stateEnterPip = "state_enter_pip";
+  static const String stateLeavePip = "state_leave_pip";
 
   @override
   Stream<bool> get onPipModeChanged {
@@ -26,7 +26,7 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
       final rawData = _pipEventChannel.receiveBroadcastStream();
       return rawData.map((value) {
         if (value is String) {
-          return value == STATE_ENTER_PIP ? true : false;
+          return value == stateEnterPip ? true : false;
         } else {
           return false;
         }

@@ -15,8 +15,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_anchor_battle => 'アンカーPK';
 
   @override
-  String get common_anchor_end_link_tips =>
-      '現在、接続されている州では、「ライブブロードキャストルームを閉じる」必要がありますか？';
+  String get common_anchor_end_link_tips => '現在、接続されている州では、「ライブブロードキャストルームを閉じる」必要がありますか？';
 
   @override
   String get common_battle_connecting => '接続';
@@ -103,12 +102,10 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_end_connect => '切断された';
 
   @override
-  String get common_end_connection_tips =>
-      '現在、接続されている州では、「ライブブロードキャストルームを閉じる」または「閉じる」必要がありますか？';
+  String get common_end_connection_tips => '現在、接続されている州では、「ライブブロードキャストルームを閉じる」または「閉じる」必要がありますか？';
 
   @override
-  String get common_end_pk_tips =>
-      '現在、PKステータスでは、「PKを終了」する必要がありますか、それとも「ライブブロードキャストルームを閉じる」必要がありますか？';
+  String get common_end_pk_tips => '現在、PKステータスでは、「PKを終了」する必要がありますか、それとも「ライブブロードキャストルームを閉じる」必要がありますか？';
 
   @override
   String get common_kick_out_of_room => '取り除く';
@@ -177,15 +174,13 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_link_host => 'アンカーでさえ';
 
   @override
-  String get live_barrage_error_content_is_long =>
-      'コンテンツが長すぎるので、試す前にコンテンツを減らしてください';
+  String get live_barrage_error_content_is_long => 'コンテンツが長すぎるので、試す前にコンテンツを減らしてください';
 
   @override
   String get live_barrage_error_network => 'ネットワークの異常、後でもう一度やり直してください';
 
   @override
-  String get live_barrage_error_sensitive_word =>
-      '敏感な単語が検出されました。それらを変更して、もう一度やり直してください';
+  String get live_barrage_error_sensitive_word => '敏感な単語が検出されました。それらを変更して、もう一度やり直してください';
 
   @override
   String get live_error_connection_notexit => '招待状リンクが存在しない部屋';
@@ -218,8 +213,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get livestreamcore_battle_error_other => 'PKを開始できない他のエラー';
 
   @override
-  String get common_audience_end_link_tips =>
-      '現在、接続されているマイク状態で、「接続されたマイクを切断する」または「ライブブロードキャストルームを終了する」必要がありますか？';
+  String get common_audience_end_link_tips => '現在、接続されているマイク状態で、「接続されたマイクを切断する」または「ライブブロードキャストルームを終了する」必要がありますか？';
 
   @override
   String get common_exit_live => 'ライブブロードキャストルームを出ます';
@@ -250,24 +244,19 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
       '現在のユーザーは別の部屋にいます。単一のルームエンジンインスタンスは、ユーザーのみが1つの部屋に入るのをサポートします。別の部屋に入りたい場合は、最初にチェックアウトするか、新しいルームエンジンインスタンスを使用してください。';
 
   @override
-  String get common_client_error_camera_device_empty =>
-      '現在、カメラデバイスはありません。カメラデバイスを挿入して問題を解決してください';
+  String get common_client_error_camera_device_empty => '現在、カメラデバイスはありません。カメラデバイスを挿入して問題を解決してください';
 
   @override
-  String get common_client_error_camera_not_authorized =>
-      'カメラにはシステム承認がありません。システム認証を確認してください';
+  String get common_client_error_camera_not_authorized => 'カメラにはシステム承認がありません。システム認証を確認してください';
 
   @override
-  String get common_client_error_camera_occupied =>
-      'カメラが占有されています。カメラを使用して他のプロセスがあるかどうかを確認してください';
+  String get common_client_error_camera_occupied => 'カメラが占有されています。カメラを使用して他のプロセスがあるかどうかを確認してください';
 
   @override
-  String get common_client_error_camera_start_fail =>
-      'システムの問題は、カメラをオンにすることができませんでした。カメラデバイスが正常かどうかを確認してください';
+  String get common_client_error_camera_start_fail => 'システムの問題は、カメラをオンにすることができませんでした。カメラデバイスが正常かどうかを確認してください';
 
   @override
-  String get common_client_error_connection_connecting =>
-      '接続するために招待されている部屋は、すでに招待リストに載っているか、接続されています。';
+  String get common_client_error_connection_connecting => '接続するために招待されている部屋は、すでに招待リストに載っているか、接続されています。';
 
   @override
   String get common_client_error_exit_not_supported_for_room_owner =>
@@ -280,62 +269,51 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_client_error_freq_limit => 'リクエストは制限されています。後でもう一度やり直してください';
 
   @override
-  String get common_client_error_get_screen_sharing_target_failed =>
-      '画面共有ソース（画面とウィンドウ）を取得し、画面録音の許可を確認できませんでした';
+  String get common_client_error_get_screen_sharing_target_failed => '画面共有ソース（画面とウィンドウ）を取得し、画面録音の許可を確認できませんでした';
 
   @override
-  String get common_client_error_invalid_parameter =>
-      'APIを呼び出すと、合格したパラメーターは違法です。パラメーターが合法かどうかを確認してください。';
+  String get common_client_error_invalid_parameter => 'APIを呼び出すと、合格したパラメーターは違法です。パラメーターが合法かどうかを確認してください。';
 
   @override
-  String get common_client_error_max_seat_count_limit =>
-      'クロワッサンの最大位置は、パッケージパッケージの数の制限を超えています';
+  String get common_client_error_max_seat_count_limit => 'クロワッサンの最大位置は、パッケージパッケージの数の制限を超えています';
 
   @override
   String get common_client_error_microphone_device_empty => '現在、マイクデバイスはありません';
 
   @override
-  String get common_client_error_microphone_not_authorized =>
-      'マイクにはシステム認証がありません。システム認証を確認してください';
+  String get common_client_error_microphone_not_authorized => 'マイクにはシステム認証がありません。システム認証を確認してください';
 
   @override
   String get common_client_error_microphone_occupied => 'マイクが占有されました';
 
   @override
-  String get common_client_error_microphone_start_fail =>
-      'システムの問題は、マイクをオンにすることができませんでした。マイクデバイスが正常かどうかを確認してください';
+  String get common_client_error_microphone_start_fail => 'システムの問題は、マイクをオンにすることができませんでした。マイクデバイスが正常かどうかを確認してください';
 
   @override
-  String get common_client_error_open_camera_need_permission_from_admin =>
-      '住宅所有者または管理者に申請してカメラをオンにする必要があります';
+  String get common_client_error_open_camera_need_permission_from_admin => '住宅所有者または管理者に申請してカメラをオンにする必要があります';
 
   @override
   String get common_client_error_open_camera_need_seat_unlock =>
       '現在のマイクのビデオはロックされており、住宅所有者はカメラをオンにする前にマイクのロックを解除する必要があります。';
 
   @override
-  String get common_client_error_open_microphone_need_permission_from_admin =>
-      '住宅所有者または管理者に申請し、マイクをオンにする必要があります';
+  String get common_client_error_open_microphone_need_permission_from_admin => '住宅所有者または管理者に申請し、マイクをオンにする必要があります';
 
   @override
-  String get common_client_error_open_microphone_need_seat_unlock =>
-      '現在のマイクオーディオがロックされています';
+  String get common_client_error_open_microphone_need_seat_unlock => '現在のマイクオーディオがロックされています';
 
   @override
-  String get common_client_error_open_screen_share_need_permission_from_admin =>
-      '住宅所有者または管理者に申請し、画面を開いて共有する必要があります';
+  String get common_client_error_open_screen_share_need_permission_from_admin => '住宅所有者または管理者に申請し、画面を開いて共有する必要があります';
 
   @override
   String get common_client_error_open_screen_share_need_seat_unlock =>
       '現在のマイクビデオがロックされています。住宅所有者は、画面を開いて共有する前にマイクのロックを解除する必要があります。';
 
   @override
-  String get common_client_error_operation_invalid_before_enter_room =>
-      'この機能を使用する前に部屋に入る必要があります';
+  String get common_client_error_operation_invalid_before_enter_room => 'この機能を使用する前に部屋に入る必要があります';
 
   @override
-  String get common_client_error_operation_not_supported_in_current_room_type =>
-      'この操作は現在の部屋の種類ではサポートされていません';
+  String get common_client_error_operation_not_supported_in_current_room_type => 'この操作は現在の部屋の種類ではサポートされていません';
 
   @override
   String get common_client_error_permission_denied =>
@@ -351,32 +329,28 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_client_error_request_id_repeat => 'シグナリングリクエストを繰り返します';
 
   @override
-  String get common_client_error_request_no_permission =>
-      'シグナリングリクエストには、自分で開始されない招待状のキャンセルなど、権限がありません';
+  String get common_client_error_request_no_permission => 'シグナリングリクエストには、自分で開始されない招待状のキャンセルなど、権限がありません';
 
   @override
   String get common_client_error_require_payment =>
       'この関数では、追加のパッケージを有効にする必要があります。 Tencent CloudビデオキューブSDKコンソールで必要に応じて、対応するパッケージを有効にしてください';
 
   @override
-  String get common_client_error_room_id_invalid =>
-      '部屋IDの作成は違法であり、カスタムIDは印刷可能なASCII文字（0x20-0x7E）で、最大48バイトである必要があります';
+  String get common_client_error_room_id_invalid => '部屋IDの作成は違法であり、カスタムIDは印刷可能なASCII文字（0x20-0x7E）で、最大48バイトである必要があります';
 
   @override
   String get common_client_error_room_name_invalid =>
       '部屋の名前は違法で、名前の長さは最大30バイトです。中国語が含まれている場合は、キャラクターエンコードがUTF-8でなければなりません';
 
   @override
-  String get common_client_error_room_not_support_preloading =>
-      'プリロードは現在の部屋ではサポートされていません';
+  String get common_client_error_room_not_support_preloading => 'プリロードは現在の部屋ではサポートされていません';
 
   @override
   String get common_client_error_sdk_app_id_not_found =>
       'sdkappidは見つかりませんでした、Tencent CloudビデオキューブSDKコンソールのアプリケーション情報を確認してください';
 
   @override
-  String get common_client_error_sdk_not_initialized =>
-      'ログインしていないので、ログインインターフェイスに電話してください';
+  String get common_client_error_sdk_not_initialized => 'ログインしていないので、ログインインターフェイスに電話してください';
 
   @override
   String get common_client_error_seat_index_not_exist => '位置番号は存在しません';
@@ -385,37 +359,31 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_client_error_send_message_disabled_for_all => '部屋は禁止されています';
 
   @override
-  String get common_client_error_send_message_disabled_for_current =>
-      'あなたは現在の部屋で禁止されています';
+  String get common_client_error_send_message_disabled_for_current => 'あなたは現在の部屋で禁止されています';
 
   @override
-  String get common_client_error_start_screen_sharing_failed =>
-      '画面共有を有効にすることができませんでした、部屋の誰かが画面を共有しているかどうかを確認しました';
+  String get common_client_error_start_screen_sharing_failed => '画面共有を有効にすることができませんでした、部屋の誰かが画面を共有しているかどうかを確認しました';
 
   @override
   String get common_client_error_success => '操作は成功しました';
 
   @override
-  String get common_client_error_user_need_admin_permission =>
-      '運営するには、住宅所有者または管理者からの許可が必要です';
+  String get common_client_error_user_need_admin_permission => '運営するには、住宅所有者または管理者からの許可が必要です';
 
   @override
-  String get common_client_error_user_need_owner_permission =>
-      '運営するには、住宅所有者からの許可が必要です';
+  String get common_client_error_user_need_owner_permission => '運営するには、住宅所有者からの許可が必要です';
 
   @override
   String get common_client_error_user_not_exist => 'ユーザーは存在しません';
 
   @override
-  String get common_server_error_gift_ability_not_enabled =>
-      'ギフト機能サービスはまだ有効になっていません。パッケージバージョンを確認してください';
+  String get common_server_error_gift_ability_not_enabled => 'ギフト機能サービスはまだ有効になっていません。パッケージバージョンを確認してください';
 
   @override
   String get common_server_error_gift_not_exist => '贈り物は存在しません';
 
   @override
-  String get common_server_error_gift_server_pre_verification_failed =>
-      'ギフトサーバーの事前確認が失敗しました。コンソールの構成を確認してください';
+  String get common_server_error_gift_server_pre_verification_failed => 'ギフトサーバーの事前確認が失敗しました。コンソールの構成を確認してください';
 
   @override
   String get common_server_error_call_in_progress => '呼び出しでは、デバイスの操作に失敗しました';
@@ -637,8 +605,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_already_on_the_mic_queue => 'すでにフェリー状態にあります';
 
   @override
-  String get common_server_error_battle_does_not_exist_or_has_ended =>
-      '戦いは存在しないか、終わっていません';
+  String get common_server_error_battle_does_not_exist_or_has_ended => '戦いは存在しないか、終わっていません';
 
   @override
   String get common_server_error_battle_session_has_ended => '戦いは終わりました';
@@ -647,25 +614,20 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_connection_does_not_exist => '現在の接続は存在しません';
 
   @override
-  String get common_server_error_creating_battles_too_frequently =>
-      '頻繁に戦闘を短時間で開始し、試してみる前に少し待ってください';
+  String get common_server_error_creating_battles_too_frequently => '頻繁に戦闘を短時間で開始し、試してみる前に少し待ってください';
 
   @override
-  String get common_server_error_creating_connections_too_frequent =>
-      '短期間で頻繁に接続しすぎて、試してみる前にしばらく待ちます';
+  String get common_server_error_creating_connections_too_frequent => '短期間で頻繁に接続しすぎて、試してみる前にしばらく待ちます';
 
   @override
   String get common_server_error_creating_rooms_exceeds_the_frequency_limit =>
       '頻度は制限を超えます。たとえば、部屋の作成は制限を超え、同じ部屋IDは1秒に1回しか作成できません';
 
   @override
-  String get common_server_error_exceeds_the_upper_limit =>
-      '支払い制限は、クロークの最大数、PKセッションの数などを超えて支払い制限を超えます。';
+  String get common_server_error_exceeds_the_upper_limit => '支払い制限は、クロークの最大数、PKセッションの数などを超えて支払い制限を超えます。';
 
   @override
-  String
-      get common_server_error_has_exceeded_the_limit_in_connection_or_battle =>
-          '接続部屋とバトルルームの最大数を超えました';
+  String get common_server_error_has_exceeded_the_limit_in_connection_or_battle => '接続部屋とバトルルームの最大数を超えました';
 
   @override
   String get common_server_error_in_other_battle => 'この部屋は他の戦闘セッションにあります';
@@ -678,46 +640,35 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_invalid_room_type => '無効な部屋の種類';
 
   @override
-  String get common_server_error_is_connecting_with_other_rooms =>
-      '現在の部屋は他の部屋に接続されています';
+  String get common_server_error_is_connecting_with_other_rooms => '現在の部屋は他の部屋に接続されています';
 
   @override
-  String
-      get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle =>
-          '部屋は戦いにあります';
+  String get common_server_error_is_not_allowed_to_cancel_battle_for_room_in_battle => '部屋は戦いにあります';
 
   @override
-  String get common_server_error_metadata_no_valid_keys =>
-      'ルームメタデータを削除するとき、削除されたキーはどれも存在しません';
+  String get common_server_error_metadata_no_valid_keys => 'ルームメタデータを削除するとき、削除されたキーはどれも存在しません';
 
   @override
-  String get common_server_error_metadata_number_of_keys_exceeds_the_limit =>
-      'ルームメタデータのキーの数は上限を超えています';
+  String get common_server_error_metadata_number_of_keys_exceeds_the_limit => 'ルームメタデータのキーの数は上限を超えています';
 
   @override
-  String get common_server_error_metadata_size_of_value_exceeds_the_limit =>
-      'ルームメタデータの単一キーに対応するVALは、バイト制限の最大数を超えています';
+  String get common_server_error_metadata_size_of_value_exceeds_the_limit => 'ルームメタデータの単一キーに対応するVALは、バイト制限の最大数を超えています';
 
   @override
-  String
-      get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
-          'ルームメタデータのキーサイズは、バイト制限の最大数を超えています';
+  String get common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit =>
+      'ルームメタデータのキーサイズは、バイト制限の最大数を超えています';
 
   @override
-  String get common_server_error_metadata_total_size_exceeds_the_limit =>
-      'ルームメタデータのすべてのキーに対応するバルの合計は、バイト制限の最大数を超えています';
+  String get common_server_error_metadata_total_size_exceeds_the_limit => 'ルームメタデータのすべてのキーに対応するバルの合計は、バイト制限の最大数を超えています';
 
   @override
-  String get common_server_error_mic_seat_is_locked =>
-      'マットレスの位置がロックされています、マットレスの位置を変更してみることができます';
+  String get common_server_error_mic_seat_is_locked => 'マットレスの位置がロックされています、マットレスの位置を変更してみることができます';
 
   @override
-  String get common_server_error_no_payment_information =>
-      '有料情報はありません、コンソールでパッケージを購入する必要があります';
+  String get common_server_error_no_payment_information => '有料情報はありません、コンソールでパッケージを購入する必要があります';
 
   @override
-  String get common_server_error_no_rooms_in_the_battle_is_valid =>
-      '開始された戦いには有効な部屋はありません';
+  String get common_server_error_no_rooms_in_the_battle_is_valid => '開始された戦いには有効な部屋はありません';
 
   @override
   String get common_server_error_not_a_room_member => '部屋以外のメンバー';
@@ -732,40 +683,32 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_not_started_yet => '戦いはまだ始まっていません';
 
   @override
-  String get common_server_error_param_illegal =>
-      '違法なパラメーターをご覧ください。エラーの説明に従ってリクエストが正しいかどうかを確認してください。';
+  String get common_server_error_param_illegal => '違法なパラメーターをご覧ください。エラーの説明に従ってリクエストが正しいかどうかを確認してください。';
 
   @override
-  String get common_server_error_requires_password =>
-      '現在の部屋では、入力するにはパスワードが必要です';
+  String get common_server_error_requires_password => '現在の部屋では、入力するにはパスワードが必要です';
 
   @override
-  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit =>
-      '管理者の数は制限を超えています';
+  String get common_server_error_room_admin_quantity_exceeds_the_upper_limit => '管理者の数は制限を超えています';
 
   @override
-  String get common_server_error_room_does_not_exist =>
-      '部屋は存在せず、存在していませんが、解散しました';
+  String get common_server_error_room_does_not_exist => '部屋は存在せず、存在していませんが、解散しました';
 
   @override
-  String get common_server_error_room_does_not_support_mic_ability =>
-      'この部屋はMSをサポートしていません';
+  String get common_server_error_room_does_not_support_mic_ability => 'この部屋はMSをサポートしていません';
 
   @override
-  String get common_server_error_room_entry_password_error =>
-      '部屋に入るためのパスワードが誤っていません';
+  String get common_server_error_room_entry_password_error => '部屋に入るためのパスワードが誤っていません';
 
   @override
-  String get common_server_error_room_id_exists =>
-      '部屋IDが使用されました、別の部屋IDを選択してください';
+  String get common_server_error_room_id_exists => '部屋IDが使用されました、別の部屋IDを選択してください';
 
   @override
   String get common_server_error_room_id_has_been_occupied_by_chat =>
       '部屋IDはIMによって占有されています。別の部屋IDで使用するか、最初にIMインターフェイスを介してグループを解散させることができます。';
 
   @override
-  String get common_server_error_room_id_has_been_used =>
-      '部屋IDが使用されており、オペレーターは住宅所有者であり、直接使用できます';
+  String get common_server_error_room_id_has_been_used => '部屋IDが使用されており、オペレーターは住宅所有者であり、直接使用できます';
 
   @override
   String get common_server_error_room_is_full => '部屋のメンバーはいっぱいです';
@@ -780,16 +723,13 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_signal_request_conflict => 'シグナリングリクエストの競合';
 
   @override
-  String get common_server_error_system_internal_error =>
-      '内部サーバーエラー、もう一度やり直してください';
+  String get common_server_error_system_internal_error => '内部サーバーエラー、もう一度やり直してください';
 
   @override
-  String get common_server_error_tag_quantity_exceeds_upper_limit =>
-      'タグの数は上限を超えています';
+  String get common_server_error_tag_quantity_exceeds_upper_limit => 'タグの数は上限を超えています';
 
   @override
-  String get common_server_error_the_room_is_not_in_the_battle =>
-      '部屋はもはや戦いにありません';
+  String get common_server_error_the_room_is_not_in_the_battle => '部屋はもはや戦いにありません';
 
   @override
   String get common_server_error_the_seat_list_is_empty => '接続されたマイクのリストは空です';
@@ -798,24 +738,22 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_server_error_the_seats_are_all_taken => '座席はいっぱいです';
 
   @override
-  String get common_server_error_there_is_a_pending_battle_request =>
-      'この部屋には、保留中の戦闘リクエストがあります';
+  String get common_server_error_there_is_a_pending_battle_request => 'この部屋には、保留中の戦闘リクエストがあります';
 
   @override
-  String get common_server_error_there_is_a_pending_connection_request =>
-      'この部屋には保留中の接続リクエストがあります';
+  String get common_server_error_there_is_a_pending_connection_request => 'この部屋には保留中の接続リクエストがあります';
 
   @override
-  String get common_server_error_this_member_has_been_banned =>
-      'このメンバーは禁止されています';
+  String get common_server_error_this_member_has_been_banned => 'このメンバーは禁止されています';
 
   @override
-  String get common_server_error_this_member_has_been_muted =>
-      'このメンバーは禁止されています';
+  String get common_server_error_this_member_has_been_muted => 'このメンバーは禁止されています';
 
   @override
-  String get common_server_error_user_is_already_on_the_mic_seat =>
-      'マイクにはすでにユーザーがいます';
+  String get common_server_error_user_is_already_on_the_mic_seat => 'マイクにはすでにユーザーがいます';
+
+  @override
+  String get common_server_error_im_sensitive_words_ban => 'このメッセージまたは文書には機密情報が含まれているため、送信は禁止されています。';
 
   @override
   String get common_set_as_background => '背景として設定します';
@@ -872,8 +810,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_title_link_video_settings => 'ビデオ接続画面を調整します';
 
   @override
-  String get common_toast_apply_link_mic =>
-      'あなたは電気通信申請書を提出しました、アンカーが同意するのを待ってください';
+  String get common_toast_apply_link_mic => 'あなたは電気通信申請書を提出しました、アンカーが同意するのを待ってください';
 
   @override
   String get common_unfollow_anchor => '解除してください';
@@ -900,8 +837,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_pip_toggle => 'ピクチャーインピクチャーの切り替え';
 
   @override
-  String get common_pip_toggle_description =>
-      'オンにすると、アプリがバックグラウンドに移動したときに自動的にピクチャーインピクチャーモードに入ります';
+  String get common_pip_toggle_description => 'オンにすると、アプリがバックグラウンドに移動したときに自動的にピクチャーインピクチャーモードに入ります';
 
   @override
   String get common_voiceroom_empty_view => 'マイクにはユーザーがいません。';
@@ -910,8 +846,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_voiceroom_invite => '招待する';
 
   @override
-  String get common_voiceroom_invite_seat_canceled =>
-      'Shangmaiへの招待状がキャンセルされました';
+  String get common_voiceroom_invite_seat_canceled => 'Shangmaiへの招待状がキャンセルされました';
 
   @override
   String get common_voiceroom_invite_seat_rejected => 'Shangmaiへの招待状が拒否されました';
@@ -1170,12 +1105,10 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_remove => '取り除く';
 
   @override
-  String get common_host_kick_user_after_connect =>
-      '接続に成功しました。先着6席以外のユーザーはマイクを降りました。';
+  String get common_host_kick_user_after_connect => '接続に成功しました。先着6席以外のユーザーはマイクを降りました。';
 
   @override
-  String get common_audience_kicked_re_apply =>
-      '接続は先着6席のみ表示されます。あなたはマイクから降ろされました。';
+  String get common_audience_kicked_re_apply => '接続は先着6席のみ表示されます。あなたはマイクから降ろされました。';
 
   @override
   String get common_game_live => 'スマホゲーム実況';
@@ -1194,4 +1127,19 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
 
   @override
   String get common_select_app_to_live => 'アプリを選択してライブを開始';
+
+  @override
+  String get common_violation_alert_toast => '現在のコンテンツにはプラットフォーム規約に違反するリスクがあります。ご注意ください';
+
+  @override
+  String get live_song_unknown_artist => '不明';
+
+  @override
+  String get live_anchor_manager_set_featured_host => 'メインホストに設定';
+
+  @override
+  String get live_anchor_manager_revoke_featured_host => 'メインホストを解除';
+
+  @override
+  String get common_enter_anchor_live_room => '配信ルームへ';
 }

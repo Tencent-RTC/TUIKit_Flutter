@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/store/app_store.dart';
 import 'package:tencent_live_uikit_example/src/view/login/login_widget.dart';
@@ -184,7 +183,6 @@ extension _MeWidgetStateLogicExtension on _MeWidgetState {
   }
 
   void _logout(BuildContext context) {
-    GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
     Future.delayed(const Duration(milliseconds: 500), () => LoginStore.shared.logout());
     Navigator.of(context).pop();
     NavigatorState navigatorState = Navigator.of(context);

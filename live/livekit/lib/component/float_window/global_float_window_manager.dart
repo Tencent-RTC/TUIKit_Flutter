@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_mode.dart';
 
-import 'package:tencent_live_uikit/common/platform/rtc_live_tuikit_platform_interface.dart';
-import 'package:tencent_live_uikit/common/widget/global.dart';
 import 'global_float_window_state.dart';
 
 /// Two scenarios:

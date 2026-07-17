@@ -1,4 +1,3 @@
-library module;
 
 export 'battle_manager.dart';
 export 'co_guest_manager.dart';

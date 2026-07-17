@@ -181,6 +181,7 @@ class AlbumPickerHandler(
                         )
                         textMessage?.let { event["textMessage"] = it }
                         capturedSessionId?.let { event["sessionId"] = it }
+                        Log.d(TAG, "onPickConfirm dispatching event to Flutter (sessionId=$capturedSessionId)")
                         mainHandler.post { eventSink(event) }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error building onPickConfirm event", e)
@@ -216,10 +217,12 @@ class AlbumPickerHandler(
 
             override fun onMediaProcessed() {
                 Log.d(TAG, "onMediaProcessed")
-                val event = mutableMapOf<String, Any>("type" to "onMediaProcessed")
-                capturedSessionId?.let { event["sessionId"] = it }
-                mainHandler.post { eventSink(event) }
-                completeSession()
+                executor.execute {
+                    val event = mutableMapOf<String, Any>("type" to "onMediaProcessed")
+                    capturedSessionId?.let { event["sessionId"] = it }
+                    mainHandler.post { eventSink(event) }
+                    mainHandler.post { completeSession() }
+                }
             }
 
             override fun onCancel() {

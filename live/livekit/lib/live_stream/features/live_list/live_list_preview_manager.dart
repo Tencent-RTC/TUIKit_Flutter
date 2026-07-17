@@ -25,9 +25,6 @@ class LiveListPreviewManager {
   /// Returns a copy of the roomIds currently being previewed in double-column mode.
   Set<String> get doublePlayingRoomIds => Set.unmodifiable(_doublePlayingRoomIds);
 
-  /// Timer for delayed double-column preload.
-  Timer? _preloadTimer;
-
   /// When true, preloadTopRow Timer callbacks will be suppressed.
   bool _isBlocked = false;
 
@@ -47,6 +44,10 @@ class LiveListPreviewManager {
   void startPreview(LiveInfo liveInfo, {bool isMuteAudio = true}) {
     final roomId = liveInfo.liveID;
     if (_activePreviews.containsKey(roomId)) {
+      return;
+    }
+    if (LiveListStore.shared.liveState.currentLive.value.liveID == roomId) {
+      LiveKitLogger.info('$tag startPreview: $roomId ignore, current live room is playing');
       return;
     }
     final controller = _controllerFactory.create();
@@ -85,7 +86,6 @@ class LiveListPreviewManager {
     required List<String> topRowRoomIds,
     required List<String> allVisibleRoomIds,
   }) {
-    _preloadTimer?.cancel();
 
     if (topRowRoomIds.isEmpty) {
       // No fully visible row, stop all double-playing previews.
@@ -114,19 +114,23 @@ class LiveListPreviewManager {
 
     if (roomIdsToPreload.isEmpty) return;
 
-    _preloadTimer = Timer(const Duration(milliseconds: 500), () {
-      if (_isBlocked) return;
-      for (final roomId in roomIdsToPreload) {
-        if (!_activePreviews.containsKey(roomId)) {
-          final controller = _controllerFactory.create();
-          _activePreviews[roomId] = controller;
-          controller.startPreview(roomId, true);
-          _doublePlayingRoomIds.add(roomId);
-          LiveKitLogger.info('$tag preloadTopRow: $roomId');
+    if (_isBlocked) return;
+    for (int i = 0; i < roomIdsToPreload.length; i++) {
+      final roomId = roomIdsToPreload[i];
+      Future.delayed(Duration(milliseconds: i * 50), () {
+        if (_isBlocked || _activePreviews.containsKey(roomId)) return;
+        if (LiveListStore.shared.liveState.currentLive.value.liveID == roomId) {
+          LiveKitLogger.info('$tag preloadTopRow, startPreview: $roomId ignore, current live room is playing');
+          return;
         }
-      }
-      notifyStateChange();
-    });
+        final controller = _controllerFactory.create();
+        _activePreviews[roomId] = controller;
+        controller.startPreview(roomId, true);
+        _doublePlayingRoomIds.add(roomId);
+        notifyStateChange();
+        LiveKitLogger.info('$tag preloadTopRow: $roomId');
+      });
+    }
   }
 
   /// Check if a preview is active for the given roomId.
@@ -139,14 +143,7 @@ class LiveListPreviewManager {
     return _activePreviews[roomId];
   }
 
-  /// Cancel the pending preload timer without stopping active previews.
-  void cancelPreloadTimer() {
-    _preloadTimer?.cancel();
-    _preloadTimer = null;
-  }
-
   void dispose() {
-    _preloadTimer?.cancel();
     stopAllPreviews();
     previewStateNotifier.dispose();
     LiveKitLogger.info('$tag disposed');
