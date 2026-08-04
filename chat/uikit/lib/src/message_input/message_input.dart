@@ -1253,11 +1253,13 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   Widget _buildMorePanelContent(SemanticColorScheme colorsTheme) {
     final List<_MorePanelItem> items = [];
 
-    items.add(_MorePanelItem(
-      icon: 'chat_assets/icon/image_action.svg',
-      title: atomicLocale.album,
-      onTap: _onPickAlbum,
-    ));
+    if (widget.config.isShowAlbum) {
+      items.add(_MorePanelItem(
+        icon: 'chat_assets/icon/image_action.svg',
+        title: atomicLocale.album,
+        onTap: _onPickAlbum,
+      ));
+    }
 
     if (widget.config.isShowPhotoTaker) {
       items.add(_MorePanelItem(
@@ -1265,6 +1267,9 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         title: atomicLocale.takeAPhoto,
         onTap: _onTakePhoto,
       ));
+    }
+
+    if (widget.config.isShowVideoRecorder) {
       items.add(_MorePanelItem(
         icon: 'chat_assets/icon/record_action.svg',
         title: atomicLocale.recordAVideo,
@@ -1272,11 +1277,13 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       ));
     }
 
-    items.add(_MorePanelItem(
-      icon: 'chat_assets/icon/file_action.svg',
-      title: atomicLocale.file,
-      onTap: _onPickFile,
-    ));
+    if (widget.config.isShowFile) {
+      items.add(_MorePanelItem(
+        icon: 'chat_assets/icon/file_action.svg',
+        title: atomicLocale.file,
+        onTap: _onPickFile,
+      ));
+    }
 
     if (widget.config.isShowVideoCall) {
       items.add(_MorePanelItem(
@@ -1295,7 +1302,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
     // Each page shows 2 rows × 4 columns = 8 items max
     const int itemsPerPage = 8;
-    final int pageCount = (items.length / itemsPerPage).ceil();
+    final int pageCount = items.isEmpty ? 0 : (items.length / itemsPerPage).ceil();
 
     return Container(
       color: colorsTheme.bgColorInput,
@@ -1306,38 +1313,40 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
             color: colorsTheme.textColorPrimary.withValues(alpha: 0.1),
           ),
           Expanded(
-            child: PageView.builder(
-              itemCount: pageCount,
-              onPageChanged: (index) {
-                setState(() {
-                  _morePanelPageIndex = index;
-                });
-              },
-              itemBuilder: (context, pageIndex) {
-                final startIndex = pageIndex * itemsPerPage;
-                final endIndex = (startIndex + itemsPerPage).clamp(0, items.length);
-                final pageItems = items.sublist(startIndex, endIndex);
+            child: pageCount == 0
+                ? const SizedBox.shrink()
+                : PageView.builder(
+                    itemCount: pageCount,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _morePanelPageIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, pageIndex) {
+                      final startIndex = pageIndex * itemsPerPage;
+                      final endIndex = (startIndex + itemsPerPage).clamp(0, items.length);
+                      final pageItems = items.sublist(startIndex, endIndex);
 
-                // Each item row: icon 64 + spacing 8 + text ~14 = ~86pt
-                // Two-row content height: 86 + 20 (gap) + 86 = 192pt
-                const double twoRowHeight = 192;
+                      // Each item row: icon 64 + spacing 8 + text ~14 = ~86pt
+                      // Two-row content height: 86 + 20 (gap) + 86 = 192pt
+                      const double twoRowHeight = 192;
 
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    final topPadding = ((constraints.maxHeight - twoRowHeight) / 2)
-                        .clamp(8.0, double.infinity);
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: 24,
-                        right: 24,
-                        top: topPadding,
-                      ),
-                      child: _buildMorePanelPage(pageItems, colorsTheme),
-                    );
-                  },
-                );
-              },
-            ),
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          final topPadding = ((constraints.maxHeight - twoRowHeight) / 2)
+                              .clamp(8.0, double.infinity);
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: 24,
+                              right: 24,
+                              top: topPadding,
+                            ),
+                            child: _buildMorePanelPage(pageItems, colorsTheme),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
           // Page indicator dots — always reserve space, hide when only 1 page
           Opacity(

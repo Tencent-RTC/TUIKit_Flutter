@@ -96,11 +96,20 @@ class ChatSettingPage extends StatelessWidget {
 class ChatPage extends StatefulWidget {
   final ConversationInfo conversation;
   final MessageInfo? message;
+  final ChatMessageInputConfig messageInputConfig;
+  final ChatMessageListConfig messageListConfig;
+  final bool isShowAppBarActions;
 
   const ChatPage({
     super.key,
     required this.conversation,
     this.message,
+    this.messageInputConfig = const ChatMessageInputConfig(
+      isShowAudioCall: true,
+      isShowVideoCall: true,
+    ),
+    this.messageListConfig = const ChatMessageListConfig(),
+    this.isShowAppBarActions = true,
   });
 
   @override
@@ -241,16 +250,18 @@ class _ChatPageState extends State<ChatPage> {
             size: ButtonSize.l,
             onClick: () => Navigator.of(context).pop(),
           ),
-          actions: [
-            IconButton.buttonContent(
-              content: IconOnlyContent(
-                Icon(Icons.more_horiz, color: colorsTheme.buttonColorPrimaryDefault),
-              ),
-              type: ButtonType.noBorder,
-              size: ButtonSize.l,
-              onClick: _onChatSettingsTap,
-            ),
-          ]),
+          actions: widget.isShowAppBarActions
+              ? [
+                  IconButton.buttonContent(
+                    content: IconOnlyContent(
+                      Icon(Icons.more_horiz, color: colorsTheme.buttonColorPrimaryDefault),
+                    ),
+                    type: ButtonType.noBorder,
+                    size: ButtonSize.l,
+                    onClick: _onChatSettingsTap,
+                  ),
+                ]
+              : null),
       body: Stack(
         children: [
           GestureDetector(
@@ -263,6 +274,7 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 MessageList(
                   conversationID: widget.conversation.conversationID,
+                  config: widget.messageListConfig,
                   locateMessage: widget.message,
                   onUserClick: (String userID) => _onUserClick(userID),
                   onUserLongPress: (String userID, String displayName) {
@@ -294,10 +306,7 @@ class _ChatPageState extends State<ChatPage> {
                   MessageInput(
                     key: _messageInputKey,
                     conversationID: widget.conversation.conversationID,
-                    config: const ChatMessageInputConfig(
-                      isShowAudioCall: true,
-                      isShowVideoCall: true,
-                    ),
+                    config: widget.messageInputConfig,
                   ),
               ],
             ),
