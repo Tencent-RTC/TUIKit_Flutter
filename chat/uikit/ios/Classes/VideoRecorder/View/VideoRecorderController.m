@@ -18,6 +18,12 @@
 #import "VideoRecorderPreviewView.h"
 #import "VideoRecordSignatureChecker.h"
 
+#if __has_include(<tencent_chat_uikit/tencent_chat_uikit-Swift.h>)
+#import <tencent_chat_uikit/tencent_chat_uikit-Swift.h>
+#else
+#import "tencent_chat_uikit-Swift.h"
+#endif
+
 #define MIXED_RECORD_MODE 0
 
 @interface VideoRecorderController () <VideoRecorderBeautifyViewDelegate, VideoRecorderCoreListener, VideoRecorderControlViewDelegate, VideoRecorderPreviewViewDelegate> {
@@ -26,6 +32,7 @@
     VideoRecorderBeautifySettings *_settings;
     VideoRecorderControlView *_ctrlView;
     VideoRecorderPreviewView *_videoPlayerView;
+    VideoRecorderImageEditView *_imageEditView;
     UIScreenEdgePanGestureRecognizer *_edgePanGesture;
     VideoRecordResult* _recorderResult;
     VideoRecorderEncodeConfig* _encodeConfig;
@@ -162,9 +169,44 @@
 }
 
 - (void) privewPhoto:(UIImage *)image {
-    _videoPlayerView.hidden = NO;
-    _videoPlayerView.frame = self.view.frame;
-    [_videoPlayerView previewPhoto:image];
+    if (image == nil) {
+        return;
+    }
+    [self removeImageEditView];
+
+    __weak typeof(self) weakSelf = self;
+    _imageEditView = [[VideoRecorderImageEditView alloc] initWithImage:image];
+    _imageEditView.frame = self.view.bounds;
+    _imageEditView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _imageEditView.onEditConfirmed = ^(UIImage *editedImage) {
+        [weakSelf onImageEditConfirmed:editedImage];
+    };
+    _imageEditView.onEditCancelled = ^{
+        [weakSelf onImageEditCancelled];
+    };
+    [self.view addSubview:_imageEditView];
+    _ctrlView.hidden = YES;
+    _edgePanGesture.enabled = NO;
+}
+
+- (void)onImageEditConfirmed:(UIImage *)editedImage {
+    if (_resultCallback != nil) {
+        _resultCallback(nil, editedImage, 0);
+    }
+    [self removeImageEditView];
+}
+
+- (void)onImageEditCancelled {
+    [self removeImageEditView];
+    _ctrlView.hidden = NO;
+    _edgePanGesture.enabled = YES;
+}
+
+- (void)removeImageEditView {
+    if (_imageEditView != nil) {
+        [_imageEditView removeFromSuperview];
+        _imageEditView = nil;
+    }
 }
 
 - (void) setAspectRatio {
