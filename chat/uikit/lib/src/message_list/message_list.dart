@@ -277,6 +277,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   // Listener references for proper removal
   late final VoidCallback _messageListStateChangedListener;
   late final VoidCallback _scrollListenerCallback;
+  late final VoidCallback _joinedGroupListChangedListener;
 
   // AutomaticKeepAliveClientMixin requires this method to be implemented
   // Returning true indicates that the state is maintained even if the Widget is not in the view.
@@ -303,6 +304,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     // Initialize listener references
     _messageListStateChangedListener = _onMessageListStateChanged;
     _scrollListenerCallback = _scrollListener;
+    _joinedGroupListChangedListener = _onJoinedGroupListChanged;
 
     _messageListStore =
         MessageListStore.create(conversationID: widget.conversationID);
@@ -311,6 +313,9 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     _itemPositionsListener.itemPositions.addListener(_scrollListenerCallback);
 
     if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
+      // Initial pull for call banner; subsequent attribute pushes arrive via
+      // GroupStore.joinedGroupList (see _onJoinedGroupListChanged).
+      GroupStore.shared.state.joinedGroupList.addListener(_joinedGroupListChangedListener);
       _loadGroupAttributes();
     }
 
@@ -345,6 +350,9 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     _messageListStore.state.messageList.removeListener(_messageListStateChangedListener);
     _messageEventSubscription?.cancel();
     _itemPositionsListener.itemPositions.removeListener(_scrollListenerCallback);
+    if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
+      GroupStore.shared.state.joinedGroupList.removeListener(_joinedGroupListChangedListener);
+    }
     _receiptTimer?.cancel();
     _asrDisplayManager.dispose();
     _translationDisplayManager.dispose();
@@ -1816,11 +1824,39 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     final groupId = widget.conversationID.replaceFirst(groupConversationIDPrefix, '');
     final result = await GroupStore.shared.getGroupInfo(groupID: groupId);
     if (result.isSuccess && result.groupInfo != null && mounted) {
+      // Prefer the joinedGroupList entry (same instance attribute pushes mutate)
+      // so the call banner stays in sync with subsequent _onGroupAttributeChanged.
+      final list = GroupStore.shared.state.joinedGroupList.value;
+      GroupInfo? fromList;
+      for (final g in list) {
+        if (g.groupID == groupId) {
+          fromList = g;
+          break;
+        }
+      }
       setState(() {
-        _groupInfo = result.groupInfo;
+        _groupInfo = fromList ?? result.groupInfo;
       });
       _updateCallStatusWidget();
     }
+  }
+
+  /// Sync call banner when GroupStore pushes group attribute / profile updates
+  /// (e.g. in-group call start / end while this chat page is already open).
+  void _onJoinedGroupListChanged() {
+    if (!mounted) return;
+    final groupId = widget.conversationID.replaceFirst(groupConversationIDPrefix, '');
+    final list = GroupStore.shared.state.joinedGroupList.value;
+    GroupInfo? updated;
+    for (final g in list) {
+      if (g.groupID == groupId) {
+        updated = g;
+        break;
+      }
+    }
+    if (updated == null) return;
+    _groupInfo = updated;
+    _updateCallStatusWidget();
   }
 
   void _updateCallStatusWidget() {
