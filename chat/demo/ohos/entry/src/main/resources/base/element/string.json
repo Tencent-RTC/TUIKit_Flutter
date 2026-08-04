@@ -1,0 +1,36 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "uikit_next"
+    },
+    {
+      "name": "permission_reason_camera",
+      "value": "Used for taking photos or recording videos to send in chat."
+    },
+    {
+      "name": "permission_reason_microphone",
+      "value": "Used for recording voice messages and audio/video calls."
+    },
+    {
+      "name": "permission_reason_read_media",
+      "value": "Used for selecting photos or videos from the album to send in chat."
+    },
+    {
+      "name": "permission_reason_write_media",
+      "value": "Used for saving received images or videos to the album."
+    },
+    {
+      "name": "permission_reason_read_pasteboard",
+      "value": "Used for pasting text copied from other locations into the input field."
+    }
+  ]
+}

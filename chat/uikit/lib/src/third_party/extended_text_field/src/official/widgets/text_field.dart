@@ -43,6 +43,8 @@ class _TextFieldSelectionGestureDetectorBuilder
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
           Feedback.forLongPress(_state.context);
       }
     }
@@ -865,6 +867,13 @@ class _TextField extends StatefulWidget {
         return SpellCheckSuggestionsToolbar.editableText(
           editableTextState: editableTextState,
         );
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        return SpellCheckSuggestionsToolbar.editableText(
+          editableTextState: editableTextState,
+        );
     }
   }
 
@@ -1312,6 +1321,8 @@ class _TextFieldState extends State<_TextField>
       case TargetPlatform.windows:
       case TargetPlatform.fuchsia:
       case TargetPlatform.android:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
         if (cause == SelectionChangedCause.longPress) {
           _editableText?.bringIntoView(selection.extent);
         }
@@ -1328,6 +1339,9 @@ class _TextFieldState extends State<_TextField>
         if (cause == SelectionChangedCause.drag) {
           _editableText?.hideToolbar();
         }
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior (no-op).
+      default:
+        break;
     }
   }
 
@@ -1461,6 +1475,13 @@ class _TextFieldState extends State<_TextField>
         spellCheckConfiguration = TextField.inferAndroidSpellCheckConfiguration(
           widget.spellCheckConfiguration,
         );
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        spellCheckConfiguration = TextField.inferAndroidSpellCheckConfiguration(
+          widget.spellCheckConfiguration,
+        );
     }
 
     TextSelectionControls? textSelectionControls = widget.selectionControls;
@@ -1579,6 +1600,22 @@ class _TextFieldState extends State<_TextField>
         handleDidLoseAccessibilityFocus = () {
           _effectiveFocusNode.unfocus();
         };
+
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        forcePressEnabled = false;
+        textSelectionControls ??= materialTextSelectionHandleControls;
+        paintCursorAboveText = false;
+        cursorOpacityAnimates ??= false;
+        cursorColor = _hasError
+            ? _errorColor
+            : widget.cursorColor ??
+                selectionStyle.cursorColor ??
+                theme.colorScheme.primary;
+        selectionColor = selectionStyle.selectionColor ??
+            theme.colorScheme.primary.withOpacity(0.40);
     }
 
     Widget child = RepaintBoundary(

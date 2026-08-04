@@ -7,13 +7,17 @@ import 'video_recorder.dart';
 class VideoRecorderPlatform {
   static const MethodChannel _methodChannel = MethodChannel('tencent_chat_uikit/video_recorder');
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   static Future<VideoRecorderResult> startRecordNative({
     required VideoRecorderConfig config,
     Locale? locale,
     String? primaryColor,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
-      throw UnsupportedError('Native VideoRecorder is only supported on Android and iOS');
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
+      throw UnsupportedError('Native VideoRecorder is only supported on Android, iOS and HarmonyOS');
     }
 
     try {

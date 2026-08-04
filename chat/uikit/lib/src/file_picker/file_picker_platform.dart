@@ -7,14 +7,18 @@ class FilePickerPlatform {
   static const MethodChannel _methodChannel =
       MethodChannel('tencent_chat_uikit/file_picker');
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   /// Pick files using native implementation
   static Future<List<PickerResult>> pickFiles({
     int maxCount = 1,
     List<String> allowedMimeTypes = const [],
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
       throw UnsupportedError(
-          'Native FilePicker is only supported on Android and iOS');
+          'Native FilePicker is only supported on Android, iOS and HarmonyOS');
     }
 
     try {
@@ -48,9 +52,9 @@ class FilePickerPlatform {
 
   /// Open file with system default application
   static Future<bool> openFile(String filePath) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
       throw UnsupportedError(
-          'Native file opening is only supported on Android and iOS');
+          'Native file opening is only supported on Android, iOS and HarmonyOS');
     }
 
     try {

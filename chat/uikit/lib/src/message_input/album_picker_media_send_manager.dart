@@ -86,6 +86,12 @@ class AlbumPickerMediaSendManager {
           thumbnailPath: thumbnailPath,
           mediaType: media.mediaType,
         );
+
+        if (state.processed) {
+          session.mediaStates.remove(media.id);
+          continue;
+        }
+
         state.placeholder = placeholder;
         session.listener.onSendPlaceholderMessage(placeholder);
       }
@@ -145,6 +151,8 @@ class AlbumPickerMediaSendManager {
 
     if (state == null) {
       session.processedMediaIds.add(media.id);
+    } else {
+      state.processed = true;
     }
 
     final placeholderToRemove = state?.placeholder;
@@ -163,7 +171,10 @@ class AlbumPickerMediaSendManager {
     );
 
     session.listener.onSendMessage(messageInfo);
-    session.mediaStates.remove(media.id);
+
+    if (state?.placeholder != null) {
+      session.mediaStates.remove(media.id);
+    }
   }
 
   void _handleVideoProcessing({
@@ -246,11 +257,17 @@ class AlbumPickerMediaSendManager {
 
     final messageInfo = MessageInfo();
     messageInfo.messageType = MessageType.video;
+    // videoType 用于 IMSDK createVideoMessage 的 type 入参,不能为空。
+    // 鸿蒙相册返回的沙盒文件名有时不带扩展名(media URI 无后缀),
+    // split('.').last 会拿到整段文件名 -> 非法 type 导致发送失败,这里兜底为 mp4。
+    final ext = media.mediaPath.contains('.') ? media.mediaPath.split('.').last : '';
+    final videoType = (ext.isEmpty || ext.length > 5) ? 'mp4' : ext;
+
     messageInfo.messagePayload = VideoMessagePayload(
       videoPath: media.mediaPath,
       videoSnapshotPath: snapshotPath,
       videoDuration: (media.duration / 1000).round(),
-      videoType: media.mediaPath.split('.').last,
+      videoType: videoType,
     );
 
     session.listener.onSendMessage(messageInfo);
@@ -301,6 +318,7 @@ class _MediaState {
   String? thumbnailPath;
   AlbumMediaType mediaType;
   double progress = 0;
+  bool processed = false;
 
   _MediaState({this.mediaType = AlbumMediaType.image});
 }

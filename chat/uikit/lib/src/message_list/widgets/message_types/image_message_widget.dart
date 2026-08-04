@@ -128,15 +128,29 @@ class _ImageMessageWidgetState extends State<ImageMessageWidget> with MessageSta
   }
 
   Widget _buildImageContent(SemanticColorScheme colorsTheme) {
-    String? originalImagePath = (widget.message.messagePayload as ImageMessagePayload?)?.originalImagePath;
-    String? largeImagePath = (widget.message.messagePayload as ImageMessagePayload?)?.largeImagePath;
-    String? thumbImagePath = (widget.message.messagePayload as ImageMessagePayload?)?.thumbImagePath;
+    final imagePayload = widget.message.messagePayload as ImageMessagePayload?;
+    String? originalImagePath = imagePayload?.originalImagePath;
+    String? largeImagePath = imagePayload?.largeImagePath;
+    String? thumbImagePath = imagePayload?.thumbImagePath;
 
-    if ((originalImagePath == null || originalImagePath.isEmpty) &&
-        (largeImagePath == null || largeImagePath.isEmpty)) {
-      if ((thumbImagePath == null || thumbImagePath.isEmpty) &&
-          widget.messageListStore != null &&
-          widget.message.rawMessage != null) {
+    // Remote URL fallbacks. In the merged-forward detail view the bundle is
+    // re-downloaded on every open and the local thumb files are transient /
+    // may be gone the second time, so we must be able to render straight from
+    // the server URL instead of getting stuck on the loading spinner
+    // (bug#161210776). Local path always wins when present.
+    String? thumbImageURL = imagePayload?.thumbImageURL;
+    String? largeImageURL = imagePayload?.largeImageURL;
+    String? originalImageURL = imagePayload?.originalImageURL;
+
+    final bool hasLocalPath = (originalImagePath != null && originalImagePath.isNotEmpty) ||
+        (largeImagePath != null && largeImagePath.isNotEmpty) ||
+        (thumbImagePath != null && thumbImagePath.isNotEmpty);
+    final bool hasRemoteURL = (thumbImageURL != null && thumbImageURL.isNotEmpty) ||
+        (largeImageURL != null && largeImageURL.isNotEmpty) ||
+        (originalImageURL != null && originalImageURL.isNotEmpty);
+
+    if (!hasLocalPath && !hasRemoteURL) {
+      if (widget.messageListStore != null && widget.message.rawMessage != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           MessageActionStore.create(widget.message).downloadMedia(quality: MediaQuality.thumbnail);
         });
@@ -176,6 +190,7 @@ class _ImageMessageWidgetState extends State<ImageMessageWidget> with MessageSta
         width: displayWidth,
         height: displayHeight,
         child: (() {
+          // Prefer any available local file, then fall back to a remote URL.
           String? displayPath;
           if (originalImagePath != null && originalImagePath.isNotEmpty) {
             displayPath = originalImagePath;
@@ -183,6 +198,12 @@ class _ImageMessageWidgetState extends State<ImageMessageWidget> with MessageSta
             displayPath = largeImagePath;
           } else if (thumbImagePath != null && thumbImagePath.isNotEmpty) {
             displayPath = thumbImagePath;
+          } else if (thumbImageURL != null && thumbImageURL.isNotEmpty) {
+            displayPath = thumbImageURL;
+          } else if (largeImageURL != null && largeImageURL.isNotEmpty) {
+            displayPath = largeImageURL;
+          } else if (originalImageURL != null && originalImageURL.isNotEmpty) {
+            displayPath = originalImageURL;
           }
 
           if (displayPath != null) {

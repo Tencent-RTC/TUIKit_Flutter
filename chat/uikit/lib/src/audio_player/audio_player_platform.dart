@@ -8,6 +8,10 @@ class AudioPlayerPlatform {
   static const EventChannel _eventChannel =
       EventChannel('tencent_chat_uikit/audio_player_events');
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   static StreamSubscription? _eventSubscription;
   static Function()? _onComplete;
   static Function(int currentPosition, int duration)? _onProgressUpdate;
@@ -31,9 +35,9 @@ class AudioPlayerPlatform {
     Function()? onResume,
     Function(String errorMessage)? onError,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
       throw UnsupportedError(
-          'Native AudioPlayer is only supported on Android and iOS');
+          'Native AudioPlayer is only supported on Android, iOS and HarmonyOS');
     }
 
     try {

@@ -1,0 +1,36 @@
+{
+  // Flutter demo(uikit_next)启动配置
+  //
+  // 使用:
+  //   1. 打开 uikit_next.code-workspace
+  //   2. 侧边栏"运行和调试"选择下面任一配置
+  //   3. 底部状态栏切换设备(Android / iOS 模拟器 / HarmonyOS 真机)
+  //
+  // 鸿蒙运行:
+  //   - 需要提前 `fohos` 切换到 Flutter-OH SDK(见 ~/.zshrc alias)
+  //   - `hdc list targets` 能看到设备 ID
+  //   - VSCode 底部设备列表会自动出现 HarmonyOS 设备
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "demo (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "demo (profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "demo (release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart"
+    }
+  ]
+}

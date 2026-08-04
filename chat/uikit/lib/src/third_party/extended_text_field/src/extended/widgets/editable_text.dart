@@ -276,6 +276,9 @@ class ExtendedEditableTextState extends _EditableTextState {
                       return false;
                     }
                   case TargetPlatform.android:
+                  // Flutter-OH: TargetPlatform.ohos falls through to Android
+                  // behavior (composing regions coalesced for Gboard-like IMEs).
+                  default:
                     // Gboard on Android puts non-CJK words in composing regions. Coalesce
                     // composing text in order to allow the saving of partial words in that
                     // case.

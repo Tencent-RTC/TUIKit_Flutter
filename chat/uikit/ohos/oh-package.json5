@@ -1,0 +1,9 @@
+{
+  "name": "tencent_chat_uikit",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {}
+}

@@ -1,0 +1,36 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "uikit_next"
+    },
+    {
+      "name": "permission_reason_camera",
+      "value": "用于聊天中拍摄照片或录制视频"
+    },
+    {
+      "name": "permission_reason_microphone",
+      "value": "用于录制语音消息以及音视频通话"
+    },
+    {
+      "name": "permission_reason_read_media",
+      "value": "用于从相册选择图片或视频发送"
+    },
+    {
+      "name": "permission_reason_write_media",
+      "value": "用于保存接收到的图片或视频到相册"
+    },
+    {
+      "name": "permission_reason_read_pasteboard",
+      "value": "用于在输入框内粘贴从其他位置复制的文本"
+    }
+  ]
+}

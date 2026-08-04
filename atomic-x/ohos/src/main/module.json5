@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "tuikit_atomic_x",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

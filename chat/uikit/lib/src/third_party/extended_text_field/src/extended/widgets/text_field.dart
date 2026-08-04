@@ -222,6 +222,8 @@ class ExtendedTextField extends _TextField {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android-style toolbar.
+      default:
         return ExtendedSpellCheckSuggestionsToolbar.editableText(
           editableTextState: editableTextState,
         );
@@ -335,6 +337,8 @@ class ExtendedTextFieldState extends _TextFieldState {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android config.
+      default:
         // zmtzawqlp
         spellCheckConfiguration =
             ExtendedTextField.inferAndroidSpellCheckConfiguration(
@@ -458,6 +462,20 @@ class ExtendedTextFieldState extends _TextFieldState {
         handleDidLoseAccessibilityFocus = () {
           _effectiveFocusNode.unfocus();
         };
+
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
+        forcePressEnabled = false;
+        textSelectionControls ??= materialTextSelectionHandleControls;
+        paintCursorAboveText = false;
+        cursorOpacityAnimates ??= false;
+        cursorColor = _hasError
+            ? _errorColor
+            : widget.cursorColor ??
+                selectionStyle.cursorColor ??
+                theme.colorScheme.primary;
+        selectionColor = selectionStyle.selectionColor ??
+            theme.colorScheme.primary.withOpacity(0.40);
     }
 
     Widget child = RepaintBoundary(

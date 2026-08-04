@@ -125,10 +125,12 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   TtsPlaybackHelper? _ttsHelper;
 
   /// Translate target languages offered in the record-translation selector.
-  /// Mirrors the demo settings translate language list.
+  /// Codes must match the IMSDK text-translation backend contract. Notably
+  /// Traditional Chinese is `zh-TR`, NOT the more common BCP-47 `zh-TW` —
+  /// the latter is rejected by the backend.
   static const List<Map<String, String>> _translateLanguageOptions = [
     {"code": "zh", "name": "简体中文"},
-    {"code": "zh-TW", "name": "繁體中文"},
+    {"code": "zh-TR", "name": "繁體中文"},
     {"code": "en", "name": "English"},
     {"code": "ja", "name": "日本語"},
     {"code": "ko", "name": "한국어"},
@@ -143,7 +145,6 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     {"code": "id", "name": "Bahasa Indonesia"},
     {"code": "th", "name": "ภาษาไทย"},
     {"code": "ms", "name": "Bahasa Melayu"},
-    {"code": "hi", "name": "हिन्दी"},
   ];
 
   /// Max recording duration in seconds

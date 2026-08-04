@@ -42,6 +42,9 @@ flutter:
         pluginClass: TencentChatUikitPlugin
       ios:
         pluginClass: TencentChatUikitPlugin
+      ohos:
+        package: com.tencent.cloud.tuikit.flutter.tuichatkit
+        pluginClass: TencentChatUikitPlugin
 
   assets:
     - chat_assets/emoji/

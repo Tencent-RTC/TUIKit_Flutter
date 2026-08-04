@@ -45,6 +45,10 @@ class AudioRecorderPlatform {
   static const EventChannel _eventChannel =
       EventChannel('tencent_chat_uikit/audio_recorder_events');
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   static StreamSubscription? _eventSubscription;
   static Function(int timeMs)? _onRecordTime;
   static Function(int powerLevel)? _onPowerLevel;
@@ -53,9 +57,9 @@ class AudioRecorderPlatform {
   static Future<AudioRecordResult> startRecordNative({
     required AudioRecorderConfig config,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
       throw UnsupportedError(
-          'Native AudioRecorder is only supported on Android and iOS');
+          'Native AudioRecorder is only supported on Android, iOS and HarmonyOS');
     }
 
     try {

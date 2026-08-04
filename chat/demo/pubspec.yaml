@@ -51,6 +51,49 @@ dependencies:
 
 dependency_overrides:
   tencent_cloud_chat_sdk: ^9.0.7652
+  # ============================================================================
+  # HarmonyOS(纯血鸿蒙)构建专用 dependency_overrides
+  # ============================================================================
+  # 使用场景:仅当基于 Flutter-OH 构建鸿蒙 hap 时,取消下面 3 段(path_provider /
+  # shared_preferences / url_launcher)的注释。用标准 Flutter 构建 Android/iOS
+  # 时请保持注释,否则每次 pub get 都会去 clone gitcode.com 上的鸿蒙 fork,
+  # 慢且不必要。
+  #
+  # ---- 组件适配时用到的工具链版本(客户可作为已验证基线,按需升级)----
+  # Flutter SDK    仓库:  https://gitcode.com/CPF-Flutter/flutter_flutter
+  #                分支:  oh-3.35.7-release
+  #                版本:  3.35.8-ohos-1.0.1(以 flutter --version 输出为准)
+  #                安装:  该仓库 README 有详细指引
+  # 三方 package    仓库:  https://gitcode.com/openharmony-tpc/flutter_packages
+  #                (旧地址 openharmony-sig 会 302 重定向到这里)
+  #                tag 命名规则:  <包名>-v<版本>-ohos-<x.y.z>
+  #                最新 tag 列表见该仓库 README 或 Tags 页面
+  #
+  # ---- 为什么必须 override,不能直接用 pub.dev 版本 ----
+  # pub.dev 上的 path_provider / shared_preferences / url_launcher 官方包只有
+  # Android/iOS/macOS/Linux/Windows/Web 六端实现,没有 ohos 平台子包。
+  # openharmony-tpc/flutter_packages 是官方 fork,补齐了 xxx_ohos 子包,
+  # 通过 override 主包版本才能拉进整套鸿蒙实现。
+  #
+  # ---- 为什么必须锁 ref 到 tag,不能拉 branch/master ----
+  # 该仓库 master 是给 Flutter 3.7 用的,直接拉运行时崩。必须锁到 Flutter 3.35
+  # 对应的 -ohos-1.0.x 稳定 tag。
+
+#  path_provider:
+#    git:
+#      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+#      path: "packages/path_provider/path_provider"
+#      ref: "provider-v2.1.5-ohos-1.0.0"
+#  shared_preferences:
+#    git:
+#      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+#      path: "packages/shared_preferences/shared_preferences"
+#      ref: "shared_preferences-v2.5.4-ohos-1.0.0"
+#  url_launcher:
+#    git:
+#      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+#      path: "packages/url_launcher/url_launcher"
+#      ref: "url_launcher_v6.3.2-ohos-1.0.0"
 
 dev_dependencies:
   flutter_test:

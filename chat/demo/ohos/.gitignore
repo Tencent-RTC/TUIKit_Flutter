@@ -1,0 +1,30 @@
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+**/BuildProfile.ets
+**/oh-package-lock.json5
+/package.json
+/package-lock.json
+
+# ============================================================
+# Flutter tool 生成的鸿蒙构建产物,全部忽略。
+# 下次 flutter run / flutter build hap 会自动重新生成。
+# ============================================================
+# Dart kernel + VM snapshot + 所有插件 assets(约 87MB)
+**/src/main/resources/rawfile/flutter_assets/
+# Flutter engine 运行时配置(enable_impeller 等)
+**/src/main/resources/rawfile/buildinfo.json5
+# Flutter engine 帧率策略配置
+**/src/main/resources/rawfile/framesconfig.json
+# Flutter native 库(libapp / libflutter / snapshot)
+**/libs/**/libapp.so
+**/libs/**/libflutter.so
+**/libs/**/libvmservice_snapshot.so

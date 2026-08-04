@@ -24,6 +24,10 @@ class AudioPlayer {
   bool get isPlaying => _isPlaying;
   bool get isPaused => _isPaused;
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   AudioPlayer._();
 
   static AudioPlayer createInstance() {
@@ -51,7 +55,7 @@ class AudioPlayer {
       _currentPath = filePath;
 
       // Use native implementation on mobile platforms
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (Platform.isAndroid || Platform.isIOS || _isOhos) {
         await AudioPlayerPlatform.play(
           filePath: filePath,
           onComplete: () {
@@ -87,7 +91,8 @@ class AudioPlayer {
           },
         );
       } else {
-        throw UnsupportedError('AudioPlayer only supports Android and iOS');
+        throw UnsupportedError(
+            'AudioPlayer only supports Android, iOS and HarmonyOS');
       }
     } catch (e) {
       debugPrint('play failed: $e');

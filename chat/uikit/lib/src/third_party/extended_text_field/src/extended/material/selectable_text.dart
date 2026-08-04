@@ -213,6 +213,20 @@ class _ExtendedSelectableTextState extends _SelectableTextState {
             theme.colorScheme.primary;
         selectionColor = selectionStyle.selectionColor ??
             theme.colorScheme.primary.withOpacity(0.40);
+
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        forcePressEnabled = false;
+        textSelectionControls ??= materialTextSelectionHandleControls;
+        paintCursorAboveText = false;
+        cursorOpacityAnimates = false;
+        cursorColor = widget.cursorColor ??
+            selectionStyle.cursorColor ??
+            theme.colorScheme.primary;
+        selectionColor = selectionStyle.selectionColor ??
+            theme.colorScheme.primary.withOpacity(0.40);
     }
 
     final DefaultTextStyle defaultTextStyle = DefaultTextStyle.of(context);

@@ -1,0 +1,89 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "requestPermissions": [
+      // ===== system_grant(声明即得) =====
+      { "name": "ohos.permission.INTERNET" },
+      { "name": "ohos.permission.GET_NETWORK_INFO" },
+      { "name": "ohos.permission.VIBRATE" },
+
+      // ===== user_grant(需运行时申请,必须提供 reason 和 usedScene) =====
+      {
+        "name": "ohos.permission.CAMERA",
+        "reason": "$string:permission_reason_camera",
+        "usedScene": {
+          "abilities": [ "EntryAbility" ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.MICROPHONE",
+        "reason": "$string:permission_reason_microphone",
+        "usedScene": {
+          "abilities": [ "EntryAbility" ],
+          "when": "inuse"
+        }
+      },
+      // READ_IMAGEVIDEO 属于受限权限,仅克隆/备份/同步类应用可申请。
+      // 本 demo 通过 photoAccessHelper.PhotoViewPicker (见 AlbumPickerHelper.ets) 让
+      // 用户主动选择图片/视频,选中文件由系统临时授权,无需 READ_IMAGEVIDEO。
+      // 参考: https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/photoaccesshelper-photoviewpicker
+      {
+        "name": "ohos.permission.WRITE_IMAGEVIDEO",
+        "reason": "$string:permission_reason_write_media",
+        "usedScene": {
+          "abilities": [ "EntryAbility" ],
+          "when": "inuse"
+        }
+      },
+      // 输入框长按"粘贴"要读系统剪贴板。鸿蒙 API 12+ 起
+      // pasteboard.getData 必须 ohos.permission.READ_PASTEBOARD(user_grant
+      // + ACL 使能,受限权限,与 READ_IMAGEVIDEO 同级)。使用前提:
+      //   1. AGC → Profile → "受限权限"勾上 READ_PASTEBOARD,重新下发 .p7b
+      //   2. 首次长按"粘贴"由 flutter-ohos 引擎自动弹权限框,用户允许后生效
+      // 若跳过步骤 1,hdc install 会报 9568289 "grant request permissions
+      // failed. PermissionName: ohos.permission.READ_PASTEBOARD";
+      // 若跳过步骤 2(用户拒绝授权),framework Clipboard.getData 返 null,
+      // 长按"粘贴"仍会无响应,需要引导用户到设置里放开权限。
+      {
+        "name": "ohos.permission.READ_PASTEBOARD",
+        "reason": "$string:permission_reason_read_pasteboard",
+        "usedScene": {
+          "abilities": [ "EntryAbility" ],
+          "when": "inuse"
+        }
+      }
+    ]
+  }
+}

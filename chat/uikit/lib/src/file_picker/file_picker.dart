@@ -41,6 +41,10 @@ class FilePicker {
 
   FilePicker._internal();
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   static Future<List<PickerResult>> pickFiles({
     required BuildContext context,
     FilePickerConfig? config,
@@ -52,7 +56,7 @@ class FilePicker {
         return [];
       }
 
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (Platform.isAndroid || Platform.isIOS || _isOhos) {
         int maxCount = config?.maxCount ?? maxFileCount;
 
         final List<PickerResult> results = await FilePickerPlatform.pickFiles(
@@ -74,7 +78,8 @@ class FilePicker {
 
         return results;
       } else {
-        throw UnsupportedError('FilePicker only supports Android and iOS');
+        throw UnsupportedError(
+            'FilePicker only supports Android, iOS and HarmonyOS');
       }
     } catch (e) {
       debugPrint('FilePicker.pickFiles error: $e');
@@ -109,17 +114,25 @@ class FilePicker {
   /// Returns true if the file was successfully opened, false otherwise.
   /// On Android, uses Intent.ACTION_VIEW to open the file.
   /// On iOS, uses UIDocumentInteractionController to open the file.
+  /// On HarmonyOS, uses startAbility with implicit want (viewData).
   static Future<bool> openFile(String filePath) async {
     try {
-      if (!Platform.isAndroid && !Platform.isIOS) {
-        throw UnsupportedError('File opening only supports Android and iOS');
+      if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
+        throw UnsupportedError(
+            'File opening only supports Android, iOS and HarmonyOS');
       }
 
-      // Check if file exists
-      final file = File(filePath);
-      if (!file.existsSync()) {
-        debugPrint('FilePicker.openFile: File does not exist: $filePath');
-        return false;
+      // On Android/iOS `filePath` is an absolute sandbox path, so dart:io File
+      // can pre-validate existence cheaply. On HarmonyOS `filePath` is typically
+      // a `file://docs/...` URI returned by DocumentViewPicker — dart:io File
+      // cannot resolve such URIs, so we skip the check and let the native layer
+      // decide.
+      if (!_isOhos) {
+        final file = File(filePath);
+        if (!file.existsSync()) {
+          debugPrint('FilePicker.openFile: File does not exist: $filePath');
+          return false;
+        }
       }
 
       return await FilePickerPlatform.openFile(filePath);

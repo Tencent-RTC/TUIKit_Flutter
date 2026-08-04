@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:tuikit_atomic_x/base_component/base_component.dart' hide IconButton;
+import 'package:tencent_chat_uikit/src/file_picker/file_picker_platform.dart';
 import 'package:tencent_chat_uikit/src/video_player/video_player.dart';
 import 'package:tencent_chat_uikit/src/video_player/video_player_widget.dart';
 import 'package:flutter/material.dart';
@@ -532,6 +533,15 @@ class _VideoItemView extends StatelessWidget {
       return _buildThumbnailWithButton();
     }
 
+    // HarmonyOS: Flutter-OH 的 PlatformView 还不成熟,VideoPlayerWidget 内部依赖的
+    // InlineVideoPlayer/PlatformView 在鸿蒙上不能工作(点播放按钮无反应)。
+    // 降级方案:展示缩略图 + 大号播放按钮,点按钮后走 FilePickerPlatform.openFile
+    // (底层是 startAbility viewData),把本地视频文件交给系统视频播放器打开。
+    // 与 video_player.dart 的 VideoPlayer.play(ohos 分支) 保持一致的降级路径。
+    if (Platform.operatingSystem == 'ohos') {
+      return _buildThumbnailWithSystemPlayerButton();
+    }
+
     // Video file exists - use VideoPlayerWidget
     return VideoPlayerWidget(
       video: VideoData(
@@ -568,6 +578,46 @@ class _VideoItemView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// HarmonyOS 专用:缩略图 + 大播放按钮,点按钮唤起系统视频播放器。
+  /// 空白区域点击关闭 viewer(和图片浏览一致的手势约定)。
+  Widget _buildThumbnailWithSystemPlayerButton() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 底层背景 + 缩略图,点空白直接关闭
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onClose,
+          child: Container(
+            color: Colors.black,
+            child: Center(child: _buildThumbnail()),
+          ),
+        ),
+        // 上层播放按钮,不冒泡到底层
+        Center(
+          child: _PlayButtonView(
+            element: element,
+            isDownloading: false,
+            onPlayTap: _openWithSystemPlayer,
+            onDownloadTap: () {},
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openWithSystemPlayer() async {
+    final path = element.videoPath;
+    if (path == null || path.isEmpty) {
+      debugPrint('_VideoItemView: video path is empty');
+      return;
+    }
+    final opened = await FilePickerPlatform.openFile(path);
+    if (!opened) {
+      debugPrint('_VideoItemView: system player failed to open $path');
+    }
   }
 
   Widget _buildThumbnail() {

@@ -1813,6 +1813,19 @@ class _RenderEditable extends RenderBox
           caretRect.width,
           caretHeight,
         );
+
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        final double caretHeight = cursorHeight;
+        final double heightDiff = fullHeight - caretHeight;
+        caretRect = Rect.fromLTWH(
+          caretRect.left,
+          caretRect.top - _kCaretHeightOffset + heightDiff / 2,
+          caretRect.width,
+          caretHeight,
+        );
     }
 
     caretRect = caretRect.shift(_paintOffset);
@@ -2236,6 +2249,22 @@ class _RenderEditable extends RenderBox
         case TargetPlatform.linux:
         case TargetPlatform.windows:
           break;
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        // Unreachable under stock Flutter (6 enum values already covered) —
+        // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+        default:
+          if (readOnly) {
+            if (previousWord == null) {
+              return TextSelection(
+                baseOffset: position.offset,
+                extentOffset: position.offset + 1,
+              );
+            }
+            return TextSelection(
+              baseOffset: previousWord.start,
+              extentOffset: position.offset,
+            );
+          }
       }
     }
 
@@ -2301,6 +2330,12 @@ class _RenderEditable extends RenderBox
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+        _caretPrototype = Rect.fromLTWH(0.0, _kCaretHeightOffset, cursorWidth,
+            cursorHeight - 2.0 * _kCaretHeightOffset);
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
         _caretPrototype = Rect.fromLTWH(0.0, _kCaretHeightOffset, cursorWidth,
             cursorHeight - 2.0 * _kCaretHeightOffset);
     }

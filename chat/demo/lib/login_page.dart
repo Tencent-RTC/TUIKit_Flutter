@@ -1,6 +1,8 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:tuikit_atomic_x/atomicx.dart';
+import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
@@ -12,6 +14,11 @@ import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 const int SDKAPPID = 0;
 const String SECRETKEY = "";
 const int EXPIRE_TIME = 604800; // 7 day = 7 x 24 x 60 x 60 = 604800
+
+// HarmonyOS(纯血鸿蒙)判断。CallKit 主干未支持鸿蒙,所有 TUICallKit / CallStore
+// 调用都要在此 guard 下跳过,否则会因为 native 端 method channel 不存在而挂起。
+// Android/iOS 完全走原流程,不受影响。
+bool get _isOhos => Platform.operatingSystem == 'ohos';
 
 class LoginInfoState extends ChangeNotifier {
   bool isLoggedIn = false;
@@ -51,7 +58,9 @@ class LoginInfoState extends ChangeNotifier {
       expireTime: EXPIRE_TIME,
     );
 
-    TUICallKit.instance.login(SDKAPPID, userID, userSig);
+    if (!_isOhos) {
+      TUICallKit.instance.login(SDKAPPID, userID, userSig);
+    }
     final result = await LoginStore.shared.login(
       sdkAppID: SDKAPPID,
       userID: userID,
@@ -60,7 +69,9 @@ class LoginInfoState extends ChangeNotifier {
     if (result.errorCode == 0) {
       _saveLoginToken(userID, userSig);
       _initPush();
-      TUICallKit.instance.enableFloatWindow(true);
+      if (!_isOhos) {
+        TUICallKit.instance.enableFloatWindow(true);
+      }
       isLoggedIn = true;
       currentUserID = userID;
       isLoggingIn = false;
@@ -75,11 +86,15 @@ class LoginInfoState extends ChangeNotifier {
   }
 
   Future<bool> logout() async {
-    if (CallStore.shared.state.selfInfo.value.status == CallParticipantStatus.accept) {
-      await CallStore.shared.hangup();
+    if (!_isOhos) {
+      if (CallStore.shared.state.selfInfo.value.status == CallParticipantStatus.accept) {
+        await CallStore.shared.hangup();
+      }
     }
     final result = await LoginStore.shared.logout();
-    TUICallKit.instance.logout();
+    if (!_isOhos) {
+      TUICallKit.instance.logout();
+    }
     if (result.errorCode == 0) {
       _removeLoginToken();
       isLoggedIn = false;
@@ -110,9 +125,9 @@ class LoginInfoState extends ChangeNotifier {
 
   void _initPush() async {
     final TencentCloudChatPush tencentCloudChatPush = TencentCloudChatPush();
-    int apnsCertificateID =  29064;
+    int apnsCertificateID = 29064;
     if (kReleaseMode) {
-      apnsCertificateID =  32321;
+      apnsCertificateID = 32321;
     }
 
     tencentCloudChatPush.registerPush(

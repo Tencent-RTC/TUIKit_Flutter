@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../file_picker/file_picker_platform.dart';
 import 'video_player_widget.dart';
 
 class VideoData {
@@ -65,7 +66,18 @@ class VideoPlayer {
       debugPrint('VideoPlayer.play: Video file does not exist: ${video.localPath}');
       return;
     }
-    
+
+    // HarmonyOS 上 Flutter-OH 的 PlatformView 还不成熟,VideoPlayerWidget 内部依赖
+    // AndroidView / UiKitView 都无法工作。降级方案:直接把本地视频文件交给系统视频播放器
+    // (复用 file_picker 已经实现的 openFile,底层是 startAbility viewData)。
+    if (Platform.operatingSystem == 'ohos') {
+      final opened = await FilePickerPlatform.openFile(video.localPath!);
+      if (!opened) {
+        debugPrint('VideoPlayer.play: system player failed to open ${video.localPath}');
+      }
+      return;
+    }
+
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => VideoPlayerWidget(video: video),

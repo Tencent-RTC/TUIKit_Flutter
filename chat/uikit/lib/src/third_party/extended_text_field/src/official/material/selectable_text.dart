@@ -141,6 +141,8 @@ class _SelectableTextSelectionGestureDetectorBuilder
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
           renderEditable.selectPosition(cause: SelectionChangedCause.tap);
       }
     }
@@ -641,7 +643,9 @@ class _SelectableTextState extends State<_SelectableText>
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
-      // Do nothing.
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior (no-op).
+      default:
+        break; // Do nothing.
     }
   }
 
@@ -755,6 +759,20 @@ class _SelectableTextState extends State<_SelectableText>
       case TargetPlatform.windows:
         forcePressEnabled = false;
         textSelectionControls ??= desktopTextSelectionHandleControls;
+        paintCursorAboveText = false;
+        cursorOpacityAnimates = false;
+        cursorColor = widget.cursorColor ??
+            selectionStyle.cursorColor ??
+            theme.colorScheme.primary;
+        selectionColor = selectionStyle.selectionColor ??
+            theme.colorScheme.primary.withOpacity(0.40);
+
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        forcePressEnabled = false;
+        textSelectionControls ??= materialTextSelectionHandleControls;
         paintCursorAboveText = false;
         cursorOpacityAnimates = false;
         cursorColor = widget.cursorColor ??

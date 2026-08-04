@@ -1,0 +1,73 @@
+{
+  // Flutter TUIKit Atomic-X 多根工作区
+  // 打开方式: VSCode -> File -> Open Workspace from File... -> 选中本文件
+  //
+  // 4 个 folder:
+  //   demo (uikit_next)   : 主工程,lib/ 里是业务代码
+  //   tencent_chat_uikit  : Chat UIKit,聊天场景的封装
+  //   tuikit_atomic_x     : 通用 Atomic UI 层(基础组件、主题)
+  //   tencent_calls_uikit : Calls UIKit(音视频通话)
+  "folders": [
+    {
+      "name": "demo (uikit_next)",
+      "path": "."
+    },
+    {
+      "name": "tencent_chat_uikit",
+      "path": "../uikit"
+    },
+    {
+      "name": "tuikit_atomic_x",
+      "path": "../../atomic-x"
+    },
+    {
+      "name": "tencent_calls_uikit",
+      "path": "../../call"
+    }
+  ],
+  "settings": {
+    // Flutter SDK 走 PATH 自动检测,方便标准 Flutter <-> Flutter-OH 切换
+    // (标准 Flutter 用于 Android/iOS 构建,Flutter-OH 3.35.7 用于鸿蒙)
+    "dart.flutterSdkPath": null,
+    "dart.previewFlutterUiGuides": true,
+    "dart.lineLength": 100,
+    "editor.formatOnSave": true,
+    "[dart]": {
+      "editor.defaultFormatter": "Dart-Code.dart-code",
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true,
+      "editor.rulers": [
+        100
+      ]
+    },
+    // 侧边栏文件视图隐藏噪声目录(不影响 IDE 索引)
+    "files.exclude": {
+      "**/.dart_tool": true,
+      "**/oh_modules": true,
+      "**/.hvigor": true,
+      "**/.flutter-plugins": true,
+      "**/.flutter-plugins-dependencies": true,
+      "**/pubspec.lock": false
+    },
+    // 全局搜索排除
+    "search.exclude": {
+      "**/.dart_tool": true,
+      "**/oh_modules": true,
+      "**/build": true,
+      "**/.hvigor": true,
+      "**/ios/Pods": true,
+      "**/android/.gradle": true,
+      "**/ohos/.hvigor": true,
+      "**/ohos/oh_modules": true
+    },
+    "dart.env": {
+      // 让 Dart Analyzer 知道当前项目跑鸿蒙代码分析时不要报错
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "Dart-Code.dart-code",
+      "Dart-Code.flutter"
+    ]
+  }
+}

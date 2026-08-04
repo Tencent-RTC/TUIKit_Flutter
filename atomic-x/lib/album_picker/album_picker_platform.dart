@@ -64,6 +64,10 @@ class AlbumPickerPlatform {
   static const EventChannel _eventChannel =
       EventChannel('atomic_x/album_picker_events');
 
+  /// HarmonyOS detection. `Platform.isOhos` only exists in the Flutter-OH SDK,
+  /// so we compare the OS string to stay compilable under standard Flutter.
+  static bool get _isOhos => Platform.operatingSystem == 'ohos';
+
   /// Persistent event subscription — set up once, never canceled.
   static StreamSubscription? _eventSubscription;
 
@@ -143,9 +147,9 @@ class AlbumPickerPlatform {
     Function()? onMediaProcessed,
     Function()? onCancel,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS && !_isOhos) {
       throw UnsupportedError(
-          'Native AlbumPicker is only supported on Android and iOS');
+          'Native AlbumPicker is only supported on Android, iOS and HarmonyOS');
     }
 
     // Set up the persistent event listener (no-op if already active).

@@ -76,6 +76,7 @@ extension _DevicePlatformExt on DevicePlatform {
   static DevicePlatform _getDevicePlatform() {
     if (Platform.isAndroid) return DevicePlatform.android;
     if (Platform.isIOS) return DevicePlatform.ios;
+    if (Platform.operatingSystem == 'ohos') return DevicePlatform.ohos;
     if (Platform.isMacOS) return DevicePlatform.macos;
     if (Platform.isWindows) return DevicePlatform.windows;
     return DevicePlatform.unknown;

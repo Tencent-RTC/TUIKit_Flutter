@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:atomic_x_core/impl/message/message_input_store_impl.dart';
@@ -1172,6 +1173,13 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       if (_isWaitingToStartRecord) {
         _isWaitingToStartRecord = false;
       }
+      // [bug#161275344] Known caveat on HarmonyOS: the finger is still down
+      // here, and the permission dialog is a system UIExtension window layered
+      // over ours, so it receives the PointerUp instead of us. OhosTouchProcessor
+      // (inside libflutter.so) never sees the sequence close and discards the
+      // *next* PointerDown as a duplicate — the long-press right after granting
+      // does nothing, and only the one after that works. Nothing in the Dart or
+      // ArkTS layer can reset that state; it needs a flutter_ohos fix.
       await Permission.checkAndRequest(context, [PermissionType.microphone]);
       return;
     }
@@ -1182,15 +1190,36 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       return;
     }
 
-    _showRecordOverlay();
-
-    _recordOverlayKey.currentState?.resetRecordingState();
-
+    // [bug#161275344] Defer overlay insertion to the moment recording actually
+    // starts. Rationale: the overlay is a full-screen transparent Material and
+    // steals all pointer events once inserted. When _onStartRecording is fired
+    // by the 200ms idle-longpress timer (see _buildIdleInputArea), the user may
+    // still lift their finger shortly after; if the overlay is up already, the
+    // resulting PointerUp is routed to the overlay (with no matching PointerDown
+    // there) and _onStopRecording — which lives on the original Listener — is
+    // never invoked, leaving the recording UI stuck. Keeping the overlay off
+    // until the 100ms starter fires means PointerUp during the "waiting" window
+    // still reaches _onStopRecording and correctly cancels via the
+    // _isWaitingToStartRecord branch.
     _recordingStarter = Timer(const Duration(milliseconds: 100), () {
+      if (!_isWaitingToStartRecord) return;
       _isWaitingToStartRecord = false;
-      String path =
-          ChatUtil.generateMediaPath(messageType: MessageType.audio, prefix: "", withExtension: "m4a", isCache: true);
-      _recordOverlayKey.currentState?.startRecord(filePath: path);
+
+      _showRecordOverlay();
+
+      // Overlay's State needs a frame to be constructed before we can drive it.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final overlayState = _recordOverlayKey.currentState;
+        if (overlayState == null) return;
+        overlayState.resetRecordingState();
+        final String path = ChatUtil.generateMediaPath(
+          messageType: MessageType.audio,
+          prefix: "",
+          withExtension: "m4a",
+          isCache: true,
+        );
+        overlayState.startRecord(filePath: path);
+      });
     });
   }
 
@@ -1285,14 +1314,19 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       ));
     }
 
-    if (widget.config.isShowVideoCall) {
+    // HarmonyOS: CallKit (client_uikit/atomic-x/flutter/call) 暂未适配纯血鸿蒙,
+    // 底层 tencent_calls_uikit 在 ohos 上不可用,点了会 crash / no-op。
+    // 先在鸿蒙平台隐藏音视频通话入口;等 CallKit 拉出 ohos 分支后去掉这个判断即可。
+    final bool hideCallOnOhos = Platform.operatingSystem == 'ohos';
+
+    if (widget.config.isShowVideoCall && !hideCallOnOhos) {
       items.add(_MorePanelItem(
         icon: 'chat_assets/icon/video_call_action.svg',
         title: atomicLocale.videoCall,
         onTap: _onVideoCallTap,
       ));
     }
-    if (widget.config.isShowAudioCall) {
+    if (widget.config.isShowAudioCall && !hideCallOnOhos) {
       items.add(_MorePanelItem(
         icon: 'chat_assets/icon/audio_call_action.svg',
         title: atomicLocale.audioCall,

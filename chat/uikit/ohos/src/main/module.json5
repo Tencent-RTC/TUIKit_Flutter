@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "tencent_chat_uikit",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

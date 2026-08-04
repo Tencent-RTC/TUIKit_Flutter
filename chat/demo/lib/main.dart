@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,11 @@ import 'login_page.dart';
 import 'splash_page.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
+// HarmonyOS(纯血鸿蒙)判断。CallKit 主干未支持鸿蒙,所有 TUICallKit / CallStore
+// 调用都要在此 guard 下跳过,否则会因为 native 端 method channel 不存在而挂起。
+// Android/iOS 完全走原流程,不受影响。
+bool get _isOhos => Platform.operatingSystem == 'ohos';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -20,11 +27,13 @@ void main() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userID = prefs.getString(LoginScreen.DEV_LOGIN_USER_ID);
     final userSig = prefs.getString(LoginScreen.DEV_LOGIN_USER_SIG);
-    TUICallKit.instance.login(
-      SDKAPPID,
-      userID ?? "",
-      userSig ?? "",
-    );
+    if (!_isOhos) {
+      TUICallKit.instance.login(
+        SDKAPPID,
+        userID ?? "",
+        userSig ?? "",
+      );
+    }
   });
 
   runApp(const MyApp());
@@ -74,7 +83,7 @@ class _MyAppState extends State<MyApp> {
     if (!_isInitialized) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [TUICallKit.navigatorObserver],
+        navigatorObservers: _isOhos ? const [] : [TUICallKit.navigatorObserver],
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
@@ -97,7 +106,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'TUIKit Next Demo',
-            navigatorObservers: [TUICallKit.navigatorObserver],
+            navigatorObservers: _isOhos ? const [] : [TUICallKit.navigatorObserver],
             localizationsDelegates: const [
               AtomicLocalizations.delegate,
               ChatLocalizations.delegate,

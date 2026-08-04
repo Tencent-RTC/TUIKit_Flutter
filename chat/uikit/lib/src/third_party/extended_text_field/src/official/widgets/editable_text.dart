@@ -1712,6 +1712,11 @@ class _EditableText extends StatefulWidget {
         case TargetPlatform.linux:
         case TargetPlatform.windows:
           break;
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        // Unreachable under stock Flutter (6 enum values already covered) —
+        // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+        default:
+          break;
       }
     }
 
@@ -2073,6 +2078,13 @@ class _EditableTextState extends State<_EditableText>
         return textEditingValue.text.isNotEmpty &&
             !(textEditingValue.selection.start == 0 &&
                 textEditingValue.selection.end == textEditingValue.text.length);
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        return textEditingValue.text.isNotEmpty &&
+            !(textEditingValue.selection.start == 0 &&
+                textEditingValue.selection.end == textEditingValue.text.length);
     }
   }
 
@@ -2115,6 +2127,16 @@ class _EditableTextState extends State<_EditableText>
       case TargetPlatform.linux:
       case TargetPlatform.windows:
         return false;
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        return !widget.obscureText &&
+            !textEditingValue.selection.isCollapsed &&
+            textEditingValue.selection
+                    .textInside(textEditingValue.text)
+                    .trim() !=
+                '';
     }
   }
 
@@ -2168,6 +2190,18 @@ class _EditableTextState extends State<_EditableText>
         case TargetPlatform.android:
         case TargetPlatform.fuchsia:
           // Collapse the selection and hide the toolbar and handles.
+          userUpdateTextEditingValue(
+            TextEditingValue(
+              text: textEditingValue.text,
+              selection: TextSelection.collapsed(
+                  offset: textEditingValue.selection.end),
+            ),
+            SelectionChangedCause.toolbar,
+          );
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        // Unreachable under stock Flutter (6 enum values already covered) —
+        // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+        default:
           userUpdateTextEditingValue(
             TextEditingValue(
               text: textEditingValue.text,
@@ -2281,6 +2315,11 @@ class _EditableTextState extends State<_EditableText>
         case TargetPlatform.linux:
         case TargetPlatform.windows:
           hideToolbar();
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        // Unreachable under stock Flutter (6 enum values already covered) —
+        // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+        default:
+          break;
       }
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
@@ -2291,6 +2330,11 @@ class _EditableTextState extends State<_EditableText>
         case TargetPlatform.macOS:
         case TargetPlatform.iOS:
           break;
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        // Unreachable under stock Flutter (6 enum values already covered) —
+        // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+        default:
+          bringIntoView(textEditingValue.selection.extent);
       }
     }
   }
@@ -3535,6 +3579,10 @@ class _EditableTextState extends State<_EditableText>
     TargetPlatform.macOS ||
     TargetPlatform.windows =>
       false,
+    // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+    // Unreachable under stock Flutter (6 enum values already covered) —
+    // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+    _ => true,
   };
 
   bool _isInternalScrollableNotification(BuildContext? notificationContext) {
@@ -4034,6 +4082,17 @@ class _EditableTextState extends State<_EditableText>
       case TargetPlatform.windows:
       case TargetPlatform.fuchsia:
       case TargetPlatform.android:
+        if (cause == SelectionChangedCause.drag) {
+          if (oldSelection.baseOffset != newSelection.baseOffset) {
+            bringIntoView(newSelection.base);
+          } else if (oldSelection.extentOffset != newSelection.extentOffset) {
+            bringIntoView(newSelection.extent);
+          }
+        }
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
         if (cause == SelectionChangedCause.drag) {
           if (oldSelection.baseOffset != newSelection.baseOffset) {
             bringIntoView(newSelection.base);
@@ -5013,6 +5072,24 @@ class _EditableTextState extends State<_EditableText>
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
         widget.focusNode.unfocus();
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      // Unreachable under stock Flutter (6 enum values already covered) —
+      // exists solely to satisfy exhaustiveness under Flutter-OH SDK.
+      default:
+        switch (event.kind) {
+          case ui.PointerDeviceKind.touch:
+            if (kIsWeb) {
+              widget.focusNode.unfocus();
+            }
+          case ui.PointerDeviceKind.mouse:
+          case ui.PointerDeviceKind.stylus:
+          case ui.PointerDeviceKind.invertedStylus:
+          case ui.PointerDeviceKind.unknown:
+            widget.focusNode.unfocus();
+          case ui.PointerDeviceKind.trackpad:
+            throw UnimplementedError(
+                'Unexpected pointer down event for trackpad');
+        }
     }
   }
 

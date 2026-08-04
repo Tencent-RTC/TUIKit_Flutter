@@ -540,6 +540,8 @@ class _TextSelectionOverlay {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
         newSelection = TextSelection(
           baseOffset: _selection.baseOffset,
           extentOffset: position.offset,
@@ -658,6 +660,8 @@ class _TextSelectionOverlay {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
         newSelection = TextSelection(
           baseOffset: position.offset,
           extentOffset: _selection.extentOffset,
@@ -1053,6 +1057,9 @@ class _SelectionOverlay {
           case TargetPlatform.macOS:
           case TargetPlatform.windows:
             break;
+          // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+          default:
+            HapticFeedback.selectionClick();
         }
       }
     }
@@ -1806,6 +1813,10 @@ class _TextSelectionGestureDetectorBuilder {
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
+        break;
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
+        editableText.showMagnifier(positionToShow);
     }
   }
 
@@ -1819,6 +1830,10 @@ class _TextSelectionGestureDetectorBuilder {
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
+        break;
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
+        editableText.hideMagnifier();
     }
   }
 
@@ -2076,6 +2091,10 @@ class _TextSelectionGestureDetectorBuilder {
           return;
         }
         renderEditable.selectPosition(cause: SelectionChangedCause.tap);
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
+        // On mobile platforms the selection is set on tap up.
+        break;
     }
   }
 
@@ -2260,6 +2279,15 @@ class _TextSelectionGestureDetectorBuilder {
                 }
               }
           }
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
+          editableText.hideToolbar(false);
+          if (isShiftPressedValid) {
+            _extendSelection(details.globalPosition, SelectionChangedCause.tap);
+            return;
+          }
+          renderEditable.selectPosition(cause: SelectionChangedCause.tap);
+          editableText.showSpellCheckSuggestionsToolbar();
       }
     }
     editableText.requestKeyboard();
@@ -2319,6 +2347,8 @@ class _TextSelectionGestureDetectorBuilder {
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
           renderEditable.selectWord(cause: SelectionChangedCause.longPress);
       }
 
@@ -2380,6 +2410,8 @@ class _TextSelectionGestureDetectorBuilder {
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
           renderEditable.selectWordsInRange(
             from: details.globalPosition -
                 details.offsetFromOrigin -
@@ -2443,6 +2475,8 @@ class _TextSelectionGestureDetectorBuilder {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
         if (!renderEditable.hasFocus) {
           renderEditable.selectPosition(cause: SelectionChangedCause.tap);
         }
@@ -2586,6 +2620,10 @@ class _TextSelectionGestureDetectorBuilder {
         case TargetPlatform.linux:
           _selectLinesInRange(
               from: details.globalPosition, cause: SelectionChangedCause.tap);
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
+          _selectParagraphsInRange(
+              from: details.globalPosition, cause: SelectionChangedCause.tap);
       }
     }
     if (shouldShowSelectionToolbar) {
@@ -2633,6 +2671,8 @@ class _TextSelectionGestureDetectorBuilder {
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
           _extendSelection(details.globalPosition, SelectionChangedCause.drag);
       }
     } else {
@@ -2682,6 +2722,30 @@ class _TextSelectionGestureDetectorBuilder {
             from: details.globalPosition,
             cause: SelectionChangedCause.drag,
           );
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
+          switch (details.kind) {
+            case PointerDeviceKind.mouse:
+            case PointerDeviceKind.trackpad:
+              renderEditable.selectPositionAt(
+                from: details.globalPosition,
+                cause: SelectionChangedCause.drag,
+              );
+            case PointerDeviceKind.stylus:
+            case PointerDeviceKind.invertedStylus:
+            case PointerDeviceKind.touch:
+            case PointerDeviceKind.unknown:
+              // For Android, Fuchsia, and iOS platforms, a touch drag
+              // does not initiate unless the editable has focus.
+              if (renderEditable.hasFocus) {
+                renderEditable.selectPositionAt(
+                  from: details.globalPosition,
+                  cause: SelectionChangedCause.drag,
+                );
+                _showMagnifierIfSupportedByPlatform(details.globalPosition);
+              }
+            case null:
+          }
       }
     }
   }
@@ -2780,6 +2844,28 @@ class _TextSelectionGestureDetectorBuilder {
               to: details.globalPosition,
               cause: SelectionChangedCause.drag,
             );
+          // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+          default:
+            switch (details.kind) {
+              case PointerDeviceKind.mouse:
+              case PointerDeviceKind.trackpad:
+                return _selectParagraphsInRange(
+                  from: dragStartGlobalPosition -
+                      editableOffset -
+                      scrollableOffset,
+                  to: details.globalPosition,
+                  cause: SelectionChangedCause.drag,
+                );
+              case PointerDeviceKind.stylus:
+              case PointerDeviceKind.invertedStylus:
+              case PointerDeviceKind.touch:
+              case PointerDeviceKind.unknown:
+              case null:
+                // Triple tap to drag is not present on these platforms when using
+                // non-precise pointer devices at the moment.
+                break;
+            }
+            return;
         }
       }
 
@@ -2844,6 +2930,36 @@ class _TextSelectionGestureDetectorBuilder {
             to: details.globalPosition,
             cause: SelectionChangedCause.drag,
           );
+        // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+        default:
+          // With a precise pointer device, such as a mouse, trackpad, or stylus,
+          // the drag will select the text spanning the origin of the drag to the end of the drag.
+          // With a touch device, the cursor should move with the drag.
+          switch (details.kind) {
+            case PointerDeviceKind.mouse:
+            case PointerDeviceKind.trackpad:
+            case PointerDeviceKind.stylus:
+            case PointerDeviceKind.invertedStylus:
+              return renderEditable.selectPositionAt(
+                from:
+                    dragStartGlobalPosition - editableOffset - scrollableOffset,
+                to: details.globalPosition,
+                cause: SelectionChangedCause.drag,
+              );
+            case PointerDeviceKind.touch:
+            case PointerDeviceKind.unknown:
+              if (renderEditable.hasFocus) {
+                renderEditable.selectPositionAt(
+                  from: details.globalPosition,
+                  cause: SelectionChangedCause.drag,
+                );
+                return _showMagnifierIfSupportedByPlatform(
+                    details.globalPosition);
+              }
+            case null:
+              break;
+          }
+          return;
       }
     }
 
@@ -2991,6 +3107,11 @@ class _TextSelectionGestureDetectorState {
         // the clicked position will be selected, and on the next click the
         // paragraph at the position is selected.
         return rawCount < 2 ? rawCount : 2 + rawCount % 2;
+      // Flutter-OH: TargetPlatform.ohos falls through to Android behavior.
+      default:
+        return rawCount <= 3
+            ? rawCount
+            : (rawCount % 3 == 0 ? 3 : rawCount % 3);
     }
   }
 }

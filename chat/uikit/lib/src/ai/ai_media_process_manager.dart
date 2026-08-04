@@ -8,6 +8,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
@@ -189,7 +190,12 @@ class AiMediaProcessManager {
         sourceLanguage: sourceLanguage,
       );
       if (result.code == 0 && result.data != null) {
-        final translated = result.data![text];
+        String? translated = result.data![text];
+        // Fallback: if exact-key lookup misses but there is exactly one entry,
+        // use it — the single input can only map to that single output.
+        if ((translated == null || translated.isEmpty) && result.data!.length == 1) {
+          translated = result.data!.values.first;
+        }
         if (translated != null && translated.isNotEmpty) {
           return AiTranslateResult(success: true, text: translated);
         }
