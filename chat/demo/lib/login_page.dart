@@ -9,6 +9,7 @@ import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_cloud_chat_push/tencent_cloud_chat_push.dart';
 import 'package:uikit_next/pages/home_page.dart';
 import 'package:uikit_next/signature/GenerateUserSig.dart';
+import 'package:uikit_next/common/welcome_message_sender.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
 const int SDKAPPID = 0;
@@ -76,6 +77,7 @@ class LoginInfoState extends ChangeNotifier {
       currentUserID = userID;
       isLoggingIn = false;
       notifyListeners();
+      WelcomeMessageSender.scheduleWelcomeMessage();
       return true;
     } else {
       loginError = "login failed: ${result.errorCode}, ${result.errorMessage}";
