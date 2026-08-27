@@ -2,20 +2,21 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:url_launcher/url_launcher.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 String getGroupTypeName(BuildContext context, GroupType type) {
-  AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+  ChatLocalizations chatLocale = ChatLocalizations.of(context);
   switch (type) {
     case GroupType.work:
-      return atomicLocale.groupWork;
+      return chatLocale.groupWork;
     case GroupType.publicGroup:
-      return atomicLocale.groupPublic;
+      return chatLocale.groupPublic;
     case GroupType.meeting:
-      return atomicLocale.groupMeeting;
+      return chatLocale.groupMeeting;
     case GroupType.community:
-      return atomicLocale.groupCommunity;
+      return chatLocale.groupCommunity;
     case GroupType.avChatRoom:
-      return atomicLocale.groupWork;
+      return chatLocale.groupWork;
   }
 }
 
@@ -36,7 +37,7 @@ class GroupTypeSelector extends StatefulWidget {
 class _GroupTypeSelectorState extends State<GroupTypeSelector> {
   late GroupType _selectedGroupType;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   final List<GroupType> _groupTypes = [
     GroupType.work,
@@ -55,36 +56,36 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   String _getGroupTypeFullName(GroupType type) {
     switch (type) {
       case GroupType.work:
-        return atomicLocale.groupWorkType;
+        return chatLocale.groupWorkType;
       case GroupType.publicGroup:
-        return atomicLocale.groupPublicType;
+        return chatLocale.groupPublicType;
       case GroupType.meeting:
-        return atomicLocale.groupMeetingType;
+        return chatLocale.groupMeetingType;
       case GroupType.community:
-        return atomicLocale.groupCommunityType;
+        return chatLocale.groupCommunityType;
       case GroupType.avChatRoom:
-        return atomicLocale.groupWorkType;
+        return chatLocale.groupWorkType;
     }
   }
 
   String _getGroupTypeDescription(GroupType type) {
     switch (type) {
       case GroupType.work:
-        return atomicLocale.groupWorkDesc;
+        return chatLocale.groupWorkDesc;
       case GroupType.publicGroup:
-        return atomicLocale.groupPublicDesc;
+        return chatLocale.groupPublicDesc;
       case GroupType.meeting:
-        return atomicLocale.groupMeetingDesc;
+        return chatLocale.groupMeetingDesc;
       case GroupType.community:
-        return atomicLocale.groupCommunityDesc;
+        return chatLocale.groupCommunityDesc;
       case GroupType.avChatRoom:
-        return atomicLocale.groupWorkDesc;
+        return chatLocale.groupWorkDesc;
     }
   }
 
@@ -105,13 +106,13 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
         backgroundColor: colorsTheme.bgColorTopBar,
         elevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.groupType,
+          chatLocale.groupType,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -121,7 +122,7 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(_selectedGroupType),
             child: Text(
-              atomicLocale.confirm,
+              chatLocale.confirm,
               style: FontScheme.caption1Medium.copyWith(
                 color: colorsTheme.buttonColorPrimaryDefault,
               ),
@@ -208,7 +209,7 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
             child: GestureDetector(
               onTap: _launchProductDocUrl,
               child: Text(
-                atomicLocale.productDocumentation,
+                chatLocale.productDocumentation,
                 style: FontScheme.caption2Regular.copyWith(
                   color: colorsTheme.textColorLink,
                 ),

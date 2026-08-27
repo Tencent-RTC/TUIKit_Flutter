@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tuikit_atomic_x/base_component/utils/tui_event_bus.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class JoinInGroupCallWidget extends StatefulWidget {
   final List<String> userIDs;
@@ -27,7 +28,7 @@ class JoinInGroupCallWidget extends StatefulWidget {
 class _JoinInGroupCallWidgetState extends State<JoinInGroupCallWidget> {
   bool _isExpand = false;
   final List<String> _userAvatars = [];
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
   late SemanticColorScheme _colorsTheme;
 
   @override
@@ -39,7 +40,7 @@ class _JoinInGroupCallWidgetState extends State<JoinInGroupCallWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
     _colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -85,8 +86,11 @@ class _JoinInGroupCallWidgetState extends State<JoinInGroupCallWidget> {
                         ),
                         const Padding(padding: EdgeInsets.only(left: 15)),
                         Text(
-                          _atomicLocale.peopleOnCall(widget.userIDs.length),
+                          _chatLocale.peopleOnCall(widget.userIDs.length),
                           textScaleFactor: 1.0,
+                          style: FontScheme.caption2Regular.copyWith(
+                            color: _colorsTheme.textColorPrimary,
+                          ),
                         ),
                         const Spacer(),
                         Image.asset(
@@ -151,9 +155,11 @@ class _JoinInGroupCallWidgetState extends State<JoinInGroupCallWidget> {
                                       height: 49,
                                       alignment: Alignment.center,
                                       child: Text(
-                                        _atomicLocale.join,
+                                        _chatLocale.join,
                                         textScaleFactor: 1.0,
-                                        style: FontScheme.caption1Medium,
+                                        style: FontScheme.caption1Medium.copyWith(
+                                          color: _colorsTheme.textColorPrimary,
+                                        ),
                                       ),
                                     ))
                               ],

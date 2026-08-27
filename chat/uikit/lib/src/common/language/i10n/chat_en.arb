@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "voiceTranslate": "Translate",
   "voiceCancelTranslation": "Undo Translation",
   "voiceSwitchLanguage": "Switch Language",
@@ -9,11 +8,9 @@
   "voiceSwitchLanguageSheetTitle": "Switch Translation Language",
   "voiceTranslateFailed": "Translation failed",
   "voiceTtsFailed": "Playback failed",
-
   "voiceMessageSettings": "Voice Message Settings",
   "voiceClone": "Voice Clone",
   "voiceSelect": "Voice Selection",
-
   "voiceCloneTip": "Record a 10-18 second voice clip to clone your exclusive voice.",
   "voiceCloneReadingTipTitle": "Suggested text to read:",
   "voiceCloneSampleText": "Hello everyone, I am your exclusive voice assistant, glad to be at your service. The weather is really nice today, hope you have a pleasant mood.",
@@ -30,7 +27,6 @@
   "voiceCloneTooShortTitle": "Recording too short",
   "voiceCloneTooShortMessage": "Please record at least 3 seconds",
   "voiceCloneDefaultName": "My Voice",
-
   "voiceSelectDefaultGroup": "Default Voices",
   "voiceSelectCustomGroup": "Custom Voices",
   "voiceSelectEmptyCustom": "No custom voices yet",
@@ -38,44 +34,513 @@
   "voiceDelete": "Delete",
   "voiceConfirm": "OK",
   "voiceDeleteFailed": "Delete failed",
-
   "voiceDefault": "Default",
   "voiceXiaoxuMale": "Xiaoxu (Male)",
   "voiceXiaomeiFemale": "Xiaomei (Female)",
   "voiceXiaoxinFemale": "Xiaoxin (Female)",
   "voiceXiaoyueFemale": "Xiaoyue (Female)",
-
-  "listenFromHere": "Listen From Here",
+  "listenFromHere": "Listen",
   "listenSelfSpeaker": "I",
   "listenSays": "{speaker} said: ",
   "@listenSays": {
     "placeholders": {
-      "speaker": { "type": "String" }
+      "speaker": {
+        "type": "String"
+      }
     }
   },
   "listenSentImage": "{speaker} sent an image",
   "@listenSentImage": {
     "placeholders": {
-      "speaker": { "type": "String" }
+      "speaker": {
+        "type": "String"
+      }
     }
   },
   "listenSentVideo": "{speaker} sent a video",
   "@listenSentVideo": {
     "placeholders": {
-      "speaker": { "type": "String" }
+      "speaker": {
+        "type": "String"
+      }
     }
   },
   "listenSentFile": "{speaker} sent a file",
   "@listenSentFile": {
     "placeholders": {
-      "speaker": { "type": "String" }
+      "speaker": {
+        "type": "String"
+      }
     }
   },
   "listenSentMerged": "{speaker} sent: {title}",
   "@listenSentMerged": {
     "placeholders": {
-      "speaker": { "type": "String" },
-      "title": { "type": "String" }
+      "speaker": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "login": "Login",
+  "logout": "Logout",
+  "chat": "Messages",
+  "me": "Me",
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "followSystem": "Follow System",
+  "color": "Color",
+  "themeColor": "Theme Color",
+  "selectThemeColor": "Select Theme Color",
+  "colorHue": "Hue",
+  "colorSaturation": "Saturation",
+  "colorBrightness": "Brightness",
+  "colorHex": "Hex",
+  "reset": "Reset",
+  "language": "Language",
+  "languageZh": "简体中文",
+  "languageZhHant": "繁體中文",
+  "languageEn": "English",
+  "languageJa": "日本語",
+  "languageKo": "한국어",
+  "languageAr": "اَلْعَرَبِيَّة",
+  "contact": "Contacts",
+  "messageRevokedBySelf": "You recalled a message",
+  "messageRevokedByOther": "The other party recalled a message",
+  "messageRevokedByUser": "{user} recalled a message",
+  "groupMemberJoined": "{user} joined the group",
+  "groupMemberInvited": "{operator} invited {users} to join the group",
+  "groupMemberQuit": "{user} left the group",
+  "groupMemberKicked": "{operator} removed {users} from the group",
+  "groupAdminSet": "{users} were set as administrators",
+  "groupAdminCancelled": "{users} were removed from administrators",
+  "groupMessagePinned": "{user} pinned a message",
+  "groupMessageUnpinned": "{user} unpinned a message",
+  "you": "You",
+  "muted": "muted",
+  "unmuted": "unmuted",
+  "day": "day",
+  "hour": "hour",
+  "min": "min",
+  "second": "sec",
+  "messageTypeImage": "[Image]",
+  "messageTypeVoice": "[Voice]",
+  "messageTypeFile": "[File]",
+  "messageTypeVideo": "[Video]",
+  "messageTypeSticker": "[Sticker]",
+  "messageTypeCustom": "[Custom Message]",
+  "groupNameChangedTo": "changed group name to",
+  "groupIntroChangedTo": "changed group description to",
+  "groupNoticeChangedTo": "changed group notice to",
+  "groupNoticeDeleted": "deleted group notice",
+  "groupAvatarChanged": "changed group avatar",
+  "groupOwnerTransferredTo": "transferred group ownership to",
+  "groupMuteAllEnabled": "enabled mute all members",
+  "groupMuteAllDisabled": "disabled mute all members",
+  "unknown": "Unknown",
+  "groupJoinMethodChangedTo": "changed join method to",
+  "groupInviteMethodChangedTo": "changed invite method to",
+  "weekdaySunday": "Sunday",
+  "weekdayMonday": "Monday",
+  "weekdayTuesday": "Tuesday",
+  "weekdayWednesday": "Wednesday",
+  "weekdayThursday": "Thursday",
+  "weekdayFriday": "Friday",
+  "weekdaySaturday": "Saturday",
+  "yesterday": "Yesterday",
+  "dateMonthDayFormat": "{month}/{day}",
+  "@dateMonthDayFormat": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "dateYearMonthDayFormat": "{month}/{day}/{year}",
+  "@dateYearMonthDayFormat": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "userID": "User ID",
+  "groupIDLabel": "Group ID",
+  "userIDLabel": "User ID",
+  "file": "File",
+  "recordAVideo": "Record Video",
+  "audioCall": "Audio Call",
+  "videoCall": "Video Call",
+  "send": "Send",
+  "more": "More",
+  "delete": "Delete",
+  "clearMessage": "Clear chat history",
+  "pin": "Pin chat",
+  "unpin": "Unpin chat",
+  "startConversation": "Start Chat",
+  "createGroupChat": "Create Group",
+  "addFriend": "Add friends",
+  "addGroup": "Add Group",
+  "addContact": "Add Contact",
+  "joinGroup": "Join Group",
+  "createGroupTips": "Create Group",
+  "createCommunity": "Create Community",
+  "groupIDInvalid": "Invalid group ID. Check whether the group ID is correct.",
+  "productDocumentation": "View product documentation",
+  "create": "Create",
+  "groupName": "Group Name",
+  "groupIDOption": "Group ID (optional)",
+  "groupFaceUrl": "Group Avatar",
+  "groupMemberSelected": "Participants",
+  "groupWorkType": "Friends Working group(Work)",
+  "groupPublicType": "Stranger Social group(Public）",
+  "groupMeetingType": "Temporary Meeting group(Meeting）",
+  "groupCommunityType": "Community(Community)",
+  "groupWorkDesc": "Friends work group (Work): Similar to ordinary WeChat groups, after creation, only friends who are already in the group can be invited to join the group, and there is no need for the approval of the invitee or the approval of the group owner.",
+  "groupPublicDesc": "Stranger social group (Public): Similar to QQ group, the group owner can designate the group administrator after creation. After the user searches for the group ID and initiates a group application, the group owner or administrator must approve it before joining the group.",
+  "groupMeetingDesc": "Temporary meeting group (Meeting): After creation, you can enter and leave at will, and support viewing of messages before joining the group; it is suitable for audio and video conference scenarios, online education scenarios, and other scenarios that are combined with real-time audio and video products.",
+  "groupCommunityDesc": "Community(Community)：After creation, you can enter and leave at will, support up to 100,000 people, support historical message storage, and after users search for group ID and initiate a group application, they can join the group without administrator approval.",
+  "groupDetail": "Group Chat Details",
+  "transferGroupOwner": "Transfer Group Owner",
+  "publicGroup": "Public Group",
+  "groupOfAnnouncement": "Group Notice",
+  "groupManagement": "Manage Group",
+  "groupType": "Group Type",
+  "addGroupWay": "Group Joining Method",
+  "inviteGroupType": "Group Inviting Method",
+  "myAliasInGroup": "My Group Nickname",
+  "doNotDisturb": "Mute Notifications",
+  "groupMember": "Group Members",
+  "profileRemark": "Remark Name",
+  "groupEdit": "Edit",
+  "blackList": "Blocked List",
+  "profileBlack": "Block",
+  "deleteFriend": "Delete Contact",
+  "search": "Search",
+  "chatHistory": "Chat History",
+  "groups": "Groups",
+  "newFriend": "New Contacts",
+  "myGroups": "Group Chats",
+  "contactInfo": "Details",
+  "tuiEmojiSmile": "[Smile]",
+  "tuiEmojiExpect": "[Expect]",
+  "tuiEmojiBlink": "[Blink]",
+  "tuiEmojiGuffaw": "[Guffaw]",
+  "tuiEmojiKindSmile": "[Kind Smile]",
+  "tuiEmojiHaha": "[Haha]",
+  "tuiEmojiCheerful": "[Cheerful]",
+  "tuiEmojiSpeechless": "[Speechless]",
+  "tuiEmojiAmazed": "[Amazed]",
+  "tuiEmojiSorrow": "[Sorrow]",
+  "tuiEmojiComplacent": "[Complacent]",
+  "tuiEmojiSilly": "[Silly]",
+  "tuiEmojiLustful": "[Lustful]",
+  "tuiEmojiGiggle": "[Giggle]",
+  "tuiEmojiKiss": "[Kiss]",
+  "tuiEmojiWail": "[Wail]",
+  "tuiEmojiTearsLaugh": "[Tears Laugh]",
+  "tuiEmojiTrapped": "[Trapped]",
+  "tuiEmojiMask": "[Mask]",
+  "tuiEmojiFear": "[Fear]",
+  "tuiEmojiBareTeeth": "[Bare Teeth]",
+  "tuiEmojiFlareUp": "[Flare Up]",
+  "tuiEmojiYawn": "[Yawn]",
+  "tuiEmojiTact": "[Tact]",
+  "tuiEmojiStareyes": "[Stareyes]",
+  "tuiEmojiShutUp": "[Shut Up]",
+  "tuiEmojiSigh": "[Sigh]",
+  "tuiEmojiHehe": "[Hehe]",
+  "tuiEmojiSilent": "[Silent]",
+  "tuiEmojiSurprised": "[Surprised]",
+  "tuiEmojiAskance": "[Askance]",
+  "tuiEmojiOk": "[OK]",
+  "tuiEmojiShit": "[Shit]",
+  "tuiEmojiMonster": "[Monster]",
+  "tuiEmojiDaemon": "[Daemon]",
+  "tuiEmojiRage": "[Rage]",
+  "tuiEmojiFool": "[Fool]",
+  "tuiEmojiPig": "[Pig]",
+  "tuiEmojiCow": "[Cow]",
+  "tuiEmojiAi": "[AI]",
+  "tuiEmojiSkull": "[Skull]",
+  "tuiEmojiBombs": "[Bombs]",
+  "tuiEmojiCoffee": "[Coffee]",
+  "tuiEmojiCake": "[Cake]",
+  "tuiEmojiBeer": "[Beer]",
+  "tuiEmojiFlower": "[Flower]",
+  "tuiEmojiWatermelon": "[Watermelon]",
+  "tuiEmojiRich": "[Rich]",
+  "tuiEmojiHeart": "[Heart]",
+  "tuiEmojiMoon": "[Moon]",
+  "tuiEmojiSun": "[Sun]",
+  "tuiEmojiStar": "[Star]",
+  "tuiEmojiRedPacket": "[Red Packet]",
+  "tuiEmojiCelebrate": "[Celebrate]",
+  "tuiEmojiBless": "[Bless]",
+  "tuiEmojiFortune": "[Fortune]",
+  "tuiEmojiConvinced": "[Convinced]",
+  "tuiEmojiProhibit": "[Prohibit]",
+  "tuiEmoji666": "[666]",
+  "tuiEmoji857": "[857]",
+  "tuiEmojiKnife": "[Knife]",
+  "tuiEmojiLike": "[Like]",
+  "sendMessage": "Send Message",
+  "quitGroup": "Leave",
+  "dismissGroup": "Disband Group",
+  "groupNoticeEmpty": "No group notice",
+  "next": "Next",
+  "agree": "Accept",
+  "accept": "Accept",
+  "refuse": "Decline",
+  "noFriendApplicationList": "Friend request is empty",
+  "noBlackList": "Block list is empty",
+  "noGroupList": "Group chats is empty",
+  "noGroupApplicationList": "No group application yet",
+  "groupChatNotifications": "Group Chat Notifications",
+  "invite": "invite",
+  "groupApplicationAllReadyBeenProcessed": "This invitation or request has been processed.",
+  "accepted": "Agreed",
+  "refused": "Declined",
+  "copy": "Copy",
+  "recall": "Recall",
+  "forward": "Forward",
+  "quote": "Quote",
+  "searchUserID": "Please enter User ID to search for users",
+  "searchGroupID": "Group ID",
+  "searchGroupIDHint": "Please enter Group ID to search for groups",
+  "addFailed": "Add failed",
+  "joinGroupFailed": "Join group failed",
+  "alreadyFriend": "Already friends",
+  "signature": "Bio",
+  "fillInTheVerificationInformation": "Fill in verification information",
+  "joinedGroupSuccessfully": "success",
+  "contactAddedSuccessfully": "Contact Added Successfully",
+  "message": "Message",
+  "groupWork": "Work",
+  "groupPublic": "Public",
+  "groupMeeting": "Meeting",
+  "groupCommunity": "Community",
+  "groupAVChatRoom": "AVChatRoom",
+  "groupAddAny": "Auto Approval",
+  "groupAddAuth": "Admin Approval",
+  "groupAddForbid": "Prohibited from Joining",
+  "groupInviteForbid": "Prohibited from Inviting",
+  "groupOwner": "Owner",
+  "member": "Member",
+  "admin": "Admin",
+  "modifyGroupName": "Edit Group Name",
+  "modifyGroupNickname": "Edit Group Name card",
+  "chatBackground": "Chat Background",
+  "selectChatBackground": "Select Chat Background",
+  "chatBackgroundDefault": "Default",
+  "chatBackgroundCustom": "Custom",
+  "quitGroupTip": "Leave the group?",
+  "dismissGroupTip": "Disband the group?",
+  "clearMsgTip": "Are you sure you want to clear the chat history?",
+  "muteAll": "Mute All",
+  "addMuteMemberTip": "Add members to mute",
+  "groupMuteTip": "When Mute All is enabled, only the group owner and admins are allowed to send messages.",
+  "deleteFriendTip": "Are you sure you want to delete the contact?",
+  "remarkEdit": "Edit Alias",
+  "detail": "Details",
+  "setAdmin": "Set Administrator",
+  "cancelAdmin": "Cancel Admin",
+  "deleteGroupMemberTip": "Confirm to delete group member?",
+  "settingSuccess": "Setup Success!",
+  "settingFail": "Setup failed!",
+  "noMore": "No more",
+  "sayTimeShort": "Message too short",
+  "recordLimitTips": "Maximum voice length reached",
+  "chooseAvatar": "Choose Avatar",
+  "inputGroupName": "Please enter a group name",
+  "error": "Error",
+  "maxCountFile": "You can only select at most {maxCount} files",
+  "groupIntroDeleted": "deleted group description",
+  "groupJoinForbidden": "Join forbidden",
+  "groupJoinApproval": "Admin approval required",
+  "groupJoinFree": "Free to join",
+  "groupInviteForbidden": "Invite forbidden",
+  "groupInviteApproval": "Admin approval required",
+  "groupInviteFree": "Free to invite",
+  "friendLimit": "The number of your contacts exceeds the limit.",
+  "otherFriendLimit": "The number of the other user's contacts exceeds the limit.",
+  "inBlacklist": "You have blocked this user.",
+  "setInBlacklist": "You have been blocked.",
+  "forbidAddFriend": "This user has disabled contact request.",
+  "waitAgreeFriend": "Request sent",
+  "userNotExist": "User does not exist.",
+  "addGroupPermissionDeny": "Prohibited from Joining",
+  "addGroupAlreadyMember": "The user is a group member",
+  "addGroupNotFound": "The group does not exist",
+  "addGroupFullMember": "The number of group members has reached the limit",
+  "chatRecords": "{count} related records",
+  "addRule": "Contact Request",
+  "allowAny": "Allow anyone",
+  "denyAny": "Deny anyone",
+  "needConfirm": "Requires verification",
+  "noSignature": "No signature yet",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "birthday": "Birthday",
+  "setNickname": "Edit nickname",
+  "setSignature": "Edit signature",
+  "messageNum": "messages",
+  "draft": "[Draft]",
+  "sendMessageFail": "Send Failed",
+  "resendTips": "Are you sure you want to resend?",
+  "stopCallTip": "Duration",
+  "startCall": "Start Call",
+  "acceptCall": "Answered",
+  "groupCallSend": "initiated a group call",
+  "groupCallEnd": "End group call",
+  "groupCallNoAnswer": "no answer",
+  "groupCallReject": "declined call",
+  "groupCallAccept": "answered",
+  "groupCallConfirmSwitchToAudio": "confirm to audio call",
+  "unknownCall": "Unknown call",
+  "join": "join in",
+  "peopleOnCall": "{number} person are currently on the call",
+  "groupReadBy": "Read",
+  "groupDeliveredTo": "Unread",
+  "readReceiptAllRead": "Read by All",
+  "readReceiptNPersonRead": "Read by {count}",
+  "@readReceiptNPersonRead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "messageReadReceipt": "Message Read Receipt",
+  "messageReadReceiptEnabledDesc": "If disabled, the message read status is hidden for all your messages and for all the messages sent by members in a chat.",
+  "messageReadReceiptDisabledDesc": "If enabled, the message read status is displayed for all your messages and for all the messages sent by members in a chat.",
+  "markAsRead": "Mark As Read",
+  "markAsUnread": "Mark As Unread",
+  "multiSelect": "Select",
+  "postEmojis": "React",
+  "recentlyUsed": "Recently used",
+  "allEmojis": "All",
+  "selectChat": "Select Chat",
+  "selectedCount": "Selected {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardIndividually": "Forward Individually",
+  "forwardMerged": "Forward as Merged",
+  "groupChatHistory": "Group Chat History",
+  "c2cChatHistoryFormat": "{name}'s Chat History",
+  "@c2cChatHistoryFormat": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatHistoryForSomebodyFormat": "Chat History of {name1} and {name2}",
+  "@chatHistoryForSomebodyFormat": {
+    "placeholders": {
+      "name1": {
+        "type": "String"
+      },
+      "name2": {
+        "type": "String"
+      }
+    }
+  },
+  "forwardCompatibleText": "Please upgrade to view chat history",
+  "forwardFailedMessageTip": "Failed messages cannot be forwarded!",
+  "forwardSeparateLimitTip": "Too many messages selected, individual forwarding is not supported",
+  "deleteMessagesConfirmTip": "Are you sure you want to delete the selected messages?",
+  "deleteConversationTip": "Are you sure you want to delete this conversation?",
+  "conversationListAtAll": "[@All]",
+  "conversationListAtMe": "[@Me]",
+  "messageInputAllMembers": "All",
+  "selectMentionMember": "Select Members",
+  "tapToRemove": "Tap to remove",
+  "messageTypeSecurityStrike": "Sensitive content involved",
+  "convertToText": "Convert to Text",
+  "convertToTextFailed": "Unable to convert",
+  "hide": "Hide",
+  "translate": "Translate",
+  "translateFailed": "Unable to translate",
+  "translateDefaultTips": "Translation powered by Tencent Cloud IM",
+  "translating": "Translating...",
+  "translateTargetLanguage": "Translate Target Language",
+  "backToLatest": "Back to Latest",
+  "newMessageCount": "{count} new messages",
+  "@newMessageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "holdToTalk": "Hold to talk",
+  "sendMessageOrHoldToTalk": "Type or hold to talk...",
+  "releaseToSend": "Release to send",
+  "releaseToCancel": "Release to cancel",
+  "recordCountdownTips": "Recording will stop in {seconds}s",
+  "@recordCountdownTips": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "backToQuotePosition": "Back to quote",
+  "quotedMessageRevoked": "Quoted content recalled",
+  "quotedMessageNotFound": "Quoted content unavailable",
+  "quotedOriginalMessageUnreachable": "Unable to locate the original message",
+  "reactionUserSummary": "{name} and {othersCount} others",
+  "@reactionUserSummary": {
+    "description": "Label on a reaction chip when several users reacted with the same emoji. Locales phrase this either around the total ('{name} 等 {totalCount} 人') or around the remainder ('{name} and {othersCount} others'), so both counts are supplied and each translation uses whichever one it needs.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "totalCount": {
+        "type": "int"
+      },
+      "othersCount": {
+        "type": "int"
+      }
+    }
+  },
+  "messageTypeMerged": "[Chat Records]",
+  "messageTypeUnknown": "[Message]",
+  "releaseToConvert": "Release to convert",
+  "voiceToTextFailed": "No text recognized",
+  "sendOriginalVoice": "Send original voice",
+  "addMembers": "Add Members",
+  "album": "Album",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "takeAPhoto": "Take Photo",
+  "callRejectCaller": "Call declined by user",
+  "callRejectCallee": "Declined",
+  "callCancelCaller": "Canceled",
+  "callCancelCallee": "Call canceled by caller",
+  "callTimeoutCaller": "Call was not answered",
+  "callTimeoutCallee": "Call timeout",
+  "callLineBusyCaller": "Line busy",
+  "callLineBusyCallee": "Line busy",
+  "callingSwitchToAudio": "Switch to voice call",
+  "callingSwitchToAudioAccept": "Confirm video to voice"
 }

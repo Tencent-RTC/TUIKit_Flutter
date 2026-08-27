@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/button.dart' as atomicx;
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import '../common/language/gen/chat_localizations.dart';
 import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
 import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'package:tencent_chat_uikit/src/third_party/azlistview/azlistview.dart';
@@ -82,7 +82,7 @@ class _UserPickerState extends State<UserPicker> {
   bool _isLoadingMore = false;
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -104,7 +104,7 @@ class _UserPickerState extends State<UserPicker> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -288,7 +288,7 @@ class _UserPickerState extends State<UserPicker> {
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: atomicx.IconButton.buttonContent(
-          content: atomicx.IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: atomicx.IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: atomicx.ButtonType.noBorder,
           size: atomicx.ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
@@ -306,7 +306,7 @@ class _UserPickerState extends State<UserPicker> {
           TextButton(
             onPressed: hasSelection ? _onConfirm : null,
             child: Text(
-              widget.confirmText ?? atomicLocale.confirm,
+              widget.confirmText ?? chatLocale.confirm,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

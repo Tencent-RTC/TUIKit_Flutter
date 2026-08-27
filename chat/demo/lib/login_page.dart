@@ -187,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocale = ChatLocalizations.of(context);
     final loginState = Provider.of<LoginInfoState>(context);
 
     return Scaffold(
@@ -272,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                           : Text(
-                              atomicLocale.login,
+                              chatLocale.login,
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                     ),

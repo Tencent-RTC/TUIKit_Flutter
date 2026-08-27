@@ -1,5 +1,6 @@
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
+import '../../common/language/gen/chat_localizations.dart';
 
 typedef OnSendMessageClick = void Function({String? userID, String? groupID});
 
@@ -24,13 +25,14 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
   final ContactStore _contactStore = ContactStore.shared;
   late ConversationListStore _conversationListStore;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   late String conversationID;
 
   ContactInfo? _contactInfo;
   bool _isNotDisturb = false;
   bool _isPinned = false;
   bool _isInBlacklist = false;
+  String? _chatBackgroundImageUri;
 
   @override
   void initState() {
@@ -38,13 +40,26 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
     conversationID = c2cConversationIDPrefix + widget.userID;
     _conversationListStore = ConversationListStore.create();
     _loadData();
+    _loadChatBackground();
+  }
+
+  Future<void> _loadChatBackground() async {
+    final imageUri = await ChatBackgroundStore.shared.load(conversationID);
+    if (!mounted) return;
+    setState(() => _chatBackgroundImageUri = imageUri);
+  }
+
+  Future<void> _onChatBackgroundTap() async {
+    final changed = await ChatBackgroundPicker.show(context, conversationID: conversationID);
+    if (!changed || !mounted) return;
+    setState(() => _chatBackgroundImageUri = ChatBackgroundStore.shared.peek(conversationID));
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   Future<void> _loadData() async {
@@ -88,78 +103,106 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorsTheme.bgColorOperate,
+      backgroundColor: colorsTheme.bgColorInput,
       appBar: SettingWidgets.buildAppBar(
         context: context,
-        title: atomicLocale.contactInfo,
+        title: chatLocale.contactInfo,
       ),
       body: _contactInfo == null
           ? Center(child: CircularProgressIndicator(color: colorsTheme.textColorSecondary))
           : SingleChildScrollView(
               child: Column(
-                children: [
-                  const SizedBox(height: 20),
+                children: _withSectionGaps([
                   _buildUserProfile(),
-                  const SizedBox(height: 24),
-                  _buildActionButtons(),
-                  const SizedBox(height: 24),
+                  _buildRemarkSection(),
                   _buildSettingsSection(),
-                  const SizedBox(height: 24),
-                  _buildDangerousActions(),
-                  const SizedBox(height: 40),
-                ],
+                  _buildChatBackground(),
+                  _buildBlacklistSection(),
+                  _buildBottomActions(),
+                ]),
               ),
             ),
     );
   }
 
+  /// See [_GroupChatSettingState._withSectionGaps]: the first card sits right
+  /// under the AppBar with a 1px seam, later cards are separated by 10px of the
+  /// gray page background.
+  List<Widget> _withSectionGaps(List<Widget?> sections) {
+    final visible = sections.whereType<Widget>().toList();
+    final result = <Widget>[const SizedBox(height: 1)];
+    for (var i = 0; i < visible.length; i++) {
+      if (i > 0) result.add(const SizedBox(height: 10));
+      result.add(visible[i]);
+    }
+    result.add(const SizedBox(height: 28));
+    return result;
+  }
+
   Widget _buildUserProfile() {
     final nickname = _contactInfo?.nickname ?? '';
     final avatarURL = _contactInfo?.avatarURL ?? '';
-    return Column(
-      children: [
-        Avatar(
-          content: AvatarImageContent(url: avatarURL, name: nickname),
-          size: AvatarSize.xl,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          nickname.isNotEmpty ? nickname : widget.userID,
-          style: FontScheme.body2Medium.copyWith(
-            color: colorsTheme.textColorPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      color: colorsTheme.bgColorOperate,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SettingWidgets.buildActionButton(
-            context: context,
-            icon: Icons.message,
-            label: atomicLocale.sendMessage,
-            onTap: _navigateToMessageList,
+          Avatar(
+            content: AvatarImageContent(url: avatarURL, name: nickname),
+            size: AvatarSize.l,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  nickname.isNotEmpty ? nickname : widget.userID,
+                  style: FontScheme.body4Medium.copyWith(
+                    color: colorsTheme.textColorPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${chatLocale.userIDLabel}: ${widget.userID}',
+                  style: FontScheme.caption3Regular.copyWith(
+                    color: colorsTheme.textColorSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsSection() {
-    final remark = _contactInfo?.friendRemark ?? '';
+  Widget _buildRemarkSection() {
     return SettingWidgets.buildSettingGroup(
       context: context,
       children: [
-        _buildRemarkRow(remark),
-        SettingWidgets.buildDivider(context),
+        SettingWidgets.buildNavigationRow(
+          context: context,
+          title: chatLocale.profileRemark,
+          value: _contactInfo?.friendRemark ?? '',
+          useEditIcon: true,
+          onTap: _showRemarkEditDialog,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsSection() {
+    return SettingWidgets.buildSettingGroup(
+      context: context,
+      children: [
         SettingWidgets.buildSettingRow(
           context: context,
-          title: atomicLocale.doNotDisturb,
+          title: chatLocale.doNotDisturb,
           value: _isNotDisturb,
           onChanged: (value) async {
             final result = await _conversationListStore.setReceiveMessageOpt(
@@ -171,10 +214,9 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
             }
           },
         ),
-        SettingWidgets.buildDivider(context),
         SettingWidgets.buildSettingRow(
           context: context,
-          title: atomicLocale.pin,
+          title: chatLocale.pin,
           value: _isPinned,
           onChanged: (value) async {
             final result = await _conversationListStore.pinConversation(conversationID: conversationID, pin: value);
@@ -183,10 +225,17 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
             }
           },
         ),
-        SettingWidgets.buildDivider(context),
+      ],
+    );
+  }
+
+  Widget _buildBlacklistSection() {
+    return SettingWidgets.buildSettingGroup(
+      context: context,
+      children: [
         SettingWidgets.buildSettingRow(
           context: context,
-          title: atomicLocale.profileBlack,
+          title: chatLocale.profileBlack,
           value: _isInBlacklist,
           onChanged: (value) async {
             CompletionHandler result;
@@ -204,79 +253,64 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
     );
   }
 
-  Widget _buildRemarkRow(String remark) {
-    return GestureDetector(
-      onTap: _showRemarkEditDialog,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Text(
-              atomicLocale.profileRemark,
-              style: FontScheme.caption1Regular.copyWith(
-                color: colorsTheme.textColorPrimary,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                remark.isNotEmpty ? remark : '',
-                textAlign: TextAlign.right,
-                style: FontScheme.caption1Regular.copyWith(
-                  color: colorsTheme.textColorPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right,
-              color: colorsTheme.scrollbarColorHover,
-              size: 20,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDangerousActions() {
+  Widget _buildChatBackground() {
     return SettingWidgets.buildSettingGroup(
       context: context,
       children: [
+        SettingWidgets.buildNavigationRow(
+          context: context,
+          title: chatLocale.chatBackground,
+          value: _chatBackgroundImageUri == null
+              ? chatLocale.chatBackgroundDefault
+              : chatLocale.chatBackgroundCustom,
+          onTap: _onChatBackgroundTap,
+        ),
+      ],
+    );
+  }
+
+  /// Bottom stack: send message (blue) then the destructive actions (red),
+  /// centered in a single card — matching the group setting page.
+  Widget _buildBottomActions() {
+    final actions = <Widget>[
+      SettingWidgets.buildCenteredActionRow(
+        context: context,
+        title: chatLocale.sendMessage,
+        onTap: _navigateToMessageList,
+      ),
+      SettingWidgets.buildDangerousActionRow(
+        context: context,
+        title: chatLocale.clearMessage,
+        onTap: () {
+          _showConfirmDialog(
+            content: chatLocale.clearMsgTip,
+            onConfirm: () async {
+              await _conversationListStore.clearConversationMessages(conversationID: conversationID);
+            },
+          );
+        },
+      ),
+      if (!_isInBlacklist)
         SettingWidgets.buildDangerousActionRow(
           context: context,
-          title: atomicLocale.clearMessage,
+          title: chatLocale.deleteFriend,
           onTap: () {
             _showConfirmDialog(
-              title: atomicLocale.clearMessage,
-              content: atomicLocale.clearMsgTip,
+              content: chatLocale.deleteFriendTip,
               onConfirm: () async {
-                await _conversationListStore.clearConversationMessages(conversationID: conversationID);
+                final result = await _contactStore.deleteFriend(userID: widget.userID);
+                if (result.errorCode == 0) {
+                  _conversationListStore.deleteConversation(conversationID: conversationID);
+                  if (mounted) Navigator.of(context).pop();
+                  widget.onContactDelete?.call();
+                }
               },
             );
           },
         ),
-        SettingWidgets.buildDivider(context),
-        if (!_isInBlacklist)
-          SettingWidgets.buildDangerousActionRow(
-            context: context,
-            title: atomicLocale.deleteFriend,
-            onTap: () {
-              _showConfirmDialog(
-                title: atomicLocale.deleteFriend,
-                content: atomicLocale.deleteFriendTip,
-                onConfirm: () async {
-                  final result = await _contactStore.deleteFriend(userID: widget.userID);
-                  if (result.errorCode == 0) {
-                    _conversationListStore.deleteConversation(conversationID: conversationID);
-                    if (mounted) Navigator.of(context).pop();
-                    widget.onContactDelete?.call();
-                  }
-                },
-              );
-            },
-          ),
-      ],
-    );
+    ];
+
+    return SettingWidgets.buildSettingGroup(context: context, children: actions);
   }
 
   void _showRemarkEditDialog() {
@@ -306,7 +340,7 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
               children: [
                 Center(
                   child: Text(
-                    atomicLocale.remarkEdit,
+                    chatLocale.remarkEdit,
                     style: FontScheme.caption1Medium.copyWith(
                       color: colorsTheme.textColorPrimary,
                     ),
@@ -339,7 +373,7 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: Text(
-                          atomicLocale.cancel,
+                          chatLocale.cancel,
                           style: FontScheme.caption1Regular.copyWith(color: colorsTheme.textColorPrimary),
                         ),
                       ),
@@ -365,7 +399,7 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: Text(
-                          atomicLocale.confirm,
+                          chatLocale.confirm,
                           style: FontScheme.caption1Medium.copyWith(
                             color: colorsTheme.textColorButton,
                           ),
@@ -383,15 +417,13 @@ class _C2CChatSettingState extends State<C2CChatSetting> {
   }
 
   void _showConfirmDialog({
-    required String title,
     required String content,
     required VoidCallback onConfirm,
   }) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     AtomicAlertDialog.showWithConfig(
       context,
       config: AlertDialogConfig(
-        title: title,
         content: content,
         cancelConfig: ButtonConfig(text: locale.cancel),
         confirmConfig: ButtonConfig(

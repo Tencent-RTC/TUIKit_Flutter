@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_input/src/chat_special_text_span_builder.dart';
 import 'package:tencent_chat_uikit/src/third_party/extended_text/extended_text.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 /// A preview bar displayed below the message input when quoting a message.
 /// Shows sender name + content preview (text / thumbnail / icon) + close button.
@@ -20,7 +21,7 @@ class QuotePreviewBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     final senderName = ChatUtil.getMessageSenderName(quotedMessage);
 
     return Container(
@@ -55,7 +56,7 @@ class QuotePreviewBar extends StatelessWidget {
     );
   }
 
-  Widget _buildSingleLineContent(SemanticColorScheme colors, AtomicLocalizations locale, String senderName) {
+  Widget _buildSingleLineContent(SemanticColorScheme colors, ChatLocalizations locale, String senderName) {
     final payload = quotedMessage.messagePayload;
     final textStyle = FontScheme.caption2Regular.copyWith(
       color: colors.textColorSecondary,
@@ -107,7 +108,7 @@ class QuotePreviewBar extends StatelessWidget {
     );
   }
 
-  String _getContentSummary(AtomicLocalizations locale) {
+  String _getContentSummary(ChatLocalizations locale) {
     final payload = quotedMessage.messagePayload;
 
     switch (payload) {

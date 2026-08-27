@@ -1,0 +1,7 @@
+{
+  "@@locale": "zh_Hant",
+  "customMessageMenuTitle": "自訂訊息",
+  "customMessageContent": "歡迎加入雲通訊 IM 大家庭！",
+  "customMessageViewDetails": "查看詳情",
+  "welcomeMessage": "歡迎體驗 Chat Demo！你可以先發送一則訊息，體驗基礎聊天功能。\n如果想新增好友，可以前往聯絡人頁面點擊首頁加號。\n如果想體驗音視訊通話，可以點擊下方加號按鈕 -> 語音通話/視訊通話。"
+}

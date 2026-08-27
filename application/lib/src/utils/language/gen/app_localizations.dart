@@ -409,6 +409,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are in a call. Please try again after it ends.'**
   String get app_can_not_start_room_during_call;
+
+  /// No description provided for @app_chat_welcome_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Chat Demo! Send a message to try out the basic chat.\nTo add friends, go to the Contacts page and tap the plus button.\nTo make audio or video calls, tap the plus button below -> Voice Call/Video Call.'**
+  String get app_chat_welcome_message;
 }
 
 class _AppLocalizationsDelegate

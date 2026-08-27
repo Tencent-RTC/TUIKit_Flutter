@@ -8,16 +8,14 @@ import 'package:tencent_chat_uikit/src/emoji_picker/emoji_picker_model.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/asr_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/calling_message_data_provider.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/recent_emoji_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/translation_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/translation_text_parser.dart';
 import 'package:tencent_chat_uikit/src/common/language/index.dart';
 import 'package:tencent_chat_uikit/src/message_list/listen/listen_from_here_controller.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/forward/forward_service.dart';
-import 'package:tencent_chat_uikit/src/message_list/widgets/message_read_receipt_view.dart';
-
 import 'message_tooltip.dart';
-import 'quote_message_preview.dart';
 import 'message_types/call_message_widget.dart';
 import 'message_types/file_message_widget.dart';
 import 'message_types/image_message_widget.dart';
@@ -25,6 +23,7 @@ import 'message_types/merged_message_widget.dart';
 import 'message_types/sound_message_widget.dart';
 import 'message_types/text_message_widget.dart';
 import 'message_types/video_message_widget.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class DefaultMessageMenuCallbacks implements MessageMenuCallbacks {
   final BuildContext context;
@@ -105,6 +104,9 @@ class MessageBubble extends StatefulWidget {
   final MessageListConfigProtocol config;
   // Merged detail view mode - disables long press menu and read receipt
   final bool isInMergedDetailView;
+  // Multi-select mode - the row-level tap toggles selection, so payloads must
+  // not install their own tap handlers while it is active.
+  final bool isMultiSelectMode;
   // ASR display manager for voice-to-text feature
   final AsrDisplayManager? asrDisplayManager;
   // Callback when ASR text bubble is long pressed, provides message and GlobalKey for positioning popup menu
@@ -115,8 +117,6 @@ class MessageBubble extends StatefulWidget {
   final void Function(MessageInfo message, GlobalKey translationBubbleKey)? onTranslationBubbleLongPress;
   // Callback when call message is clicked in C2C conversation
   final void Function(String userID, bool isVideoCall)? onCallMessageClick;
-  // Callback when quote preview is tapped (for navigation to quoted message)
-  final void Function(MessageInfo message)? onQuotePreviewTap;
   /// In merged detail view: the bundle's full message list, used as the
   /// static data source for image / video viewers (the page's
   /// MessageListStore is empty in this mode).
@@ -135,12 +135,12 @@ class MessageBubble extends StatefulWidget {
     this.onHighlightComplete,
     this.customActions = const [],
     this.isInMergedDetailView = false,
+    this.isMultiSelectMode = false,
     this.asrDisplayManager,
     this.onAsrBubbleLongPress,
     this.translationDisplayManager,
     this.onTranslationBubbleLongPress,
     this.onCallMessageClick,
-    this.onQuotePreviewTap,
     this.mergedMediaMessages,
   });
 
@@ -155,7 +155,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
 
   late AnimationController _highlightAnimationController;
 
-  late AtomicLocalizations atomicLocal;
+  late ChatLocalizations chatLocal;
 
   @override
   void initState() {
@@ -190,7 +190,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocal = AtomicLocalizations.of(context);
+    chatLocal = ChatLocalizations.of(context);
   }
 
   @override
@@ -215,12 +215,30 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     AtomicAlertDialog.showWithConfig(
       context,
       config: AlertDialogConfig(
-        title: atomicLocal.resendTips,
-        cancelConfig: ButtonConfig(text: atomicLocal.cancel),
+        title: chatLocal.resendTips,
+        cancelConfig: ButtonConfig(text: chatLocal.cancel),
         confirmConfig: ButtonConfig(
-          text: atomicLocal.confirm,
+          text: chatLocal.confirm,
           type: TextColorPreset.blue,
           onClick: _handleResendMessage,
+        ),
+      ),
+    );
+  }
+
+  /// Deleting is irreversible, so it goes through the same confirmation the
+  /// multi-select delete uses. Lives here rather than in the menu callback so
+  /// that a caller-supplied [MessageMenuCallbacks] stays a plain action.
+  void _showDeleteConfirmDialog() {
+    AtomicAlertDialog.showWithConfig(
+      context,
+      config: AlertDialogConfig(
+        content: chatLocal.deleteMessagesConfirmTip,
+        cancelConfig: ButtonConfig(text: chatLocal.cancel),
+        confirmConfig: ButtonConfig(
+          text: chatLocal.confirm,
+          type: TextColorPreset.red,
+          onClick: () => _menuCallbacks.onDeleteMessage(widget.message),
         ),
       ),
     );
@@ -236,6 +254,12 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
+
+    // The reaction strip lives *inside* the bubble, under the payload. When it
+    // is present the bubble background is painted once around the pair, so the
+    // payload itself must not paint one — see [_buildPayloadBubble].
+    final reactionStrip = _buildReactionStrip(context);
+    final sharesBubbleWithReactions = reactionStrip != null && !_payloadOwnsBubble;
 
     Widget backgroundBuilder(Widget child) {
       if (widget.isHighlighted) {
@@ -292,9 +316,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
           isSelf: widget.isSelf,
           maxWidth: widget.maxWidth,
           config: widget.config,
-          onLongPress: widget.message.quoteInfo != null ? null : _longPressCallback,
-          bubbleKey: widget.message.quoteInfo != null ? null : _messageKey,
-          backgroundBuilder: widget.message.quoteInfo != null ? (child) => child : backgroundBuilder,
+          onLongPress: _longPressCallback,
+          bubbleKey: _messageKey,
+          backgroundBuilder: sharesBubbleWithReactions ? (child) => child : backgroundBuilder,
           onResendTap: widget.message.status == MessageStatus.sendFail ? _showResendConfirmDialog : null,
           isInMergedDetailView: widget.isInMergedDetailView,
         );
@@ -337,25 +361,10 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         break;
 
       case MessageType.audio:
-        if (widget.isHighlighted) {
-          messageWidget = AnimatedBuilder(
-            animation: _highlightAnimationController,
-            builder: (context, _) {
-              return SoundMessageWidget(
-                message: widget.message,
-                isSelf: widget.isSelf,
-                maxWidth: widget.maxWidth,
-                config: widget.config,
-                onLongPress: _longPressCallback,
-                messageListStore: widget.messageListStore,
-                isInMergedDetailView: widget.isInMergedDetailView,
-                bubbleKey: _messageKey,
-                bubbleColor: _animatedBubbleColor(colorsTheme),
-              );
-            },
-          );
-        } else {
-          messageWidget = SoundMessageWidget(
+        messageWidget = _buildPayloadBubble(
+          colorsTheme,
+          hasReactionStrip: sharesBubbleWithReactions,
+          builder: (bubbleColor) => SoundMessageWidget(
             message: widget.message,
             isSelf: widget.isSelf,
             maxWidth: widget.maxWidth,
@@ -364,30 +373,16 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
             messageListStore: widget.messageListStore,
             isInMergedDetailView: widget.isInMergedDetailView,
             bubbleKey: _messageKey,
-          );
-        }
+            bubbleColor: bubbleColor,
+          ),
+        );
         break;
 
       case MessageType.file:
-        if (widget.isHighlighted) {
-          messageWidget = AnimatedBuilder(
-            animation: _highlightAnimationController,
-            builder: (context, _) {
-              return FileMessageWidget(
-                message: widget.message,
-                isSelf: widget.isSelf,
-                maxWidth: widget.maxWidth,
-                config: widget.config,
-                onLongPress: _longPressCallback,
-                messageListStore: widget.messageListStore,
-                isInMergedDetailView: widget.isInMergedDetailView,
-                bubbleKey: _messageKey,
-                bubbleColor: _animatedBubbleColor(colorsTheme),
-              );
-            },
-          );
-        } else {
-          messageWidget = FileMessageWidget(
+        messageWidget = _buildPayloadBubble(
+          colorsTheme,
+          hasReactionStrip: sharesBubbleWithReactions,
+          builder: (bubbleColor) => FileMessageWidget(
             message: widget.message,
             isSelf: widget.isSelf,
             maxWidth: widget.maxWidth,
@@ -396,8 +391,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
             messageListStore: widget.messageListStore,
             isInMergedDetailView: widget.isInMergedDetailView,
             bubbleKey: _messageKey,
-          );
-        }
+            bubbleColor: bubbleColor,
+          ),
+        );
         break;
 
       case MessageType.tips:
@@ -407,8 +403,23 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         break;
 
       case MessageType.custom:
+        final businessID = customMessageBusinessID(widget.message);
+        final customBuilder = businessID == null ? null : widget.config.customMessageBuilders[businessID];
         CallingMessageDataProvider provider = CallingMessageDataProvider(widget.message, context);
-        if (provider.isCallingSignal) {
+        if (customBuilder != null) {
+          messageWidget = customBuilder(
+            context,
+            CustomMessageRenderInfo(
+              message: widget.message,
+              conversationID: widget.conversationID,
+              isSelf: widget.isSelf,
+              maxWidth: widget.maxWidth,
+              isInMergedDetailView: widget.isInMergedDetailView,
+              isMultiSelectMode: widget.isMultiSelectMode,
+              onLongPress: _longPressCallback,
+            ),
+          );
+        } else if (provider.isCallingSignal) {
           messageWidget = CallMessageWidget(
             message: widget.message,
             isSelf: widget.isSelf,
@@ -429,32 +440,10 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         break;
 
       case MessageType.merged:
-        if (widget.isHighlighted) {
-          // Same pattern as audio / file: drive the bubble's background
-          // colour through the highlight animation by re-passing
-          // `_animatedBubbleColor` on every tick. MergedMessageWidget
-          // forwards this into its outer Container's decoration.color
-          // so the warning flash actually replaces the default bubble
-          // colour rather than being painted under it (which the merged
-          // bubble would have hidden).
-          messageWidget = AnimatedBuilder(
-            animation: _highlightAnimationController,
-            builder: (context, _) {
-              return MergedMessageWidget(
-                message: widget.message,
-                isSelf: widget.isSelf,
-                maxWidth: widget.maxWidth,
-                config: widget.config,
-                onLongPress: _longPressCallback,
-                bubbleKey: _messageKey,
-                messageListStore: widget.messageListStore,
-                isInMergedDetailView: widget.isInMergedDetailView,
-                bubbleColor: _animatedBubbleColor(colorsTheme),
-              );
-            },
-          );
-        } else {
-          messageWidget = MergedMessageWidget(
+        messageWidget = _buildPayloadBubble(
+          colorsTheme,
+          hasReactionStrip: sharesBubbleWithReactions,
+          builder: (bubbleColor) => MergedMessageWidget(
             message: widget.message,
             isSelf: widget.isSelf,
             maxWidth: widget.maxWidth,
@@ -463,8 +452,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
             bubbleKey: _messageKey,
             messageListStore: widget.messageListStore,
             isInMergedDetailView: widget.isInMergedDetailView,
-          );
-        }
+            bubbleColor: bubbleColor,
+          ),
+        );
         break;
 
       default:
@@ -474,75 +464,94 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         messageWidget = _buildUnsupportedMessage(context);
     }
 
-    // Wrap with quote message preview if this message has quoteInfo
-    // The quote preview is placed INSIDE the bubble (same background)
-    if (widget.message.quoteInfo != null) {
-      final quotePreview = QuoteMessagePreview(
-        quoteInfo: widget.message.quoteInfo!,
-        maxWidth: widget.maxWidth * 0.7,
-        onTap: widget.onQuotePreviewTap != null
-            ? () => widget.onQuotePreviewTap!(widget.message)
-            : null,
-      );
-      final colorsTheme = BaseThemeProvider.colorsOf(context);
-      final columnChild = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    if (reactionStrip != null) {
+      final withReactions = Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: widget.isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          quotePreview,
           messageWidget,
+          reactionStrip,
         ],
       );
-      Widget bubbleContainer;
-      if (widget.isHighlighted) {
-        // Apply highlight animation to the outer bubble container
-        bubbleContainer = AnimatedBuilder(
-          animation: _highlightAnimationController,
-          builder: (context, animChild) {
-            final colorAnimation = ColorTween(
-              begin: _getBubbleColor(colorsTheme),
-              end: colorsTheme.textColorWarning,
-            ).animate(CurvedAnimation(
-              parent: _highlightAnimationController,
-              curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
-            ));
-            final reverseColorAnimation = ColorTween(
-              begin: colorsTheme.textColorWarning,
-              end: _getBubbleColor(colorsTheme),
-            ).animate(CurvedAnimation(
-              parent: _highlightAnimationController,
-              curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
-            ));
-            return Container(
-              constraints: BoxConstraints(maxWidth: widget.maxWidth * 0.7),
-              decoration: BoxDecoration(
-                color: _highlightAnimationController.value <= 0.5
-                    ? colorAnimation.value
-                    : reverseColorAnimation.value,
-                borderRadius: _getBubbleBorderRadius(),
-              ),
-              child: animChild,
-            );
-          },
-          child: columnChild,
-        );
-      } else {
-        bubbleContainer = Container(
-          constraints: BoxConstraints(maxWidth: widget.maxWidth * 0.7),
-          decoration: BoxDecoration(
-            color: _getBubbleColor(colorsTheme),
-            borderRadius: _getBubbleBorderRadius(),
-          ),
-          child: columnChild,
-        );
-      }
-      messageWidget = GestureDetector(
-        onLongPress: _longPressCallback,
-        child: bubbleContainer,
-      );
+      // Cooperating payloads skipped their own background above, so paint the
+      // bubble once around payload + reactions to make them read as one.
+      messageWidget = sharesBubbleWithReactions ? backgroundBuilder(withReactions) : withReactions;
     }
 
     return messageWidget;
+  }
+
+  /// Whether the payload paints a background this widget can't take over.
+  ///
+  /// Custom, system and unsupported payloads style themselves end to end and
+  /// expose no colour hook, so wrapping them would nest one bubble inside
+  /// another. Merged forwards opt out too: they render as a bordered card
+  /// instead of a bubble. Their reaction strip hangs below the payload instead
+  /// of sharing its bubble.
+  bool get _payloadOwnsBubble => !const {
+        MessageType.text,
+        MessageType.image,
+        MessageType.video,
+        MessageType.audio,
+        MessageType.file,
+      }.contains(widget.message.messageType);
+
+  /// Builds a payload that paints its own bubble container.
+  ///
+  /// Passes down the bubble colour the payload should use: transparent when an
+  /// outer wrapper owns the background (reaction strip present), an animated
+  /// colour while the highlight flash plays, or null to let the payload pick
+  /// its own default.
+  Widget _buildPayloadBubble(
+    SemanticColorScheme colorsTheme, {
+    required bool hasReactionStrip,
+    required Widget Function(Color? bubbleColor) builder,
+  }) {
+    if (hasReactionStrip) return builder(Colors.transparent);
+    if (!widget.isHighlighted) return builder(null);
+    return AnimatedBuilder(
+      animation: _highlightAnimationController,
+      builder: (context, _) => builder(_animatedBubbleColor(colorsTheme)),
+    );
+  }
+
+  /// Reaction chips rendered at the bottom of the bubble, or null when the
+  /// message carries no reactions.
+  Widget? _buildReactionStrip(BuildContext context) {
+    if (!widget.config.isSupportReaction || widget.message.reactionList.isEmpty) {
+      return null;
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 2, 8, 6),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: widget.maxWidth * 0.9),
+        child: MessageReactionBar(
+          reactionList: widget.message.reactionList,
+          isSelf: widget.isSelf,
+          onClick: () => _showReactionDetailSheet(context),
+        ),
+      ),
+    );
+  }
+
+  void _showReactionDetailSheet(BuildContext context) {
+    final messageActionStore = MessageActionStore.create(widget.message);
+    final currentUserID = LoginStore.shared.loginState.loginUserInfo?.userID;
+
+    ReactionDetailSheet.show(
+      context: context,
+      reactionList: widget.message.reactionList,
+      currentUserID: currentUserID,
+      onFetchUsers: (reactionID) {
+        messageActionStore.loadReactionUsers(reactionID: reactionID, count: 20);
+      },
+      onRemoveReaction: (reactionID) {
+        messageActionStore.removeReaction(reactionID: reactionID);
+        Navigator.of(context).pop();
+      },
+      // Reactions are read-only inside a merged forward.
+      allowRemove: !widget.isInMergedDetailView,
+    );
   }
 
   void _handleLongPress() {
@@ -632,7 +641,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final isSelf = widget.isSelf;
 
-    // Estimated menu height including reaction picker
+    // Estimated height of the action menu, which is the taller of the two panels
     const estimatedMenuHeight = 120.0;
     // Minimum top padding to avoid going above message_list area (considering app bar, status bar, etc.)
     const minTopPadding = 100.0;
@@ -722,6 +731,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       shadowColor: colorsTheme.shadowColor,
       hasShadow: true,
       borderWidth: 1.0,
+      borderRadius: 8.0,
       showCloseButton: ShowCloseButton.none,
       touchThroughAreaShape: ClipAreaShape.rectangle,
       content: MessageTooltip(
@@ -729,8 +739,8 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         message: widget.message,
         onCloseTooltip: () => tooltip?.close(),
         isSelf: isSelf,
-        // Violation messages should not show reaction picker
-        showReactionPicker: widget.config.isSupportReaction && widget.message.status != MessageStatus.violation,
+        // Violation messages cannot be reacted to
+        isSupportReaction: widget.config.isSupportReaction && widget.message.status != MessageStatus.violation,
         onReactionSelected: widget.config.isSupportReaction && widget.message.status != MessageStatus.violation ? _handleReactionSelected : null,
       ),
     );
@@ -805,10 +815,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     // Translate menu item
     if (_shouldShowTranslateMenuItem()) {
       items.add(MessageMenuItem(
-        title: atomicLocal.translate,
+        title: chatLocal.translate,
         assetName: 'chat_assets/icon/translate.svg',
         package: 'tencent_chat_uikit',
-        icon: Icons.translate,
         onTap: () => _handleTranslateText(),
       ));
     }
@@ -867,7 +876,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     }
     
     // Get @ user names first, then parse and translate
-    final allMembersText = atomicLocal.messageInputAllMembers;
+    final allMembersText = chatLocal.messageInputAllMembers;
     final atUserNames = await TranslationTextParser.getAtUserNames(
       widget.message,
       allMembersText: allMembersText,
@@ -906,7 +915,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       if (!result.isSuccess) {
         // Show error toast using base_component Toast
         if (mounted) {
-          Toast.error(context, atomicLocal.translateFailed);
+          Toast.error(context, chatLocal.translateFailed);
         }
       }
       // On success, translatedText will be updated in message and shown by default
@@ -935,8 +944,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     // Convert to text menu item
     if (_shouldShowConvertToTextMenuItem()) {
       items.add(MessageMenuItem(
-        title: atomicLocal.convertToText,
-        icon: Icons.text_fields,
+        title: chatLocal.convertToText,
+        assetName: 'chat_assets/icon/to_text.svg',
+        package: 'tencent_chat_uikit',
         onTap: () => _handleConvertVoiceToText(),
       ));
     }
@@ -986,7 +996,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       if (!result.isSuccess) {
         // Show error toast
         if (mounted) {
-          Toast.error(context, atomicLocal.convertToTextFailed);
+          Toast.error(context, chatLocal.convertToTextFailed);
         }
       } else {
         // Wait for next frame to ensure messageListStore has been updated via notificationCenter
@@ -1004,7 +1014,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         if (asrText.isEmpty) {
           // Voice message has no content, show error toast and collapse ASR bubble
           if (mounted) {
-            Toast.error(context, atomicLocal.convertToTextFailed);
+            Toast.error(context, chatLocal.convertToTextFailed);
           }
           widget.asrDisplayManager?.hide(messageID);
         }
@@ -1037,7 +1047,6 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         title: _getMultiSelectText(),
         assetName: 'chat_assets/icon/multi_select.svg',
         package: 'tencent_chat_uikit',
-        icon: Icons.checklist,
         onTap: () => _menuCallbacks.onMultiSelectMessage(widget.message),
       ));
     }
@@ -1049,10 +1058,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       final isNotViolation = widget.message.status != MessageStatus.violation;
       if (isSentSuccess && isNotViolation) {
         items.add(MessageMenuItem(
-          title: atomicLocal.forward,
+          title: chatLocal.forward,
           assetName: 'chat_assets/icon/forward.svg',
           package: 'tencent_chat_uikit',
-          icon: Icons.shortcut,
           onTap: () => _menuCallbacks.onForwardMessage(widget.message),
         ));
       }
@@ -1064,10 +1072,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
       final isNotViolation = widget.message.status != MessageStatus.violation;
       if (isSentSuccess && isNotViolation) {
         items.add(MessageMenuItem(
-          title: atomicLocal.quote,
+          title: chatLocal.quote,
           assetName: 'chat_assets/icon/quote.svg',
           package: 'tencent_chat_uikit',
-          icon: Icons.format_quote,
           onTap: () => _menuCallbacks.onQuoteMessage(widget.message),
         ));
       }
@@ -1077,10 +1084,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     // Violation messages cannot be copied
     if (includeCopy && widget.config.isSupportCopy && widget.message.status != MessageStatus.violation) {
       items.add(MessageMenuItem(
-        title: atomicLocal.copy,
+        title: chatLocal.copy,
         assetName: 'chat_assets/icon/copy.svg',
         package: 'tencent_chat_uikit',
-        icon: Icons.copy,
         onTap: () => _menuCallbacks.onCopyMessage(widget.message),
       ));
     }
@@ -1095,10 +1101,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
 
       if (isWithin2Minutes && isSentSuccess && isNotViolation) {
         items.add(MessageMenuItem(
-          title: atomicLocal.recall,
+          title: chatLocal.recall,
           assetName: 'chat_assets/icon/revoke.svg',
           package: 'tencent_chat_uikit',
-          icon: Icons.undo,
           onTap: () => _menuCallbacks.onRecallMessage(widget.message),
         ));
       }
@@ -1107,26 +1112,23 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     // Delete button
     if (widget.config.isSupportDelete) {
       items.add(MessageMenuItem(
-        title: atomicLocal.delete,
+        title: chatLocal.delete,
         assetName: 'chat_assets/icon/delete.svg',
         package: 'tencent_chat_uikit',
-        icon: Icons.delete_outline,
-        isDestructive: true,
-        onTap: () => _menuCallbacks.onDeleteMessage(widget.message),
+        onTap: _showDeleteConfirmDialog,
       ));
     }
 
     // Listen-from-here button (all message types).
     items.add(MessageMenuItem(
-      title: ChatLocalizations.of(context)!.listenFromHere,
+      title: ChatLocalizations.of(context).listenFromHere,
       assetName: 'chat_assets/icon/listen_from_here.svg',
       package: 'tencent_chat_uikit',
-      icon: Icons.headset_outlined,
       onTap: () {
         ListenFromHereController.instance.start(
           messages: widget.messageListStore.state.messageList.value,
           fromMessageId: widget.message.msgID,
-          l: ChatLocalizations.of(context)!,
+          l: ChatLocalizations.of(context),
         );
       },
     ));
@@ -1146,7 +1148,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   }
 
   String _getMultiSelectText() {
-    return atomicLocal.multiSelect;
+    return chatLocal.multiSelect;
   }
 
   Widget _buildUnsupportedMessage(BuildContext context) {
@@ -1175,7 +1177,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
             ),
             const SizedBox(width: 4),
             Text(
-              atomicLocal.unknown,
+              chatLocal.unknown,
               style: FontScheme.caption2Regular.copyWith(
                 color: colorsTheme.textColorSecondary,
               ),
@@ -1205,39 +1207,9 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
     }
   }
 
-  BorderRadius _getBubbleBorderRadius() {
-    switch (widget.config.alignment) {
-      case 'left':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-          bottomLeft: Radius.circular(0),
-          bottomRight: Radius.circular(10),
-        );
-      case 'right':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-          bottomLeft: Radius.circular(10),
-          bottomRight: Radius.circular(0),
-        );
-      case 'two-sided':
-      default:
-        if (widget.isSelf) {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(0),
-          );
-        } else {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-            bottomLeft: Radius.circular(0),
-            bottomRight: Radius.circular(10),
-          );
-        }
-    }
-  }
+  BorderRadius _getBubbleBorderRadius() => MessageUtil.bubbleBorderRadius(
+        alignment: widget.config.alignment,
+        isSelf: widget.isSelf,
+        radius: widget.config.textBubbleCornerRadius,
+      );
 }

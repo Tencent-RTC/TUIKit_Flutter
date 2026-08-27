@@ -2,6 +2,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
+import '../common/language/gen/chat_localizations.dart';
 import 'conversation_list_config.dart';
 import 'widgets/conversation_item.dart';
 
@@ -119,12 +120,43 @@ class _ConversationListState extends State<ConversationList> {
     }
   }
 
-  void _handleClearHistoryMessage(ConversationInfo conversationInfo) async {
-    conversationListStore.clearConversationMessages(conversationID: conversationInfo.conversationID);
+  void _handleClearHistoryMessage(ConversationInfo conversationInfo) {
+    _showConfirmDialog(
+      content: ChatLocalizations.of(context).clearMsgTip,
+      onConfirm: () {
+        conversationListStore.clearConversationMessages(conversationID: conversationInfo.conversationID);
+      },
+    );
   }
 
-  void _handleDeleteConversation(ConversationInfo conversationInfo) async {
-    conversationListStore.deleteConversation(conversationID: conversationInfo.conversationID);
+  void _handleDeleteConversation(ConversationInfo conversationInfo) {
+    _showConfirmDialog(
+      content: ChatLocalizations.of(context).deleteConversationTip,
+      onConfirm: () {
+        conversationListStore.deleteConversation(conversationID: conversationInfo.conversationID);
+      },
+    );
+  }
+
+  /// Guards the irreversible swipe actions. The action sheet has already closed
+  /// by the time this runs, so the dialog is the only thing on screen.
+  void _showConfirmDialog({
+    required String content,
+    required VoidCallback onConfirm,
+  }) {
+    final locale = ChatLocalizations.of(context);
+    AtomicAlertDialog.showWithConfig(
+      context,
+      config: AlertDialogConfig(
+        content: content,
+        cancelConfig: ButtonConfig(text: locale.cancel),
+        confirmConfig: ButtonConfig(
+          text: locale.confirm,
+          type: TextColorPreset.red,
+          onClick: onConfirm,
+        ),
+      ),
+    );
   }
 
   /// Marks a conversation as read by clearing unread count and removing unread mark.
@@ -154,12 +186,11 @@ class _ConversationListState extends State<ConversationList> {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     return Container(
-      color: colorsTheme.bgColorOperate,
+      color: colorsTheme.bgColorTopBar,
       child: Stack(
         children: [
           ListView.builder(
             controller: _scrollController,
-            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: conversations.length + (isLoading && hasMoreConversations ? 1 : 0),
             itemBuilder: (context, index) {
               if (isLoading && hasMoreConversations && index == conversations.length) {

@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../chat_setting/widgets/avatar_selector.dart';
 import '../widgets/group_type_selector.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class CreateGroup extends StatefulWidget {
   final List<ContactInfo> selectedMembers;
@@ -26,7 +27,7 @@ class _CreateGroupState extends State<CreateGroup> {
   final TextEditingController _groupIdController = TextEditingController();
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   String _selectedAvatarURL = '';
   GroupType _selectedGroupType = GroupType.work;
@@ -46,7 +47,7 @@ class _CreateGroupState extends State<CreateGroup> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -150,7 +151,7 @@ class _CreateGroupState extends State<CreateGroup> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              atomicLocale.groupType,
+              chatLocale.groupType,
               style: FontScheme.caption1Regular.copyWith(
                 color: colorsTheme.textColorPrimary,
               ),
@@ -184,7 +185,7 @@ class _CreateGroupState extends State<CreateGroup> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            atomicLocale.groupFaceUrl,
+            chatLocale.groupFaceUrl,
             style: FontScheme.caption1Medium.copyWith(
               color: colorsTheme.textColorPrimary,
             ),
@@ -224,7 +225,7 @@ class _CreateGroupState extends State<CreateGroup> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${atomicLocale.groupMemberSelected} (${widget.selectedMembers.length})',
+            '${chatLocale.groupMemberSelected} (${widget.selectedMembers.length})',
             style: FontScheme.caption1Medium.copyWith(
               color: colorsTheme.textColorPrimary,
             ),
@@ -296,7 +297,7 @@ class _CreateGroupState extends State<CreateGroup> {
 
     final groupName = _groupNameController.text.trim();
     if (groupName.isEmpty) {
-      Toast.warning(context, atomicLocale.inputGroupName);
+      Toast.warning(context, chatLocale.inputGroupName);
       return;
     }
 
@@ -323,7 +324,7 @@ class _CreateGroupState extends State<CreateGroup> {
         'cmd': cmdValue,
         'businessID': 'group_create',
         'opUser': loginUserID,
-        'content': atomicLocale.createGroupTips,
+        'content': chatLocale.createGroupTips,
       };
 
       String customData = ChatUtil.dictionary2JsonData(customMessageJson);
@@ -362,13 +363,13 @@ class _CreateGroupState extends State<CreateGroup> {
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.createGroupChat,
+          chatLocale.createGroupChat,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -389,7 +390,7 @@ class _CreateGroupState extends State<CreateGroup> {
                     ),
                   )
                 : Text(
-                    atomicLocale.create,
+                    chatLocale.create,
                     style: FontScheme.caption1Medium.copyWith(
                       color: colorsTheme.buttonColorPrimaryDefault,
                     ),
@@ -410,11 +411,11 @@ class _CreateGroupState extends State<CreateGroup> {
           children: [
             _buildTextField(
               controller: _groupNameController,
-              hintText: atomicLocale.groupName,
+              hintText: chatLocale.groupName,
             ),
             _buildTextField(
               controller: _groupIdController,
-              hintText: atomicLocale.groupIDOption,
+              hintText: chatLocale.groupIDOption,
             ),
             _buildGroupTypeSelector(),
             Container(

@@ -8,6 +8,7 @@ import 'package:tencent_chat_uikit/src/video_player/video_player_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'image_element.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 typedef EventHandler = void Function(Map<String, dynamic> eventData, Function(dynamic) callback);
 
@@ -890,8 +891,8 @@ class _ImageViewerWidgetState extends State<ImageViewerWidget> {
 
     _overscrollToastTimer = Timer(const Duration(milliseconds: 200), () {
       if (mounted) {
-        AtomicLocalizations atomicLocalizations = AtomicLocalizations.of(context);
-        Toast.info(context, atomicLocalizations.noMore);
+        ChatLocalizations chatLocalizations = ChatLocalizations.of(context);
+        Toast.info(context, chatLocalizations.noMore);
       }
     });
   }

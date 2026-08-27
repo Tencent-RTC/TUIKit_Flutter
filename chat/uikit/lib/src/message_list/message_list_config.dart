@@ -1,5 +1,7 @@
 import 'package:tuikit_atomic_x/base_component/utils/app_builder.dart';
 
+import 'widgets/message_types/custom_message_renderer.dart';
+
 abstract class MessageListConfigProtocol {
   double get textBubbleCornerRadius;
   String get alignment;
@@ -24,6 +26,10 @@ abstract class MessageListConfigProtocol {
   bool get isSupportTranslate;
   bool get isSupportTongue;
   bool get isSupportQuote;
+
+  /// Host-supplied renderers for custom messages, keyed by `businessID` and
+  /// consulted before the built-in custom message handling.
+  Map<String, CustomMessageBuilder> get customMessageBuilders;
 }
 
 class ChatMessageListConfig implements MessageListConfigProtocol {
@@ -50,9 +56,10 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   final bool _isSupportTranslate;
   final bool _isSupportTongue;
   final bool _isSupportQuote;
+  final Map<String, CustomMessageBuilder> _customMessageBuilders;
 
   @override
-  double get textBubbleCornerRadius => _userTextBubbleCornerRadius ?? 18.0;
+  double get textBubbleCornerRadius => _userTextBubbleCornerRadius ?? 10.0;
 
   @override
   String get alignment {
@@ -74,7 +81,7 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   bool get isShowLeftNickname => _userIsShowLeftNickname ?? false;
 
   @override
-  bool get isShowRightAvatar => _userIsShowRightAvatar ?? false;
+  bool get isShowRightAvatar => _userIsShowRightAvatar ?? true;
 
   @override
   bool get isShowRightNickname => _userIsShowRightNickname ?? false;
@@ -154,6 +161,9 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   @override
   bool get isSupportQuote => _isSupportQuote;
 
+  @override
+  Map<String, CustomMessageBuilder> get customMessageBuilders => _customMessageBuilders;
+
   const ChatMessageListConfig({
     double? textBubbleCornerRadius,
     String? alignment,
@@ -178,7 +188,9 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
     bool isSupportTranslate = true,
     bool isSupportTongue = true,
     bool isSupportQuote = true,
-  })  : _userTextBubbleCornerRadius = textBubbleCornerRadius,
+    Map<String, CustomMessageBuilder> customMessageBuilders = const {},
+  })  : _customMessageBuilders = customMessageBuilders,
+        _userTextBubbleCornerRadius = textBubbleCornerRadius,
         _userAlignment = alignment,
         _userIsShowTimeMessage = isShowTimeMessage,
         _userIsShowLeftAvatar = isShowLeftAvatar,

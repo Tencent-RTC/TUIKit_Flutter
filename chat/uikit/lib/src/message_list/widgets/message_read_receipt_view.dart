@@ -4,6 +4,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class MessageReadReceiptView extends StatefulWidget {
   final MessageActionStore messageActionStore;
@@ -31,7 +32,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
   bool _isLoadingRead = false;
   bool _isLoadingUnread = false;
 
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
   }
 
   @override
@@ -120,11 +121,11 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
         leading: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Center(
-            child: Icon(Icons.arrow_back_ios, color: colorsTheme.textColorPrimary),
+            child: Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary),
           ),
         ),
         title: Text(
-          _atomicLocale.detail,
+          _chatLocale.detail,
           style: FontScheme.body4Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -176,7 +177,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
   Widget _buildMessageContent(SemanticColorScheme colorsTheme) {
     final payload = widget.message.messagePayload;
     if (payload == null) {
-      return _buildDefaultMessagePreview(colorsTheme, '[${_atomicLocale.message}]');
+      return _buildDefaultMessagePreview(colorsTheme, '[${_chatLocale.message}]');
     }
 
     switch (payload) {
@@ -191,7 +192,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
       case FileMessagePayload p:
         return _buildFileMessagePayloadPreview(colorsTheme, p);
       default:
-        return _buildDefaultMessagePreview(colorsTheme, '[${_atomicLocale.message}]');
+        return _buildDefaultMessagePreview(colorsTheme, '[${_chatLocale.message}]');
     }
   }
 
@@ -342,7 +343,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  payload.fileName ?? _atomicLocale.unknown,
+                  payload.fileName ?? _chatLocale.unknown,
                   style: FontScheme.caption2Medium.copyWith(
                     color: colorsTheme.textColorAntiPrimary,
                   ),
@@ -385,7 +386,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
     return Column(
       children: [
         _buildSectionHeader(
-          title: '${_atomicLocale.groupReadBy} ($readCount)',
+          title: '${_chatLocale.groupReadBy} ($readCount)',
           iconName: 'read_receipt_check_all_highlight',
           isExpanded: _isReadSectionExpanded,
           onTap: () => setState(() => _isReadSectionExpanded = !_isReadSectionExpanded),
@@ -416,7 +417,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
     return Column(
       children: [
         _buildSectionHeader(
-          title: '${_atomicLocale.groupDeliveredTo} ($unreadCount)',
+          title: '${_chatLocale.groupDeliveredTo} ($unreadCount)',
           iconName: 'read_receipt_check',
           isExpanded: _isUnreadSectionExpanded,
           onTap: () => setState(() => _isUnreadSectionExpanded = !_isUnreadSectionExpanded),
@@ -536,7 +537,7 @@ class _MessageReadReceiptViewState extends State<MessageReadReceiptView> {
         ),
         child: Center(
           child: Text(
-            _atomicLocale.more,
+            _chatLocale.more,
             style: FontScheme.caption2Regular.copyWith(
               color: colorsTheme.textColorLink,
             ),

@@ -4,6 +4,7 @@ import 'package:tencent_chat_uikit/src/common/utils/uikit_util.dart';
 import 'package:flutter/material.dart';
 
 import '../../user_picker/user_picker.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupTransferOwner extends StatefulWidget {
   final String groupID;
@@ -21,7 +22,7 @@ class GroupTransferOwner extends StatefulWidget {
 
 class _GroupTransferOwnerState extends State<GroupTransferOwner> {
   List<UserPickerData> _dataSource = [];
-  late AtomicLocalizations atomicLocal;
+  late ChatLocalizations chatLocal;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _GroupTransferOwnerState extends State<GroupTransferOwner> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocal = AtomicLocalizations.of(context);
+    chatLocal = ChatLocalizations.of(context);
   }
 
   void _initMemberList() {
@@ -64,14 +65,14 @@ class _GroupTransferOwnerState extends State<GroupTransferOwner> {
     if (!mounted) return;
 
     if (result.errorCode == 0) {
-      Toast.success(context, atomicLocal.settingSuccess, useRootOverlay: true);
+      Toast.success(context, chatLocal.settingSuccess, useRootOverlay: true);
     } else {
       debugPrint(
           'changeOwner failed, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}');
       final errMsg = result.errorMessage?.trim();
       final fullMsg = (errMsg == null || errMsg.isEmpty)
-          ? atomicLocal.settingFail
-          : '${atomicLocal.settingFail} $errMsg';
+          ? chatLocal.settingFail
+          : '${chatLocal.settingFail} $errMsg';
       Toast.error(context, fullMsg, useRootOverlay: true);
     }
 
@@ -82,7 +83,7 @@ class _GroupTransferOwnerState extends State<GroupTransferOwner> {
   Widget build(BuildContext context) {
     return UserPicker(
       dataSource: _dataSource,
-      title: atomicLocal.transferGroupOwner,
+      title: chatLocal.transferGroupOwner,
       maxCount: 1,
       onConfirm: _onConfirm,
     );

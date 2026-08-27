@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart' hide SearchBar, IconButton;
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:tencent_chat_uikit/src/contact_list/pages/start_c2c_chat.dart';
 import 'package:tencent_chat_uikit/src/contact_list/pages/start_group_chat.dart';
 import 'package:tencent_chat_uikit/src/search/search_bar.dart';
 
 import 'chat_page.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 const String startC2CChatMenuString = "startC2CChat";
 const String startGroupChatMenuString = "startGroupChat";
@@ -12,9 +14,22 @@ const String startGroupChatMenuString = "startGroupChat";
 class ConversationsPage extends StatefulWidget {
   final VoidCallback? onBackPressed;
 
+  /// Forwarded to every [ChatPage] opened from this page, so a host can add
+  /// more-panel actions no matter how the user reached the conversation.
+  final ChatMessageInputConfig messageInputConfig;
+
+  /// Forwarded to every [ChatPage] opened from this page, so a host can render
+  /// custom messages no matter how the user reached the conversation.
+  final ChatMessageListConfig messageListConfig;
+
   const ConversationsPage({
     super.key,
     this.onBackPressed,
+    this.messageInputConfig = const ChatMessageInputConfig(
+      isShowAudioCall: true,
+      isShowVideoCall: true,
+    ),
+    this.messageListConfig = const ChatMessageListConfig(),
   });
 
   @override
@@ -22,14 +37,23 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   late SemanticColorScheme colorsTheme;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
+  }
+
+  ChatPage _chatPage(ConversationInfo conversation, {MessageInfo? message}) {
+    return ChatPage(
+      conversation: conversation,
+      message: message,
+      messageInputConfig: widget.messageInputConfig,
+      messageListConfig: widget.messageListConfig,
+    );
   }
 
   void _startC2CChat() {
@@ -48,9 +72,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatPage(
-                  conversation: conversation,
-                ),
+                builder: (context) => _chatPage(conversation),
               ),
             );
           },
@@ -75,9 +97,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatPage(
-                  conversation: conversation,
-                ),
+                builder: (context) => _chatPage(conversation),
               ),
             );
           },
@@ -101,9 +121,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatPage(
-          conversation: conversation,
-        ),
+        builder: (context) => _chatPage(conversation),
       ),
     );
   }
@@ -118,9 +136,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatPage(
-          conversation: conversation,
-        ),
+        builder: (context) => _chatPage(conversation),
       ),
     );
   }
@@ -135,9 +151,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatPage(
-          conversation: conversation,
-        ),
+        builder: (context) => _chatPage(conversation),
       ),
     );
   }
@@ -162,10 +176,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatPage(
-            conversation: conversation,
-            message: messageInfo,
-          ),
+          builder: (context) => _chatPage(conversation, message: messageInfo),
         ),
       );
     }
@@ -174,25 +185,31 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorsTheme.bgColorOperate,
+      backgroundColor: colorsTheme.bgColorTopBar,
       appBar: AppBar(
         backgroundColor: colorsTheme.bgColorOperate,
         automaticallyImplyLeading: false,
         leading: widget.onBackPressed != null
             ? IconButton.buttonContent(
-                content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+                content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorPrimary)),
                 type: ButtonType.noBorder,
                 size: ButtonSize.l,
                 onClick: widget.onBackPressed,
               )
             : null,
-        title: Text(atomicLocale.chat,
-            style: FontScheme.title3Medium.copyWith(color: colorsTheme.textColorPrimary)),
-        centerTitle: false,
+        title: Text(chatLocale.chat,
+            style: FontScheme.body4Bold.copyWith(color: colorsTheme.textColorPrimary)),
+        centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.create_outlined, color: colorsTheme.textColorPrimary),
+            icon: SvgPicture.asset(
+              'chat_assets/icon/create_chat.svg',
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(colorsTheme.textColorPrimary, BlendMode.srcIn),
+              package: 'tencent_chat_uikit',
+            ),
             offset: const Offset(0, 40),
             padding: EdgeInsets.zero,
             color: colorsTheme.bgColorDialog,
@@ -213,9 +230,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.chat_outlined, color: colorsTheme.textColorPrimary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/create_c2c_chat.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colorsTheme.textColorPrimary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 8),
-                    Text(atomicLocale.startConversation, style: TextStyle(color: colorsTheme.textColorPrimary)),
+                    Text(chatLocale.startConversation, style: FontScheme.caption1Regular.copyWith(color: colorsTheme.textColorPrimary)),
                   ],
                 ),
               ),
@@ -225,9 +248,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.group_add_outlined, color: colorsTheme.textColorPrimary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/create_group_chat.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colorsTheme.textColorPrimary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 8),
-                    Text(atomicLocale.createGroupChat, style: TextStyle(color: colorsTheme.textColorPrimary)),
+                    Text(chatLocale.createGroupChat, style: FontScheme.caption1Regular.copyWith(color: colorsTheme.textColorPrimary)),
                   ],
                 ),
               ),
@@ -238,11 +267,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
       body: Column(
         children: [
           if (!AppBuilder.getInstance().searchConfig.hideSearch)
-            SearchBar(
-              onContactSelect: _onSelectContact,
-              onGroupSelect: _onSelectGroup,
-              onConversationSelect: _onSelectConversation,
-              onMessageSelect: _onSelectMessage,
+            Container(
+              color: colorsTheme.bgColorOperate,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SearchBar(
+                onContactSelect: _onSelectContact,
+                onGroupSelect: _onSelectGroup,
+                onConversationSelect: _onSelectConversation,
+                onMessageSelect: _onSelectMessage,
+              ),
             ),
           Expanded(
             child: ConversationList(
@@ -250,9 +283,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      conversation: conversation,
-                    ),
+                    builder: (context) => _chatPage(conversation),
                   ),
                 );
               },

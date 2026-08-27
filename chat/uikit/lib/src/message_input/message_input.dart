@@ -33,9 +33,11 @@ import 'mention/mention_member_picker.dart';
 import 'message_input_config.dart';
 import 'widget/audio_record_overlay.dart';
 import 'widget/quote_preview_bar.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 export 'mention/mention_info.dart';
 export 'message_input_config.dart';
+export 'message_input_more_action.dart';
 
 /// Three-state input mode for the message input bar.
 /// - [idle]: Default state on chat entry. Shows hint "发消息或按住说话...", mic icon, keyboard not shown.
@@ -67,7 +69,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   final FocusNode _textEditingFocusNode = FocusNode();
   Widget stickerWidget = Container();
 
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   late LocaleProvider localeProvider;
 
   Timer? _recordingStarter;
@@ -734,7 +736,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final result = await _messageInputStore.sendMessage(payload: payload, option: option);
     if (!result.isSuccess) {
       if (mounted) {
-        Toast.error(context, atomicLocale.sendMessageFail);
+        Toast.error(context, chatLocale.sendMessageFail);
       }
     } else {
       // Clear quoted message after successful send
@@ -849,22 +851,22 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         content = EmojiManager.createLocalizedStringFromEmojiCodes(context, (message.messagePayload as TextMessagePayload?)?.text ?? '');
         break;
       case MessageType.image:
-        content = atomicLocale.messageTypeImage;
+        content = chatLocale.messageTypeImage;
         break;
       case MessageType.video:
-        content = atomicLocale.messageTypeVideo;
+        content = chatLocale.messageTypeVideo;
         break;
       case MessageType.file:
-        content = atomicLocale.messageTypeFile;
+        content = chatLocale.messageTypeFile;
         break;
       case MessageType.audio:
-        content = atomicLocale.messageTypeVoice;
+        content = chatLocale.messageTypeVoice;
         break;
       case MessageType.face:
-        content = atomicLocale.messageTypeSticker;
+        content = chatLocale.messageTypeSticker;
         break;
       case MessageType.merged:
-        content = '[${atomicLocale.chatHistory}]';
+        content = '[${chatLocale.chatHistory}]';
         break;
       default:
         content = '';
@@ -1071,7 +1073,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     // the OverlayEntry, since the overlay lives in a different widget subtree
     // and cannot look up these InheritedWidgets.
     final colorScheme = BaseThemeProvider.colorsOf(context);
-    final atomicLocalizations = AtomicLocalizations.of(context);
+    final chatLocalizations = ChatLocalizations.of(context);
     final overlay = Overlay.of(context);
     final enableConvert = widget.config.enableVoiceToTextOnRecord;
 
@@ -1082,7 +1084,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
           child: AudioRecordOverlay(
             key: _recordOverlayKey,
             colorScheme: colorScheme,
-            atomicLocalizations: atomicLocalizations,
+            chatLocalizations: chatLocalizations,
             enableVoiceToText: enableConvert,
             onRecordFinish: (recordInfo) {
               // When the user released on the convert button, we DO NOT close
@@ -1283,33 +1285,33 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final List<_MorePanelItem> items = [];
 
     if (widget.config.isShowAlbum) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/image_action.svg',
-        title: atomicLocale.album,
+        title: chatLocale.album,
         onTap: _onPickAlbum,
       ));
     }
 
     if (widget.config.isShowPhotoTaker) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/camera_action.svg',
-        title: atomicLocale.takeAPhoto,
+        title: chatLocale.takeAPhoto,
         onTap: _onTakePhoto,
       ));
     }
 
     if (widget.config.isShowVideoRecorder) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/record_action.svg',
-        title: atomicLocale.recordAVideo,
+        title: chatLocale.recordAVideo,
         onTap: _onTakeVideo,
       ));
     }
 
     if (widget.config.isShowFile) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/file_action.svg',
-        title: atomicLocale.file,
+        title: chatLocale.file,
         onTap: _onPickFile,
       ));
     }
@@ -1320,17 +1322,25 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final bool hideCallOnOhos = Platform.operatingSystem == 'ohos';
 
     if (widget.config.isShowVideoCall && !hideCallOnOhos) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/video_call_action.svg',
-        title: atomicLocale.videoCall,
+        title: chatLocale.videoCall,
         onTap: _onVideoCallTap,
       ));
     }
     if (widget.config.isShowAudioCall && !hideCallOnOhos) {
-      items.add(_MorePanelItem(
+      items.add(_MorePanelItem.builtIn(
         icon: 'chat_assets/icon/audio_call_action.svg',
-        title: atomicLocale.audioCall,
+        title: chatLocale.audioCall,
         onTap: _onAudioCallTap,
+      ));
+    }
+
+    for (final action in widget.config.customMoreActions) {
+      items.add(_MorePanelItem(
+        title: action.title,
+        iconBuilder: action.buildIcon,
+        onTap: () => action.onTap(context, widget.conversationID),
       ));
     }
 
@@ -1339,12 +1349,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final int pageCount = items.isEmpty ? 0 : (items.length / itemsPerPage).ceil();
 
     return Container(
-      color: colorsTheme.bgColorInput,
+      color: colorsTheme.bgColorOperate,
       child: Column(
         children: [
           Container(
-            height: 0.5,
-            color: colorsTheme.textColorPrimary.withValues(alpha: 0.1),
+            height: 1,
+            color: colorsTheme.strokeColorSecondary,
           ),
           Expanded(
             child: pageCount == 0
@@ -1361,9 +1371,9 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                       final endIndex = (startIndex + itemsPerPage).clamp(0, items.length);
                       final pageItems = items.sublist(startIndex, endIndex);
 
-                      // Each item row: icon 64 + spacing 8 + text ~14 = ~86pt
-                      // Two-row content height: 86 + 20 (gap) + 86 = 192pt
-                      const double twoRowHeight = 192;
+                      // Each item row: icon 64 + spacing 8 + up to two text
+                      // lines ~30 = ~102pt. Two-row content: 102 + 20 (gap) + 102.
+                      const double twoRowHeight = 224;
 
                       return LayoutBuilder(
                         builder: (context, constraints) {
@@ -1371,8 +1381,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                               .clamp(8.0, double.infinity);
                           return Padding(
                             padding: EdgeInsets.only(
-                              left: 24,
-                              right: 24,
+                              left: 12,
+                              right: 12,
                               top: topPadding,
                             ),
                             child: _buildMorePanelPage(pageItems, colorsTheme),
@@ -1428,13 +1438,17 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
           for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) ...[
             if (rowIndex > 0) const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Equal-width columns (like Android's 4-column GridLayoutManager)
+                // so a long label can wrap inside its cell instead of being
+                // clipped to the icon's width.
                 for (int colIndex = 0; colIndex < columns; colIndex++)
-                  if (colIndex < rows[rowIndex].length)
-                    _buildMorePanelItemWidget(rows[rowIndex][colIndex], colorsTheme)
-                  else
-                    const SizedBox(width: 64), // Placeholder for grid alignment
+                  Expanded(
+                    child: colIndex < rows[rowIndex].length
+                        ? _buildMorePanelItemWidget(rows[rowIndex][colIndex], colorsTheme)
+                        : const SizedBox.shrink(),
+                  ),
               ],
             ),
           ],
@@ -1447,43 +1461,32 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   Widget _buildMorePanelItemWidget(_MorePanelItem item, SemanticColorScheme colorsTheme) {
     return GestureDetector(
       onTap: item.onTap,
-      child: SizedBox(
-        width: 64,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: colorsTheme.bgColorOperate,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  item.icon,
-                  package: 'tencent_chat_uikit',
-                  colorFilter: ColorFilter.mode(
-                    colorsTheme.textColorSecondary,
-                    BlendMode.srcIn,
-                  ),
-                  width: 26,
-                  height: 22,
-                ),
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: colorsTheme.bgColorTopBar,
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(height: 8),
-            Text(
-              item.title,
-              style: FontScheme.caption3Regular.copyWith(
-                color: colorsTheme.textColorSecondary,
-                decoration: TextDecoration.none,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Center(
+              child: item.iconBuilder(colorsTheme.textColorSecondary),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            item.title,
+            textAlign: TextAlign.center,
+            style: FontScheme.caption3Regular.copyWith(
+              color: colorsTheme.textColorSecondary,
+              decoration: TextDecoration.none,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -1491,7 +1494,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     _bottomPadding = MediaQuery.paddingOf(context).bottom;
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     localeProvider = Provider.of<LocaleProvider>(context);
 
     final panelHeight = _getBottomContainerHeight();
@@ -1510,7 +1513,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
               duration: const Duration(milliseconds: 300),
               curve: Curves.ease,
               clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(color: colors.bgColorInput),
+              decoration: BoxDecoration(color: colors.bgColorOperate),
               height: panelHeight,
               constraints: (_showEmojiPanel || _showMorePanel) 
                   ? BoxConstraints(minHeight: panelHeight) 
@@ -1547,14 +1550,19 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   /// [Voice/Keyboard toggle] [Input field / Hold-to-talk] [Emoji] [More / Send]
   ///
   /// Figma spec (750px canvas = 2x, all values in logical pt):
-  /// - Bar background: #EBF0F6, top shadow: 0px -2px #E6E9EB (via divider)
+  /// - Bar background: bgColorOperate, top shadow: 0px -2px #E6E9EB (via divider)
   /// - Horizontal padding: ~16pt, vertical padding: 8pt
   /// - Icon size: 26pt (52px@2x), input height: 34pt (68px@2x)
-  /// - Input field bg: white, border-radius: 4pt (8px@2x)
+  /// - Input field bg: bgColorInput, border-radius: 4pt (8px@2x)
   /// - Gap between icon and input: ~10pt
   Widget _buildInputWidget(SemanticColorScheme colorsTheme) {
     return Container(
-      color: colorsTheme.bgColorInput,
+      decoration: BoxDecoration(
+        color: colorsTheme.bgColorOperate,
+        border: Border(
+          top: BorderSide(color: colorsTheme.strokeColorSecondary, width: 0.5),
+        ),
+      ),
       padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1576,7 +1584,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                                 'chat_assets/icon/keyboard.svg',
                                 package: 'tencent_chat_uikit',
                                 colorFilter: ColorFilter.mode(
-                                  colorsTheme.textColorPrimary,
+                                  colorsTheme.textColorSecondary,
                                   BlendMode.srcIn,
                                 ),
                                 width: 26,
@@ -1586,7 +1594,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                                 'chat_assets/icon/mic.svg',
                                 package: 'tencent_chat_uikit',
                                 colorFilter: ColorFilter.mode(
-                                  colorsTheme.textColorPrimary,
+                                  colorsTheme.textColorSecondary,
                                   BlendMode.srcIn,
                                 ),
                                 width: 26,
@@ -1607,7 +1615,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                           : Container(
                               constraints: const BoxConstraints(minHeight: 34),
                               decoration: BoxDecoration(
-                                color: colorsTheme.textColorButtonDisabled,
+                                color: colorsTheme.bgColorInput,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: _buildInputTextField(colorsTheme: colorsTheme),
@@ -1628,7 +1636,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                               'chat_assets/icon/keyboard.svg',
                               package: 'tencent_chat_uikit',
                               colorFilter: ColorFilter.mode(
-                                colorsTheme.textColorPrimary,
+                                colorsTheme.textColorSecondary,
                                 BlendMode.srcIn,
                               ),
                               width: 28,
@@ -1638,7 +1646,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                               'chat_assets/icon/emoji.svg',
                               package: 'tencent_chat_uikit',
                               colorFilter: ColorFilter.mode(
-                                colorsTheme.textColorPrimary,
+                                colorsTheme.textColorSecondary,
                                 BlendMode.srcIn,
                               ),
                               width: 26,
@@ -1664,7 +1672,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                                   'chat_assets/icon/add.svg',
                                   package: 'tencent_chat_uikit',
                                   colorFilter: ColorFilter.mode(
-                                    colorsTheme.textColorPrimary,
+                                    colorsTheme.textColorSecondary,
                                     BlendMode.srcIn,
                                   ),
                                   width: 26,
@@ -1733,12 +1741,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       child: Container(
         height: 34,
         decoration: BoxDecoration(
-          color: colorsTheme.textColorButtonDisabled,
+          color: colorsTheme.bgColorInput,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Center(
           child: Text(
-            atomicLocale.holdToTalk,
+            chatLocale.holdToTalk,
             style: FontScheme.caption1Medium.copyWith(
               color: colorsTheme.textColorPrimary,
             ),
@@ -1814,12 +1822,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         child: Container(
           constraints: const BoxConstraints(minHeight: 34),
           decoration: BoxDecoration(
-            color: colorsTheme.textColorButtonDisabled,
+            color: colorsTheme.bgColorInput,
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           child: Text(
-            atomicLocale.sendMessageOrHoldToTalk,
+            chatLocale.sendMessageOrHoldToTalk,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: FontScheme.caption1Regular.copyWith(
@@ -1860,7 +1868,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         ),
         child: Center(
           child: Text(
-            atomicLocale.send,
+            chatLocale.send,
             style: FontScheme.caption2Regular.copyWith(
               color: colorsTheme.textColorButton,
             ),
@@ -2156,15 +2164,36 @@ class _MentionTextFieldState extends State<_MentionTextField> {
 
 /// Data model for a "more" panel grid item
 class _MorePanelItem {
-  final String icon;
   final String title;
   final VoidCallback onTap;
 
+  /// Draws the glyph inside the icon tile, tinted with the supplied color.
+  final Widget Function(Color color) iconBuilder;
+
   const _MorePanelItem({
-    required this.icon,
     required this.title,
     required this.onTap,
+    required this.iconBuilder,
   });
+
+  /// Built-in item whose icon ships with the UIKit package.
+  factory _MorePanelItem.builtIn({
+    required String icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return _MorePanelItem(
+      title: title,
+      onTap: onTap,
+      iconBuilder: (color) => SvgPicture.asset(
+        icon,
+        package: 'tencent_chat_uikit',
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        width: 26,
+        height: 22,
+      ),
+    );
+  }
 }
 
 // MARK: - AlbumPickerMediaSendListener Implementation

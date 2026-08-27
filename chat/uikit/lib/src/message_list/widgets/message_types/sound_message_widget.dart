@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tencent_chat_uikit/src/audio_player/audio_player.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_status_mixin.dart';
 
 class SoundMessageWidget extends StatefulWidget {
@@ -110,7 +112,7 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
       child: Container(
         key: widget.bubbleKey,
         constraints: BoxConstraints(
-          maxWidth: widget.maxWidth * 0.7,
+          maxWidth: widget.maxWidth,
         ),
         margin: EdgeInsets.zero,
         decoration: BoxDecoration(
@@ -143,62 +145,46 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
 
   Widget _buildSoundContent(SemanticColorScheme colorsTheme) {
     final int soundDuration = (widget.message.messagePayload as AudioMessagePayload?)?.audioDuration ?? 0;
+    final Color contentColor =
+        widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary;
 
-    return Container(
-      width: 160,
-      child: Row(
-        children: [
-          Icon(
-            widget.isSelf ? Icons.volume_up : Icons.volume_down,
-            color: widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(
-                8,
-                (index) {
-                  final height = 4.0 + (index % 3) * 4.0;
-                  final isActive = _isPlaying && (index % 2 == 0);
+    // The base asset points the waves to the right (received look). The sender's
+    // bubble mirrors it so the waves point back toward the sender on the right.
+    Widget soundIcon = SvgPicture.asset(
+      'chat_assets/icon/sound.svg',
+      package: 'tencent_chat_uikit',
+      height: 18,
+      colorFilter: ColorFilter.mode(contentColor, BlendMode.srcIn),
+    );
+    if (widget.isSelf) {
+      soundIcon = Transform.flip(flipX: true, child: soundIcon);
+    }
 
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: 2,
-                    height: isActive ? height * 1.5 : height,
-                    decoration: BoxDecoration(
-                      color: widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+    final Widget durationText = Text(
+      '${_isPlaying ? _currentPosition.inSeconds : soundDuration}"',
+      style: FontScheme.caption3Medium.copyWith(color: contentColor),
+    );
+
+    final List<Widget> content = widget.isSelf
+        ? [durationText, const SizedBox(width: 6), soundIcon]
+        : [soundIcon, const SizedBox(width: 6), durationText];
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ...content,
+        if (_isDownloading) ...[
           const SizedBox(width: 8),
-          Text(
-            _isPlaying ? _formatDuration(_currentPosition.inSeconds) : _formatDuration(soundDuration),
-            style: FontScheme.caption3Medium.copyWith(
-              color: widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(contentColor),
             ),
           ),
-          if (_isDownloading)
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    widget.isSelf ? colorsTheme.textColorAntiPrimary : colorsTheme.textColorPrimary,
-                  ),
-                ),
-              ),
-            ),
         ],
-      ),
+      ],
     );
   }
 
@@ -271,12 +257,6 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
     }
   }
 
-  String _formatDuration(int seconds) {
-    int minutes = seconds ~/ 60;
-    int remainingSeconds = seconds % 60;
-    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
-  }
-
   Color _getBubbleColor(SemanticColorScheme colorsTheme) {
     if (widget.bubbleColor != null) return widget.bubbleColor!;
     if (widget.isSelf) {
@@ -286,23 +266,11 @@ class _SoundMessageWidgetState extends State<SoundMessageWidget> with MessageSta
     }
   }
 
-  BorderRadius _getBubbleBorderRadius() {
-    if (widget.isSelf) {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(18),
-        bottomRight: Radius.circular(0),
+  BorderRadius _getBubbleBorderRadius() => MessageUtil.bubbleBorderRadius(
+        alignment: widget.config.alignment,
+        isSelf: widget.isSelf,
+        radius: widget.config.textBubbleCornerRadius,
       );
-    } else {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(0),
-        bottomRight: Radius.circular(18),
-      );
-    }
-  }
 }
 
 class _AudioPlayerListenerImpl extends AudioPlayerListener {

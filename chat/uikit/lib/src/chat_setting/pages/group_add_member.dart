@@ -3,6 +3,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 
 import '../../user_picker/user_picker.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupAddMember extends StatefulWidget {
   final String groupID;
@@ -24,7 +25,7 @@ class _GroupAddMemberState extends State<GroupAddMember> {
   List<UserPickerData> _dataSource = [];
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _GroupAddMemberState extends State<GroupAddMember> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -77,7 +78,7 @@ class _GroupAddMemberState extends State<GroupAddMember> {
     if (result.errorCode != 0) {
       debugPrint('addMember failed, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}');
       if (mounted) {
-        Toast.error(context, atomicLocale.addFailed);
+        Toast.error(context, chatLocale.addFailed);
       }
     } else {
       if (mounted) {
@@ -95,13 +96,13 @@ class _GroupAddMemberState extends State<GroupAddMember> {
           backgroundColor: colorsTheme.bgColorTopBar,
           elevation: 0,
           leading: IconButton.buttonContent(
-            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
             type: ButtonType.noBorder,
             size: ButtonSize.l,
             onClick: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            atomicLocale.addMembers,
+            chatLocale.addMembers,
             style: FontScheme.caption1Medium.copyWith(
               color: colorsTheme.textColorPrimary,
             ),
@@ -118,7 +119,7 @@ class _GroupAddMemberState extends State<GroupAddMember> {
 
     return UserPicker(
       dataSource: _dataSource,
-      title: atomicLocale.addMembers,
+      title: chatLocale.addMembers,
       maxCount: 20,
       onConfirm: _onConfirm,
     );

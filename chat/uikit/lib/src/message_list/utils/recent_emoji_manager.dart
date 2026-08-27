@@ -30,8 +30,11 @@ class RecentEmojiManager {
     await StorageUtil.set<List<String>>(_recentEmojiKey, recent);
   }
 
-  /// Get quick emojis for reaction picker (6 recent + fill with defaults)
-  static Future<List<EmojiPickerModelItem>> getQuickEmojis(BuildContext context) async {
+  /// Get quick emojis for reaction picker (recent first + fill with defaults)
+  static Future<List<EmojiPickerModelItem>> getQuickEmojis(
+    BuildContext context, {
+    int count = _quickEmojiCount,
+  }) async {
     final allEmojis = _getAllEmojis(context);
     if (allEmojis.isEmpty) return [];
 
@@ -39,7 +42,7 @@ class RecentEmojiManager {
     final recentIds = await getRecentEmojiIds();
 
     // Add recent emojis first
-    for (final id in recentIds.take(_quickEmojiCount)) {
+    for (final id in recentIds.take(count)) {
       final emoji = allEmojis.firstWhere(
         (e) => e.name == id,
         orElse: () => EmojiPickerModelItem(name: '', path: ''),
@@ -50,16 +53,16 @@ class RecentEmojiManager {
     }
 
     // Fill with default emojis if needed
-    if (result.length < _quickEmojiCount) {
+    if (result.length < count) {
       for (final emoji in allEmojis) {
-        if (result.length >= _quickEmojiCount) break;
+        if (result.length >= count) break;
         if (!result.any((e) => e.name == emoji.name)) {
           result.add(emoji);
         }
       }
     }
 
-    return result.take(_quickEmojiCount).toList();
+    return result.take(count).toList();
   }
 
   /// Get all available emojis

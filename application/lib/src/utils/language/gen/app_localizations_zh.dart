@@ -165,4 +165,8 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get app_can_not_start_room_during_call => '当前正在通话中，请结束后再试';
+
+  @override
+  String get app_chat_welcome_message =>
+      '欢迎体验 Chat Demo！你可以先发送一条消息，体验基础聊天能力。\n如果想添加好友，可以前往联系人页面点击首页加号。\n如果想体验音视频通话，可以点击下方加号按钮 -> 语音通话/视频通话。';
 }

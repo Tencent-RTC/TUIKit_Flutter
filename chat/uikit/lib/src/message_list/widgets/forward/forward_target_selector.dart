@@ -2,6 +2,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_checkbox.dart';
+import '../../../common/language/gen/chat_localizations.dart';
 
 /// Forward target selection result
 class ForwardTargetSelectResult {
@@ -117,7 +118,7 @@ class _ForwardTargetSelectorPageState extends State<ForwardTargetSelectorPage> {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: colors.bgColorOperate,
@@ -238,11 +239,11 @@ class _ForwardTargetSelectorPageState extends State<ForwardTargetSelectorPage> {
     );
   }
 
-  String _getTitle(AtomicLocalizations locale) {
+  String _getTitle(ChatLocalizations locale) {
     return locale.selectChat;
   }
 
-  String _getEmptyText(AtomicLocalizations locale) {
+  String _getEmptyText(ChatLocalizations locale) {
     final languageCode = locale.localeName;
     if (languageCode.startsWith('zh')) {
       return '暂无会话';

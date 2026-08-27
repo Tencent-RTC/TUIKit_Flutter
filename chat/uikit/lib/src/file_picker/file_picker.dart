@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'file_picker_platform.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 class PickerResult {
   final String filePath;
@@ -70,8 +71,8 @@ class FilePicker {
 
         if (results.length > maxCount) {
           if (context.mounted) {
-            AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
-            _showErrorDialog(context, atomicLocal.maxCountFile(maxCount));
+            ChatLocalizations chatLocal = ChatLocalizations.of(context);
+            _showErrorDialog(context, chatLocal.maxCountFile(maxCount));
           }
           return results.take(maxCount).toList();
         }
@@ -143,17 +144,17 @@ class FilePicker {
   }
 
   static void _showErrorDialog(BuildContext context, String message) {
-    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocal = ChatLocalizations.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(atomicLocal.error),
+          title: Text(chatLocal.error),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(atomicLocal.confirm),
+              child: Text(chatLocal.confirm),
             ),
           ],
         );

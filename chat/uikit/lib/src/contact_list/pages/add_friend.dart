@@ -2,6 +2,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:tencent_cloud_chat_sdk/native_im/bindings/native_imsdk_bindings_generated.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class AddFriend extends StatefulWidget {
   final ContactInfo? contactInfo;
@@ -21,7 +22,7 @@ class _AddFriendState extends State<AddFriend> {
   bool _showAddFriendDetail = false;
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _AddFriendState extends State<AddFriend> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   @override
@@ -71,7 +72,7 @@ class _AddFriendState extends State<AddFriend> {
     if (_searchResult == null) return;
 
     if (_searchResult!.isFriend == true) {
-      Toast.info(context, atomicLocale.alreadyFriend);
+      Toast.info(context, chatLocale.alreadyFriend);
     } else {
       setState(() {
         _showAddFriendDetail = true;
@@ -89,23 +90,23 @@ class _AddFriendState extends State<AddFriend> {
 
     if (mounted) {
       if (result.errorCode == 0) {
-        Toast.success(context, atomicLocale.contactAddedSuccessfully);
+        Toast.success(context, chatLocale.contactAddedSuccessfully);
         Navigator.pop(context);
       } else {
         if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_ALLOW_TYPE_NEED_CONFIRM.value) {
-          Toast.info(context, atomicLocale.waitAgreeFriend);
+          Toast.info(context, chatLocale.waitAgreeFriend);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_ALLOW_TYPE_DENY_ANY.value) {
-          Toast.error(context, atomicLocale.forbidAddFriend);
+          Toast.error(context, chatLocale.forbidAddFriend);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_IN_PEER_BLACKLIST.value) {
-          Toast.error(context, atomicLocale.setInBlacklist);
+          Toast.error(context, chatLocale.setInBlacklist);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_IN_SELF_BLACKLIST.value) {
-          Toast.error(context, atomicLocale.inBlacklist);
+          Toast.error(context, chatLocale.inBlacklist);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_PEER_FRIEND_LIMIT.value) {
-          Toast.error(context, atomicLocale.otherFriendLimit);
+          Toast.error(context, chatLocale.otherFriendLimit);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_COUNT_LIMIT.value) {
-          Toast.error(context, atomicLocale.friendLimit);
+          Toast.error(context, chatLocale.friendLimit);
         } else if (result.errorCode == TIMErrCode.ERR_SVR_FRIENDSHIP_INVALID_SDKAPPID.value) {
-          Toast.error(context, atomicLocale.userNotExist);
+          Toast.error(context, chatLocale.userNotExist);
         } else {
           Toast.error(context, result.errorMessage ?? '');
         }
@@ -117,11 +118,15 @@ class _AddFriendState extends State<AddFriend> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(atomicLocale.addFriend, style: TextStyle(color: colorsTheme.textColorPrimary)),
+        title: Text(
+          chatLocale.addContact,
+          style: FontScheme.caption1Medium.copyWith(color: colorsTheme.textColorPrimary),
+        ),
+        centerTitle: true,
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () {
@@ -158,7 +163,7 @@ class _AddFriendState extends State<AddFriend> {
                     style: TextStyle(color: colorsTheme.textColorPrimary),
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: atomicLocale.userID,
+                      hintText: chatLocale.userID,
                       hintStyle: FontScheme.caption1Regular.copyWith(
                         color: colorsTheme.textColorTertiary,
                       ),
@@ -172,7 +177,7 @@ class _AddFriendState extends State<AddFriend> {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      atomicLocale.search,
+                      chatLocale.search,
                       style: FontScheme.caption1Medium.copyWith(
                         color: colorsTheme.textColorLink,
                       ),
@@ -194,7 +199,7 @@ class _AddFriendState extends State<AddFriend> {
     if (_searchResult == null) {
       return Center(
         child: Text(
-          atomicLocale.searchUserID,
+          chatLocale.searchUserID,
           style: FontScheme.caption1Regular.copyWith(
             color: colorsTheme.textColorTertiary,
           ),
@@ -238,7 +243,7 @@ class _AddFriendState extends State<AddFriend> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: '${atomicLocale.userID}: ',
+                          text: '${chatLocale.userID}: ',
                           style: FontScheme.caption2Regular.copyWith(
                             color: colorsTheme.textColorSecondary,
                           ),
@@ -294,14 +299,14 @@ class _AddFriendState extends State<AddFriend> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${atomicLocale.userID}：$userID',
+                        '${chatLocale.userID}：$userID',
                         style: FontScheme.caption3Regular.copyWith(
                           color: colorsTheme.textColorSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${atomicLocale.signature}：',
+                        '${chatLocale.signature}：',
                         style: FontScheme.caption3Regular.copyWith(
                           color: colorsTheme.textColorSecondary,
                         ),
@@ -316,7 +321,7 @@ class _AddFriendState extends State<AddFriend> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              atomicLocale.fillInTheVerificationInformation,
+              chatLocale.fillInTheVerificationInformation,
               style: FontScheme.caption1Regular.copyWith(
                 color: colorsTheme.textColorPrimary,
               ),
@@ -351,7 +356,7 @@ class _AddFriendState extends State<AddFriend> {
             child: Row(
               children: [
                 Text(
-                  atomicLocale.profileRemark,
+                  chatLocale.profileRemark,
                   style: FontScheme.caption1Regular.copyWith(
                     color: colorsTheme.textColorPrimary,
                   ),
@@ -363,7 +368,7 @@ class _AddFriendState extends State<AddFriend> {
                     controller: _remarkController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: atomicLocale.profileRemark,
+                      hintText: chatLocale.profileRemark,
                       hintStyle: FontScheme.caption1Regular.copyWith(color: colorsTheme.textColorTertiary),
                     ),
                     style: FontScheme.caption1Regular.copyWith(
@@ -395,7 +400,7 @@ class _AddFriendState extends State<AddFriend> {
                 ),
               ),
               child: Text(
-                atomicLocale.send,
+                chatLocale.send,
                 style: FontScheme.caption1Medium.copyWith(color: colorsTheme.textColorLink),
               ),
             ),

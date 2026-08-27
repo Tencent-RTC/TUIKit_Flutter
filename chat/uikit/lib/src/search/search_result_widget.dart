@@ -7,6 +7,7 @@ import 'package:tencent_chat_uikit/src/search/utils/text_highlighter.dart';
 import 'search_bar.dart';
 import 'search_message_in_conversation_page.dart';
 import 'search_result_more_page.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 class SearchResultWidget extends StatelessWidget {
   final SearchStore searchStore;
@@ -28,7 +29,7 @@ class SearchResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final atomicLocale = AtomicLocalizations.of(context);
+    final chatLocale = ChatLocalizations.of(context);
     final state = searchStore.state;
 
     return ListView(
@@ -36,23 +37,23 @@ class SearchResultWidget extends StatelessWidget {
         if (state.friendList.value.isNotEmpty)
           _buildFriendSection(
             context: context,
-            title: atomicLocale.contact,
+            title: chatLocale.contact,
             friends: state.friendList.value,
-            atomicLocale: atomicLocale,
+            chatLocale: chatLocale,
           ),
         if (state.groupList.value.isNotEmpty)
           _buildGroupSection(
             context: context,
-            title: atomicLocale.groups,
+            title: chatLocale.groups,
             groups: state.groupList.value,
-            atomicLocale: atomicLocale,
+            chatLocale: chatLocale,
           ),
         if (state.messageResults.value.isNotEmpty)
           _buildMessageSection(
             context: context,
-            title: atomicLocale.chatHistory,
+            title: chatLocale.chatHistory,
             messageResults: state.messageResults.value,
-            atomicLocale: atomicLocale,
+            chatLocale: chatLocale,
           ),
       ],
     );
@@ -62,7 +63,7 @@ class SearchResultWidget extends StatelessWidget {
     required BuildContext context,
     required String title,
     required List<FriendSearchInfo> friends,
-    required AtomicLocalizations atomicLocale,
+    required ChatLocalizations chatLocale,
   }) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final bool showMoreButton = friends.length > 3;
@@ -98,7 +99,7 @@ class SearchResultWidget extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    atomicLocale.more,
+                    chatLocale.more,
                     style: TextStyle(color: colorsTheme.buttonColorPrimaryDefault),
                   ),
                 ),
@@ -121,7 +122,7 @@ class SearchResultWidget extends StatelessWidget {
     required BuildContext context,
     required String title,
     required List<GroupSearchInfo> groups,
-    required AtomicLocalizations atomicLocale,
+    required ChatLocalizations chatLocale,
   }) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final bool showMoreButton = groups.length > 3;
@@ -157,7 +158,7 @@ class SearchResultWidget extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    atomicLocale.more,
+                    chatLocale.more,
                     style: TextStyle(color: colorsTheme.buttonColorPrimaryDefault),
                   ),
                 ),
@@ -180,7 +181,7 @@ class SearchResultWidget extends StatelessWidget {
     required BuildContext context,
     required String title,
     required List<MessageSearchResultItem> messageResults,
-    required AtomicLocalizations atomicLocale,
+    required ChatLocalizations chatLocale,
   }) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final bool showMoreButton = messageResults.length > 3;
@@ -216,7 +217,7 @@ class SearchResultWidget extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    atomicLocale.more,
+                    chatLocale.more,
                     style: TextStyle(color: colorsTheme.buttonColorPrimaryDefault),
                   ),
                 ),
@@ -228,7 +229,7 @@ class SearchResultWidget extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: itemCount,
           itemBuilder: (context, index) {
-            return _buildMessageResultItem(context, messageResults[index], colorsTheme, atomicLocale);
+            return _buildMessageResultItem(context, messageResults[index], colorsTheme, chatLocale);
           },
         ),
       ],
@@ -320,7 +321,7 @@ class SearchResultWidget extends StatelessWidget {
   }
 
   Widget _buildMessageResultItem(BuildContext context, MessageSearchResultItem messageResult,
-      SemanticColorScheme colorsTheme, AtomicLocalizations atomicLocale) {
+      SemanticColorScheme colorsTheme, ChatLocalizations chatLocale) {
     const double avatarSize = 40.0;
     const double leadingPadding = 16.0;
     const double titleLeftPadding = 16.0;
@@ -333,7 +334,7 @@ class SearchResultWidget extends StatelessWidget {
 
     String subtitle;
     if (messageResult.messageCount > 1) {
-      subtitle = atomicLocale.chatRecords(messageResult.messageCount);
+      subtitle = chatLocale.chatRecords(messageResult.messageCount);
     } else if (messageResult.messageList.isNotEmpty) {
       subtitle = MessageUtil.getMessageAbstract(messageResult.messageList.first, context);
     } else {

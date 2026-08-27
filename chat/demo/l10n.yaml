@@ -1,0 +1,7 @@
+arb-dir: lib/common/language/i10n
+template-arb-file: demo_en.arb
+nullable-getter: false
+output-localization-file: demo_localizations.dart
+output-dir: lib/common/language/gen
+output-class: DemoLocalizations
+format: true

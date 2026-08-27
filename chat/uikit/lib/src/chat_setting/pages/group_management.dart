@@ -4,6 +4,7 @@ import 'package:tencent_chat_uikit/src/common/utils/uikit_util.dart';
 import 'package:flutter/material.dart' hide IconButton;
 
 import 'group_add_mute_member.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupManagement extends StatefulWidget {
   final String groupID;
@@ -21,7 +22,7 @@ class GroupManagement extends StatefulWidget {
 
 class _GroupManagementState extends State<GroupManagement> {
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   GroupInfo? _groupInfo;
 
   @override
@@ -33,7 +34,7 @@ class _GroupManagementState extends State<GroupManagement> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -50,7 +51,7 @@ class _GroupManagementState extends State<GroupManagement> {
     final result = await GroupStore.shared.muteAllMembers(groupID: widget.groupID, isMuted: value);
     if (result.errorCode == 0) {
       if (mounted) {
-        Toast.success(context, value ? atomicLocale.groupMuteAllEnabled : atomicLocale.groupMuteAllDisabled);
+        Toast.success(context, value ? chatLocale.groupMuteAllEnabled : chatLocale.groupMuteAllDisabled);
         _loadGroupInfo();
       }
     } else {
@@ -68,13 +69,13 @@ class _GroupManagementState extends State<GroupManagement> {
         backgroundColor: colorsTheme.bgColorTopBar,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.groupManagement,
+          chatLocale.groupManagement,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -101,7 +102,7 @@ class _GroupManagementState extends State<GroupManagement> {
               child: Column(
                 children: [
                   _buildSwitchRow(
-                    title: atomicLocale.muteAll,
+                    title: chatLocale.muteAll,
                     value: isAllMuted,
                     onChanged: _onMuteAllChanged,
                   ),
@@ -114,7 +115,7 @@ class _GroupManagementState extends State<GroupManagement> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Text(
-                        atomicLocale.groupMuteTip,
+                        chatLocale.groupMuteTip,
                         style: FontScheme.caption3Regular.copyWith(
                           color: colorsTheme.textColorSecondary,
                         ),
@@ -202,7 +203,7 @@ class _GroupManagementState extends State<GroupManagement> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      atomicLocale.addMuteMemberTip,
+                      chatLocale.addMuteMemberTip,
                       style: FontScheme.caption2Regular.copyWith(
                         color: colorsTheme.buttonColorPrimaryDefault,
                       ),

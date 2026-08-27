@@ -5,6 +5,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_item.dart';
 import 'package:tencent_chat_uikit/src/third_party/scrollable_positioned_list/scrollable_positioned_list.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 /// Merged message detail page
 class MergedMessageDetailPage extends StatefulWidget {
@@ -111,7 +112,7 @@ class _MergedMessageDetailPageState extends State<MergedMessageDetailPage> {
       // Reuses the same string as the main chat shows when an original
       // quoted message can't be located — keeps the user-facing copy
       // consistent across the two surfaces.
-      Toast.info(context, AtomicLocalizations.of(context).quotedOriginalMessageUnreachable);
+      Toast.info(context, ChatLocalizations.of(context).quotedOriginalMessageUnreachable);
       return;
     }
 
@@ -164,7 +165,7 @@ class _MergedMessageDetailPageState extends State<MergedMessageDetailPage> {
         leading: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Center(
-            child: Icon(Icons.arrow_back_ios, color: colors.textColorPrimary),
+            child: Icon(Icons.arrow_back_ios, color: colors.textColorSecondary),
           ),
         ),
         title: Text(
@@ -229,7 +230,7 @@ class _MergedMessageDetailPageState extends State<MergedMessageDetailPage> {
   }
 
   String _getDefaultTitle() {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     return locale.chatHistory;
   }
 }

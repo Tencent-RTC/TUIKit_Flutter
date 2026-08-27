@@ -1,7 +1,7 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 enum GroupPermission {
   setGroupName,
@@ -435,34 +435,34 @@ class GroupPermissionManager {
   }
 
   static String getGroupTypeDescription(GroupType groupType, BuildContext context) {
-    AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocale = ChatLocalizations.of(context);
     switch (groupType) {
       case GroupType.work:
-        return atomicLocale.groupWork;
+        return chatLocale.groupWork;
       case GroupType.publicGroup:
-        return atomicLocale.groupPublic;
+        return chatLocale.groupPublic;
       case GroupType.meeting:
-        return atomicLocale.groupMeeting;
+        return chatLocale.groupMeeting;
       case GroupType.community:
-        return atomicLocale.groupCommunity;
+        return chatLocale.groupCommunity;
       case GroupType.avChatRoom:
-        return atomicLocale.groupAVChatRoom;
+        return chatLocale.groupAVChatRoom;
       default:
-        return atomicLocale.groupWork;
+        return chatLocale.groupWork;
     }
   }
 
   static String getMemberRoleDescription(GroupMemberRole role, BuildContext context) {
-    AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocale = ChatLocalizations.of(context);
     switch (role) {
       case GroupMemberRole.owner:
-        return atomicLocale.groupOwner;
+        return chatLocale.groupOwner;
       case GroupMemberRole.admin:
-        return atomicLocale.admin;
+        return chatLocale.admin;
       case GroupMemberRole.member:
-        return atomicLocale.groupMember;
+        return chatLocale.groupMember;
       default:
-        return atomicLocale.groupMember;
+        return chatLocale.groupMember;
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide IconButton;
 
 import '../contact_list.dart';
 import 'package:tencent_chat_uikit/src/widgets/az_ordered_list.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class Blacklist extends StatefulWidget {
   final OnContactClick? onContactClick;
@@ -20,7 +21,7 @@ class Blacklist extends StatefulWidget {
 class _BlacklistState extends State<Blacklist> {
   final ContactStore _contactStore = ContactStore.shared;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _BlacklistState extends State<Blacklist> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   Future<void> _loadData() async {
@@ -49,13 +50,13 @@ class _BlacklistState extends State<Blacklist> {
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.blackList,
+          chatLocale.blackList,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -84,7 +85,7 @@ class _BlacklistState extends State<Blacklist> {
           return AZOrderedList(
             dataSource: dataSource,
             config: AZOrderedListConfig(
-              emptyText: atomicLocale.noBlackList,
+              emptyText: chatLocale.noBlackList,
               onItemClick: (item) {
                 if (widget.onContactClick != null) {
                   ContactInfo contactInfo = ContactInfo(

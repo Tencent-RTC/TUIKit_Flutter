@@ -2,6 +2,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:flutter/material.dart' hide IconButton;
 
 import '../widgets/avatar_selector.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class ChooseGroupAvatar extends StatefulWidget {
   final String groupID;
@@ -21,7 +22,7 @@ class ChooseGroupAvatar extends StatefulWidget {
 
 class ChooseGroupAvatarState extends State<ChooseGroupAvatar> {
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   final String _groupFaceURL = "https://im.sdk.qcloud.com/download/tuikit-resource/group-avatar/group_avatar_%s.png";
   final int _groupFaceCount = 24;
@@ -41,7 +42,7 @@ class ChooseGroupAvatarState extends State<ChooseGroupAvatar> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -53,13 +54,13 @@ class ChooseGroupAvatarState extends State<ChooseGroupAvatar> {
         backgroundColor: colorsTheme.bgColorTopBar,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.chooseAvatar,
+          chatLocale.chooseAvatar,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -69,7 +70,7 @@ class ChooseGroupAvatarState extends State<ChooseGroupAvatar> {
           TextButton(
             onPressed: _submitAvatar,
             child: Text(
-              atomicLocale.confirm,
+              chatLocale.confirm,
               style: FontScheme.caption1Medium.copyWith(
                 color: colorsTheme.buttonColorPrimaryDefault,
               ),

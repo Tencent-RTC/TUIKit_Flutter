@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide IconButton;
 
 import '../contact_list.dart';
 import 'package:tencent_chat_uikit/src/widgets/az_ordered_list.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupList extends StatefulWidget {
   final OnGroupClick? onGroupClick;
@@ -20,7 +21,7 @@ class GroupList extends StatefulWidget {
 
 class _GroupListState extends State<GroupList> {
   final group_api.GroupStore _groupStore = group_api.GroupStore.shared;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -31,7 +32,7 @@ class _GroupListState extends State<GroupList> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   Future<void> _loadData() async {
@@ -48,13 +49,13 @@ class _GroupListState extends State<GroupList> {
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.myGroups,
+          chatLocale.myGroups,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -83,7 +84,7 @@ class _GroupListState extends State<GroupList> {
           return AZOrderedList(
             dataSource: dataSource,
             config: AZOrderedListConfig(
-              emptyText: atomicLocale.noGroupList,
+              emptyText: chatLocale.noGroupList,
               onItemClick: (item) {
                 if (widget.onGroupClick != null) {
                   // Convert GroupInfo back to ContactInfo for backward compatibility with OnGroupClick callback

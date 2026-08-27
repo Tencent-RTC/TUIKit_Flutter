@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 /// Bottom action bar for multi-select mode
 class MultiSelectBottomBar extends StatelessWidget {
@@ -21,14 +22,14 @@ class MultiSelectBottomBar extends StatelessWidget {
     this.isForwardEnabled = true,
   });
 
-  String _getSelectedCountText(AtomicLocalizations locale) {
+  String _getSelectedCountText(ChatLocalizations locale) {
     return locale.selectedCount(selectedCount);
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(

@@ -8,6 +8,7 @@ import 'package:tencent_chat_uikit/src/message_list/utils/translation_display_ma
 import 'package:tencent_chat_uikit/src/message_list/utils/translation_text_parser.dart';
 import 'package:tencent_chat_uikit/src/third_party/extended_text/extended_text.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 /// Builds the optional "attachment" widget that hangs below the main
 /// message bubble — the ASR (voice → text) bubble for audio messages and
@@ -242,7 +243,7 @@ class _TranslationAttachmentBubbleState
     _isLoadingAtUserNames = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final localizations = AtomicLocalizations.of(context);
+      final localizations = ChatLocalizations.of(context);
       final atUserNames = await TranslationTextParser.getAtUserNames(
         widget.message,
         allMembersText: localizations.messageInputAllMembers,
@@ -260,7 +261,7 @@ class _TranslationAttachmentBubbleState
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final localizations = AtomicLocalizations.of(context);
+    final localizations = ChatLocalizations.of(context);
     final translatedTextMap =
         (widget.message.messagePayload as TextMessagePayload?)?.translatedText;
 

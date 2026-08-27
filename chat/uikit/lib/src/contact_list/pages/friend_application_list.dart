@@ -1,6 +1,7 @@
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
+import '../../common/language/gen/chat_localizations.dart';
 
 class FriendApplicationList extends StatefulWidget {
   const FriendApplicationList({super.key});
@@ -12,7 +13,7 @@ class FriendApplicationList extends StatefulWidget {
 class _FriendApplicationListState extends State<FriendApplicationList> {
   final ContactStore _contactStore = ContactStore.shared;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -24,7 +25,7 @@ class _FriendApplicationListState extends State<FriendApplicationList> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   Future<void> _loadData() async {
@@ -40,13 +41,13 @@ class _FriendApplicationListState extends State<FriendApplicationList> {
         backgroundColor: colorsTheme.bgColorOperate,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.pop(context),
         ),
         title: Text(
-          atomicLocale.newFriend,
+          chatLocale.newFriend,
           style: FontScheme.body4Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -75,7 +76,7 @@ class _FriendApplicationListState extends State<FriendApplicationList> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    atomicLocale.noFriendApplicationList,
+                    chatLocale.noFriendApplicationList,
                     style: FontScheme.caption1Regular.copyWith(
                       color: colorsTheme.textColorSecondary,
                     ),
@@ -149,14 +150,14 @@ class _FriendApplicationListState extends State<FriendApplicationList> {
               ),
               const SizedBox(width: 12),
               _buildActionButton(
-                text: atomicLocale.agree,
+                text: chatLocale.agree,
                 backgroundColor: colorsTheme.buttonColorPrimaryDefault,
                 textColor: colorsTheme.textColorButton,
                 onPressed: () => _acceptFriendApplication(application),
               ),
               const SizedBox(width: 8),
               _buildActionButton(
-                text: atomicLocale.refuse,
+                text: chatLocale.refuse,
                 backgroundColor: colorsTheme.buttonColorSecondaryDefault,
                 textColor: colorsTheme.textColorPrimary,
                 onPressed: () => _refuseFriendApplication(application),

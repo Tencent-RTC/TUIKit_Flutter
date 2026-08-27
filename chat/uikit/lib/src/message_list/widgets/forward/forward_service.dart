@@ -6,6 +6,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/emoji_picker/emoji_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/forward/forward_target_selector.dart';
+import '../../../common/language/gen/chat_localizations.dart';
 
 /// Forward type
 enum ForwardType {
@@ -29,7 +30,7 @@ class ForwardService {
   /// Validate if messages can be forwarded (all must be sendSuccess)
   /// Returns error message if validation fails, null if valid
   static String? validateMessagesStatus(BuildContext context, List<MessageInfo> messages) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     final hasFailedMessage = messages.any((msg) => msg.status != MessageStatus.sendSuccess);
     if (hasFailedMessage) {
       return locale.forwardFailedMessageTip;
@@ -42,7 +43,7 @@ class ForwardService {
   static String? validateSeparateForwardLimit(BuildContext context, List<MessageInfo> messages, ForwardType forwardType) {
     if (forwardType != ForwardType.separate) return null;
     
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     if (messages.length > _forwardSeparateLimit) {
       return locale.forwardSeparateLimitTip;
     }
@@ -174,7 +175,7 @@ class ForwardService {
     List<MessageInfo> messages,
     String? conversationID,
   ) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     // Generate title
     final title = _generateMergedTitle(locale, messages, conversationID);
@@ -194,7 +195,7 @@ class ForwardService {
 
   /// Generate merged message title
   static String _generateMergedTitle(
-    AtomicLocalizations locale,
+    ChatLocalizations locale,
     List<MessageInfo> messages,
     String? conversationID,
   ) {
@@ -259,7 +260,7 @@ class ForwardService {
 
   /// Get message abstract
   static String _getMessageAbstract(BuildContext context, MessageInfo message) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     switch (message.messageType) {
       case MessageType.text:
         return (message.messagePayload as TextMessagePayload?)?.text ?? '';
@@ -283,13 +284,13 @@ class ForwardService {
   }
 
   /// Get compatible text
-  static String _getCompatibleText(AtomicLocalizations locale) {
+  static String _getCompatibleText(ChatLocalizations locale) {
     return locale.forwardCompatibleText;
   }
 
   /// Show forward type selector using ActionSheet
   static Future<ForwardType?> _showForwardTypeSelector(BuildContext context) async {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     ForwardType? selectedType;
 
     await ActionSheet.show(
@@ -438,7 +439,7 @@ class ForwardService {
 
   /// Get message type abstract for push notification
   static String _getMessageTypeAbstract(BuildContext context, MessageInfo message) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     switch (message.messageType) {
       case MessageType.text:
         // Convert emoji codes to localized names

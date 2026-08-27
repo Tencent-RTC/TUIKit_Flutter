@@ -1,11 +1,13 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/search/utils/text_highlighter.dart';
 
 import 'search_bar.dart';
 import 'search_message_in_conversation_page.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 class SearchResultMorePage extends StatefulWidget {
   final SearchType searchType;
@@ -35,7 +37,7 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
   final FocusNode _focusNode = FocusNode();
   late SearchStore _searchStore;
   late SemanticColorScheme _colorScheme;
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
   bool _isSearching = false;
   bool _isLoadingMore = false;
 
@@ -55,7 +57,7 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _colorScheme = BaseThemeProvider.colorsOf(context);
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
   }
 
   @override
@@ -149,15 +151,21 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
           children: [
             Expanded(
               child: Container(
-                height: 36,
+                height: 40,
                 decoration: BoxDecoration(
                   color: _colorScheme.bgColorInput,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    Icon(Icons.search, size: 20, color: _colorScheme.textColorSecondary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/search.svg',
+                      width: 14,
+                      height: 14,
+                      colorFilter: ColorFilter.mode(_colorScheme.textColorTertiary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: TextField(
@@ -165,14 +173,12 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
                         focusNode: _focusNode,
                         onChanged: _onSearch,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: FontScheme.caption2Regular.copyWith(
                           color: _colorScheme.textColorPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: _atomicLocale.search,
-                          hintStyle: TextStyle(
-                            fontSize: 16,
+                          hintText: _chatLocale.search,
+                          hintStyle: FontScheme.caption2Regular.copyWith(
                             color: _colorScheme.textColorSecondary,
                           ),
                           border: InputBorder.none,
@@ -194,9 +200,9 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  _atomicLocale.cancel,
+                  _chatLocale.cancel,
                   style: TextStyle(
-                    color: _colorScheme.buttonColorPrimaryDefault,
+                    color: _colorScheme.textColorSecondary,
                     fontSize: 17,
                   ),
                 ),
@@ -317,7 +323,7 @@ class _SearchResultMorePageState extends State<SearchResultMorePage> {
 
     String subtitle;
     if (messageResult.messageCount > 1) {
-      subtitle = _atomicLocale.chatRecords(messageResult.messageCount);
+      subtitle = _chatLocale.chatRecords(messageResult.messageCount);
     } else if (messageResult.messageList.isNotEmpty) {
       subtitle = MessageUtil.getMessageAbstract(messageResult.messageList.first, context);
     } else {

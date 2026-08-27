@@ -1,10 +1,12 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/search/utils/text_highlighter.dart';
 
 import 'search_bar.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 class SearchMessageInConversationPage extends StatefulWidget {
   final String conversationID;
@@ -34,7 +36,7 @@ class _SearchMessageInConversationPageState extends State<SearchMessageInConvers
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   late SemanticColorScheme _colorScheme;
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
   bool _isSearching = false;
   bool _isLoadingMore = false;
 
@@ -51,7 +53,7 @@ class _SearchMessageInConversationPageState extends State<SearchMessageInConvers
   void didChangeDependencies() {
     super.didChangeDependencies();
     _colorScheme = BaseThemeProvider.colorsOf(context);
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
   }
 
   @override
@@ -166,7 +168,13 @@ class _SearchMessageInConversationPageState extends State<SearchMessageInConvers
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    Icon(Icons.search, size: 20, color: _colorScheme.textColorSecondary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/search.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(_colorScheme.textColorSecondary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: TextField(
@@ -174,14 +182,12 @@ class _SearchMessageInConversationPageState extends State<SearchMessageInConvers
                         focusNode: _focusNode,
                         onChanged: _onSearch,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: FontScheme.caption2Regular.copyWith(
                           color: _colorScheme.textColorPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: _atomicLocale.search,
-                          hintStyle: TextStyle(
-                            fontSize: 16,
+                          hintText: _chatLocale.search,
+                          hintStyle: FontScheme.caption2Regular.copyWith(
                             color: _colorScheme.textColorSecondary,
                           ),
                           border: InputBorder.none,
@@ -204,9 +210,9 @@ class _SearchMessageInConversationPageState extends State<SearchMessageInConvers
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  _atomicLocale.cancel,
+                  _chatLocale.cancel,
                   style: TextStyle(
-                    color: _colorScheme.buttonColorPrimaryDefault,
+                    color: _colorScheme.textColorSecondary,
                     fontSize: 17,
                   ),
                 ),

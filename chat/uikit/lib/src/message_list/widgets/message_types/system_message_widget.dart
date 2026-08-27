@@ -31,19 +31,13 @@ class SystemMessageWidget extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8.0),
       child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: colorsTheme.strokeColorPrimary,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            systemContent,
-            style: FontScheme.caption3Regular.copyWith(
-              color: colorsTheme.textColorTertiary,
-            ),
+        child: Text(
+          systemContent,
+          textAlign: TextAlign.center,
+          style: FontScheme.caption3Regular.copyWith(
+            color: colorsTheme.textColorTertiary,
           ),
         ),
       ),

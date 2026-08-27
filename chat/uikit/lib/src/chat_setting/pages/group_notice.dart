@@ -3,6 +3,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide IconButton;
 
 import 'group_permission_manager.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupNotice extends StatefulWidget {
   final String groupID;
@@ -24,7 +25,7 @@ class _GroupNoticeState extends State<GroupNotice> {
   bool _isEditing = false;
   late TextEditingController _controller;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   late String _currentNotice;
 
@@ -39,7 +40,7 @@ class _GroupNoticeState extends State<GroupNotice> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -104,7 +105,7 @@ class _GroupNoticeState extends State<GroupNotice> {
       backgroundColor: colorsTheme.bgColorTopBar,
       elevation: 0,
       leading: IconButton.buttonContent(
-        content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+        content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
         type: ButtonType.noBorder,
         size: ButtonSize.l,
         onClick: () {
@@ -112,7 +113,7 @@ class _GroupNoticeState extends State<GroupNotice> {
         },
       ),
       title: Text(
-        atomicLocale.groupOfAnnouncement,
+        chatLocale.groupOfAnnouncement,
         style: FontScheme.caption1Medium.copyWith(
           color: colorsTheme.textColorPrimary,
         ),
@@ -122,7 +123,7 @@ class _GroupNoticeState extends State<GroupNotice> {
         if (_canEditNotice)
           IconButton.buttonContent(
             content: TextOnlyContent(
-              _isEditing ? atomicLocale.confirm : atomicLocale.groupEdit,
+              _isEditing ? chatLocale.confirm : chatLocale.groupEdit,
             ),
             type: ButtonType.noBorder,
             size: ButtonSize.l,
@@ -142,7 +143,7 @@ class _GroupNoticeState extends State<GroupNotice> {
   Widget _buildDisplayView(String notice) {
     return SingleChildScrollView(
       child: Text(
-        notice.isNotEmpty ? notice : atomicLocale.groupNoticeEmpty,
+        notice.isNotEmpty ? notice : chatLocale.groupNoticeEmpty,
         style: FontScheme.caption1Regular.copyWith(
           color: colorsTheme.textColorSecondary,
           height: 1.4,

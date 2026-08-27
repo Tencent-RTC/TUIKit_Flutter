@@ -2,6 +2,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/api/group/group_store.dart' as group_api;
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:tencent_cloud_chat_sdk/native_im/bindings/native_imsdk_bindings_generated.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class AddGroup extends StatefulWidget {
   const AddGroup({super.key});
@@ -18,7 +19,7 @@ class _AddGroupState extends State<AddGroup> {
   bool _showJoinGroupDetail = false;
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _AddGroupState extends State<AddGroup> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   @override
@@ -59,7 +60,7 @@ class _AddGroupState extends State<AddGroup> {
       }
 
       if (result.errorCode == TIMErrCode.ERR_SVR_GROUP_INVALID_GROUPID.value) {
-        Toast.error(context, atomicLocale.groupIDInvalid);
+        Toast.error(context, chatLocale.groupIDInvalid);
       } else {
         debugPrint('getGroupInfo failed, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}');
       }
@@ -87,17 +88,17 @@ class _AddGroupState extends State<AddGroup> {
 
       if (mounted) {
         if (result.errorCode == 0) {
-          Toast.success(context, atomicLocale.joinedGroupSuccessfully);
+          Toast.success(context, chatLocale.joinedGroupSuccessfully);
           Navigator.pop(context);
         } else {
           if (result.errorCode == TIMErrCode.ERR_SVR_GROUP_PERMISSION_DENY.value) {
-            Toast.error(context, atomicLocale.addGroupPermissionDeny);
+            Toast.error(context, chatLocale.addGroupPermissionDeny);
           } else if (result.errorCode == TIMErrCode.ERR_SVR_GROUP_ALLREADY_MEMBER.value) {
-            Toast.error(context, atomicLocale.addGroupAlreadyMember);
+            Toast.error(context, chatLocale.addGroupAlreadyMember);
           } else if (result.errorCode == TIMErrCode.ERR_SVR_GROUP_NOT_FOUND.value) {
-            Toast.error(context, atomicLocale.addGroupNotFound);
+            Toast.error(context, chatLocale.addGroupNotFound);
           } else if (result.errorCode == TIMErrCode.ERR_SVR_GROUP_FULL_MEMBER_COUNT.value) {
-            Toast.error(context, atomicLocale.addGroupFullMember);
+            Toast.error(context, chatLocale.addGroupFullMember);
           } else {
             Toast.error(context, result.errorMessage ?? '');
           }
@@ -105,7 +106,7 @@ class _AddGroupState extends State<AddGroup> {
       }
     } catch (e) {
       if (mounted) {
-        Toast.error(context, atomicLocale.joinGroupFailed);
+        Toast.error(context, chatLocale.joinGroupFailed);
       }
     }
   }
@@ -114,11 +115,15 @@ class _AddGroupState extends State<AddGroup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(atomicLocale.addGroup, style: TextStyle(color: colorsTheme.textColorPrimary)),
+        title: Text(
+          chatLocale.joinGroup,
+          style: FontScheme.caption1Medium.copyWith(color: colorsTheme.textColorPrimary),
+        ),
+        centerTitle: true,
         backgroundColor: colorsTheme.bgColorOperate,
         elevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () {
@@ -155,7 +160,7 @@ class _AddGroupState extends State<AddGroup> {
                     style: TextStyle(color: colorsTheme.textColorPrimary),
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: atomicLocale.searchGroupID,
+                      hintText: chatLocale.searchGroupID,
                       hintStyle: FontScheme.caption1Regular.copyWith(
                         color: colorsTheme.textColorTertiary,
                       ),
@@ -169,7 +174,7 @@ class _AddGroupState extends State<AddGroup> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      atomicLocale.search,
+                      chatLocale.search,
                       style: FontScheme.caption1Medium.copyWith(
                         color: colorsTheme.textColorLink,
                       ),
@@ -191,7 +196,7 @@ class _AddGroupState extends State<AddGroup> {
     if (_searchResult == null) {
       return Center(
         child: Text(
-          atomicLocale.searchGroupIDHint,
+          chatLocale.searchGroupIDHint,
           style: FontScheme.caption1Regular.copyWith(
             color: colorsTheme.textColorTertiary,
           ),
@@ -306,7 +311,7 @@ class _AddGroupState extends State<AddGroup> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              atomicLocale.fillInTheVerificationInformation,
+              chatLocale.fillInTheVerificationInformation,
               style: FontScheme.caption1Regular.copyWith(
                 color: colorsTheme.textColorPrimary,
               ),
@@ -350,7 +355,7 @@ class _AddGroupState extends State<AddGroup> {
                 ),
               ),
               child: Text(
-                atomicLocale.send,
+                chatLocale.send,
                 style: FontScheme.caption1Medium.copyWith(color: colorsTheme.textColorLink),
               ),
             ),

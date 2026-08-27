@@ -7,8 +7,10 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDi
 import 'package:tuikit_atomic_x/device_info/device.dart';
 import 'package:tencent_chat_uikit/src/file_picker/file_picker.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_status_mixin.dart';
 import 'package:tuikit_atomic_x/permission/permission.dart';
+import '../../../common/language/gen/chat_localizations.dart';
 
 class FileMessageWidget extends StatefulWidget {
   final MessageInfo message;
@@ -93,7 +95,7 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
       child: Container(
         key: widget.bubbleKey,
         constraints: BoxConstraints(
-          maxWidth: widget.maxWidth * 0.7,
+          maxWidth: widget.maxWidth,
         ),
         margin: EdgeInsets.zero,
         decoration: BoxDecoration(
@@ -152,17 +154,17 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
 
   /// Show error dialog
   void _showErrorDialog(BuildContext context, String message) {
-    AtomicLocalizations atomicLocal = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocal = ChatLocalizations.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(atomicLocal.error),
+          title: Text(chatLocal.error),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(atomicLocal.confirm),
+              child: Text(chatLocal.confirm),
             ),
           ],
         );
@@ -289,21 +291,9 @@ class _FileMessageWidgetState extends State<FileMessageWidget> with MessageStatu
     }
   }
 
-  BorderRadius _getBubbleBorderRadius() {
-    if (widget.isSelf) {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(18),
-        bottomRight: Radius.circular(0),
+  BorderRadius _getBubbleBorderRadius() => MessageUtil.bubbleBorderRadius(
+        alignment: widget.config.alignment,
+        isSelf: widget.isSelf,
+        radius: widget.config.textBubbleCornerRadius,
       );
-    } else {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(0),
-        bottomRight: Radius.circular(18),
-      );
-    }
-  }
 }

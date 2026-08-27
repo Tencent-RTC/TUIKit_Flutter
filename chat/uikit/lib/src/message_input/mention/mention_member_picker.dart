@@ -2,7 +2,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:tencent_chat_uikit/src/common/utils/uikit_util.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import '../../common/language/gen/chat_localizations.dart';
 import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
 import 'package:tuikit_atomic_x/base_component/theme/font.dart';
 import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
@@ -31,7 +31,7 @@ class MentionMemberPicker extends StatefulWidget {
 class _MentionMemberPickerState extends State<MentionMemberPicker> with WidgetsBindingObserver {
   late GroupMemberStore _memberStore;
   late SemanticColorScheme _colorsTheme;
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
 
   bool _isLoading = false;
   List<UserPickerData> _memberDataSource = [];
@@ -63,7 +63,7 @@ class _MentionMemberPickerState extends State<MentionMemberPicker> with WidgetsB
   void didChangeDependencies() {
     super.didChangeDependencies();
     _colorsTheme = BaseThemeProvider.colorsOf(context);
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
   }
 
   void _onMemberListChanged() {
@@ -115,7 +115,7 @@ class _MentionMemberPickerState extends State<MentionMemberPicker> with WidgetsB
   void _onAtAllTap() {
     final mentionInfo = MentionInfo(
       userID: MentionInfo.atAllUserID,
-      displayName: _atomicLocale.messageInputAllMembers,
+      displayName: _chatLocale.messageInputAllMembers,
       startIndex: 0,
     );
     widget.onMembersSelected([mentionInfo]);
@@ -134,7 +134,7 @@ class _MentionMemberPickerState extends State<MentionMemberPicker> with WidgetsB
   }
 
   Widget _buildAtAllHeader() {
-    final allMembersText = _atomicLocale.messageInputAllMembers;
+    final allMembersText = _chatLocale.messageInputAllMembers;
 
     return InkWell(
       onTap: _onAtAllTap,
@@ -175,7 +175,7 @@ class _MentionMemberPickerState extends State<MentionMemberPicker> with WidgetsB
 
     return UserPicker(
       dataSource: _memberDataSource,
-      title: _atomicLocale.selectMentionMember,
+      title: _chatLocale.selectMentionMember,
       headerWidget: _buildAtAllHeader(),
       onConfirm: _onMembersConfirmed,
       onReachEnd: _loadMoreGroupMembers,

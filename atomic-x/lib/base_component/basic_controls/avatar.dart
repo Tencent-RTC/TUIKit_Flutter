@@ -312,13 +312,13 @@ class Avatar extends StatelessWidget {
         return const SizedBox.shrink();
       case DotBadge():
         return Positioned(
-          right: -2,
-          top: -2,
+          right: -3,
+          top: -3,
           child: Container(
             width: 10,
             height: 10,
-            decoration: const BoxDecoration(
-              color: Colors.red,
+            decoration: BoxDecoration(
+              color: colors.textColorError,
               shape: BoxShape.circle,
             ),
           ),
@@ -328,39 +328,47 @@ class Avatar extends StatelessWidget {
           right: -5,
           top: -5,
           child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+            decoration: BoxDecoration(
+              color: colors.textColorError,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               textBadge.text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+              style: FontScheme.caption3Medium.copyWith(
+                color: colors.textColorButton,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         );
       case CountBadge countBadge:
         final text = countBadge.count > 99 ? "99+" : "${countBadge.count}";
+        final bool isSingleDigit = text.length == 1;
         return Positioned(
           right: -5,
           top: -5,
           child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
+            alignment: Alignment.center,
+            padding: isSingleDigit
+                ? EdgeInsets.zero
+                : const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            constraints: isSingleDigit
+                ? const BoxConstraints.tightFor(width: 20, height: 20)
+                : const BoxConstraints(minWidth: 20, minHeight: 20),
+            decoration: BoxDecoration(
+              color: colors.textColorError,
+              shape: isSingleDigit ? BoxShape.circle : BoxShape.rectangle,
+              borderRadius: isSingleDigit ? null : BorderRadius.circular(10),
             ),
             child: Text(
               text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+              style: FontScheme.caption3Medium.copyWith(
+                color: colors.textColorButton,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         );
@@ -390,6 +398,10 @@ class Avatar extends StatelessWidget {
         break;
     }
 
+    // Keep the layout size equal to the avatar's own size regardless of
+    // whether a badge is present, so callers can align siblings consistently.
+    // The badge overflows the Stack via `clipBehavior: Clip.none` and is
+    // expected to render into the parent's own padding area.
     Widget result = Stack(
       clipBehavior: Clip.none,
       children: [
@@ -398,13 +410,6 @@ class Avatar extends StatelessWidget {
         _buildBadgeView(colorsTheme),
       ],
     );
-
-    if (badge is! NoBadge) {
-      result = Padding(
-        padding: const EdgeInsets.only(top: 6, right: 6),
-        child: result,
-      );
-    }
 
     if (onClick != null) {
       result = GestureDetector(

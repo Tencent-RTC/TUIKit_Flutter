@@ -139,7 +139,7 @@ class _VoiceClonePageState extends State<VoiceClonePage> {
   }
 
   Future<void> _showTooShortDialog() async {
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -156,7 +156,7 @@ class _VoiceClonePageState extends State<VoiceClonePage> {
   }
 
   Future<void> _submit() async {
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
     if (_recordedPath == null) {
       Toast.warning(context, chatLocale.voiceCloneEmptyRecord);
       return;
@@ -198,16 +198,19 @@ class _VoiceClonePageState extends State<VoiceClonePage> {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
     final canSubmit = _recordedPath != null && !_submitting;
 
     return Scaffold(
-      backgroundColor: colors.bgColorOperate,
+      backgroundColor: colors.bgColorInput,
       appBar: SettingWidgets.buildAppBar(
         context: context,
         title: chatLocale.voiceClone,
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        margin: const EdgeInsets.only(top: 1),
+        color: colors.bgColorOperate,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -341,6 +344,7 @@ class _VoiceClonePageState extends State<VoiceClonePage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

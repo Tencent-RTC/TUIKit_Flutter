@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_cloud_chat_push/tencent_cloud_chat_push.dart';
 
+import 'common/language/gen/demo_localizations.dart';
+import 'custom_messages/custom_link_message.dart';
 import 'login_page.dart';
 import 'splash_page.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
@@ -20,6 +22,10 @@ bool get _isOhos => Platform.operatingSystem == 'ohos';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Conversation list previews render outside any chat page, so the custom
+  // message summary has to be registered globally rather than via page config.
+  CustomLinkMessageManager.registerMessageSummary();
 
   TencentCloudChatPush().registerOnAppWakeUpEvent(onAppWakeUpEvent: () async {
     debugPrint('onAppWakeUpEvent onAppWakeUpEvent');
@@ -109,6 +115,7 @@ class _MyAppState extends State<MyApp> {
             navigatorObservers: _isOhos ? const [] : [TUICallKit.navigatorObserver],
             localizationsDelegates: const [
               AtomicLocalizations.delegate,
+              DemoLocalizations.delegate,
               ChatLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,

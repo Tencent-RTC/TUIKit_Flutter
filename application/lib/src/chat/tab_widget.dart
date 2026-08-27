@@ -24,48 +24,31 @@ class TabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isActive) {
-      final String iconPath = getIconPath(true);
-      return SvgPicture.asset(
-        iconPath,
-        width: size,
-        height: size,
-        colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn),
-      );
-    } else {
-      final String iconPath = getIconPath(false);
-      return SvgPicture.asset(
-        iconPath,
-        width: size,
-        height: size,
-        colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-      );
-    }
-  }
-
-  String getIconPath(bool isActive) {
-    if (isActive) {
-      if (iconType == TabIconType.chats) {
-        return Constant.tabChatsActive;
-      } else if (iconType == TabIconType.contact) {
-        return Constant.tabContactsActive;
-      } else {
-        return Constant.tabSettingsActive;
-      }
-    } else {
-      if (iconType == TabIconType.chats) {
-        return Constant.tabChats;
-      } else if (iconType == TabIconType.contact) {
-        return Constant.tabContacts;
-      } else {
-        return Constant.tabSettings;
-      }
-    }
+    return SvgPicture.asset(
+      iconType.assetPath,
+      width: size,
+      height: size,
+      colorFilter: ColorFilter.mode(
+        isActive ? activeColor : inactiveColor,
+        BlendMode.srcIn,
+      ),
+    );
   }
 }
 
 enum TabIconType {
   chats,
   contact,
-  settings,
+  settings;
+
+  String get assetPath {
+    switch (this) {
+      case TabIconType.chats:
+        return Constant.tabChats;
+      case TabIconType.contact:
+        return Constant.tabContacts;
+      case TabIconType.settings:
+        return Constant.tabSettings;
+    }
+  }
 }
