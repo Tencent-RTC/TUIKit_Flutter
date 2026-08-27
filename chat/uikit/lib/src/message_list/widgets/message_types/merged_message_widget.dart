@@ -4,8 +4,8 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_input/src/chat_special_text_span_builder.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/merged_message_detail_page.dart';
-import 'package:tencent_chat_uikit/src/message_list/widgets/message_status_mixin.dart';
 import 'package:tencent_chat_uikit/src/third_party/extended_text/extended_text.dart';
+import '../../../common/language/gen/chat_localizations.dart';
 
 /// Merged message display widget
 class MergedMessageWidget extends StatefulWidget {
@@ -40,135 +40,80 @@ class MergedMessageWidget extends StatefulWidget {
   State<MergedMessageWidget> createState() => _MergedMessageWidgetState();
 }
 
-class _MergedMessageWidgetState extends State<MergedMessageWidget> with MessageStatusMixin {
+/// A merged forward is rendered as a card rather than a chat bubble: fixed
+/// width, symmetric corners and a hairline border on both sides of the
+/// conversation, so it reads as an attached transcript instead of speech.
+const double _cardWidth = 214;
+const double _cardCornerRadius = 12;
+const int _maxAbstractCount = 4;
+
+class _MergedMessageWidgetState extends State<MergedMessageWidget> {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
     final mergedInfo = (widget.message.messagePayload as MergedMessagePayload?);
+    final abstracts = (mergedInfo?.abstractList ?? const <String>[]).take(_maxAbstractCount).toList();
 
     return GestureDetector(
       onTap: () => _openMergedMessagePayloadDetail(context),
       onLongPress: widget.onLongPress,
       child: Container(
         key: widget.bubbleKey,
-        constraints: BoxConstraints(
-          maxWidth: widget.maxWidth * 0.7,
-          minWidth: 120,
-        ),
+        width: _cardWidth,
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
         decoration: BoxDecoration(
-          color: widget.bubbleColor ??
-              (widget.isSelf ? colors.bgColorBubbleOwn : colors.bgColorBubbleReciprocal),
-          borderRadius: _getBubbleBorderRadius(),
+          color: widget.bubbleColor ?? colors.bgColorOperate,
+          borderRadius: BorderRadius.circular(_cardCornerRadius),
+          border: Border.all(color: colors.strokeColorPrimary, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Title
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
-              child: Text(
-                mergedInfo?.title ?? _getDefaultTitle(context),
-                style: FontScheme.caption2Medium.copyWith(
-                  color: colors.textColorPrimary,
+            Text(
+              mergedInfo?.title ?? _chatHistoryText(context),
+              style: FontScheme.caption1Regular.copyWith(
+                color: colors.textColorPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            for (var index = 0; index < abstracts.length; index++)
+              Padding(
+                padding: EdgeInsets.only(top: index == 0 ? 6 : 2),
+                // ExtendedText so [TUIEmoji_*] tokens in the preview render as
+                // inline emoji images rather than raw tokens.
+                child: ExtendedText(
+                  abstracts[index],
+                  specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
+                    colorScheme: colors,
+                    onTapUrl: (_) {},
+                  ),
+                  style: FontScheme.caption3Regular.copyWith(
+                    color: colors.textColorTertiary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top: 9, bottom: 6),
+              child: Container(
+                width: double.infinity,
+                height: 0.5,
+                color: colors.strokeColorPrimary,
               ),
             ),
-            // Divider
-            Container(
-              height: 1,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              color: colors.strokeColorPrimary.withOpacity(0.5),
-            ),
-            // Abstract list with status and time
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAbstractList(context, mergedInfo?.abstractList, colors),
-                  const SizedBox(height: 6),
-                  // Status and time row
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: buildStatusAndTimeWidgets(
-                      message: widget.message,
-                      isSelf: widget.isSelf,
-                      colors: colors,
-                      isShowTimeInBubble: widget.config.isShowTimeInBubble,
-                      enableReadReceipt: widget.config.enableReadReceipt,
-                      isInMergedDetailView: widget.isInMergedDetailView,
-                    ),
-                  ),
-                ],
+            Text(
+              _chatHistoryText(context),
+              style: FontScheme.caption4Regular.copyWith(
+                color: colors.textColorTertiary,
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildAbstractList(
-    BuildContext context,
-    List<String>? abstractList,
-    SemanticColorScheme colors,
-  ) {
-    if (abstractList == null || abstractList.isEmpty) {
-      return Text(
-        _getChatRecordsText(context),
-        style: FontScheme.caption3Regular.copyWith(
-          color: colors.textColorSecondary,
-        ),
-      );
-    }
-
-    // Show max 4 abstracts
-    final displayList = abstractList.take(4).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: displayList.map((abstract) {
-        // Use ExtendedText with ChatSpecialTextSpanBuilder to render emoji images
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 2),
-          child: ExtendedText(
-            abstract,
-            specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
-              colorScheme: colors,
-              onTapUrl: (_) {},
-            ),
-            style: FontScheme.caption3Regular.copyWith(
-              color: colors.textColorSecondary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  BorderRadius _getBubbleBorderRadius() {
-    if (widget.isSelf) {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(18),
-        bottomRight: Radius.circular(0),
-      );
-    } else {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-        bottomLeft: Radius.circular(0),
-        bottomRight: Radius.circular(18),
-      );
-    }
   }
 
   void _openMergedMessagePayloadDetail(BuildContext context) {
@@ -182,13 +127,7 @@ class _MergedMessageWidgetState extends State<MergedMessageWidget> with MessageS
     );
   }
 
-  String _getDefaultTitle(BuildContext context) {
-    final locale = AtomicLocalizations.of(context);
-    return locale.chatHistory;
-  }
-
-  String _getChatRecordsText(BuildContext context) {
-    final locale = AtomicLocalizations.of(context);
-    return locale.chatHistory;
+  String _chatHistoryText(BuildContext context) {
+    return ChatLocalizations.of(context).chatHistory;
   }
 }

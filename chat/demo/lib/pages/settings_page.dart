@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uikit_next/login_page.dart';
 
+import '../widgets/theme_color_picker.dart';
 import 'profile_page.dart';
 import 'voice_message_settings_page.dart';
 
@@ -74,12 +75,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void showThemeSelector(BuildContext context, ThemeState themeState, ThemeType currentTheme) {
-    final atomicLocale = AtomicLocalizations.of(context);
+    final chatLocale = ChatLocalizations.of(context);
 
     final List<Map<String, dynamic>> themes = [
-      {"label": atomicLocale.themeLight, "value": ThemeType.light},
-      {"label": atomicLocale.themeDark, "value": ThemeType.dark},
-      {"label": atomicLocale.followSystem, "value": ThemeType.system},
+      {"label": chatLocale.themeLight, "value": ThemeType.light},
+      {"label": chatLocale.themeDark, "value": ThemeType.dark},
+      {"label": chatLocale.followSystem, "value": ThemeType.system},
     ];
 
     ActionSheet.show(
@@ -94,97 +95,33 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void showColorSelector(BuildContext context, ThemeState themeState) {
-    final List<String> presetColors = [
-      '#1c66e5',
-      '#7ff879',
-      '#ff6b6b',
-      '#ffa726',
-      '#ab47bc',
-      '#26a69a',
-      '#ff7043',
-      '#42a5f5',
-    ];
+  Widget _buildThemeColorSwatch(ThemeState themeState) {
+    final color = ThemeColorPicker.parseHex(themeState.currentPrimaryColor) ??
+        ThemeColorPicker.parseHex(ThemeColorPicker.defaultPrimaryColor)!;
 
-    String? selectedColor = themeState.currentPrimaryColor;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text('Color'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...presetColors.map((color) => RadioListTile<String>(
-                        title: Row(
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: Color(int.parse(color.replaceAll('#', '0xFF'))),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(color),
-                          ],
-                        ),
-                        value: color,
-                        groupValue: selectedColor,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedColor = value;
-                          });
-                        },
-                      )),
-                  RadioListTile<String>(
-                    title: const Text('Clear Color'),
-                    value: '',
-                    groupValue: selectedColor,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedColor = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(AtomicLocalizations.of(context).cancel),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (selectedColor != null && selectedColor!.isNotEmpty) {
-                      themeState.setPrimaryColor(selectedColor!);
-                    } else {
-                      themeState.clearPrimaryColor();
-                    }
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(AtomicLocalizations.of(context).confirm),
-                ),
-              ],
-            );
-          },
-        );
-      },
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: themeState.colors.strokeColorPrimary, width: 1.5),
+      ),
     );
   }
 
-  void showFriendRequestSelector(BuildContext context, AtomicLocalizations atomicLocale, AllowType? currentAllowType) {
+  Future<void> showThemeColorSelector(BuildContext context, ThemeState themeState) async {
+    final hex = await ThemeColorPicker.show(context, selectedHex: themeState.currentPrimaryColor);
+    if (hex != null) {
+      themeState.setPrimaryColor(hex);
+    }
+  }
+
+  void showFriendRequestSelector(BuildContext context, ChatLocalizations chatLocale, AllowType? currentAllowType) {
     final List<Map<String, dynamic>> options = [
-      {"label": atomicLocale.allowAny, "value": AllowType.allowAny},
-      {"label": atomicLocale.needConfirm, "value": AllowType.needConfirm},
-      {"label": atomicLocale.denyAny, "value": AllowType.denyAny},
+      {"label": chatLocale.allowAny, "value": AllowType.allowAny},
+      {"label": chatLocale.needConfirm, "value": AllowType.needConfirm},
+      {"label": chatLocale.denyAny, "value": AllowType.denyAny},
     ];
 
     ActionSheet.show(
@@ -243,13 +180,13 @@ class _SettingsPageState extends State<SettingsPage> {
     return ChangeNotifierProvider.value(
       value: _loginStore,
       child: Scaffold(
-        backgroundColor: colorsTheme.bgColorOperate,
+        backgroundColor: colorsTheme.bgColorInput,
         appBar: AppBar(
           backgroundColor: colorsTheme.bgColorOperate,
           automaticallyImplyLeading: false,
-          title: Text(AtomicLocalizations.of(context).settings,
-              style: FontScheme.title3Medium.copyWith(color: colorsTheme.textColorPrimary)),
-          centerTitle: false,
+          title: Text(ChatLocalizations.of(context).me,
+              style: FontScheme.body4Bold.copyWith(color: colorsTheme.textColorPrimary)),
+          centerTitle: true,
         ),
         body: Consumer<LoginStore>(
           builder: (context, loginStore, child) {
@@ -261,7 +198,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildBody(BuildContext context, LoginStore loginStore) {
-    AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocale = ChatLocalizations.of(context);
     final themeState = BaseThemeProvider.of(context);
     final ThemeType currentTheme = themeState.currentType;
     final localeProvider = Provider.of<LocaleProvider>(context);
@@ -272,46 +209,46 @@ class _SettingsPageState extends State<SettingsPage> {
     String getThemeName(ThemeType themeType) {
       switch (themeType) {
         case ThemeType.light:
-          return atomicLocale.themeLight;
+          return chatLocale.themeLight;
         case ThemeType.dark:
-          return atomicLocale.themeDark;
+          return chatLocale.themeDark;
         case ThemeType.system:
-          return atomicLocale.followSystem;
+          return chatLocale.followSystem;
         default:
-          return atomicLocale.followSystem;
+          return chatLocale.followSystem;
       }
     }
 
     String getLocaleName(Locale? locale) {
       switch (locale?.languageCode) {
         case 'zh':
-          if (locale?.scriptCode == 'Hant') return atomicLocale.languageZhHant;
-          return atomicLocale.languageZh;
+          if (locale?.scriptCode == 'Hant') return chatLocale.languageZhHant;
+          return chatLocale.languageZh;
         case 'en':
-          return atomicLocale.languageEn;
+          return chatLocale.languageEn;
         case 'ja':
-          return atomicLocale.languageJa;
+          return chatLocale.languageJa;
         case 'ko':
-          return atomicLocale.languageKo;
+          return chatLocale.languageKo;
         case 'ar':
-          return atomicLocale.languageAr;
+          return chatLocale.languageAr;
         default:
-          return atomicLocale.followSystem;
+          return chatLocale.followSystem;
       }
     }
 
     void showLanguageSelector() {
       final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
-      final atomicLocale = AtomicLocalizations.of(context);
+      final chatLocale = ChatLocalizations.of(context);
 
       final List<Map<String, dynamic>> languages = [
-        {"label": atomicLocale.followSystem, "value": "system"},
-        {"label": atomicLocale.languageZh, "value": "zh"},
-        {"label": atomicLocale.languageZhHant, "value": "zh_Hant"},
-        {"label": atomicLocale.languageEn, "value": "en"},
-        {"label": atomicLocale.languageJa, "value": "ja"},
-        {"label": atomicLocale.languageKo, "value": "ko"},
-        {"label": atomicLocale.languageAr, "value": "ar"},
+        {"label": chatLocale.followSystem, "value": "system"},
+        {"label": chatLocale.languageZh, "value": "zh"},
+        {"label": chatLocale.languageZhHant, "value": "zh_Hant"},
+        {"label": chatLocale.languageEn, "value": "en"},
+        {"label": chatLocale.languageJa, "value": "ja"},
+        {"label": chatLocale.languageKo, "value": "ko"},
+        {"label": chatLocale.languageAr, "value": "ar"},
       ];
 
       String? selected;
@@ -335,16 +272,16 @@ class _SettingsPageState extends State<SettingsPage> {
       );
     }
 
-    String getFriendRequestName(AtomicLocalizations atomicLocale, AllowType? allowType) {
+    String getFriendRequestName(ChatLocalizations chatLocale, AllowType? allowType) {
       switch (allowType) {
         case AllowType.allowAny:
-          return atomicLocale.allowAny;
+          return chatLocale.allowAny;
         case AllowType.needConfirm:
-          return atomicLocale.needConfirm;
+          return chatLocale.needConfirm;
         case AllowType.denyAny:
-          return atomicLocale.denyAny;
+          return chatLocale.denyAny;
         default:
-          return atomicLocale.needConfirm;
+          return chatLocale.needConfirm;
       }
     }
 
@@ -366,14 +303,10 @@ class _SettingsPageState extends State<SettingsPage> {
             },
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 36,
-                  backgroundImage: currentUser?.avatarURL != null && currentUser!.avatarURL!.isNotEmpty
-                      ? NetworkImage(currentUser.avatarURL!)
-                      : null,
-                  child: currentUser?.avatarURL == null || currentUser!.avatarURL!.isEmpty
-                      ? const Icon(Icons.person, size: 36)
-                      : null,
+                Avatar.image(
+                  url: currentUser?.avatarURL,
+                  name: (currentUser?.nickname?.isEmpty ?? true) ? currentUser?.userID : currentUser?.nickname,
+                  size: AvatarSize.l,
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -384,24 +317,24 @@ class _SettingsPageState extends State<SettingsPage> {
                         (currentUser?.nickname?.isEmpty ?? true)
                             ? currentUser?.userID ?? ''
                             : currentUser?.nickname ?? '',
-                        style: FontScheme.body3Bold.copyWith(
+                        style: FontScheme.body4Regular.copyWith(
                           color: themeState.colors.textColorPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "ID: ${currentUser?.userID ?? ''}",
-                        style: FontScheme.caption1Regular.copyWith(
-                          color: themeState.colors.textColorSecondary,
+                        style: FontScheme.caption3Regular.copyWith(
+                          color: themeState.colors.textColorTertiary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         currentUser?.selfSignature?.isEmpty ?? true
-                            ? atomicLocale.noSignature
+                            ? chatLocale.noSignature
                             : currentUser!.selfSignature!,
-                        style: FontScheme.caption1Regular.copyWith(
-                          color: themeState.colors.textColorSecondary,
+                        style: FontScheme.caption3Regular.copyWith(
+                          color: themeState.colors.textColorTertiary,
                         ),
                       ),
                     ],
@@ -415,59 +348,74 @@ class _SettingsPageState extends State<SettingsPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 SettingWidgets.buildSettingGroup(
                   context: context,
                   children: [
                     SettingWidgets.buildNavigationRow(
                       context: context,
-                      title: atomicLocale.addRule,
-                      value: getFriendRequestName(atomicLocale, currentUser?.allowType),
-                      onTap: () {
-                        showFriendRequestSelector(context, atomicLocale, currentUser?.allowType);
-                      },
-                    ),
-                    SettingWidgets.buildDivider(context),
-                    SettingWidgets.buildNavigationRow(
-                      context: context,
-                      title: atomicLocale.theme,
+                      title: chatLocale.theme,
                       value: getThemeName(currentTheme),
                       onTap: () {
                         showThemeSelector(context, themeState, currentTheme);
                       },
                     ),
-                    SettingWidgets.buildDivider(context),
                     SettingWidgets.buildNavigationRow(
                       context: context,
-                      title: atomicLocale.language,
+                      title: chatLocale.themeColor,
+                      valueWidget: _buildThemeColorSwatch(themeState),
+                      onTap: () => showThemeColorSelector(context, themeState),
+                    ),
+                    SettingWidgets.buildNavigationRow(
+                      context: context,
+                      title: chatLocale.language,
                       value: getLocaleName(currentLocale),
                       onTap: showLanguageSelector,
                     ),
-                    SettingWidgets.buildDivider(context),
-                    SettingWidgets.buildSettingRow(
-                      context: context,
-                      title: atomicLocale.messageReadReceipt,
-                      value: AppBuilder.getInstance().messageListConfig.enableReadReceipt,
-                      onChanged: (value) async {
-                        await AppBuilder.getInstance().messageListConfig.setEnableReadReceipt(value);
-                        setState(() {});
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        AppBuilder.getInstance().messageListConfig.enableReadReceipt
-                            ? atomicLocale.messageReadReceiptEnabledDesc
-                            : atomicLocale.messageReadReceiptDisabledDesc,
-                        style: FontScheme.caption2Regular.copyWith(
-                          color: themeState.colors.textColorSecondary,
-                        ),
-                      ),
-                    ),
-                    SettingWidgets.buildDivider(context),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SettingWidgets.buildSettingGroup(
+                  context: context,
+                  children: [
                     SettingWidgets.buildNavigationRow(
                       context: context,
-                      title: atomicLocale.translateTargetLanguage,
+                      title: chatLocale.addRule,
+                      value: getFriendRequestName(chatLocale, currentUser?.allowType),
+                      onTap: () {
+                        showFriendRequestSelector(context, chatLocale, currentUser?.allowType);
+                      },
+                    ),
+                    // Switch + its description are one card entry so the auto
+                    // divider doesn't split them.
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SettingWidgets.buildSettingRow(
+                          context: context,
+                          title: chatLocale.messageReadReceipt,
+                          value: AppBuilder.getInstance().messageListConfig.enableReadReceipt,
+                          onChanged: (value) async {
+                            await AppBuilder.getInstance().messageListConfig.setEnableReadReceipt(value);
+                            setState(() {});
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Text(
+                            AppBuilder.getInstance().messageListConfig.enableReadReceipt
+                                ? chatLocale.messageReadReceiptEnabledDesc
+                                : chatLocale.messageReadReceiptDisabledDesc,
+                            style: FontScheme.caption2Regular.copyWith(
+                              color: themeState.colors.textColorSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SettingWidgets.buildNavigationRow(
+                      context: context,
+                      title: chatLocale.translateTargetLanguage,
                       value: _getTranslateLanguageDisplayName(
                         AppBuilder.getInstance().translateConfig.targetLanguage,
                       ),
@@ -475,13 +423,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 SettingWidgets.buildSettingGroup(
                   context: context,
                   children: [
                     SettingWidgets.buildNavigationRow(
                       context: context,
-                      title: ChatLocalizations.of(context)!.voiceMessageSettings,
+                      title: ChatLocalizations.of(context).voiceMessageSettings,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -518,7 +466,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               child: Text(
-                atomicLocale.logout,
+                chatLocale.logout,
                 style: FontScheme.caption1Medium.copyWith(
                   color: themeState.colors.textColorError,
                 ),

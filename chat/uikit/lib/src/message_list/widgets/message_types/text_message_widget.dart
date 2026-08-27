@@ -1,6 +1,7 @@
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_input/src/chat_special_text_span_builder.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_status_mixin.dart';
 import 'package:tencent_chat_uikit/src/third_party/extended_text/extended_text.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
@@ -57,10 +58,13 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
 
     final content = Container(
       key: widget.bubbleKey,
+      // maxWidth already reserves an avatar column on both sides, so the bubble
+      // may fill it — shrinking further would push the text off the alignment
+      // a received bubble sits on.
       constraints: BoxConstraints(
-        maxWidth: widget.maxWidth * 0.9,
+        maxWidth: widget.maxWidth,
       ),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: _buildTextWithStatusAndTime(colors),
     );
 
@@ -81,6 +85,16 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
   }
 
   Widget _buildTextWithStatusAndTime(SemanticColorScheme colors) {
+    final statusAndTimeWidgets = buildStatusAndTimeWidgets(
+      message: widget.message,
+      isSelf: widget.isSelf,
+      colors: colors,
+      onResendTap: widget.onResendTap,
+      isShowTimeInBubble: widget.config.isShowTimeInBubble,
+      enableReadReceipt: widget.config.enableReadReceipt,
+      isInMergedDetailView: widget.isInMergedDetailView,
+    );
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -88,17 +102,12 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
         Flexible(
           child: _buildTextContent(colors),
         ),
-        ...[
+        // The list is empty unless an in-bubble time or status is shown, and the
+        // gap must go with it — otherwise every bubble carries a dead 8px that
+        // reads as lopsided padding on the trailing edge.
+        if (statusAndTimeWidgets.isNotEmpty) ...[
           const SizedBox(width: 8),
-          ...buildStatusAndTimeWidgets(
-            message: widget.message,
-            isSelf: widget.isSelf,
-            colors: colors,
-            onResendTap: widget.onResendTap,
-            isShowTimeInBubble: widget.config.isShowTimeInBubble,
-            enableReadReceipt: widget.config.enableReadReceipt,
-            isInMergedDetailView: widget.isInMergedDetailView,
-          ),
+          ...statusAndTimeWidgets,
         ],
       ],
     );
@@ -168,39 +177,9 @@ class _TextMessageWidgetState extends State<TextMessageWidget> with MessageStatu
     }
   }
 
-  BorderRadius _getBubbleBorderRadius() {
-    switch (widget.config.alignment) {
-      case 'left':
-        return BorderRadius.only(
-          topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-          topRight: Radius.circular(widget.config.textBubbleCornerRadius),
-          bottomLeft: const Radius.circular(0),
-          bottomRight: Radius.circular(widget.config.textBubbleCornerRadius),
-        );
-      case 'right':
-        return BorderRadius.only(
-          topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-          topRight: Radius.circular(widget.config.textBubbleCornerRadius),
-          bottomLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-          bottomRight: const Radius.circular(0),
-        );
-      case 'two-sided':
-      default:
-        if (widget.isSelf) {
-          return BorderRadius.only(
-            topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-            topRight: Radius.circular(widget.config.textBubbleCornerRadius),
-            bottomLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-            bottomRight: const Radius.circular(0),
-          );
-        } else {
-          return BorderRadius.only(
-            topLeft: Radius.circular(widget.config.textBubbleCornerRadius),
-            topRight: Radius.circular(widget.config.textBubbleCornerRadius),
-            bottomLeft: const Radius.circular(0),
-            bottomRight: Radius.circular(widget.config.textBubbleCornerRadius),
-          );
-        }
-    }
-  }
+  BorderRadius _getBubbleBorderRadius() => MessageUtil.bubbleBorderRadius(
+        alignment: widget.config.alignment,
+        isSelf: widget.isSelf,
+        radius: widget.config.textBubbleCornerRadius,
+      );
 }

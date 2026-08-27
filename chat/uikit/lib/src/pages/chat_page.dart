@@ -4,17 +4,29 @@ import 'package:tuikit_atomic_x/base_component/utils/tui_event_bus.dart';
 import 'package:tencent_chat_uikit/src/contact_list/pages/add_friend.dart';
 import 'package:tencent_chat_uikit/src/message_list/listen/listen_playback_bar.dart';
 import 'package:flutter/material.dart' hide IconButton;
+import '../common/language/gen/chat_localizations.dart';
 
 class ChatSettingPage extends StatelessWidget {
   final ConversationInfo conversation;
   final ConversationInfo conversationOfChatPage;
   final VoidCallback? onDestroyCallback;
 
+  /// Forwarded to the [ChatPage] opened via "send message". Inherited from the
+  /// chat page this settings page was opened from, so the conversation the user
+  /// jumps to behaves like the one they came from.
+  final ChatMessageInputConfig messageInputConfig;
+  final ChatMessageListConfig messageListConfig;
+
   const ChatSettingPage({
     super.key,
     required this.conversation,
     required this.conversationOfChatPage,
     this.onDestroyCallback,
+    this.messageInputConfig = const ChatMessageInputConfig(
+      isShowAudioCall: true,
+      isShowVideoCall: true,
+    ),
+    this.messageListConfig = const ChatMessageListConfig(),
   });
 
   void _onSendMessageClick({required BuildContext context, String? userID, String? groupID}) async {
@@ -49,6 +61,8 @@ class ChatSettingPage extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => ChatPage(
               conversation: conversation,
+              messageInputConfig: messageInputConfig,
+              messageListConfig: messageListConfig,
             ),
           ),
         );
@@ -118,7 +132,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   // Multi-select mode state
   MultiSelectState? _multiSelectState;
@@ -135,7 +149,7 @@ class _ChatPageState extends State<ChatPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   void _onDestroyCallback() {
@@ -173,6 +187,8 @@ class _ChatPageState extends State<ChatPage> {
             conversation: widget.conversation,
             conversationOfChatPage: widget.conversation,
             onDestroyCallback: _onDestroyCallback,
+            messageInputConfig: widget.messageInputConfig,
+            messageListConfig: widget.messageListConfig,
           ),
         ),
       );
@@ -211,6 +227,8 @@ class _ChatPageState extends State<ChatPage> {
             conversation: conversation,
             conversationOfChatPage: widget.conversation,
             onDestroyCallback: _onDestroyCallback,
+            messageInputConfig: widget.messageInputConfig,
+            messageListConfig: widget.messageListConfig,
           ),
         ),
       );
@@ -233,19 +251,20 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: colorsTheme.bgColorTopBar,
       appBar: AppBar(
           backgroundColor: colorsTheme.bgColorOperate,
           titleSpacing: 4.0,
           centerTitle: true,
           title: Text(
-            widget.conversation.title ?? atomicLocale.chat,
-            style: FontScheme.caption2Medium,
+            widget.conversation.title ?? chatLocale.chat,
+            style: FontScheme.caption1Bold.copyWith(color: colorsTheme.textColorPrimary),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
           scrolledUnderElevation: 0.0,
           leading: IconButton.buttonContent(
-            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
             type: ButtonType.noBorder,
             size: ButtonSize.l,
             onClick: () => Navigator.of(context).pop(),
@@ -254,7 +273,7 @@ class _ChatPageState extends State<ChatPage> {
               ? [
                   IconButton.buttonContent(
                     content: IconOnlyContent(
-                      Icon(Icons.more_horiz, color: colorsTheme.buttonColorPrimaryDefault),
+                      Icon(Icons.more_horiz, color: colorsTheme.textColorSecondary),
                     ),
                     type: ButtonType.noBorder,
                     size: ButtonSize.l,

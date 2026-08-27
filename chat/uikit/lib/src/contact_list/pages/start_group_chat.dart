@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../user_picker/user_picker.dart';
 import 'create_group.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class StartGroupChat extends StatefulWidget {
   final Function(String groupID, String groupName, String? avatar)? onGroupCreated;
@@ -20,7 +21,7 @@ class StartGroupChat extends StatefulWidget {
 class _StartGroupChatState extends State<StartGroupChat> {
   final ContactStore _contactStore = ContactStore.shared;
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _StartGroupChatState extends State<StartGroupChat> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
   }
 
   Future<void> _loadData() async {
@@ -86,10 +87,10 @@ class _StartGroupChatState extends State<StartGroupChat> {
 
         return UserPicker(
           dataSource: dataSource,
-          title: atomicLocale.createGroupChat,
+          title: chatLocale.createGroupChat,
           showSelectedList: true,
           maxCount: 20,
-          confirmText: atomicLocale.next,
+          confirmText: chatLocale.next,
           onConfirm: _createGroupChat,
         );
       },

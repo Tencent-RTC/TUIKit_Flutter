@@ -2,6 +2,7 @@ import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/recent_emoji_manager.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 /// Bottom sheet showing reaction details with user list
 class ReactionDetailSheet extends StatefulWidget {
@@ -330,7 +331,7 @@ class _ReactionUserItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final atomicLocal = AtomicLocalizations.of(context);
+    final chatLocal = ChatLocalizations.of(context);
     final displayName = (user.nickname?.isNotEmpty == true) ? user.nickname! : user.userID;
 
     return GestureDetector(
@@ -360,7 +361,7 @@ class _ReactionUserItem extends StatelessWidget {
                   ),
                   if (isSelf)
                     Text(
-                      atomicLocal.tapToRemove,
+                      chatLocal.tapToRemove,
                       style: FontScheme.caption3Regular.copyWith(
                         color: colors.textColorTertiary,
                       ),

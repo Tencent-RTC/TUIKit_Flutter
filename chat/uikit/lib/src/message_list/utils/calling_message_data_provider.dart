@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 enum CallProtocolType {
   unknown,
@@ -70,10 +70,10 @@ class CallingMessageDataProvider {
   bool get isCallingSignal => _isCallingSignal;
 
   late MessageInfo messageInfo;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   CallingMessageDataProvider(this.messageInfo, BuildContext context) {
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     _isExcludedFromLastMessage = messageInfo.rawMessage?.isExcludedFromLastMessage ?? false;
     _isExcludedFromUnreadCount = messageInfo.rawMessage?.isExcludedFromUnreadCount ?? false;
 
@@ -275,34 +275,34 @@ class CallingMessageDataProvider {
 
     if (_participantType == CallParticipantType.c2c) {
       if (_protocolType == CallProtocolType.reject) {
-        _content = isCaller ? atomicLocale.callRejectCaller : atomicLocale.callRejectCallee;
+        _content = isCaller ? chatLocale.callRejectCaller : chatLocale.callRejectCallee;
       } else if (_protocolType == CallProtocolType.cancel) {
-        _content = isCaller ? atomicLocale.callCancelCaller : atomicLocale.callCancelCallee;
+        _content = isCaller ? chatLocale.callCancelCaller : chatLocale.callCancelCallee;
       } else if (_protocolType == CallProtocolType.hangup) {
         final time = _getShowTime(_jsonData['call_end']);
-        _content = '${atomicLocale.stopCallTip}:$time';
+        _content = '${chatLocale.stopCallTip}:$time';
       } else if (_protocolType == CallProtocolType.timeout) {
-        _content = isCaller ? atomicLocale.callTimeoutCaller : atomicLocale.callTimeoutCallee;
+        _content = isCaller ? chatLocale.callTimeoutCaller : chatLocale.callTimeoutCallee;
       } else if (_protocolType == CallProtocolType.lineBusy) {
-        _content = isCaller ? atomicLocale.callLineBusyCaller : atomicLocale.callLineBusyCallee;
+        _content = isCaller ? chatLocale.callLineBusyCaller : chatLocale.callLineBusyCallee;
       } else if (_protocolType == CallProtocolType.send) {
-        _content = atomicLocale.startCall;
+        _content = chatLocale.startCall;
       } else if (_protocolType == CallProtocolType.accept) {
-        _content = atomicLocale.acceptCall;
+        _content = chatLocale.acceptCall;
       } else if (_protocolType == CallProtocolType.switchToAudio) {
-        _content = atomicLocale.callingSwitchToAudio;
+        _content = chatLocale.callingSwitchToAudio;
       } else if (_protocolType == CallProtocolType.switchToAudioConfirm) {
-        _content = atomicLocale.callingSwitchToAudioAccept;
+        _content = chatLocale.callingSwitchToAudioAccept;
       } else {
-        _content = atomicLocale.unknownCall;
+        _content = chatLocale.unknownCall;
       }
     } else if (_participantType == CallParticipantType.group) {
       if (_protocolType == CallProtocolType.send) {
-        _content = '"$showName" ${atomicLocale.groupCallSend}';
+        _content = '"$showName" ${chatLocale.groupCallSend}';
       } else if (_protocolType == CallProtocolType.cancel) {
-        _content = atomicLocale.groupCallEnd;
+        _content = chatLocale.groupCallEnd;
       } else if (_protocolType == CallProtocolType.hangup) {
-        _content = atomicLocale.groupCallEnd;
+        _content = chatLocale.groupCallEnd;
       } else if (_protocolType == CallProtocolType.timeout || _protocolType == CallProtocolType.lineBusy) {
         String inviteeNames = '';
         if (_participantType == CallParticipantType.group) {
@@ -311,23 +311,23 @@ class CallingMessageDataProvider {
           }
         }
         if (_protocolType == CallProtocolType.lineBusy) {
-          _content = inviteeNames.substring(0, inviteeNames.length - 1) + atomicLocale.callLineBusyCallee;
+          _content = inviteeNames.substring(0, inviteeNames.length - 1) + chatLocale.callLineBusyCallee;
         } else {
-          _content = inviteeNames.substring(0, inviteeNames.length - 1) + atomicLocale.groupCallNoAnswer;
+          _content = inviteeNames.substring(0, inviteeNames.length - 1) + chatLocale.groupCallNoAnswer;
         }
       } else if (_protocolType == CallProtocolType.reject) {
-        _content = '"$showName" ${atomicLocale.groupCallReject}';
+        _content = '"$showName" ${chatLocale.groupCallReject}';
       } else if (_protocolType == CallProtocolType.accept) {
-        _content = '"$showName" ${atomicLocale.groupCallAccept}';
+        _content = '"$showName" ${chatLocale.groupCallAccept}';
       } else if (_protocolType == CallProtocolType.switchToAudio) {
-        _content = '"$showName" ${atomicLocale.callingSwitchToAudio}';
+        _content = '"$showName" ${chatLocale.callingSwitchToAudio}';
       } else if (_protocolType == CallProtocolType.switchToAudioConfirm) {
-        _content = '"$showName" ${atomicLocale.groupCallConfirmSwitchToAudio}';
+        _content = '"$showName" ${chatLocale.groupCallConfirmSwitchToAudio}';
       } else {
-        _content = atomicLocale.unknownCall;
+        _content = chatLocale.unknownCall;
       }
     } else {
-      _content = atomicLocale.unknownCall;
+      _content = chatLocale.unknownCall;
     }
   }
 

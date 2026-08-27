@@ -1,0 +1,23 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'demo_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Korean (`ko`).
+class DemoLocalizationsKo extends DemoLocalizations {
+  DemoLocalizationsKo([String locale = 'ko']) : super(locale);
+
+  @override
+  String get customMessageMenuTitle => '사용자 지정 메시지';
+
+  @override
+  String get customMessageContent => '클라우드 커뮤니케이션 IM 패밀리에 오신 것을 환영합니다!';
+
+  @override
+  String get customMessageViewDetails => '자세히 보기';
+
+  @override
+  String get welcomeMessage =>
+      'Chat Demo에 오신 것을 환영합니다! 먼저 메시지를 보내 기본 채팅 기능을 사용해 보세요.\n친구를 추가하려면 연락처 페이지로 이동해 더하기 버튼을 탭하세요.\n음성 통화나 영상 통화를 사용해 보려면 아래 더하기 버튼을 탭한 후 음성 통화/영상 통화를 선택하세요.';
+}

@@ -1,5 +1,7 @@
 import 'package:tuikit_atomic_x/base_component/utils/app_builder.dart';
 
+import 'message_input_more_action.dart';
+
 abstract class MessageInputConfigProtocol {
   bool get isShowAudioRecorder;
   bool get isShowMore;
@@ -14,6 +16,9 @@ abstract class MessageInputConfigProtocol {
   bool get isShowFile;
   bool get isShowVideoCall;
   bool get isShowAudioCall;
+
+  /// Host-supplied entries appended after the built-in more panel items.
+  List<MessageInputMoreAction> get customMoreActions;
 }
 
 class ChatMessageInputConfig implements MessageInputConfigProtocol {
@@ -28,6 +33,7 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   final bool? _userIsShowFile;
   final bool? _userIsShowVideoCall;
   final bool? _userIsShowAudioCall;
+  final List<MessageInputMoreAction> _customMoreActions;
 
   @override
   bool get isShowAudioRecorder => _userIsShowAudioRecorder ?? true;
@@ -63,10 +69,13 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   bool get isShowFile => _userIsShowFile ?? true;
 
   @override
-  bool get isShowVideoCall => _userIsShowVideoCall ?? false;
+  bool get isShowVideoCall => _userIsShowVideoCall ?? true;
 
   @override
-  bool get isShowAudioCall => _userIsShowAudioCall ?? false;
+  bool get isShowAudioCall => _userIsShowAudioCall ?? true;
+
+  @override
+  List<MessageInputMoreAction> get customMoreActions => _customMoreActions;
 
   const ChatMessageInputConfig({
     bool? isShowAudioRecorder,
@@ -80,7 +89,9 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
     bool? isShowFile,
     bool? isShowVideoCall,
     bool? isShowAudioCall,
-  })  : _userIsShowAudioRecorder = isShowAudioRecorder,
+    List<MessageInputMoreAction> customMoreActions = const [],
+  })  : _customMoreActions = customMoreActions,
+        _userIsShowAudioRecorder = isShowAudioRecorder,
         _userIsShowMore = isShowMore,
         _userEnableReadReceipt = enableReadReceipt,
         _userEnableMention = enableMention,
@@ -91,4 +102,37 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
         _userIsShowFile = isShowFile,
         _userIsShowVideoCall = isShowVideoCall,
         _userIsShowAudioCall = isShowAudioCall;
+
+  /// Returns a copy with the given values replaced. Arguments left null keep the
+  /// current setting — including "never set", so those fields still fall back to
+  /// their defaults when read.
+  ChatMessageInputConfig copyWith({
+    bool? isShowAudioRecorder,
+    bool? isShowMore,
+    bool? enableReadReceipt,
+    bool? enableMention,
+    bool? enableVoiceToTextOnRecord,
+    bool? isShowAlbum,
+    bool? isShowPhotoTaker,
+    bool? isShowVideoRecorder,
+    bool? isShowFile,
+    bool? isShowVideoCall,
+    bool? isShowAudioCall,
+    List<MessageInputMoreAction>? customMoreActions,
+  }) {
+    return ChatMessageInputConfig(
+      isShowAudioRecorder: isShowAudioRecorder ?? _userIsShowAudioRecorder,
+      isShowMore: isShowMore ?? _userIsShowMore,
+      enableReadReceipt: enableReadReceipt ?? _userEnableReadReceipt,
+      enableMention: enableMention ?? _userEnableMention,
+      enableVoiceToTextOnRecord: enableVoiceToTextOnRecord ?? _userEnableVoiceToTextOnRecord,
+      isShowAlbum: isShowAlbum ?? _userIsShowAlbum,
+      isShowPhotoTaker: isShowPhotoTaker ?? _userIsShowPhotoTaker,
+      isShowVideoRecorder: isShowVideoRecorder ?? _userIsShowVideoRecorder,
+      isShowFile: isShowFile ?? _userIsShowFile,
+      isShowVideoCall: isShowVideoCall ?? _userIsShowVideoCall,
+      isShowAudioCall: isShowAudioCall ?? _userIsShowAudioCall,
+      customMoreActions: customMoreActions ?? _customMoreActions,
+    );
+  }
 }

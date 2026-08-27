@@ -1,5 +1,6 @@
 arb-dir: lib/src/common/language/i10n
 template-arb-file: chat_en.arb
+nullable-getter: false
 output-localization-file: chat_localizations.dart
 output-dir: lib/src/common/language/gen
 output-class: ChatLocalizations

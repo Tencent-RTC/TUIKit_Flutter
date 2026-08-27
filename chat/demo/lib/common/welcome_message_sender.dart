@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 
+import 'language/gen/demo_localizations.dart';
+
 /// Demo-only helper that pushes a one-off guidance message to the built-in
 /// "administrator" conversation shortly after the user logs in, mirroring the
 /// native demos' first-run hint.
@@ -9,23 +11,6 @@ class WelcomeMessageSender {
 
   static const String _administratorConversationID = 'c2c_administrator';
   static const Duration _sendDelay = Duration(seconds: 1);
-
-  static const String _welcomeEn =
-      'Welcome to Chat Demo! Send a message to try out the basic chat.\n'
-      'To add friends, go to the Contacts page and tap the plus button.\n'
-      'To make audio or video calls, tap the plus button below -> Voice Call/Video Call.';
-  static const String _welcomeZh =
-      '欢迎体验 Chat Demo！你可以先发送一条消息，体验基础聊天能力。\n'
-      '如果想添加好友，可以前往联系人页面点击首页加号。\n'
-      '如果想体验音视频通话，可以点击下方加号按钮 -> 语音通话/视频通话。';
-  static const String _welcomeZhHant =
-      '歡迎體驗 Chat Demo！你可以先發送一則訊息，體驗基礎聊天功能。\n'
-      '如果想新增好友，可以前往聯絡人頁面點擊首頁加號。\n'
-      '如果想體驗音視訊通話，可以點擊下方加號按鈕 -> 語音通話/視訊通話。';
-  static const String _welcomeAr =
-      'مرحبًا بك في Chat Demo! يمكنك أولاً إرسال رسالة لتجربة الدردشة الأساسية.\n'
-      'لإضافة أصدقاء، انتقل إلى صفحة جهات الاتصال واضغط على زر الإضافة في الصفحة الرئيسية.\n'
-      'لتجربة مكالمات الصوت والفيديو، اضغط على زر الإضافة أدناه -> مكالمة صوتية/مكالمة فيديو.';
 
   /// Schedules the welcome message to be sent after a short delay so it lands
   /// once the conversation list has settled post-login.
@@ -65,13 +50,13 @@ class WelcomeMessageSender {
     }
   }
 
+  /// There is no `BuildContext` this early, so the message is read straight off
+  /// the generated localizations for [locale]. That lookup throws on a language
+  /// the demo has no translation for, hence the explicit fallback to English.
   static String _resolveMessage(Locale locale) {
-    if (locale.languageCode == 'zh') {
-      return locale.scriptCode == 'Hant' ? _welcomeZhHant : _welcomeZh;
-    }
-    if (locale.languageCode == 'ar') {
-      return _welcomeAr;
-    }
-    return _welcomeEn;
+    final isTranslated = DemoLocalizations.supportedLocales.any(
+      (supported) => supported.languageCode == locale.languageCode,
+    );
+    return lookupDemoLocalizations(isTranslated ? locale : const Locale('en')).welcomeMessage;
   }
 }

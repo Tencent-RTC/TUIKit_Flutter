@@ -15,7 +15,7 @@ class ChooseAvatarPage extends StatefulWidget {
 
 class ChooseAvatarPageState extends State<ChooseAvatarPage> {
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   final String _userFaceURL = "https://im.sdk.qcloud.com/download/tuikit-resource/avatar/avatar_%s.png";
   final int _userFaceCount = 26;
@@ -35,7 +35,7 @@ class ChooseAvatarPageState extends State<ChooseAvatarPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -47,13 +47,13 @@ class ChooseAvatarPageState extends State<ChooseAvatarPage> {
         backgroundColor: colorsTheme.bgColorTopBar,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          atomicLocale.chooseAvatar,
+          chatLocale.chooseAvatar,
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),
@@ -63,7 +63,7 @@ class ChooseAvatarPageState extends State<ChooseAvatarPage> {
           TextButton(
             onPressed: _submitAvatar,
             child: Text(
-              atomicLocale.confirm,
+              chatLocale.confirm,
               style: FontScheme.caption1Medium.copyWith(
                 color: colorsTheme.buttonColorPrimaryDefault,
               ),

@@ -1,6 +1,7 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tencent_chat_uikit/src/common/utils/time_util.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/asr_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/calling_message_data_provider.dart';
@@ -11,6 +12,8 @@ import 'package:tencent_chat_uikit/src/message_list/widgets/message_attachments.
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_status_mixin.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_read_receipt_view.dart';
 import 'package:tencent_chat_uikit/src/message_list/widgets/message_tooltip.dart';
+import 'package:tencent_chat_uikit/src/message_list/widgets/quote_message_preview.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class MessageItem extends StatelessWidget with MessageStatusMixin {
   final MessageInfo message;
@@ -117,12 +120,12 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
       customActions: customActions,
       menuCallbacks: _buildMenuCallbacks(context),
       isInMergedDetailView: isInMergedDetailView,
+      isMultiSelectMode: isMultiSelectMode,
       asrDisplayManager: asrDisplayManager,
       onAsrBubbleLongPress: onAsrBubbleLongPress,
       translationDisplayManager: translationDisplayManager,
       onTranslationBubbleLongPress: onTranslationBubbleLongPress,
       onCallMessageClick: onCallMessageClick,
-      onQuotePreviewTap: onQuotePreviewTap,
       mergedMediaMessages: mergedMediaMessages,
     );
 
@@ -204,7 +207,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
 
   /// Show resend confirmation dialog
   void _showResendConfirmDialog(BuildContext context) {
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
     AtomicAlertDialog.showWithConfig(
       context,
       config: AlertDialogConfig(
@@ -289,12 +292,12 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
       onHighlightComplete: onHighlightComplete,
       customActions: customActions,
       isInMergedDetailView: isInMergedDetailView,
+      isMultiSelectMode: isMultiSelectMode,
       asrDisplayManager: asrDisplayManager,
       onAsrBubbleLongPress: onAsrBubbleLongPress,
       translationDisplayManager: translationDisplayManager,
       onTranslationBubbleLongPress: onTranslationBubbleLongPress,
       onCallMessageClick: onCallMessageClick,
-      onQuotePreviewTap: onQuotePreviewTap,
       mergedMediaMessages: mergedMediaMessages,
     );
 
@@ -357,7 +360,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.from.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     // In merged detail view: always show avatar, disable click, hide nickname
     final shouldShowAvatar = isInMergedDetailView || config.isShowLeftAvatar;
@@ -385,6 +388,45 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
         : null;
 
     final attachment = _buildAttachmentIfAny(isSelf);
+    final quotePreview = _buildQuotePreview();
+    final inlineTime = isInMergedDetailView ? _buildInlineTime(context, colors) : null;
+
+    final messageColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (shouldShowNickname && displaySenderName.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 2, top: 8, bottom: 4),
+            child: Text(
+              '$displaySenderName:',
+              style: FontScheme.caption3Regular.copyWith(color: colors.textColorSecondary),
+            ),
+          ),
+        // Bubble row with status icon and read receipt label
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Flexible(child: messageBubble),
+            if (statusIndicator != null) ...[
+              const SizedBox(width: 6),
+              statusIndicator,
+            ],
+            if (readReceiptLabel != null) ...[
+              const SizedBox(width: 4),
+              readReceiptLabel,
+            ],
+          ],
+        ),
+        if (quotePreview != null) quotePreview,
+        // ASR / translation bubble (when present) hangs *below*
+        // the row so it doesn't shift the receipt down — see
+        // Bug-956459.
+        if (attachment != null) attachment,
+        // Violation hint text below the bubble
+        _buildViolationHintText(context),
+      ],
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -421,47 +463,39 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
               ),
             ),
           if (shouldShowAvatar) SizedBox(width: config.avatarSpacing),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (shouldShowNickname && displaySenderName.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 2, top: 8, bottom: 4),
-                    child: Text(
-                      '$displaySenderName:',
-                      style: FontScheme.caption3Regular,
-                    ),
-                  ),
-                // Bubble row with status icon and read receipt label
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Flexible(child: messageBubble),
-                    if (statusIndicator != null) ...[
-                      const SizedBox(width: 6),
-                      statusIndicator,
-                    ],
-                    if (readReceiptLabel != null) ...[
-                      const SizedBox(width: 4),
-                      readReceiptLabel,
-                    ],
-                  ],
-                ),
-                // ASR / translation bubble (when present) hangs *below*
-                // the row so it doesn't shift the receipt down — see
-                // Bug-956459.
-                if (attachment != null) attachment,
-                // Violation hint text below the bubble
-                _buildViolationHintText(context),
-                // Reaction bar for left-aligned layout
-                if (config.isSupportReaction && message.reactionList.isNotEmpty)
-                  _buildReactionBar(context, isLeft: true),
-              ],
-            ),
-          ),
+          // With a trailing timestamp the column has to claim the leftover
+          // width so the time is pushed to the row's edge; without one it
+          // shrink-wraps the bubble as usual.
+          if (inlineTime != null)
+            Expanded(child: messageColumn)
+          else
+            Flexible(child: messageColumn),
+          if (inlineTime != null) inlineTime,
         ],
+      ),
+    );
+  }
+
+  /// Timestamp pinned to the trailing edge of a merged-detail row.
+  ///
+  /// The main chat interleaves standalone time dividers between messages, but
+  /// a merged bundle is a flat transcript with no dividers, so every row has
+  /// to carry its own time.
+  Widget? _buildInlineTime(BuildContext context, SemanticColorScheme colors) {
+    final timeText = TimeUtil.convertToFormatTime(
+      message.timestamp ?? 0,
+      context,
+      style: TimeFormatStyle.messageList,
+    );
+    if (timeText.isEmpty) return null;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Text(
+        timeText,
+        style: FontScheme.caption3Regular.copyWith(color: colors.textColorSecondary),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -471,7 +505,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.from.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     // Build status indicator if needed (only for self messages)
     final statusIndicator = isSelf
@@ -495,6 +529,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
         : null;
 
     final attachment = _buildAttachmentIfAny(isSelf);
+    final quotePreview = _buildQuotePreview();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -511,7 +546,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                     padding: const EdgeInsets.only(right: 2, top: 8, bottom: 4),
                     child: Text(
                       '$displaySenderName:',
-                      style: FontScheme.caption3Regular,
+                      style: FontScheme.caption3Regular.copyWith(color: colors.textColorSecondary),
                     ),
                   ),
                 // Bubble row with read receipt label on the left, status icon, then bubble
@@ -531,12 +566,10 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                     Flexible(child: messageBubble),
                   ],
                 ),
+                if (quotePreview != null) quotePreview,
                 if (attachment != null) attachment,
                 // Violation hint text below the bubble
                 _buildViolationHintText(context),
-                // Reaction bar for right-aligned layout
-                if (config.isSupportReaction && message.reactionList.isNotEmpty)
-                  _buildReactionBar(context, isLeft: false),
               ],
             ),
           ),
@@ -566,7 +599,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     final displayAvatarUrl = avatarUrl ?? message.from.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     // Build status indicator if needed
     final statusIndicator = buildOutsideBubbleStatusIndicator(
@@ -586,15 +619,9 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     );
 
     final attachment = _buildAttachmentIfAny(true);
-
-    // When the other side's left avatar is shown, add a left spacer for self messages
-    // so the bubble's left edge aligns with other-message bubble's left edge
-    // and doesn't overlap with the other side's avatar.
-    final needLeftSpacer = config.isShowLeftAvatar;
-    final leftSpacerWidth = needLeftSpacer ? AvatarSize.m.value + config.avatarSpacing : 0.0;
+    final quotePreview = _buildQuotePreview();
 
     return [
-      if (needLeftSpacer) SizedBox(width: leftSpacerWidth),
       Flexible(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -604,7 +631,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                 padding: const EdgeInsets.only(right: 2, top: 8, bottom: 4),
                 child: Text(
                   '$displaySenderName:',
-                  style: FontScheme.caption3Regular,
+                  style: FontScheme.caption3Regular.copyWith(color: colors.textColorSecondary),
                 ),
               ),
             // Bubble row with read receipt label on the left, status icon, then bubble
@@ -624,11 +651,10 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                 Flexible(child: messageBubble),
               ],
             ),
+            if (quotePreview != null) quotePreview,
             if (attachment != null) attachment,
             // Violation hint text below the bubble
             _buildViolationHintText(context),
-            // Reaction bar for self messages (right aligned)
-            if (config.isSupportReaction && message.reactionList.isNotEmpty) _buildReactionBar(context, isLeft: false),
           ],
         ),
       ),
@@ -641,9 +667,11 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
   }
 
   List<Widget> _buildOtherMessage(BuildContext context, Widget messageBubble, [String? avatarUrl, String? senderName]) {
+    final colors = BaseThemeProvider.colorsOf(context);
     final displayAvatarUrl = avatarUrl ?? message.from.avatarURL;
     final displaySenderName = senderName ?? ChatUtil.getMessageSenderName(message);
     final attachment = _buildAttachmentIfAny(false);
+    final quotePreview = _buildQuotePreview();
 
     return [
       if (config.isShowLeftAvatar)
@@ -680,53 +708,34 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
                 padding: const EdgeInsets.only(left: 2, top: 8, bottom: 4),
                 child: Text(
                   '$displaySenderName:',
-                  style: FontScheme.caption3Regular,
+                  style: FontScheme.caption3Regular.copyWith(color: colors.textColorSecondary),
                 ),
               ),
             messageBubble,
+            if (quotePreview != null) quotePreview,
             if (attachment != null) attachment,
             // Violation hint text below the bubble
             _buildViolationHintText(context),
-            // Reaction bar for other messages (left aligned)
-            if (config.isSupportReaction && message.reactionList.isNotEmpty) _buildReactionBar(context, isLeft: true),
           ],
         ),
       ),
-      // When self's right avatar is shown, add a right spacer for other messages
-      // so the bubble's right edge aligns with self-message bubble's right edge
-      // and doesn't overlap with self's avatar.
-      if (config.isShowRightAvatar) SizedBox(width: AvatarSize.m.value + config.avatarSpacing),
     ];
   }
 
-  Widget _buildReactionBar(BuildContext context, {required bool isLeft}) {
-    return MessageReactionBar(
-      reactionList: message.reactionList,
-      isLeft: isLeft,
-      onClick: () => _showReactionDetailSheet(context),
-    );
-  }
+  /// Preview of the message this one replies to, hung under the bubble on the
+  /// same side as it. It sits outside the bubble so that a reply reads as
+  /// "here's what I said, and here's what I was answering".
+  Widget? _buildQuotePreview() {
+    final quoteInfo = message.quoteInfo;
+    if (quoteInfo == null) return null;
 
-  void _showReactionDetailSheet(BuildContext context) {
-    final messageActionStore = MessageActionStore.create(message);
-    final currentUserID = LoginStore.shared.loginState.loginUserInfo?.userID;
-
-    ReactionDetailSheet.show(
-      context: context,
-      reactionList: message.reactionList,
-      currentUserID: currentUserID,
-      onFetchUsers: (reactionID) {
-        messageActionStore.loadReactionUsers(
-          reactionID: reactionID,
-          count: 20,
-        );
-      },
-      onRemoveReaction: (reactionID) {
-        messageActionStore.removeReaction(reactionID: reactionID);
-        Navigator.of(context).pop();
-      },
-      // Disable remove reaction in merged message detail view
-      allowRemove: !isInMergedDetailView,
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: QuoteMessagePreview(
+        quoteInfo: quoteInfo,
+        maxWidth: maxWidth * 0.9,
+        onTap: onQuotePreviewTap != null ? () => onQuotePreviewTap!(message) : null,
+      ),
     );
   }
 
@@ -737,7 +746,7 @@ class MessageItem extends StatelessWidget with MessageStatusMixin {
     }
 
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(top: 4),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide IconButton, AlertDialog;
 
 import 'c2c_chat_setting.dart';
 import 'package:tencent_chat_uikit/src/widgets/az_ordered_list.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupMemberList extends StatefulWidget {
   final String groupID;
@@ -28,12 +29,12 @@ class GroupMemberList extends StatefulWidget {
 
 class _GroupMemberListState extends State<GroupMemberList> {
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -82,7 +83,7 @@ class _GroupMemberListState extends State<GroupMemberList> {
 
     actions.add(
       ActionSheetItem(
-        title: atomicLocale.detail,
+        title: chatLocale.detail,
         onTap: () => _showMemberInfo(member),
       ),
     );
@@ -91,7 +92,7 @@ class _GroupMemberListState extends State<GroupMemberList> {
       final isAdmin = member.role == GroupMemberRole.admin;
       actions.add(
         ActionSheetItem(
-          title: isAdmin ? atomicLocale.cancelAdmin : atomicLocale.setAdmin,
+          title: isAdmin ? chatLocale.cancelAdmin : chatLocale.setAdmin,
           onTap: () => _setMemberRole(member, isAdmin ? GroupMemberRole.member : GroupMemberRole.admin),
         ),
       );
@@ -100,7 +101,7 @@ class _GroupMemberListState extends State<GroupMemberList> {
     if (_canDeleteMember(member)) {
       actions.add(
         ActionSheetItem(
-          title: atomicLocale.delete,
+          title: chatLocale.delete,
           isDestructive: true,
           onTap: () => _showDeleteConfirmDialog(member),
         ),
@@ -128,7 +129,7 @@ class _GroupMemberListState extends State<GroupMemberList> {
     );
 
     if (result.errorCode == 0) {
-      _showToast(atomicLocale.settingSuccess);
+      _showToast(chatLocale.settingSuccess);
     } else {
       debugPrint('setMemberRole failed, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}');
     }
@@ -146,11 +147,11 @@ class _GroupMemberListState extends State<GroupMemberList> {
     AtomicAlertDialog.showWithConfig(
       context,
       config: AlertDialogConfig(
-        title: atomicLocale.delete,
-        content: atomicLocale.deleteGroupMemberTip,
-        cancelConfig: ButtonConfig(text: atomicLocale.cancel),
+        title: chatLocale.delete,
+        content: chatLocale.deleteGroupMemberTip,
+        cancelConfig: ButtonConfig(text: chatLocale.cancel),
         confirmConfig: ButtonConfig(
-          text: atomicLocale.confirm,
+          text: chatLocale.confirm,
           type: TextColorPreset.red,
           onClick: () => _deleteMember(member),
         ),
@@ -177,7 +178,7 @@ class _GroupMemberListState extends State<GroupMemberList> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        member.role == GroupMemberRole.owner ? atomicLocale.groupOwner : atomicLocale.admin,
+        member.role == GroupMemberRole.owner ? chatLocale.groupOwner : chatLocale.admin,
         style: FontScheme.caption4Regular.copyWith(
           color: colorsTheme.buttonColorPrimaryHover,
         ),
@@ -193,13 +194,13 @@ class _GroupMemberListState extends State<GroupMemberList> {
         backgroundColor: colorsTheme.bgColorTopBar,
         scrolledUnderElevation: 0,
         leading: IconButton.buttonContent(
-          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+          content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
           type: ButtonType.noBorder,
           size: ButtonSize.l,
           onClick: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          '${atomicLocale.groupMember}(${widget.groupInfo.memberCount ?? 0})',
+          '${chatLocale.groupMember}(${widget.groupInfo.memberCount ?? 0})',
           style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
           ),

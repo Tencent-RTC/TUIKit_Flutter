@@ -23,48 +23,31 @@ class TabIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isActive) {
-      final String iconPath = getIconPath(true);
-      return SvgPicture.asset(
-        iconPath,
-        width: size,
-        height: size,
-        colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn),
-      );
-    } else {
-      final String iconPath = getIconPath(false);
-      return SvgPicture.asset(
-        iconPath,
-        width: size,
-        height: size,
-        colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-      );
-    }
-  }
-
-  String getIconPath(bool isActive) {
-    if (isActive) {
-      if (iconType == TabIconType.chats) {
-        return 'assets/tab/tab_chats_active.svg';
-      } else if (iconType == TabIconType.contact) {
-        return 'assets/tab/tab_contacts_active.svg';
-      } else {
-        return 'assets/tab/tab_settings_active.svg';
-      }
-    } else {
-      if (iconType == TabIconType.chats) {
-        return 'assets/tab/tab_chats.svg';
-      } else if (iconType == TabIconType.contact) {
-        return 'assets/tab/tab_contacts.svg';
-      } else {
-        return 'assets/tab/tab_settings.svg';
-      }
-    }
+    return SvgPicture.asset(
+      iconType.assetPath,
+      width: size,
+      height: size,
+      colorFilter: ColorFilter.mode(
+        isActive ? activeColor : inactiveColor,
+        BlendMode.srcIn,
+      ),
+    );
   }
 }
 
 enum TabIconType {
   chats,
   contact,
-  settings,
+  settings;
+
+  String get assetPath {
+    switch (this) {
+      case TabIconType.chats:
+        return 'assets/tab/tab_chats.svg';
+      case TabIconType.contact:
+        return 'assets/tab/tab_contacts.svg';
+      case TabIconType.settings:
+        return 'assets/tab/tab_settings.svg';
+    }
+  }
 }

@@ -18,9 +18,6 @@ class ChatDeviceLanguage {
 
   static bool checkLocale(BuildContext context) {
     final Locale locale = Localizations.localeOf(context);
-    final bool isSupportedLocale =
-        ChatLocalizations.delegate.isSupported(locale);
-    final ChatLocalizations? localizations = ChatLocalizations.of(context);
-    return isSupportedLocale && localizations != null;
+    return ChatLocalizations.delegate.isSupported(locale);
   }
 }

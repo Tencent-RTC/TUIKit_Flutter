@@ -2,6 +2,7 @@ import 'package:tencent_chat_uikit/tencent_chat_uikit.dart' hide Badge;
 import 'package:flutter/material.dart';
 import 'package:application/src/chat/settings_page.dart';
 import 'package:application/src/chat/tab_widget.dart';
+import 'package:application/src/chat/welcome_message_sender.dart';
 
 class ChatMainWidget extends StatefulWidget {
   const ChatMainWidget({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class ChatMainWidget extends StatefulWidget {
 
 class _ChatMainWidgetState extends State<ChatMainWidget> {
   late ConversationListStore conversationListStore;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   int _currentIndex = 0;
   late List<_NavItem> _navItems;
   int totalUnreadCount = 0;
@@ -23,6 +24,7 @@ class _ChatMainWidgetState extends State<ChatMainWidget> {
     super.initState();
     conversationListStore = ConversationListStore.create();
     conversationListStore.state.totalUnreadCount.addListener(_onConversationListChanged);
+    WelcomeMessageSender.scheduleWelcomeMessage();
 
     _pages = [
       _KeepAlivePage(child: ConversationsPage(onBackPressed: _onBackPressed)),
@@ -50,19 +52,19 @@ class _ChatMainWidgetState extends State<ChatMainWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     _navItems = [
       _NavItem(
         iconType: TabIconType.chats,
-        label: atomicLocale.chat,
+        label: chatLocale.chat,
       ),
       _NavItem(
         iconType: TabIconType.contact,
-        label: atomicLocale.contact,
+        label: chatLocale.contact,
       ),
       _NavItem(
         iconType: TabIconType.settings,
-        label: atomicLocale.settings,
+        label: chatLocale.me,
       ),
     ];
   }
@@ -153,8 +155,8 @@ class _ChatMainWidgetState extends State<ChatMainWidget> {
               iconType: item.iconType,
               isActive: isActive,
               activeColor: colors.textColorLink,
-              inactiveColor: colors.textColorSecondary,
-              size: 28,
+              inactiveColor: colors.textColorTertiary,
+              size: 24,
             ),
           ),
         ),
@@ -169,8 +171,8 @@ class _ChatMainWidgetState extends State<ChatMainWidget> {
           iconType: item.iconType,
           isActive: isActive,
           activeColor: colors.buttonColorPrimaryDefault,
-          inactiveColor: colors.textColorSecondary,
-          size: 28,
+          inactiveColor: colors.textColorTertiary,
+          size: 24,
         ),
       ),
       label: item.label,

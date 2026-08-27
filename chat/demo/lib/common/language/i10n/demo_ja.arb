@@ -1,0 +1,7 @@
+{
+  "@@locale": "ja",
+  "customMessageMenuTitle": "カスタムメッセージ",
+  "customMessageContent": "クラウドコミュニケーション IM ファミリーへようこそ！",
+  "customMessageViewDetails": "詳細を見る",
+  "welcomeMessage": "Chat Demo へようこそ！まずはメッセージを送信して、基本的なチャット機能をお試しください。\n友だちを追加するには、連絡先ページに移動してプラスボタンをタップしてください。\n音声通話やビデオ通話を試すには、下部のプラスボタンをタップして「音声通話／ビデオ通話」を選択してください。"
+}

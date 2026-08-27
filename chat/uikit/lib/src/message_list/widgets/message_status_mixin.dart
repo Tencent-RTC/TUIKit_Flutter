@@ -1,6 +1,7 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 mixin MessageStatusMixin {
   /// Check whether a read-receipt indicator should be displayed for [message].
@@ -168,7 +169,7 @@ mixin MessageStatusMixin {
   Widget? buildOutsideReadReceiptLabel({
     required MessageInfo message,
     required SemanticColorScheme colorsTheme,
-    required AtomicLocalizations locale,
+    required ChatLocalizations locale,
     required bool enableReadReceipt,
     bool isInMergedDetailView = false,
     VoidCallback? onTap,
@@ -181,45 +182,31 @@ mixin MessageStatusMixin {
       return null;
     }
 
-    String text;
-    Color textColor;
-
     final isGroup = message.conversationType == ConversationType.group;
 
+    String text;
     if (!isGroup) {
-      // C2C conversation
-      if (message.readReceiptInfo?.isPeerRead == true) {
-        text = locale.groupReadBy; // "已读"
-        textColor = colorsTheme.textColorSecondary; // gray
-      } else {
-        text = locale.groupDeliveredTo; // "未读"
-        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
-      }
+      // C2C conversation: "已读" / "未读"
+      text = message.readReceiptInfo?.isPeerRead == true ? locale.groupReadBy : locale.groupDeliveredTo;
     } else {
-      // Group conversation
+      // Group conversation: "全部已读" / "N人已读" / "未读"
       final readCount = message.readReceiptInfo?.readCount ?? 0;
       final unreadCount = message.readReceiptInfo?.unreadCount ?? 0;
       final totalCount = readCount + unreadCount;
 
       if (totalCount > 0 && readCount == totalCount) {
-        // All read
-        text = locale.readReceiptAllRead; // "全部已读"
-        textColor = colorsTheme.textColorSecondary; // gray
+        text = locale.readReceiptAllRead;
       } else if (readCount > 0) {
-        // Partially read
-        text = locale.readReceiptNPersonRead(readCount); // "N人已读"
-        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
+        text = locale.readReceiptNPersonRead(readCount);
       } else {
-        // No one read
-        text = locale.groupDeliveredTo; // "未读"
-        textColor = colorsTheme.buttonColorPrimaryDefault; // primary/theme color
+        text = locale.groupDeliveredTo;
       }
     }
 
     final textWidget = Text(
       text,
       style: FontScheme.caption3Regular.copyWith(
-        color: textColor,
+        color: colorsTheme.textColorTertiary,
       ),
     );
 

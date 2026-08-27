@@ -774,8 +774,11 @@ class _BubbleShape extends ShapeBorder {
       this.right,
       this.bottom);
 
+  // Container turns a ShapeDecoration's dimensions into padding around the
+  // content. Only the border sits inside the rect: the arrow is drawn from the
+  // rect's edge outwards, so it needs no room reserved here.
   @override
-  EdgeInsetsGeometry get dimensions => new EdgeInsets.all(10.0);
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(borderWidth);
 
   @override
   Path getInnerPath(Rect rect, {TextDirection? textDirection}) {

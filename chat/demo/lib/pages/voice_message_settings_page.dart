@@ -29,10 +29,10 @@ class _VoiceMessageSettingsPageState extends State<VoiceMessageSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: colors.bgColorOperate,
+      backgroundColor: colors.bgColorInput,
       appBar: SettingWidgets.buildAppBar(
         context: context,
         title: chatLocale.voiceMessageSettings,
@@ -40,7 +40,7 @@ class _VoiceMessageSettingsPageState extends State<VoiceMessageSettingsPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 2),
+            const SizedBox(height: 12),
             SettingWidgets.buildSettingGroup(
               context: context,
               children: [
@@ -56,7 +56,6 @@ class _VoiceMessageSettingsPageState extends State<VoiceMessageSettingsPage> {
                     if (mounted) setState(() {});
                   },
                 ),
-                SettingWidgets.buildDivider(context),
                 SettingWidgets.buildNavigationRow(
                   context: context,
                   title: chatLocale.voiceSelect,

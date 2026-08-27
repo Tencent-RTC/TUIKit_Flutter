@@ -2,12 +2,17 @@ import 'package:atomic_x_core/atomicxcore.dart' hide CompletionHandler;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
-import 'package:tuikit_atomic_x/base_component/utils/time_util.dart';
+import 'package:tencent_chat_uikit/src/common/utils/time_util.dart';
 import 'package:tencent_chat_uikit/src/conversation_list/conversation_list.dart';
 import 'package:tencent_chat_uikit/src/conversation_list/conversation_list_config.dart';
 import 'package:tencent_chat_uikit/src/emoji_picker/emoji_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/third_party/flutter_swipe_action_cell/core/cell.dart';
+import '../../common/language/gen/chat_localizations.dart';
+
+const double _horizontalPadding = 14;
+const double _avatarSpacing = 10;
+const AvatarSize _avatarSize = AvatarSize.l;
 
 class ConversationItem extends StatefulWidget {
   final ConversationInfo conversation;
@@ -49,7 +54,7 @@ class ConversationItem extends StatefulWidget {
 }
 
 class _ConversationItemState extends State<ConversationItem> {
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -59,7 +64,7 @@ class _ConversationItemState extends State<ConversationItem> {
   @override
   Widget build(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
 
     return SwipeActionCell(
       key: ObjectKey(widget.conversation.conversationID),
@@ -76,7 +81,7 @@ class _ConversationItemState extends State<ConversationItem> {
     if (widget.config.isSupportMarkUnread) {
       final bool hasUnread = _hasUnreadStatus();
       actions.add(SwipeAction(
-        title: hasUnread ? atomicLocale.markAsRead : atomicLocale.markAsUnread,
+        title: hasUnread ? chatLocale.markAsRead : chatLocale.markAsUnread,
         onTap: (CompletionHandler handler) async {
           if (hasUnread) {
             widget.onMarkAsRead?.call();
@@ -101,7 +106,7 @@ class _ConversationItemState extends State<ConversationItem> {
 
     if (_hasMoreActions()) {
       actions.add(SwipeAction(
-        title: atomicLocale.more,
+        title: chatLocale.more,
         onTap: (CompletionHandler handler) async {
           await _showMoreActions(context, colorsTheme);
           handler(false);
@@ -128,60 +133,87 @@ class _ConversationItemState extends State<ConversationItem> {
 
   Widget _buildConversationContent(BuildContext context) {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
-    String formatTime = TimeUtil.convertToFormatTime(widget.conversation.lastMessage?.timestamp ?? 0, context);
+    String formatTime = TimeUtil.convertToFormatTime(
+      widget.conversation.lastMessage?.timestamp ?? 0,
+      context,
+      style: TimeFormatStyle.conversationList,
+    );
 
     return InkWell(
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
       child: Container(
         decoration: BoxDecoration(
-          color: widget.conversation.isPinned ? colorsTheme.bgColorDefault : colorsTheme.bgColorOperate,
+          color: widget.conversation.isPinned ? colorsTheme.bgColorDefault : colorsTheme.bgColorTopBar,
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: Row(
+        child: Column(
           children: [
-            _buildAvatar(context),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: _horizontalPadding),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          widget.conversation.title ?? '',
-                          style: FontScheme.caption1Medium.copyWith(
-                            color: colorsTheme.textColorPrimary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  _buildAvatar(context),
+                  const SizedBox(width: _avatarSpacing),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.conversation.title ?? '',
+                                style: FontScheme.body4Regular.copyWith(
+                                  color: colorsTheme.textColorPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              formatTime,
+                              style: FontScheme.caption3Regular.copyWith(
+                                color: colorsTheme.textColorTertiary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      _buildUnreadOrMuteIcon(),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildSubtitle(context, colorsTheme),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildErrorStatusIcon(colorsTheme),
-                      Text(
-                        formatTime,
-                        style: FontScheme.caption3Regular.copyWith(
-                          color: colorsTheme.textColorTertiary,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            _buildErrorStatusIcon(colorsTheme),
+                            Expanded(
+                              child: _buildSubtitle(context, colorsTheme),
+                            ),
+                            _buildMuteIcon(colorsTheme),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
+            _buildDivider(colorsTheme),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Separator between items: starts at the title (aligned past the avatar) and
+  /// runs to the right edge.
+  Widget _buildDivider(SemanticColorScheme colorsTheme) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: _horizontalPadding + _avatarSize.value + _avatarSpacing,
+      ),
+      child: Divider(
+        height: 1,
+        thickness: 0.5,
+        color: colorsTheme.strokeColorPrimary,
       ),
     );
   }
@@ -206,7 +238,7 @@ class _ConversationItemState extends State<ConversationItem> {
       // Build prefix for unread count (only when muted and unreadCount >= 2)
       String unreadPrefix = '';
       if (widget.conversation.receiveOption == ReceiveMessageOption.notNotify && widget.conversation.unreadCount >= 2) {
-        unreadPrefix = '[${_formatUnreadCount(widget.conversation.unreadCount)} ${atomicLocale.messageNum}]';
+        unreadPrefix = '[${_formatUnreadCount(widget.conversation.unreadCount)} ${chatLocale.messageNum}]';
       }
 
       return RichText(
@@ -225,11 +257,11 @@ class _ConversationItemState extends State<ConversationItem> {
               TextSpan(
                 text: unreadPrefix,
                 style: FontScheme.caption2Regular.copyWith(
-                  color: colorsTheme.textColorSecondary,
+                  color: colorsTheme.textColorTertiary,
                 ),
               ),
             TextSpan(
-              text: atomicLocale.draft,
+              text: chatLocale.draft,
               style: FontScheme.caption2Regular.copyWith(
                 color: colorsTheme.textColorError,
               ),
@@ -237,7 +269,7 @@ class _ConversationItemState extends State<ConversationItem> {
             TextSpan(
               text: ' $localizedDraft',
               style: FontScheme.caption2Regular.copyWith(
-                color: colorsTheme.textColorSecondary,
+                color: colorsTheme.textColorTertiary,
               ),
             ),
           ],
@@ -254,7 +286,7 @@ class _ConversationItemState extends State<ConversationItem> {
 
     String unreadPrefix =
         widget.conversation.receiveOption == ReceiveMessageOption.notNotify && widget.conversation.unreadCount >= 2
-            ? '[${_formatUnreadCount(widget.conversation.unreadCount)} ${atomicLocale.messageNum}]'
+            ? '[${_formatUnreadCount(widget.conversation.unreadCount)} ${chatLocale.messageNum}]'
             : '';
 
     // If there's @ mention, show with red color
@@ -274,13 +306,13 @@ class _ConversationItemState extends State<ConversationItem> {
               TextSpan(
                 text: unreadPrefix,
                 style: FontScheme.caption2Regular.copyWith(
-                  color: colorsTheme.textColorSecondary,
+                  color: colorsTheme.textColorTertiary,
                 ),
               ),
             TextSpan(
               text: replaceText,
               style: FontScheme.caption2Regular.copyWith(
-                color: colorsTheme.textColorSecondary,
+                color: colorsTheme.textColorTertiary,
               ),
             ),
           ],
@@ -293,7 +325,7 @@ class _ConversationItemState extends State<ConversationItem> {
     return Text(
       displayText,
       style: FontScheme.caption2Regular.copyWith(
-        color: colorsTheme.textColorSecondary,
+        color: colorsTheme.textColorTertiary,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -339,11 +371,11 @@ class _ConversationItemState extends State<ConversationItem> {
     // Build prefix based on @ types
     // Priority: @All + @Me shows both tags, @Me shows [@Me], @All shows [@All]
     if (hasAtAll && hasAtMe) {
-      return '${atomicLocale.conversationListAtAll} ${atomicLocale.conversationListAtMe} ';
+      return '${chatLocale.conversationListAtAll} ${chatLocale.conversationListAtMe} ';
     } else if (hasAtMe) {
-      return '${atomicLocale.conversationListAtMe} ';
+      return '${chatLocale.conversationListAtMe} ';
     } else if (hasAtAll) {
-      return '${atomicLocale.conversationListAtAll} ';
+      return '${chatLocale.conversationListAtAll} ';
     }
 
     return '';
@@ -362,21 +394,21 @@ class _ConversationItemState extends State<ConversationItem> {
     // Pin/Unpin action
     if (widget.config.isSupportPin) {
       actions.add(ActionSheetItem(
-        title: widget.conversation.isPinned ? atomicLocale.unpin : atomicLocale.pin,
+        title: widget.conversation.isPinned ? chatLocale.unpin : chatLocale.pin,
         onTap: () => widget.onPinToggle?.call(),
       ));
     }
 
     if (widget.config.isSupportClearHistory) {
       actions.add(ActionSheetItem(
-        title: atomicLocale.clearMessage,
+        title: chatLocale.clearMessage,
         onTap: () => widget.onClearHistory?.call(),
       ));
     }
 
     if (widget.config.isSupportDelete) {
       actions.add(ActionSheetItem(
-        title: atomicLocale.delete,
+        title: chatLocale.delete,
         isDestructive: true,
         onTap: () => widget.onDelete?.call(),
       ));
@@ -399,19 +431,28 @@ class _ConversationItemState extends State<ConversationItem> {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    // Show red dot for muted conversations with unread status
-    bool hasDot = false;
-    if (widget.conversation.receiveOption == ReceiveMessageOption.notNotify) {
-      // Check both unreadCount and markList for unread status
-      hasDot = widget.conversation.unreadCount > 0 ||
-          widget.conversation.conversationMarkList.any((mark) => mark == ConversationMarkType.unread);
+    final bool isMuted = widget.conversation.receiveOption == ReceiveMessageOption.notNotify;
+    final bool hasUnreadMark = widget.conversation.conversationMarkList
+        .any((mark) => mark == ConversationMarkType.unread);
+    final int unreadCount = widget.conversation.unreadCount;
+    final bool hasUnread = unreadCount > 0 || hasUnreadMark;
+
+    AvatarBadge badge;
+    if (!hasUnread) {
+      badge = const NoBadge();
+    } else if (isMuted) {
+      badge = const DotBadge();
+    } else if (unreadCount > 0) {
+      badge = CountBadge(unreadCount);
+    } else {
+      badge = const CountBadge(1);
     }
 
     return Avatar.image(
       name: _getAvatarText(),
       url: widget.conversation.avatarURL!,
-      badge: hasDot ? DotBadge() : NoBadge(),
-      size: AvatarSize.l,
+      badge: badge,
+      size: _avatarSize,
     );
   }
 
@@ -430,67 +471,26 @@ class _ConversationItemState extends State<ConversationItem> {
     return count.toString();
   }
 
-  Widget _buildUnreadOrMuteIcon() {
-    final colorsTheme = BaseThemeProvider.colorsOf(context);
-
-    // For muted conversations (except meeting groups), show mute icon
+  /// Build mute icon shown on the right side of the subtitle when the
+  /// conversation is muted (excluding meeting groups).
+  Widget _buildMuteIcon(SemanticColorScheme colorsTheme) {
     if (widget.conversation.receiveOption == ReceiveMessageOption.notNotify &&
         widget.conversation.groupType != GroupType.meeting) {
       return Padding(
-        padding: const EdgeInsets.only(left: 8.0),
+        padding: const EdgeInsets.only(left: 4.0),
         child: SvgPicture.asset(
           'chat_assets/icon/ic_mute.svg',
-          width: 18,
-          height: 18,
-          colorFilter: ColorFilter.mode(colorsTheme.textColorTertiary, BlendMode.srcIn),
+          width: 16,
+          height: 16,
+          colorFilter: ColorFilter.mode(colorsTheme.textColorDisable, BlendMode.srcIn),
           package: 'tencent_chat_uikit',
         ),
       );
     }
-
-    // Check for unread status: unreadCount > 0 OR marked as unread
-    final bool hasUnreadMark = widget.conversation.conversationMarkList.any((mark) => mark == ConversationMarkType.unread);
-
-    if (widget.conversation.unreadCount > 0) {
-      // Show real unread count
-      return _buildUnreadBadge(
-        _formatUnreadCount(widget.conversation.unreadCount),
-        colorsTheme,
-      );
-    } else if (hasUnreadMark) {
-      // Show virtual badge with "1" when marked as unread but unreadCount is 0
-      return _buildUnreadBadge('1', colorsTheme);
-    } else {
-      return const SizedBox.shrink();
-    }
+    return const SizedBox.shrink();
   }
 
-  Widget _buildUnreadBadge(String text, SemanticColorScheme colorsTheme) {
-    final bool isSingleDigit = text.length == 1;
-    return Container(
-      alignment: Alignment.center,
-      padding: isSingleDigit
-          ? EdgeInsets.zero
-          : const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      constraints: isSingleDigit
-          ? const BoxConstraints.tightFor(width: 18, height: 18)
-          : const BoxConstraints(minWidth: 16, minHeight: 16),
-      decoration: BoxDecoration(
-        color: colorsTheme.textColorError,
-        shape: isSingleDigit ? BoxShape.circle : BoxShape.rectangle,
-        borderRadius: isSingleDigit ? null : BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: FontScheme.caption3Medium.copyWith(
-          color: colorsTheme.textColorButton,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  /// Build error status icon (sendFail or violation) - shown to the left of time
+  /// Build error status icon (sendFail or violation) - shown to the left of the subtitle text
   Widget _buildErrorStatusIcon(SemanticColorScheme colorsTheme) {
     final lastMessage = widget.conversation.lastMessage;
     if (lastMessage != null &&

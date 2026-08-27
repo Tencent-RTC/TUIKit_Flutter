@@ -4,6 +4,7 @@ import 'package:tencent_chat_uikit/src/common/utils/uikit_util.dart';
 import 'package:flutter/material.dart';
 
 import '../../user_picker/user_picker.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
 class GroupAddMuteMember extends StatefulWidget {
   final GroupMemberStore memberStore;
@@ -21,7 +22,7 @@ class _GroupAddMuteMemberState extends State<GroupAddMuteMember> {
   List<UserPickerData> _dataSource = [];
 
   late SemanticColorScheme colorsTheme;
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _GroupAddMuteMemberState extends State<GroupAddMuteMember> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -67,7 +68,7 @@ class _GroupAddMuteMemberState extends State<GroupAddMuteMember> {
       if (result.errorCode != 0) {
         debugPrint('muteMember failed, errorCode:${result.errorCode}, errorMessage:${result.errorMessage}');
         if (mounted) {
-          Toast.error(context, atomicLocale.addFailed);
+          Toast.error(context, chatLocale.addFailed);
         }
       } else {
         if (mounted) {
@@ -81,7 +82,7 @@ class _GroupAddMuteMemberState extends State<GroupAddMuteMember> {
   Widget build(BuildContext context) {
     return UserPicker(
       dataSource: _dataSource,
-      title: atomicLocale.groupMember,
+      title: chatLocale.groupMember,
       maxCount: 20,
       onConfirm: _onConfirm,
     );

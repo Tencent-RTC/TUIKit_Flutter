@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tuikit_atomic_x/base_component/localizations/atomic_localizations.dart';
+import '../common/language/gen/chat_localizations.dart';
 import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
 import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'emoji_picker_config.dart';
@@ -197,7 +197,7 @@ class EmojiPickerContent extends StatefulWidget {
 }
 
 class EmojiPickerContentState extends State<EmojiPickerContent> {
-  late AtomicLocalizations atomicLocale;
+  late ChatLocalizations chatLocale;
   late SemanticColorScheme colorsTheme;
 
   sendStickerMessage(int type, String name, int stickerIndex) {
@@ -219,7 +219,7 @@ class EmojiPickerContentState extends State<EmojiPickerContent> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    atomicLocale = AtomicLocalizations.of(context);
+    chatLocale = ChatLocalizations.of(context);
     colorsTheme = BaseThemeProvider.colorsOf(context);
   }
 
@@ -285,7 +285,7 @@ class EmojiPickerContentState extends State<EmojiPickerContent> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: _buildActionButtons(colorsTheme, atomicLocale),
+              child: _buildActionButtons(colorsTheme, chatLocale),
             ),
           ],
         ),
@@ -293,7 +293,7 @@ class EmojiPickerContentState extends State<EmojiPickerContent> {
     );
   }
 
-  Widget _buildActionButtons(SemanticColorScheme colorsTheme, AtomicLocalizations atomicLocale) {
+  Widget _buildActionButtons(SemanticColorScheme colorsTheme, ChatLocalizations chatLocale) {
     return Container(
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -335,7 +335,7 @@ class EmojiPickerContentState extends State<EmojiPickerContent> {
                 ),
                 child: Center(
                   child: Text(
-                    atomicLocale.send,
+                    chatLocale.send,
                     style: TextStyle(
                       color: colorsTheme.textColorButton,
                       fontSize: 14,

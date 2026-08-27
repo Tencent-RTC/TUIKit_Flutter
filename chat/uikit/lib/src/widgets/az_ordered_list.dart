@@ -7,6 +7,12 @@ import 'package:tencent_chat_uikit/src/third_party/lpinyin/lpinyin.dart';
 
 import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
 
+/// Row metrics shared by the list item and its divider, so the divider always
+/// starts where the label starts.
+const double azItemHorizontalPadding = 16;
+const double azItemAvatarSpacing = 12;
+const AvatarSize azItemAvatarSize = AvatarSize.m;
+
 class AZOrderedListItem {
   final String key;
   final String label;
@@ -235,7 +241,7 @@ class _AZOrderedListState extends State<AZOrderedList> {
           if (widget.header != null) widget.header!,
           Expanded(
             child: Container(
-              color: colorsTheme.bgColorOperate,
+              color: colorsTheme.bgColorInput,
               child: listView,
             ),
           ),
@@ -256,35 +262,45 @@ class _AZOrderedListState extends State<AZOrderedList> {
       highlightColor: colorsTheme.clearColor,
       child: Container(
         color: colorsTheme.listColorDefault,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
+        child: Column(
           children: [
-            Avatar.image(
-              name: item.label,
-              url: item.avatarURL,
-              size: AvatarSize.l,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: azItemHorizontalPadding,
+                vertical: 12,
+              ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Flexible(
-                    child: Text(
-                      item.label,
-                      style: FontScheme.body4Regular.copyWith(
-                        color: colorsTheme.textColorPrimary,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Avatar.image(
+                    name: item.label,
+                    url: item.avatarURL,
+                    size: azItemAvatarSize,
+                  ),
+                  const SizedBox(width: azItemAvatarSpacing),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            item.label,
+                            style: FontScheme.body4Regular.copyWith(
+                              color: colorsTheme.textColorPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (item.nameAccessoryBuilder != null) ...[
+                          const SizedBox(width: 8),
+                          item.nameAccessoryBuilder!(context),
+                        ],
+                      ],
                     ),
                   ),
-                  if (item.nameAccessoryBuilder != null) ...[
-                    const SizedBox(width: 8),
-                    item.nameAccessoryBuilder!(context),
-                  ],
                 ],
               ),
             ),
+            buildAZItemDivider(colorsTheme),
           ],
         ),
       ),
@@ -299,17 +315,31 @@ class _AZOrderedListState extends State<AZOrderedList> {
     return Container(
       height: 40,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.only(left: 16.0),
+      padding: const EdgeInsets.only(left: azItemHorizontalPadding),
       alignment: Alignment.centerLeft,
-      color: colorsTheme.bgColorOperate,
+      color: colorsTheme.bgColorInput,
       child: Text(
         tag,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: colorsTheme.textColorPrimary,
+        style: FontScheme.caption2Regular.copyWith(
+          color: colorsTheme.textColorTertiary,
         ),
       ),
     );
   }
+}
+
+/// Divider aligned with the label column: starts where the text starts and
+/// stops [azItemHorizontalPadding] short of the right edge.
+Widget buildAZItemDivider(SemanticColorScheme colorsTheme) {
+  return Padding(
+    padding: EdgeInsets.only(
+      left: azItemHorizontalPadding + azItemAvatarSize.value + azItemAvatarSpacing,
+      right: azItemHorizontalPadding,
+    ),
+    child: Divider(
+      height: 0.5,
+      thickness: 0.5,
+      color: colorsTheme.strokeColorPrimary,
+    ),
+  );
 }

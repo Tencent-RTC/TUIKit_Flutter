@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -42,12 +45,13 @@ dependencies:
   shared_preferences: ^2.5.0
 
   flutter_svg: ^2.0.9
+  url_launcher: ^6.3.1
   tencent_chat_uikit:
     path: ../uikit/
 
   tencent_calls_uikit:
     path: ../../call
-  tencent_cloud_chat_push: ^8.8.7357
+  tencent_cloud_chat_push: ^9.0.7652+1
 
 dependency_overrides:
   tencent_cloud_chat_sdk: ^9.0.7652
@@ -116,6 +120,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Generates DemoLocalizations from lib/common/language/i10n/*.arb, see l10n.yaml.
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

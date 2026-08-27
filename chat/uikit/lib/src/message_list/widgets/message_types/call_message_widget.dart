@@ -1,5 +1,6 @@
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,6 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final atomicLocale = AtomicLocalizations.of(context);
     CallingMessageDataProvider provider = CallingMessageDataProvider(widget.message, context);
     if (!provider.isCallingSignal) {
       return Container();
@@ -64,10 +64,10 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
     final content = Container(
       key: widget.bubbleKey,
       constraints: BoxConstraints(
-        maxWidth: widget.maxWidth * 0.7,
+        maxWidth: widget.maxWidth,
       ),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: _buildCallContentWithStatusAndTime(colors, atomicLocale, provider),
+      child: _buildCallContentWithStatusAndTime(colors, provider),
     );
 
     final bubble = widget.backgroundBuilder?.call(content) ??
@@ -98,26 +98,27 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
 
   Widget _buildCallContentWithStatusAndTime(
     SemanticColorScheme colors,
-    AtomicLocalizations atomicLocale,
     CallingMessageDataProvider provider,
   ) {
+    final statusAndTimeWidgets = buildStatusAndTimeWidgets(
+      message: widget.message,
+      isSelf: widget.isSelf,
+      colors: colors,
+      onResendTap: widget.onResendTap,
+      isShowTimeInBubble: widget.config.isShowTimeInBubble,
+      isInMergedDetailView: widget.isInMergedDetailView,
+    );
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Flexible(
-          child: _buildCallContent(colors, atomicLocale, provider),
+          child: _buildCallContent(colors, provider),
         ),
-        ...[
+        if (statusAndTimeWidgets.isNotEmpty) ...[
           const SizedBox(width: 8),
-          ...buildStatusAndTimeWidgets(
-            message: widget.message,
-            isSelf: widget.isSelf,
-            colors: colors,
-            onResendTap: widget.onResendTap,
-            isShowTimeInBubble: widget.config.isShowTimeInBubble,
-            isInMergedDetailView: widget.isInMergedDetailView,
-          ),
+          ...statusAndTimeWidgets,
         ],
       ],
     );
@@ -125,40 +126,39 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
 
   Widget _buildCallContent(
     SemanticColorScheme colors,
-    AtomicLocalizations atomicLocale,
     CallingMessageDataProvider provider,
   ) {
+    final icon = _buildCallIcon(colors, provider);
+    final text = Flexible(
+      child: Text(
+        provider.content,
+        style: FontScheme.caption2Medium.copyWith(
+          color: widget.isSelf ? colors.textColorAntiPrimary : colors.textColorPrimary,
+          height: 1.4,
+        ),
+      ),
+    );
+
+    // Received: [icon] text. Sent: text [icon] — the icon sits on the sender's
+    // side (right), matching the design.
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildCallIcon(colors, provider),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            provider.content,
-            style: FontScheme.caption2Medium.copyWith(
-              color: widget.isSelf ? colors.textColorAntiPrimary : colors.textColorPrimary,
-              height: 1.4,
-            ),
-          ),
-        ),
-      ],
+      children: widget.isSelf
+          ? [text, const SizedBox(width: 8), icon]
+          : [icon, const SizedBox(width: 8), text],
     );
   }
 
   Widget _buildCallIcon(SemanticColorScheme colors, CallingMessageDataProvider provider) {
-    IconData iconData;
+    final bool isAudio = provider.streamMediaType == CallStreamMediaType.audio;
+    final String asset = isAudio
+        ? 'chat_assets/icon/voice_call.png'
+        : (widget.isSelf ? 'chat_assets/icon/video_call_self.png' : 'chat_assets/icon/video_call.png');
 
-    if (provider.streamMediaType == CallStreamMediaType.audio) {
-      iconData = Icons.phone;
-    } else {
-      iconData = Icons.videocam;
-    }
-
-    return Icon(
-      iconData,
-      size: 16,
-      color: widget.isSelf ? colors.textColorAntiPrimary : colors.textColorSecondary,
+    return Image.asset(
+      asset,
+      package: 'tencent_chat_uikit',
+      height: 18,
     );
   }
 
@@ -170,39 +170,9 @@ class _CallMessageWidgetState extends State<CallMessageWidget> with MessageStatu
     }
   }
 
-  BorderRadius _getBubbleBorderRadius() {
-    switch (widget.alignment) {
-      case 'left':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(0),
-          bottomRight: Radius.circular(18),
-        );
-      case 'right':
-        return const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(18),
-          bottomRight: Radius.circular(0),
-        );
-      case 'two-sided':
-      default:
-        if (widget.isSelf) {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(18),
-            bottomRight: Radius.circular(0),
-          );
-        } else {
-          return const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(0),
-            bottomRight: Radius.circular(18),
-          );
-        }
-    }
-  }
+  BorderRadius _getBubbleBorderRadius() => MessageUtil.bubbleBorderRadius(
+        alignment: widget.alignment,
+        isSelf: widget.isSelf,
+        radius: widget.config.textBubbleCornerRadius,
+      );
 }

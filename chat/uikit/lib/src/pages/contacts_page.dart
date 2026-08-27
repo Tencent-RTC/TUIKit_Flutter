@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart' hide IconButton;
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:tencent_chat_uikit/src/contact_list/pages/add_friend.dart';
 import 'package:tencent_chat_uikit/src/contact_list/pages/add_group.dart';
 
 import 'chat_page.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 const String addFriendMenuString = "addFriend";
 const String addGroupMenuString = "addGroup";
@@ -11,10 +13,31 @@ const String addGroupMenuString = "addGroup";
 class ContactsPage extends StatelessWidget {
   final VoidCallback? onBackPressed;
 
+  /// Forwarded to every [ChatPage] opened from this page, so a host can add
+  /// more-panel actions no matter how the user reached the conversation.
+  final ChatMessageInputConfig messageInputConfig;
+
+  /// Forwarded to every [ChatPage] opened from this page, so a host can render
+  /// custom messages no matter how the user reached the conversation.
+  final ChatMessageListConfig messageListConfig;
+
   const ContactsPage({
     super.key,
     this.onBackPressed,
+    this.messageInputConfig = const ChatMessageInputConfig(
+      isShowAudioCall: true,
+      isShowVideoCall: true,
+    ),
+    this.messageListConfig = const ChatMessageListConfig(),
   });
+
+  ChatPage _chatPage(ConversationInfo conversation) {
+    return ChatPage(
+      conversation: conversation,
+      messageInputConfig: messageInputConfig,
+      messageListConfig: messageListConfig,
+    );
+  }
 
   void _onSendMessageClick(BuildContext context, {String? userID, String? groupID}) async {
     ConversationInfo conversation;
@@ -43,9 +66,7 @@ class ContactsPage extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatPage(
-            conversation: conversation,
-          ),
+          builder: (context) => _chatPage(conversation),
         ),
       );
     }
@@ -61,9 +82,7 @@ class ContactsPage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatPage(
-          conversation: conversationInfo,
-        ),
+        builder: (context) => _chatPage(conversationInfo),
       ),
     );
   }
@@ -83,28 +102,34 @@ class ContactsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AtomicLocalizations atomicLocale = AtomicLocalizations.of(context);
+    ChatLocalizations chatLocale = ChatLocalizations.of(context);
     SemanticColorScheme colorsScheme = BaseThemeProvider.colorsOf(context);
     return Scaffold(
-      backgroundColor: colorsScheme.bgColorOperate,
+      backgroundColor: colorsScheme.bgColorInput,
       appBar: AppBar(
         backgroundColor: colorsScheme.bgColorOperate,
         automaticallyImplyLeading: false,
         leading: onBackPressed != null
             ? IconButton.buttonContent(
-                content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsScheme.buttonColorPrimaryDefault)),
+                content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsScheme.textColorPrimary)),
                 type: ButtonType.noBorder,
                 size: ButtonSize.l,
                 onClick: onBackPressed,
               )
             : null,
-        title: Text(atomicLocale.contact,
-            style: FontScheme.title3Medium.copyWith(color: colorsScheme.textColorPrimary)),
-        centerTitle: false,
+        title: Text(chatLocale.contact,
+            style: FontScheme.body4Bold.copyWith(color: colorsScheme.textColorPrimary)),
+        centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.add, color: colorsScheme.textColorPrimary),
+            icon: SvgPicture.asset(
+              'chat_assets/icon/create_chat.svg',
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(colorsScheme.textColorPrimary, BlendMode.srcIn),
+              package: 'tencent_chat_uikit',
+            ),
             offset: const Offset(0, 40),
             color: colorsScheme.bgColorDialog,
             shape: RoundedRectangleBorder(
@@ -117,9 +142,16 @@ class ContactsPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.person_add, color: colorsScheme.textColorPrimary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/create_c2c_chat.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colorsScheme.textColorPrimary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 8),
-                    Text(atomicLocale.addFriend, style: TextStyle(color: colorsScheme.textColorPrimary)),
+                    Text(chatLocale.addFriend,
+                        style: FontScheme.caption1Regular.copyWith(color: colorsScheme.textColorPrimary)),
                   ],
                 ),
               ),
@@ -129,9 +161,16 @@ class ContactsPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.group_add, color: colorsScheme.textColorPrimary),
+                    SvgPicture.asset(
+                      'chat_assets/icon/create_group_chat.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(colorsScheme.textColorPrimary, BlendMode.srcIn),
+                      package: 'tencent_chat_uikit',
+                    ),
                     const SizedBox(width: 8),
-                    Text(atomicLocale.addGroup, style: TextStyle(color: colorsScheme.textColorPrimary)),
+                    Text(chatLocale.addGroup,
+                        style: FontScheme.caption1Regular.copyWith(color: colorsScheme.textColorPrimary)),
                   ],
                 ),
               ),

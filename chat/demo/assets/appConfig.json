@@ -32,6 +32,6 @@
     "hideSearch": false
   },
   "avatar": {
-    "shape": "circular"
+    "shape": "rounded"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "@@locale": "en",
+  "customMessageMenuTitle": "Custom Message",
+  "customMessageContent": "Welcome to the Cloud Communication IM family!",
+  "customMessageViewDetails": "View Details",
+  "welcomeMessage": "Welcome to Chat Demo! Send a message to try out the basic chat.\nTo add friends, go to the Contacts page and tap the plus button.\nTo make audio or video calls, tap the plus button below -> Voice Call/Video Call."
+}

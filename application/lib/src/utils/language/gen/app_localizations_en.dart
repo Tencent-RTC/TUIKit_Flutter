@@ -172,4 +172,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get app_can_not_start_room_during_call =>
       'You are in a call. Please try again after it ends.';
+
+  @override
+  String get app_chat_welcome_message =>
+      'Welcome to Chat Demo! Send a message to try out the basic chat.\nTo add friends, go to the Contacts page and tap the plus button.\nTo make audio or video calls, tap the plus button below -> Voice Call/Video Call.';
 }

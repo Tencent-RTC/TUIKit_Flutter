@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/message_input/src/chat_special_text_span_builder.dart';
 import 'package:tencent_chat_uikit/src/third_party/extended_text/extended_text.dart';
+import '../../common/language/gen/chat_localizations.dart';
 
-/// A quote message preview block shown inside a message bubble.
+/// A quote message preview block shown under a message bubble.
 /// Displays the quoted message's sender name + content summary/thumbnail.
 /// Tapping triggers navigation to the quoted message.
 class QuoteMessagePreview extends StatelessWidget {
@@ -23,44 +24,23 @@ class QuoteMessagePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final locale = AtomicLocalizations.of(context);
+    final locale = ChatLocalizations.of(context);
 
     return GestureDetector(
       onTap: () => _handleTap(context, locale),
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: colors.sliderColorEmpty,
-          borderRadius: BorderRadius.circular(6),
+          color: colors.bgColorBubbleReciprocal,
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: IntrinsicHeight(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Left vertical bar
-              Container(
-                width: 3,
-                decoration: BoxDecoration(
-                  color: colors.switchColorOff,
-                ),
-              ),
-              // Content area
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  child: _buildContent(colors, locale),
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: _buildContent(colors, locale),
       ),
     );
   }
 
-  Widget _buildContent(SemanticColorScheme colors, AtomicLocalizations locale) {
+  Widget _buildContent(SemanticColorScheme colors, ChatLocalizations locale) {
     // Display priority — derived from (status, payload) only; no extra
     // "isNotFound" flag is needed because the engine repurposes
     // `status = deleted` to mean "original unreachable" when cloud
@@ -113,7 +93,7 @@ class QuoteMessagePreview extends StatelessWidget {
   ///     repurposed by the engine to mean "cloud lookup gave up" —
   ///     either way it can't be located in the list)
   ///   - any other state (including partial-loading) → defer to caller
-  void _handleTap(BuildContext context, AtomicLocalizations locale) {
+  void _handleTap(BuildContext context, ChatLocalizations locale) {
     final unreachable = quoteInfo.status == MessageStatus.revoked ||
         quoteInfo.status == MessageStatus.deleted;
     if (unreachable) {
@@ -158,7 +138,7 @@ class QuoteMessagePreview extends StatelessWidget {
     );
   }
 
-  Widget _buildFullContent(SemanticColorScheme colors, AtomicLocalizations locale) {
+  Widget _buildFullContent(SemanticColorScheme colors, ChatLocalizations locale) {
     final senderName = _getSenderName();
     final payload = quoteInfo.messagePayload!;
     final thumbnail = _getThumbnailUrl(payload);
@@ -200,7 +180,7 @@ class QuoteMessagePreview extends StatelessWidget {
     );
   }
 
-  Widget _buildContentWidget(MessagePayload payload, SemanticColorScheme colors, AtomicLocalizations locale) {
+  Widget _buildContentWidget(MessagePayload payload, SemanticColorScheme colors, ChatLocalizations locale) {
     final textStyle = FontScheme.caption3Regular.copyWith(
       color: colors.textColorSecondary,
     );
@@ -255,12 +235,14 @@ class QuoteMessagePreview extends StatelessWidget {
 
   String _getSenderName() {
     final sender = quoteInfo.sender;
-    final name = sender.friendRemark ?? sender.nameCard ?? sender.nickname;
-    if (name != null && name.isNotEmpty) return name;
+    for (final candidate in [sender.friendRemark, sender.nameCard, sender.nickname]) {
+      final name = candidate?.trim();
+      if (name != null && name.isNotEmpty) return name;
+    }
     return sender.userID;
   }
 
-  String _getContentSummary(MessagePayload payload, AtomicLocalizations locale) {
+  String _getContentSummary(MessagePayload payload, ChatLocalizations locale) {
     switch (payload) {
       case TextMessagePayload p:
         return p.text;

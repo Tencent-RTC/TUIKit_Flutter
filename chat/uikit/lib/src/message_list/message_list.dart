@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:flutter/services.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
+import 'package:tencent_chat_uikit/src/common/utils/chat_background_store.dart';
+import 'package:tencent_chat_uikit/src/common/utils/time_util.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/asr_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/call_ui_extension.dart';
@@ -18,10 +20,13 @@ import 'package:tencent_chat_uikit/src/message_list/widgets/message_tongue_widge
 import 'package:tencent_chat_uikit/src/message_list/widgets/forward/forward_service.dart';
 import 'package:tencent_chat_uikit/src/third_party/scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tencent_chat_uikit/src/third_party/visibility_detector/visibility_detector.dart';
+import '../common/language/gen/chat_localizations.dart';
 
 export 'message_list_config.dart';
+export 'utils/message_summary_registry.dart';
 export 'widgets/message_bubble.dart';
 export 'widgets/message_item.dart';
+export 'widgets/message_types/custom_message_renderer.dart';
 export 'widgets/message_types/custom_message_widget.dart';
 export 'widgets/message_types/system_message_widget.dart';
 export 'widgets/multi_select_bottom_bar.dart';
@@ -210,7 +215,7 @@ class _NavReloadingLatest extends _NavigationState {
 class _MessageListState extends State<MessageList> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late MessageListStore _messageListStore;
   GroupInfo? _groupInfo;
-  late AtomicLocalizations _atomicLocale;
+  late ChatLocalizations _chatLocale;
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   List<MessageInfo> _messages = [];
@@ -278,6 +283,10 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   late final VoidCallback _messageListStateChangedListener;
   late final VoidCallback _scrollListenerCallback;
   late final VoidCallback _joinedGroupListChangedListener;
+  late final VoidCallback _chatBackgroundListener;
+
+  /// Persisted chat background image for this conversation, `null` for none.
+  String? _chatBackgroundImageUri;
 
   // AutomaticKeepAliveClientMixin requires this method to be implemented
   // Returning true indicates that the state is maintained even if the Widget is not in the view.
@@ -306,6 +315,10 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     _scrollListenerCallback = _scrollListener;
     _joinedGroupListChangedListener = _onJoinedGroupListChanged;
 
+    _chatBackgroundListener = _onChatBackgroundChanged;
+    ChatBackgroundStore.shared.revision.addListener(_chatBackgroundListener);
+    _loadChatBackground();
+
     _messageListStore =
         MessageListStore.create(conversationID: widget.conversationID);
     _messageListStore.state.messageList.addListener(_messageListStateChangedListener);
@@ -326,19 +339,13 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   Widget _buildTimeDivider(String timeString, SemanticColorScheme colorsTheme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8.0),
       child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: colorsTheme.strokeColorPrimary,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            timeString,
-            style: FontScheme.caption3Regular.copyWith(
-              color: colorsTheme.textColorTertiary,
-            ),
+        child: Text(
+          timeString,
+          textAlign: TextAlign.center,
+          style: FontScheme.caption3Regular.copyWith(
+            color: colorsTheme.textColorTertiary,
           ),
         ),
       ),
@@ -353,10 +360,23 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     if (widget.conversationID.startsWith(groupConversationIDPrefix)) {
       GroupStore.shared.state.joinedGroupList.removeListener(_joinedGroupListChangedListener);
     }
+    ChatBackgroundStore.shared.revision.removeListener(_chatBackgroundListener);
     _receiptTimer?.cancel();
     _asrDisplayManager.dispose();
     _translationDisplayManager.dispose();
     super.dispose();
+  }
+
+  void _onChatBackgroundChanged() {
+    final imageUri = ChatBackgroundStore.shared.peek(widget.conversationID);
+    if (imageUri == _chatBackgroundImageUri) return;
+    setState(() => _chatBackgroundImageUri = imageUri);
+  }
+
+  Future<void> _loadChatBackground() async {
+    final imageUri = await ChatBackgroundStore.shared.load(widget.conversationID);
+    if (!mounted || imageUri == _chatBackgroundImageUri) return;
+    setState(() => _chatBackgroundImageUri = imageUri);
   }
 
   void _scrollListener() {
@@ -823,6 +843,18 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     );
   }
 
+  /// Maximum width a bubble may occupy: the list's content width minus an avatar
+  /// column on *both* sides.
+  ///
+  /// Both are deducted no matter who sent the message, so a self bubble ends
+  /// exactly where a received bubble begins instead of growing into the empty
+  /// column on the left. Android reserves the same area through the 0.72
+  /// screen-width ratio in `resolvePreferredBubbleMaxWidth`.
+  double _resolveBubbleMaxWidth(BuildContext context) {
+    final avatarColumn = AvatarSize.m.value + widget.config.avatarSpacing;
+    return MediaQuery.sizeOf(context).width - 32 - avatarColumn * 2;
+  }
+
   Widget _buildMessageItem(MessageInfo message, SemanticColorScheme colors) {
     bool isGroup = widget.conversationID.startsWith(groupConversationIDPrefix);
 
@@ -835,7 +867,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             message: message,
             conversationID: widget.conversationID,
             isGroup: isGroup,
-            maxWidth: MediaQuery.sizeOf(context).width - 32,
+            maxWidth: _resolveBubbleMaxWidth(context),
             messageListStore: _messageListStore,
             isHighlighted: _highlightedMessageId == message.msgID,
             onHighlightComplete: () {
@@ -902,19 +934,35 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     super.build(context);
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
+    final backgroundImageUri = _chatBackgroundImageUri;
+
     return Expanded(
       child: Container(
-        color: colorsTheme.bgColorOperate,
+        color: colorsTheme.bgColorTopBar,
         child: Stack(
           children: [
+            if (backgroundImageUri != null)
+              Positioned.fill(
+                key: const ValueKey('message_list_background'),
+                child: Image.network(
+                  backgroundImageUri,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
+            // Keys keep the list element stable when optional layers such as the
+            // background or the call banner are inserted or removed; without them
+            // Stack matches children by index and rebuilds the list from scratch,
+            // which re-attaches _itemScrollController to a new state.
             Positioned.fill(
+              key: const ValueKey('message_list_content'),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
                   padding: EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    top: _callStatusWidget != null ? 70 : 8,
+                    top: _callStatusWidget != null ? 70 : 0,
                     bottom: 8,
                   ),
                   child: ScrollablePositionedList.builder(
@@ -934,6 +982,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             ),
             if (_callStatusWidget != null)
               Positioned(
+                key: const ValueKey('message_list_call_status'),
                 top: 8,
                 left: 8,
                 right: 8,
@@ -942,6 +991,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             // Top-right unread messages tongue
             if (widget.config.isSupportTongue && _unreadTongueType == TongueType.unreadMessages)
               Positioned(
+                key: const ValueKey('message_list_unread_tongue'),
                 top: _callStatusWidget != null ? 78 : 16,
                 right: 16,
                 child: MessageTongueWidget(
@@ -951,13 +1001,14 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
                     isLoading: _navigationState is _NavToUnread,
                   ),
                   onTap: _onUnreadTongueTap,
-                  backToLatestText: _atomicLocale.backToLatest,
-                  newMessageCountText: (count) => _atomicLocale.newMessageCount(count),
+                  backToLatestText: _chatLocale.backToLatest,
+                  newMessageCountText: (count) => _chatLocale.newMessageCount(count),
                 ),
               ),
             // Bottom-right tongue (back to latest / new messages / @mention)
             if (widget.config.isSupportTongue && _tongueType != TongueType.none)
               Positioned(
+                key: const ValueKey('message_list_tongue'),
                 bottom: 16,
                 right: 16,
                 child: MessageTongueWidget(
@@ -970,9 +1021,9 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
                         || _navigationState is _NavReloadingLatest,
                   ),
                   onTap: _onTongueTap,
-                  backToLatestText: _atomicLocale.backToLatest,
-                  newMessageCountText: (count) => _atomicLocale.newMessageCount(count),
-                  backToQuoteText: _atomicLocale.backToQuotePosition,
+                  backToLatestText: _chatLocale.backToLatest,
+                  newMessageCountText: (count) => _chatLocale.newMessageCount(count),
+                  backToQuoteText: _chatLocale.backToQuotePosition,
                 ),
               ),
           ],
@@ -1073,7 +1124,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _atomicLocale = AtomicLocalizations.of(context);
+    _chatLocale = ChatLocalizations.of(context);
 
     // Resolve @mention text after locale is available
     if (_pendingAtType != null) {
@@ -1086,9 +1137,9 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     switch (atType) {
       case GroupAtType.atMe:
       case GroupAtType.atAllAtMe:
-        return _atomicLocale.conversationListAtMe;
+        return _chatLocale.conversationListAtMe;
       case GroupAtType.atAll:
-        return _atomicLocale.conversationListAtAll;
+        return _chatLocale.conversationListAtAll;
     }
   }
 
@@ -1650,10 +1701,10 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     AtomicAlertDialog.showWithConfig(
       context,
       config: AlertDialogConfig(
-        content: _atomicLocale.deleteMessagesConfirmTip,
-        cancelConfig: ButtonConfig(text: _atomicLocale.cancel),
+        content: _chatLocale.deleteMessagesConfirmTip,
+        cancelConfig: ButtonConfig(text: _chatLocale.cancel),
         confirmConfig: ButtonConfig(
-          text: _atomicLocale.confirm,
+          text: _chatLocale.confirm,
           type: TextColorPreset.red,
           onClick: () async {
             final messagesToDelete = selectedMessages;
@@ -1732,38 +1783,30 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
     final message = _messages[index];
 
-    // Skip time display for system messages when they are hidden
-    if (!widget.config.isShowSystemMessage && _isSystemMessage(message)) {
+    // System messages render as standalone centered tips and never carry a time
+    // header of their own.
+    if (_isSystemMessage(message)) {
       return null;
     }
 
-    if (index == _messages.length - 1) {
-      return _getTimeString(message.timestamp ?? 0);
-    }
-
-    // Find the previous message, skipping system messages if they are hidden
-    int prevIndex = index + 1;
+    // Walk back to the closest non-system message so a run of tips in between
+    // doesn't restart the aggregation window.
     MessageInfo? prevMessage;
-
-    while (prevIndex < _messages.length) {
+    for (int prevIndex = index + 1; prevIndex < _messages.length; prevIndex++) {
       final candidate = _messages[prevIndex];
-
-      // If system messages are hidden, skip them when calculating time intervals
-      if (!widget.config.isShowSystemMessage && _isSystemMessage(candidate)) {
-        prevIndex++;
+      if (_isSystemMessage(candidate)) {
         continue;
       }
-
       prevMessage = candidate;
       break;
     }
 
-    // If no valid previous message found, show time for this message
+    // Oldest message in the list always gets a time header.
     if (prevMessage == null) {
       return _getTimeString(message.timestamp ?? 0);
     }
 
-    final timeInterval = _getIntervalSeconds(message.timestamp!, prevMessage.timestamp!);
+    final timeInterval = _getIntervalSeconds(message.timestamp ?? 0, prevMessage.timestamp ?? 0);
     if (timeInterval > _messageAggregationTime) {
       return _getTimeString(message.timestamp ?? 0);
     }
@@ -1776,48 +1819,11 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   }
 
   String? _getTimeString(int timestamp) {
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    final DateTime now = DateTime.now();
-
-    final String timeStr =
-        "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
-
-    final DateTime today = DateTime(now.year, now.month, now.day);
-    final DateTime messageDay = DateTime(date.year, date.month, date.day);
-    final int daysDiff = today.difference(messageDay).inDays;
-
-    if (daysDiff == 0) {
-      return timeStr;
-    }
-
-    if (daysDiff == 1) {
-      return "${_atomicLocale.yesterday} $timeStr";
-    }
-
-    // Compute Monday-based week start to determine "same week".
-    final int nowWeekIndex = (now.weekday + 6) % 7;
-    final int dateWeekIndex = (date.weekday + 6) % 7;
-    final DateTime nowWeekStart = today.subtract(Duration(days: nowWeekIndex));
-    final DateTime dateWeekStart = messageDay.subtract(Duration(days: dateWeekIndex));
-
-    if (now.year == date.year && nowWeekStart == dateWeekStart) {
-      final weekdays = [
-        _atomicLocale.weekdaySunday,
-        _atomicLocale.weekdayMonday,
-        _atomicLocale.weekdayTuesday,
-        _atomicLocale.weekdayWednesday,
-        _atomicLocale.weekdayThursday,
-        _atomicLocale.weekdayFriday,
-        _atomicLocale.weekdaySaturday,
-      ];
-      return "${weekdays[date.weekday % 7]} $timeStr";
-    }
-
-    if (now.year == date.year) {
-      return "${date.month}/${date.day} $timeStr";
-    }
-
-    return "${date.year}/${date.month}/${date.day} $timeStr";
+    return TimeUtil.convertToFormatTime(
+      timestamp,
+      context,
+      style: TimeFormatStyle.messageList,
+    );
   }
 
   Future<void> _loadGroupAttributes() async {
@@ -1944,17 +1950,17 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       actions: [
         // TODO: 暂时屏蔽"隐藏"入口，后续会重新支持，请勿删除
         // AsrPopupMenuAction(
-        //   label: _atomicLocale.hide,
+        //   label: _chatLocale.hide,
         //   iconAsset: 'chat_assets/icon/hide.svg',
         //   onTap: () => _hideAsrText(message),
         // ),
         AsrPopupMenuAction(
-          label: _atomicLocale.forward,
+          label: _chatLocale.forward,
           iconAsset: 'chat_assets/icon/forward.svg',
           onTap: () => _forwardAsrText(message),
         ),
         AsrPopupMenuAction(
-          label: _atomicLocale.copy,
+          label: _chatLocale.copy,
           iconAsset: 'chat_assets/icon/copy.svg',
           onTap: () => _copyAsrText(message),
         ),
@@ -2003,17 +2009,17 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       actions: [
         // TODO: 暂时屏蔽"隐藏"入口，后续会重新支持，请勿删除
         // AsrPopupMenuAction(
-        //   label: _atomicLocale.hide,
+        //   label: _chatLocale.hide,
         //   iconAsset: 'chat_assets/icon/hide.svg',
         //   onTap: () => _hideTranslationText(message),
         // ),
         AsrPopupMenuAction(
-          label: _atomicLocale.forward,
+          label: _chatLocale.forward,
           iconAsset: 'chat_assets/icon/forward.svg',
           onTap: () => _forwardTranslationText(message),
         ),
         AsrPopupMenuAction(
-          label: _atomicLocale.copy,
+          label: _chatLocale.copy,
           iconAsset: 'chat_assets/icon/copy.svg',
           onTap: () => _copyTranslationText(message),
         ),

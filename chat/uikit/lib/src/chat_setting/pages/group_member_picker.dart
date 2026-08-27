@@ -95,7 +95,7 @@ class _GroupMemberPickerState extends State<GroupMemberPicker> {
           backgroundColor: colorsTheme.bgColorTopBar,
           elevation: 0,
           leading: IconButton.buttonContent(
-            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.buttonColorPrimaryDefault)),
+            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
             type: ButtonType.noBorder,
             size: ButtonSize.l,
             onClick: () => Navigator.of(context).pop(),

@@ -44,7 +44,7 @@ class _VoiceSelectPageState extends State<VoiceSelectPage> {
   }
 
   Future<bool> _delete(CustomVoiceItem item) async {
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
     final ok =
         await AiMediaProcessManager.shared.deleteCustomVoice(voiceId: item.voiceId);
     if (!mounted) return ok;
@@ -65,7 +65,7 @@ class _VoiceSelectPageState extends State<VoiceSelectPage> {
   @override
   Widget build(BuildContext context) {
     final colors = BaseThemeProvider.colorsOf(context);
-    final chatLocale = ChatLocalizations.of(context)!;
+    final chatLocale = ChatLocalizations.of(context);
     final defaults = defaultVoiceList(chatLocale);
 
     return Scaffold(
@@ -175,7 +175,7 @@ class _VoiceSelectPageState extends State<VoiceSelectPage> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  ChatLocalizations.of(context)!.voiceCustomBadge,
+                  ChatLocalizations.of(context).voiceCustomBadge,
                   style: FontScheme.caption4Regular.copyWith(
                     color: colors.textColorButton,
                   ),
