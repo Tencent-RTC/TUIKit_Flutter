@@ -1,5 +1,6 @@
 import 'package:application/src/module_assembly/module_assembly.dart';
 import 'package:flutter/material.dart';
+import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
 import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
 import 'package:tencent_live_uikit/common/widget/toast.dart';
 import '../app_store/index.dart';
@@ -21,7 +22,9 @@ class _MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenWidth = MediaQuery.sizeOf(context).width;
+    _screenWidth = MediaQuery
+        .sizeOf(context)
+        .width;
     final cardWidth = _screenWidth / 2 - 12.width;
     final cardHeight = 106.0.height;
     return Scaffold(
@@ -168,7 +171,21 @@ class _MainWidgetState extends State<MainWidget> {
     KeyMetrics.reportKeyMetrics(KeyMetrics.kDemoClickRoom);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
-        return const RoomHomeWidget();
+        return RoomHomeWidget(chatPageBuilder: (roomId) =>
+            ChatPage(
+              conversation: ConversationInfo(
+                conversationID: '$groupConversationIDPrefix$roomId',
+                title: "Chat",
+                type: ConversationType.group,
+              ),
+              isShowAppBarActions: false,
+              messageInputConfig: const ChatMessageInputConfig(
+                isShowVideoRecorder: false,
+                isShowFile: false,
+                isShowAudioCall: false,
+                isShowVideoCall: false,
+              ),
+            ));
       },
     ));
   }

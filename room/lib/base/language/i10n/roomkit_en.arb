@@ -264,5 +264,6 @@
   "roomkit_err_100503_room_metadata_no_valid_keys": "There is no valid keys when delete metadata",
   "roomkit_err_100504_room_metadata_key_size_limit": "The size of key in the room's metadata exceeds the maximum byte limit",
   "roomkit_err_7002_invalid_user_id": "Invalid userid",
-  "roomkit_room_running": "Running"
+  "roomkit_room_running": "Running",
+  "roomkit_chat": "Chat"
 }

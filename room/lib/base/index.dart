@@ -9,3 +9,4 @@ export './extension/room_extension.dart';
 export './widget/index.dart';
 export './operator/index.dart';
 export './reporter/room_data_reporter.dart';
+export './typedef/room_type_def.dart';

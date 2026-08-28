@@ -865,4 +865,7 @@ class RoomLocalizationsJa extends RoomLocalizations {
 
   @override
   String get roomkit_room_running => '実行中';
+
+  @override
+  String get roomkit_chat => 'チャット';
 }

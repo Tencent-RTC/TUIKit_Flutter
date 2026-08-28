@@ -7,7 +7,9 @@ import 'room_create_widget.dart';
 import 'room_join_widget.dart';
 
 class RoomHomeWidget extends StatefulWidget {
-  const RoomHomeWidget({super.key});
+  final RoomChatPageBuilder? chatPageBuilder;
+
+  const RoomHomeWidget({super.key, this.chatPageBuilder});
 
   @override
   State<RoomHomeWidget> createState() => _RoomHomeWidgetState();
@@ -147,7 +149,7 @@ class _RoomHomeWidgetState extends State<RoomHomeWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return const RoomJoinWidget();
+          return RoomJoinWidget(chatPageBuilder: widget.chatPageBuilder);
         },
       ),
     );
@@ -157,7 +159,7 @@ class _RoomHomeWidgetState extends State<RoomHomeWidget> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return const RoomCreateWidget();
+          return RoomCreateWidget(chatPageBuilder: widget.chatPageBuilder);
         },
       ),
     );

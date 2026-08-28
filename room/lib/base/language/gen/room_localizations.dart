@@ -1685,6 +1685,12 @@ abstract class RoomLocalizations {
   /// In en, this message translates to:
   /// **'Running'**
   String get roomkit_room_running;
+
+  /// No description provided for @roomkit_chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get roomkit_chat;
 }
 
 class _RoomLocalizationsDelegate

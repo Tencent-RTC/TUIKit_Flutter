@@ -923,4 +923,7 @@ class RoomLocalizationsEn extends RoomLocalizations {
 
   @override
   String get roomkit_room_running => 'Running';
+
+  @override
+  String get roomkit_chat => 'Chat';
 }
