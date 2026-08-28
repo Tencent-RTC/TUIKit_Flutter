@@ -1304,6 +1304,9 @@ class ChatLocalizationsAr extends ChatLocalizations {
   String get addMembers => 'إضافة أعضاء';
 
   @override
+  String get removeMembers => 'إزالة العضو';
+
+  @override
   String get album => 'ألبوم';
 
   @override

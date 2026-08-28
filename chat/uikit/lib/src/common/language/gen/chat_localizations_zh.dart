@@ -1296,6 +1296,9 @@ class ChatLocalizationsZh extends ChatLocalizations {
   String get addMembers => '添加成员';
 
   @override
+  String get removeMembers => '移除成员';
+
+  @override
   String get album => '相册';
 
   @override
@@ -2630,6 +2633,9 @@ class ChatLocalizationsZhHans extends ChatLocalizationsZh {
   String get addMembers => '添加成员';
 
   @override
+  String get removeMembers => '移除成员';
+
+  @override
   String get album => '相册';
 
   @override
@@ -3962,6 +3968,9 @@ class ChatLocalizationsZhHant extends ChatLocalizationsZh {
 
   @override
   String get addMembers => '加成員';
+
+  @override
+  String get removeMembers => '移除成員';
 
   @override
   String get album => '相册';

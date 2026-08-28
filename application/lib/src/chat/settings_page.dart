@@ -166,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
           automaticallyImplyLeading: false,
           leading: widget.onBackPressed != null
               ? IconButton.buttonContent(
-                  content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
+                  content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorPrimary)),
                   type: ButtonType.noBorder,
                   size: ButtonSize.l,
                   onClick: widget.onBackPressed,

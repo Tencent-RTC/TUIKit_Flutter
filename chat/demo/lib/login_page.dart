@@ -189,6 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     ChatLocalizations chatLocale = ChatLocalizations.of(context);
     final loginState = Provider.of<LoginInfoState>(context);
+    final colors = BaseThemeProvider.colorsOf(context);
 
     return Scaffold(
       body: SafeArea(
@@ -214,28 +215,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 48),
                   TextField(
                     controller: _userIDController,
+                    style: TextStyle(color: colors.textColorPrimary),
+                    cursorColor: colors.textColorLink,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: colors.bgColorInput,
                       labelText: "User ID",
+                      labelStyle: TextStyle(color: colors.textColorSecondary),
+                      floatingLabelStyle: TextStyle(color: colors.textColorLink),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: colors.strokeColorPrimary,
                           width: 1.0,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: colors.strokeColorPrimary,
                           width: 1.0,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor.withOpacity(0.5),
+                          color: colors.textColorLink,
                           width: 1.5,
                         ),
                       ),

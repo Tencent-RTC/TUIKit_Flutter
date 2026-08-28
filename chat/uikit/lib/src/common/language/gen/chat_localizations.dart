@@ -2560,6 +2560,12 @@ abstract class ChatLocalizations {
   /// **'Add Members'**
   String get addMembers;
 
+  /// No description provided for @removeMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Member'**
+  String get removeMembers;
+
   /// No description provided for @album.
   ///
   /// In en, this message translates to:

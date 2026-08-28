@@ -246,29 +246,10 @@ class _GroupManagementState extends State<GroupManagement> {
       color: colorsTheme.bgColorOperate,
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              image: member.avatarURL?.isNotEmpty == true
-                  ? DecorationImage(
-                      image: NetworkImage(member.avatarURL!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-              color: member.avatarURL?.isEmpty != false ? colorsTheme.listColorHover : null,
-            ),
-            child: member.avatarURL?.isEmpty != false
-                ? Center(
-                    child: Text(
-                      () { final n = UIKitUtil.memberDisplayName(member); return n.isNotEmpty ? n[0].toUpperCase() : '?'; }(),
-                      style: FontScheme.caption1Medium.copyWith(
-                        color: colorsTheme.textColorButton,
-                      ),
-                    ),
-                  )
-                : null,
+          Avatar.image(
+            url: member.avatarURL,
+            name: UIKitUtil.memberDisplayName(member),
+            size: AvatarSize.m,
           ),
           const SizedBox(width: 12),
           Expanded(

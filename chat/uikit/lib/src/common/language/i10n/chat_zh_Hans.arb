@@ -477,6 +477,7 @@
   "voiceToTextFailed": "未识别到文字内容",
   "sendOriginalVoice": "发送原语音",
   "addMembers": "添加成员",
+  "removeMembers": "移除成员",
   "album": "相册",
   "cancel": "取消",
   "confirm": "确定",

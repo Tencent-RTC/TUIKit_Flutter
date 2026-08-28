@@ -1308,6 +1308,9 @@ class ChatLocalizationsEn extends ChatLocalizations {
   String get addMembers => 'Add Members';
 
   @override
+  String get removeMembers => 'Remove Member';
+
+  @override
   String get album => 'Album';
 
   @override

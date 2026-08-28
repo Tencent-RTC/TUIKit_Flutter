@@ -1297,6 +1297,9 @@ class ChatLocalizationsJa extends ChatLocalizations {
   String get addMembers => 'メンバー追加';
 
   @override
+  String get removeMembers => 'メンバー削除';
+
+  @override
   String get album => 'アルバム';
 
   @override

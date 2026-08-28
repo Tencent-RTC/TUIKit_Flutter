@@ -89,38 +89,11 @@ class _GroupAddMemberState extends State<GroupAddMember> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: colorsTheme.listColorDefault,
-        appBar: AppBar(
-          backgroundColor: colorsTheme.bgColorTopBar,
-          elevation: 0,
-          leading: IconButton.buttonContent(
-            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
-            type: ButtonType.noBorder,
-            size: ButtonSize.l,
-            onClick: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            chatLocale.addMembers,
-            style: FontScheme.caption1Medium.copyWith(
-              color: colorsTheme.textColorPrimary,
-            ),
-          ),
-          centerTitle: true,
-        ),
-        body: Center(
-          child: CircularProgressIndicator(
-            color: colorsTheme.textColorSecondary,
-          ),
-        ),
-      );
-    }
-
     return UserPicker(
       dataSource: _dataSource,
       title: chatLocale.addMembers,
       maxCount: 20,
+      isLoading: _isLoading,
       onConfirm: _onConfirm,
     );
   }

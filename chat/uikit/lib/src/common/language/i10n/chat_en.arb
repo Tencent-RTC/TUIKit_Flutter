@@ -529,6 +529,7 @@
   "voiceToTextFailed": "No text recognized",
   "sendOriginalVoice": "Send original voice",
   "addMembers": "Add Members",
+  "removeMembers": "Remove Member",
   "album": "Album",
   "cancel": "Cancel",
   "confirm": "Confirm",

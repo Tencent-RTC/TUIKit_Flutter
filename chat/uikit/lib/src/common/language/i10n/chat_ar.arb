@@ -477,6 +477,7 @@
   "voiceToTextFailed": "لم يتم التعرف على أي نص",
   "sendOriginalVoice": "إرسال الصوت الأصلي",
   "addMembers": "إضافة أعضاء",
+  "removeMembers": "إزالة العضو",
   "album": "ألبوم",
   "cancel": "إلغاء",
   "confirm": "تأكيد",
