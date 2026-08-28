@@ -4,6 +4,7 @@ import 'package:tuikit_atomic_x/base_component/basic_controls/avatar.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/button.dart' as atomicx;
 import '../common/language/gen/chat_localizations.dart';
 import 'package:tuikit_atomic_x/base_component/theme/color_scheme.dart';
+import 'package:tuikit_atomic_x/base_component/theme/font.dart';
 import 'package:tuikit_atomic_x/base_component/theme/theme_state.dart';
 import 'package:tencent_chat_uikit/src/third_party/azlistview/azlistview.dart';
 import 'package:tencent_chat_uikit/src/third_party/lpinyin/lpinyin.dart';
@@ -55,6 +56,12 @@ class UserPicker extends StatefulWidget {
   /// Optional widget to display at the top of the list (before the sorted items)
   final Widget? headerWidget;
 
+  /// Shows a spinner in place of the list while the caller fetches [dataSource].
+  ///
+  /// Callers should prefer this over rendering their own loading scaffold, so the
+  /// app bar stays identical across the fetch and nothing shifts once data lands.
+  final bool isLoading;
+
   const UserPicker({
     super.key,
     required this.dataSource,
@@ -69,6 +76,7 @@ class UserPicker extends StatefulWidget {
     this.onReachEnd,
     this.maxCount,
     this.headerWidget,
+    this.isLoading = false,
   });
 
   @override
@@ -280,7 +288,7 @@ class _UserPickerState extends State<UserPicker> {
       return !item.isPreSelected && !lockedKeys.contains(item.key);
     }).length;
 
-    final hasSelection = widget.maxCount == 1 ? _selectedItems.isNotEmpty : newSelectedCount > 0;
+    final hasSelection = !widget.isLoading && (widget.maxCount == 1 ? _selectedItems.isNotEmpty : newSelectedCount > 0);
 
     return Scaffold(
       backgroundColor: colorsTheme.bgColorOperate,
@@ -295,10 +303,8 @@ class _UserPickerState extends State<UserPicker> {
         ),
         title: Text(
           widget.title ?? '',
-          style: TextStyle(
+          style: FontScheme.caption1Medium.copyWith(
             color: colorsTheme.textColorPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
@@ -323,54 +329,61 @@ class _UserPickerState extends State<UserPicker> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          if (widget.showSelectedList) _buildSelectedListWidget(),
-          if (widget.headerWidget != null) widget.headerWidget!,
-          Expanded(
-            child: _itemList.isEmpty
-                ? const Center()
-                : AzListView(
-                    data: _itemList,
-                    itemCount: _itemList.length,
-                    itemPositionsListener: _itemPositionsListener,
-                    itemBuilder: (context, index) {
-                      final itemModel = _itemList[index];
-                      return _buildItemWidget(itemModel);
-                    },
-                    physics: const BouncingScrollPhysics(),
-                    susItemBuilder: (context, index) {
-                      final itemModel = _itemList[index];
-                      return _buildSuspensionWidget(itemModel.getSuspensionTag());
-                    },
-                    indexBarData: SuspensionUtil.getTagIndexList(_itemList).where((element) => element != "#").toList(),
-                    indexBarOptions: IndexBarOptions(
-                      needRebuild: true,
-                      ignoreDragCancel: true,
-                      downTextStyle: TextStyle(fontSize: 12, color: colorsTheme.textColorButton),
-                      downItemDecoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: colorsTheme.buttonColorPrimaryDefault,
-                      ),
-                      indexHintWidth: 40,
-                      indexHintHeight: 40,
-                      indexHintDecoration: BoxDecoration(
-                        color: colorsTheme.buttonColorPrimaryDefault,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      indexHintAlignment: Alignment.centerRight,
-                      indexHintChildAlignment: Alignment.center,
-                      indexHintOffset: const Offset(-20, 0),
-                      indexHintTextStyle: TextStyle(
-                        fontSize: 20,
-                        color: colorsTheme.textColorButton,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-          ),
-        ],
-      ),
+      body: widget.isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: colorsTheme.textColorSecondary,
+              ),
+            )
+          : Column(
+              children: [
+                if (widget.showSelectedList) _buildSelectedListWidget(),
+                if (widget.headerWidget != null) widget.headerWidget!,
+                Expanded(
+                  child: _itemList.isEmpty
+                      ? const Center()
+                      : AzListView(
+                          data: _itemList,
+                          itemCount: _itemList.length,
+                          itemPositionsListener: _itemPositionsListener,
+                          itemBuilder: (context, index) {
+                            final itemModel = _itemList[index];
+                            return _buildItemWidget(itemModel);
+                          },
+                          physics: const BouncingScrollPhysics(),
+                          susItemBuilder: (context, index) {
+                            final itemModel = _itemList[index];
+                            return _buildSuspensionWidget(itemModel.getSuspensionTag());
+                          },
+                          indexBarData:
+                              SuspensionUtil.getTagIndexList(_itemList).where((element) => element != "#").toList(),
+                          indexBarOptions: IndexBarOptions(
+                            needRebuild: true,
+                            ignoreDragCancel: true,
+                            downTextStyle: TextStyle(fontSize: 12, color: colorsTheme.textColorButton),
+                            downItemDecoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorsTheme.buttonColorPrimaryDefault,
+                            ),
+                            indexHintWidth: 40,
+                            indexHintHeight: 40,
+                            indexHintDecoration: BoxDecoration(
+                              color: colorsTheme.buttonColorPrimaryDefault,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            indexHintAlignment: Alignment.centerRight,
+                            indexHintChildAlignment: Alignment.center,
+                            indexHintOffset: const Offset(-20, 0),
+                            indexHintTextStyle: TextStyle(
+                              fontSize: 20,
+                              color: colorsTheme.textColorButton,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 

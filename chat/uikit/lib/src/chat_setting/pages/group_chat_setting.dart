@@ -771,7 +771,10 @@ class _GroupChatSettingState extends State<GroupChatSetting> {
   void _onRemoveMembers() async {
     final selected = await Navigator.of(context).push<List<UserPickerData>>(
       MaterialPageRoute<List<UserPickerData>>(
-        builder: (context) => GroupMemberPicker(groupID: widget.groupID),
+        builder: (context) => GroupMemberPicker(
+          groupID: widget.groupID,
+          title: chatLocale.removeMembers,
+        ),
       ),
     );
     if (selected == null || selected.isEmpty) return;

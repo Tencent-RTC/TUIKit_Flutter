@@ -459,7 +459,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: themeState.colors.bgColorTopBar,
+                backgroundColor: themeState.colors.bgColorOperate,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

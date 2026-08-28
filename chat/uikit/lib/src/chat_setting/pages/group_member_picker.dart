@@ -9,10 +9,15 @@ class GroupMemberPicker extends StatefulWidget {
   final String groupID;
   final Function(List<UserPickerData>)? onConfirm;
 
+  /// App bar title. Callers pass what the selection is *for* (removing members,
+  /// picking call participants, ...), since this page serves several flows.
+  final String? title;
+
   const GroupMemberPicker({
     super.key,
     required this.groupID,
     this.onConfirm,
+    this.title,
   });
 
   @override
@@ -88,29 +93,10 @@ class _GroupMemberPickerState extends State<GroupMemberPicker> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: colorsTheme.listColorDefault,
-        appBar: AppBar(
-          backgroundColor: colorsTheme.bgColorTopBar,
-          elevation: 0,
-          leading: IconButton.buttonContent(
-            content: IconOnlyContent(Icon(Icons.arrow_back_ios, color: colorsTheme.textColorSecondary)),
-            type: ButtonType.noBorder,
-            size: ButtonSize.l,
-            onClick: () => Navigator.of(context).pop(),
-          ),
-        ),
-        body: Center(
-          child: CircularProgressIndicator(
-            color: colorsTheme.textColorSecondary,
-          ),
-        ),
-      );
-    }
-
     return UserPicker(
       dataSource: _dataSource,
+      title: widget.title,
+      isLoading: _isLoading,
       onConfirm: _onConfirm,
     );
   }

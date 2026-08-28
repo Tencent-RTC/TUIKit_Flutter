@@ -1297,6 +1297,9 @@ class ChatLocalizationsKo extends ChatLocalizations {
   String get addMembers => '멤버 추가';
 
   @override
+  String get removeMembers => '멤버 삭제';
+
+  @override
   String get album => '앨범';
 
   @override

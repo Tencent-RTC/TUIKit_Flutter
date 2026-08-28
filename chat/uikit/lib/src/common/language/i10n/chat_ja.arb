@@ -477,6 +477,7 @@
   "voiceToTextFailed": "テキストを認識できませんでした",
   "sendOriginalVoice": "音声を送信",
   "addMembers": "メンバー追加",
+  "removeMembers": "メンバー削除",
   "album": "アルバム",
   "cancel": "キャンセル",
   "confirm": "確認",

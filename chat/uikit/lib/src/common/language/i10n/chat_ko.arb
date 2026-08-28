@@ -477,6 +477,7 @@
   "voiceToTextFailed": "텍스트를 인식하지 못했습니다",
   "sendOriginalVoice": "원본 음성 보내기",
   "addMembers": "멤버 추가",
+  "removeMembers": "멤버 삭제",
   "album": "앨범",
   "cancel": "취소",
   "confirm": "확인",
