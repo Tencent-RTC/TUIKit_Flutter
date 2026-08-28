@@ -1,5 +1,9 @@
 ## Changelog
 
+### 4.2.0(2026-08-28)
+
+- Added in‑meeting chat feature.
+
 ### 4.1.0(2026-05-21)
 - Added AI real-time subtitles and AI real-time meeting transcription.
 - Upgraded rtc_room_engine dependencies.

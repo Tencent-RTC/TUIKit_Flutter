@@ -911,4 +911,7 @@ class RoomLocalizationsAr extends RoomLocalizations {
 
   @override
   String get roomkit_room_running => 'قيد التشغيل';
+
+  @override
+  String get roomkit_chat => 'دردشة';
 }

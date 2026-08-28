@@ -831,4 +831,7 @@ class RoomLocalizationsZh extends RoomLocalizations {
 
   @override
   String get roomkit_room_running => '运行中';
+
+  @override
+  String get roomkit_chat => '聊天';
 }

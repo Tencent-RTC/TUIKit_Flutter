@@ -7,7 +7,9 @@ import 'package:tencent_conference_uikit/base/index.dart';
 import 'room_main_widget.dart';
 
 class RoomJoinWidget extends StatefulWidget {
-  const RoomJoinWidget({super.key});
+  final RoomChatPageBuilder? chatPageBuilder;
+
+  const RoomJoinWidget({super.key, this.chatPageBuilder});
 
   @override
   State<RoomJoinWidget> createState() => _RoomJoinWidgetState();
@@ -254,7 +256,12 @@ class _RoomJoinWidgetState extends State<RoomJoinWidget> {
     );
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => RoomMainWidget(roomID: roomID, behavior: behavior, config: config),
+        builder: (context) => RoomMainWidget(
+          roomID: roomID,
+          behavior: behavior,
+          config: config,
+          chatPageBuilder: widget.chatPageBuilder,
+        ),
       ),
     );
   }

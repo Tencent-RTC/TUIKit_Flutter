@@ -13,6 +13,7 @@ class RoomBottomBarWidget extends StatefulWidget {
   final VoidCallback onEnableAISubtitle;
   final VoidCallback onDisableAISubtitle;
   final VoidCallback onOpenMinutes;
+  final RoomChatPageBuilder? chatPageBuilder;
 
   const RoomBottomBarWidget({
     super.key,
@@ -22,6 +23,7 @@ class RoomBottomBarWidget extends StatefulWidget {
     required this.onEnableAISubtitle,
     required this.onDisableAISubtitle,
     required this.onOpenMinutes,
+    this.chatPageBuilder,
   });
 
   @override
@@ -71,6 +73,7 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
                     _buildMicrophoneButton(),
                     _buildCameraButton(),
                     _buildAIToolsButton(),
+                    if (widget.chatPageBuilder != null) _buildChatButton(),
                   ],
                 ),
               ),
@@ -182,8 +185,29 @@ class _RoomBottomBarWidgetState extends State<RoomBottomBarWidget> {
     );
   }
 
+  Widget _buildChatButton() {
+    return RoomButtonItemWidget(
+      iconPath: RoomImages.roomChat,
+      text: RoomLocalizations.of(context)!.roomkit_chat,
+      onPressed: _handleChatPressed,
+    );
+  }
+
   void _handleMembersPressed() {
     popupWidget(RoomParticipantListWidget(roomId: widget.roomId), backgroundColor: RoomColors.g2);
+  }
+
+  void _handleChatPressed() {
+    final builder = widget.chatPageBuilder;
+    if (builder == null) return;
+    final topInset = MediaQuery.of(context).padding.top;
+    popupWidget(
+      Padding(
+        padding: EdgeInsets.only(top: topInset),
+        child: builder(widget.roomId),
+      ),
+      backgroundColor: RoomColors.white,
+    );
   }
 
   void _handleCameraToggle() async {

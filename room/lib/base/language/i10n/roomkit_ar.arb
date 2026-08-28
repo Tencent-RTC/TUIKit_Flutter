@@ -264,5 +264,6 @@
   "roomkit_err_100503_room_metadata_no_valid_keys": "لا توجد مفاتيح صالحة عند حذف البيانات الوصفية",
   "roomkit_err_100504_room_metadata_key_size_limit": "حجم المفتاح في البيانات الوصفية للغرفة يتجاوز الحد الأقصى للبايت",
   "roomkit_err_7002_invalid_user_id": "معرف مستخدم غير صالح",
-  "roomkit_room_running": "قيد التشغيل"
+  "roomkit_room_running": "قيد التشغيل",
+  "roomkit_chat": "دردشة"
 }

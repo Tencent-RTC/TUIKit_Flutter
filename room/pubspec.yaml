@@ -1,6 +1,6 @@
 name: tencent_conference_uikit
 description: tencent_conference_uikit is a UIKit about audio&video room launched by Tencent Cloud.
-version: 4.1.0
+version: 4.2.0
 repository: https://github.com/Tencent-RTC/TUIKit_Flutter/tree/main/room
 homepage: https://trtc.io/
 

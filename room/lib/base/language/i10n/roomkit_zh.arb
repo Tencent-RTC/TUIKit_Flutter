@@ -264,5 +264,6 @@
   "roomkit_err_100503_room_metadata_no_valid_keys": "删除房间 meta 数据时候，被删除的 key 没有一个存在",
   "roomkit_err_100504_room_metadata_key_size_limit": "房间 meta 数据中的 key 大小超过了最大字节数限制",
   "roomkit_err_7002_invalid_user_id": "非法的userId",
-  "roomkit_room_running": "运行中"
+  "roomkit_room_running": "运行中",
+  "roomkit_chat": "聊天"
 }

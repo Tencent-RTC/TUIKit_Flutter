@@ -264,5 +264,6 @@
   "roomkit_err_100503_room_metadata_no_valid_keys": "メタデータ削除時に有効なキーがありません",
   "roomkit_err_100504_room_metadata_key_size_limit": "ルームメタデータのキーサイズが最大バイト制限を超えています",
   "roomkit_err_7002_invalid_user_id": "無効なユーザーID",
-  "roomkit_room_running": "実行中"
+  "roomkit_room_running": "実行中",
+  "roomkit_chat": "チャット"
 }

@@ -102,4 +102,6 @@ class RoomImages {
 
   static const String aiRecordRightArrow =
       '$_basePath/room_ai_record_right_arrow.png';
+
+  static const String roomChat = '$_basePath/room_chat.png';
 }

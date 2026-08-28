@@ -47,8 +47,15 @@ class RoomMainWidget extends StatefulWidget {
   final String roomID;
   final RoomBehavior behavior;
   final ConnectConfig config;
+  final RoomChatPageBuilder? chatPageBuilder;
 
-  const RoomMainWidget({super.key, required this.roomID, required this.behavior, required this.config});
+  const RoomMainWidget({
+    super.key,
+    required this.roomID,
+    required this.behavior,
+    required this.config,
+    this.chatPageBuilder,
+  });
 
   @override
   State<RoomMainWidget> createState() => _RoomMainWidgetState();
@@ -196,6 +203,7 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
                     onEnableAISubtitle: _showAISubtitleView,
                     onDisableAISubtitle: _hideAISubtitleView,
                     onOpenMinutes: _openMinutes,
+                    chatPageBuilder: widget.chatPageBuilder,
                   );
                 },
               ),
@@ -269,6 +277,7 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
                   onEnableAISubtitle: _showAISubtitleView,
                   onDisableAISubtitle: _hideAISubtitleView,
                   onOpenMinutes: _openMinutes,
+                  chatPageBuilder: widget.chatPageBuilder,
                 ),
                 SizedBox(width: 11.width)
               ],
