@@ -1,0 +1,175 @@
+{
+  "@@locale": "en",
+  "barrageEmpty": "No messages yet",
+  "barrageLatest": "Latest messages",
+  "barrageBackToBottom": "Back to bottom",
+  "barrageInputHint": "Send a barrage...",
+  "interactionTitle": "Interaction",
+  "giftEmpty": "No gifts yet",
+  "giftSent": "sent",
+  "audienceTitle": "Audience",
+  "audienceEmpty": "No audience yet",
+  "audienceMute": "Mute",
+  "audienceUnmute": "Unmute",
+  "audienceKick": "Remove",
+  "audienceMutedTag": "Muted",
+  "@loginException": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "loginBrandTitle": "Live Streaming Assistant",
+  "loginTabUsername": "Username Login",
+  "loginUsernameHint": "Enter username",
+  "loginButton": "Login",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonAdd": "Add",
+  "commonClose": "Close",
+  "commonConfirm": "OK",
+  "errorDialogTitle": "Operation Failed",
+  "sceneGame": "Game Streaming",
+  "sceneMovie": "Watch Together",
+  "sceneChat": "Group Chat",
+  "sceneTalk": "Casual Talk",
+  "sceneRest": "Be Right Back",
+  "sceneDefault": "Scene 1",
+  "sceneCustomSuggestion": "Custom {index}",
+  "@sceneCustomSuggestion": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "sceneCopySuffix": "{name} Copy",
+  "@sceneCopySuffix": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "sceneMenuRename": "Rename",
+  "sceneMenuDuplicate": "Duplicate",
+  "sceneMenuDelete": "Delete",
+  "sceneRenameTitle": "Rename Scene",
+  "sceneNameHint": "Scene name",
+  "sceneAddTitle": "Add Scene",
+  "sceneIconPick": "Choose an icon",
+  "sceneGroupLandscape": "Landscape Scenes",
+  "sceneGroupPortrait": "Portrait Scenes",
+  "sourceAddTitle": "Add Source",
+  "sourceTypeCamera": "Camera",
+  "sourceTypeCameraDesc": "Capture camera video",
+  "sourceTypeScreen": "Screen",
+  "sourceTypeScreenDesc": "Screen / window capture",
+  "sourceTypeImage": "Image",
+  "sourceTypeImageDesc": "Static image",
+  "sourceTypeOnlineVideo": "Online Video",
+  "sourceTypeOnlineVideoDesc": "Network video stream URL",
+  "sourceTypeVideoFile": "Video File",
+  "sourceTypeVideoFileDesc": "Local video file",
+  "sourceNameCamera": "Camera Feed",
+  "sourceNameScreen": "Screen Share",
+  "sourceListEmpty": "No sources in this scene\nTap + at the top right to add",
+  "errorStartMixing": "Failed to start mixing",
+  "errorSourceNotFound": "Source not found",
+  "errorAddSource": "Failed to add source (error code {code})",
+  "@errorAddSource": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "cameraEditTitle": "Edit Camera",
+  "cameraAddTitle": "Add Camera",
+  "cameraDeviceLabel": "Select an available camera",
+  "cameraDeviceHint": "Select camera",
+  "cameraNotFound": "No camera device detected",
+  "cameraResolutionLabel": "Capture Resolution",
+  "cameraMirrorLabel": "Mirror",
+  "imageEditTitle": "Edit Image",
+  "imageAddTitle": "Add Image",
+  "imageFileLabel": "Image File",
+  "imagePickPlaceholder": "Choose a local image",
+  "imagePickButton": "Choose Image",
+  "imageFormatsHint": "Supports BMP / JPG / PNG / GIF",
+  "videoFileEditTitle": "Edit Video File",
+  "videoFileAddTitle": "Add Video File",
+  "videoFileLabel": "Video File",
+  "videoPickPlaceholder": "Choose a local video",
+  "videoPickButton": "Choose Video",
+  "videoFileFormatsHint": "Supports MP4 / MOV / M4V / MKV / AVI / FLV / WMV",
+  "onlineVideoEditTitle": "Edit Online Video",
+  "onlineVideoAddTitle": "Add Online Video",
+  "onlineVideoUrlLabel": "Video URL",
+  "onlineVideoUrlHint": "Video URL starting with http:// or https://",
+  "onlineVideoProtocolHint": "Only HTTP / HTTPS supported",
+  "onlineVideoUrlInvalid": "Please enter a valid http / https video URL",
+  "onlineVideoCacheLabel": "Network Cache",
+  "onlineVideoCacheAuto": "Auto",
+  "onlineVideoCacheAutoScale": "0 (Auto)",
+  "screenEditTitle": "Edit Screen Share",
+  "screenAddTitle": "Add Screen Share",
+  "screenTabWindow": "Window",
+  "screenEmpty": "No shareable {kind} found\nCheck \"System Settings → Privacy & Security → Screen Recording\" permission",
+  "@screenEmpty": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "screenEnumFailed": "Failed to enumerate share sources",
+  "filePickRequired": "Please select a {label} file",
+  "@filePickRequired": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fileFormatUnsupported": "Unsupported {label} format: .{ext}",
+  "@fileFormatUnsupported": {
+    "placeholders": {
+      "label": {},
+      "ext": {}
+    }
+  },
+  "fileNotReadable": "File does not exist or is unreadable",
+  "playbackVolume": "Playback Volume",
+  "tabSources": "Sources",
+  "tabBeauty": "Beauty",
+  "tabMore": "More",
+  "featureInDevelopment": "In development",
+  "featureComingSoon": "Coming soon",
+  "beautyNoCamera": "No camera added in this scene",
+  "beautyFilterTitle": "Beauty Filter",
+  "beautySkinSmooth": "Smooth",
+  "beautyWhiteness": "Whiteness",
+  "beautySharpen": "Sharpen",
+  "beautyRuddy": "Ruddy",
+  "orientationLandscape": "Landscape",
+  "orientationPortrait": "Portrait",
+  "liveStart": "Start Live",
+  "liveEnd": "End Live",
+  "liveInfoEditTitle": "Edit Live Info",
+  "liveInfoNameLabel": "Live Name",
+  "liveInfoVisibilityLabel": "Visibility",
+  "liveInfoVisibilityPublic": "Public",
+  "liveInfoVisibilityPrivate": "Private",
+  "liveInfoSave": "Save Settings",
+  "liveDefaultName": "{name}'s Room",
+  "@liveDefaultName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "liveStatsGiftSenders": "{count} sent gifts",
+  "@liveStatsGiftSenders": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "liveSummaryTitle": "Live Ended",
+  "liveSummarySubtitle": "Live Session Summary",
+  "liveSummaryDuration": "Duration",
+  "liveSummaryViewers": "Total Viewers",
+  "liveSummaryLikes": "Total Likes",
+  "liveSummaryGiftSenders": "Gift Senders",
+  "liveSummaryDone": "Done",
+  "languageSwitch": "Language",
+  "languageFollowSystem": "Follow System"
+}

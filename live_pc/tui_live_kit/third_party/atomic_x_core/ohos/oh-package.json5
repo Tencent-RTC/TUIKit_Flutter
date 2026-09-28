@@ -1,0 +1,13 @@
+{
+  "name": "atomic_x_core",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@tencentcloud/liteavsdk_professional": "file:../../../../../../SDK/Ohos/LiteAVSDK_Professional_13.4.0.8678.har",
+    "@tencentcloud/imsdk": "^9.0.7652",
+    "@tencentcloud/atomicxcore": "file:../../../../../../SDK/Ohos/atomicxcore_1.0.0.0.har"
+  }
+}

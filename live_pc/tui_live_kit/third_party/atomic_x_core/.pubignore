@@ -1,0 +1,7 @@
+# pub.dev 发布时忽略的文件（不影响 git tracking）。
+# 语法与 .gitignore 一致；文件放在包根目录。
+# https://dart.dev/tools/pub/publishing#what-files-are-published
+
+# --- 发布者内部脚手架，用户端不需要 -----------------------------------------
+publish.sh
+.publish_backup.tar.gz

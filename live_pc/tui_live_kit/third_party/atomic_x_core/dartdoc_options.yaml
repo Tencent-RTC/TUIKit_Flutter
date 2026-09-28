@@ -1,0 +1,9 @@
+dartdoc:
+  nodoc: [
+    'lib/impl/**',
+    'lib/api/contact/**',
+    'lib/api/conversation/**',
+    'lib/api/live/deprecated/**',
+    'lib/api/message/**',
+    'lib/api/search/**',
+  ]

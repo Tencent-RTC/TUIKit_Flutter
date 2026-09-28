@@ -1,0 +1,69 @@
+PODS:
+  - atomic_x_core (0.0.1):
+    - AtomicXCore_Mac
+    - FlutterMacOS
+    - TXLiteAVSDK_TRTC_Mac (= 13.4.21067)
+  - AtomicXCore_Mac (5.0.0):
+    - TXIMSDK_Plus_Mac
+    - TXLiteAVSDK_TRTC_Mac
+  - file_selector_macos (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - HydraAsync (2.0.6)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - tencent_cloud_chat_sdk (8.0.0):
+    - FlutterMacOS
+    - HydraAsync
+    - TXIMSDK_Plus_Mac (= 9.0.7652)
+  - TXIMSDK_Plus_Mac (9.0.7652)
+  - TXLiteAVSDK_TRTC_Mac (13.4.21067)
+
+DEPENDENCIES:
+  - atomic_x_core (from `Flutter/ephemeral/.symlinks/plugins/atomic_x_core/macos`)
+  - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
+  - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - tencent_cloud_chat_sdk (from `Flutter/ephemeral/.symlinks/plugins/tencent_cloud_chat_sdk/macos`)
+
+SPEC REPOS:
+  trunk:
+    - AtomicXCore_Mac
+    - HydraAsync
+    - TXIMSDK_Plus_Mac
+    - TXLiteAVSDK_TRTC_Mac
+
+EXTERNAL SOURCES:
+  atomic_x_core:
+    :path: Flutter/ephemeral/.symlinks/plugins/atomic_x_core/macos
+  file_selector_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
+  shared_preferences_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
+  tencent_cloud_chat_sdk:
+    :path: Flutter/ephemeral/.symlinks/plugins/tencent_cloud_chat_sdk/macos
+
+SPEC CHECKSUMS:
+  atomic_x_core: 9c04edae2b2db93cf2ae3c98f1c8306d12331784
+  AtomicXCore_Mac: a5dbb8547f6faad5df4112a5a2c48cb8b3c2083e
+  file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  HydraAsync: 8d589bd725b0224f899afafc9a396327405f8063
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  tencent_cloud_chat_sdk: 1c0a83b84208bb9c0e75acc2eff5f90bfea7b2f9
+  TXIMSDK_Plus_Mac: e32b6214d4bf4396b78b6449f5ac07b6c0218c90
+  TXLiteAVSDK_TRTC_Mac: 8a2f900227a195104db6fc0a7ac2554c45da5e3f
+
+PODFILE CHECKSUM: f608a0729fc019237ab9d959ebac4630120ce44d
+
+COCOAPODS: 1.16.2

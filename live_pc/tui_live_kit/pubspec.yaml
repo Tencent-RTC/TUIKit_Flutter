@@ -1,0 +1,32 @@
+name: tencent_live_kit_desktop
+description: "TUILiveKit Flutter PC 直播组件库。"
+version: 0.0.1
+homepage:
+publish_to: none
+
+environment:
+  # CI 流水线最高支持 Flutter 3.29（Dart 3.7），故放开下限以兼容低版本 SDK。
+  sdk: '>=3.7.0 <4.0.0'
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+  remixicon: ^4.9.3
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  file_selector: ^1.0.0
+  atomic_x_core:
+    path: third_party/atomic_x_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # 6.x 要求 Dart ^3.8.0，与 Flutter 3.29（Dart 3.7）不兼容，降级到 5.x。
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
