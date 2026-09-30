@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "atomic_x_core",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

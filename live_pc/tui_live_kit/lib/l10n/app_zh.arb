@@ -1,0 +1,175 @@
+{
+  "@@locale": "zh",
+  "barrageEmpty": "暂无消息",
+  "barrageLatest": "最新消息",
+  "barrageBackToBottom": "回到底部",
+  "barrageInputHint": "发条弹幕互动一下...",
+  "interactionTitle": "互动消息",
+  "giftEmpty": "暂无礼物",
+  "giftSent": "送出",
+  "audienceTitle": "观众",
+  "audienceEmpty": "暂无观众",
+  "audienceMute": "禁言",
+  "audienceUnmute": "取消禁言",
+  "audienceKick": "踢出",
+  "audienceMutedTag": "已禁言",
+  "@loginException": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "loginBrandTitle": "直播推流助手",
+  "loginTabUsername": "用户名登录",
+  "loginUsernameHint": "请输入用户名",
+  "loginButton": "登录",
+  "commonCancel": "取消",
+  "commonSave": "保存",
+  "commonAdd": "添加",
+  "commonClose": "关闭",
+  "commonConfirm": "知道了",
+  "errorDialogTitle": "操作失败",
+  "sceneGame": "游戏直播",
+  "sceneMovie": "观影陪伴",
+  "sceneChat": "连麦聊天",
+  "sceneTalk": "日常唠嗑",
+  "sceneRest": "休息中",
+  "sceneDefault": "场景一",
+  "sceneCustomSuggestion": "自定义{index}",
+  "@sceneCustomSuggestion": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "sceneCopySuffix": "{name} 副本",
+  "@sceneCopySuffix": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "sceneMenuRename": "重命名",
+  "sceneMenuDuplicate": "复制",
+  "sceneMenuDelete": "删除",
+  "sceneRenameTitle": "重命名场景",
+  "sceneNameHint": "场景名称",
+  "sceneAddTitle": "添加预设场景",
+  "sceneIconPick": "选择图标",
+  "sceneGroupLandscape": "横屏场景",
+  "sceneGroupPortrait": "竖屏场景",
+  "sourceAddTitle": "添加画面源",
+  "sourceTypeCamera": "摄像头",
+  "sourceTypeCameraDesc": "采集摄像头画面",
+  "sourceTypeScreen": "屏幕",
+  "sourceTypeScreenDesc": "屏幕 / 窗口捕获",
+  "sourceTypeImage": "图片",
+  "sourceTypeImageDesc": "静态图片素材",
+  "sourceTypeOnlineVideo": "在线视频",
+  "sourceTypeOnlineVideoDesc": "网络视频流地址",
+  "sourceTypeVideoFile": "视频文件",
+  "sourceTypeVideoFileDesc": "本地视频文件",
+  "sourceNameCamera": "摄像头画面",
+  "sourceNameScreen": "屏幕共享",
+  "sourceListEmpty": "当前场景暂无画面源\n点击右上角 + 添加",
+  "errorStartMixing": "启动混流失败",
+  "errorSourceNotFound": "画面源不存在",
+  "errorAddSource": "添加画面源失败（错误码 {code}）",
+  "@errorAddSource": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "cameraEditTitle": "编辑摄像头",
+  "cameraAddTitle": "添加摄像头",
+  "cameraDeviceLabel": "选择可用摄像头",
+  "cameraDeviceHint": "选择摄像头",
+  "cameraNotFound": "未检测到摄像头设备",
+  "cameraResolutionLabel": "采集分辨率",
+  "cameraMirrorLabel": "镜像",
+  "imageEditTitle": "编辑图片",
+  "imageAddTitle": "添加图片",
+  "imageFileLabel": "图片文件",
+  "imagePickPlaceholder": "选择本地图片",
+  "imagePickButton": "选择图片",
+  "imageFormatsHint": "支持 BMP / JPG / PNG / GIF 格式",
+  "videoFileEditTitle": "编辑视频文件",
+  "videoFileAddTitle": "添加视频文件",
+  "videoFileLabel": "视频文件",
+  "videoPickPlaceholder": "选择本地视频",
+  "videoPickButton": "选择视频",
+  "videoFileFormatsHint": "支持 MP4 / MOV / M4V / MKV / AVI / FLV / WMV 格式",
+  "onlineVideoEditTitle": "编辑在线视频",
+  "onlineVideoAddTitle": "添加在线视频",
+  "onlineVideoUrlLabel": "视频地址",
+  "onlineVideoUrlHint": "http:// 或 https:// 开头的视频地址",
+  "onlineVideoProtocolHint": "仅支持 HTTP / HTTPS 协议",
+  "onlineVideoUrlInvalid": "请输入合法的 http / https 视频地址",
+  "onlineVideoCacheLabel": "网络缓存",
+  "onlineVideoCacheAuto": "自动",
+  "onlineVideoCacheAutoScale": "0（自动）",
+  "screenEditTitle": "编辑屏幕共享",
+  "screenAddTitle": "添加屏幕共享",
+  "screenTabWindow": "窗口",
+  "screenEmpty": "未发现可共享的{kind}\n请检查「系统设置 → 隐私与安全性 → 屏幕录制」权限",
+  "@screenEmpty": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "screenEnumFailed": "枚举共享源失败",
+  "filePickRequired": "请选择{label}文件",
+  "@filePickRequired": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fileFormatUnsupported": "不支持的{label}格式：.{ext}",
+  "@fileFormatUnsupported": {
+    "placeholders": {
+      "label": {},
+      "ext": {}
+    }
+  },
+  "fileNotReadable": "文件不存在或不可读",
+  "playbackVolume": "播放音量",
+  "tabSources": "画面源",
+  "tabBeauty": "美颜",
+  "tabMore": "更多能力",
+  "featureInDevelopment": "功能开发中",
+  "featureComingSoon": "敬请期待",
+  "beautyNoCamera": "当前场景下未添加摄像头",
+  "beautyFilterTitle": "美颜滤镜",
+  "beautySkinSmooth": "磨皮",
+  "beautyWhiteness": "美白",
+  "beautySharpen": "锐化",
+  "beautyRuddy": "红润",
+  "orientationLandscape": "横屏",
+  "orientationPortrait": "竖屏",
+  "liveStart": "开始直播",
+  "liveEnd": "结束直播",
+  "liveInfoEditTitle": "修改直播间信息",
+  "liveInfoNameLabel": "直播间名称",
+  "liveInfoVisibilityLabel": "可见范围",
+  "liveInfoVisibilityPublic": "公开",
+  "liveInfoVisibilityPrivate": "隐私",
+  "liveInfoSave": "保存设置",
+  "liveDefaultName": "{name}的房间",
+  "@liveDefaultName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "liveStatsGiftSenders": "{count} 人送礼",
+  "@liveStatsGiftSenders": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "liveSummaryTitle": "直播已结束",
+  "liveSummarySubtitle": "本场直播数据一览",
+  "liveSummaryDuration": "直播时长",
+  "liveSummaryViewers": "累计观看",
+  "liveSummaryLikes": "点赞总数",
+  "liveSummaryGiftSenders": "送礼人数",
+  "liveSummaryDone": "完成",
+  "languageSwitch": "语言",
+  "languageFollowSystem": "跟随系统"
+}

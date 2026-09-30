@@ -1,0 +1,39 @@
+name: live_kit_access
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  # CI 流水线最高支持 Flutter 3.29（Dart 3.7），故放开下限以兼容低版本 SDK。
+  sdk: '>=3.7.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 直播 UI 组件包（仓库内相对 path 依赖，对齐手机端 flutter/live 做法）。
+  tencent_live_kit_desktop:
+    path: ../tui_live_kit
+
+  # 直播引擎（仓库内 vendored 副本，与 tui_live_kit 共用同一份）。
+  # 副本对齐 atomic_engine 仓库 src/atomic/dart/atomicengine 快照；
+  # macOS 引擎二进制经 CocoaPods trunk（AtomicXCore_Mac）分发，
+  # Windows 引擎 DLL 随副本 windows/lib/ 入库。
+  atomic_x_core:
+    path: ../tui_live_kit/third_party/atomic_x_core
+
+  # macOS 场景注释 tencent_rtc_sdk（回 Windows 需恢复）：
+  # 其 macOS pod 会再拉一份 TXLiteAVSDK_TRTC_Mac(=13.4.21067)，与 atomic_x_core
+  # vendored 的 13.4.21082 重复嵌入 app（"Multiple commands produce" 冲突）；
+  # 且 13.4.21067 缺符号无法给引擎链接。当前 Dart 代码未使用该包。
+  # tencent_rtc_sdk: 13.4.2
+  crypto: ^3.0.3
+  shared_preferences: ^2.3.2
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # 6.x 要求 Dart ^3.8.0，与 Flutter 3.29（Dart 3.7）不兼容，降级到 5.x。
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
