@@ -100,7 +100,7 @@ extension LiveStreamServiceWithMedia on LiveStreamService {
 
   void enableMultiPlaybackQuality(bool enable) {
     try {
-      Map<String, dynamic> params = {'enable': enable};
+      Map<String, dynamic> params = {'enable': false};
 
       Map<String, dynamic> jsonObject = {
         'api': 'enableMultiPlaybackQuality',
