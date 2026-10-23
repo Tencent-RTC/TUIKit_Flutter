@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:rtc_room_engine/api/extension/tui_live_list_manager.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
 import 'package:live_uikit_gift/live_uikit_gift.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_controller.dart';
@@ -22,8 +24,8 @@ import 'package:tencent_live_uikit/voice_room/widget/end_statistics/audience_end
 import 'package:tencent_live_uikit/voice_room/widget/end_statistics/end_statistics_widget_define.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/seat_invitation_panel_widget.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/user_management_panel_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
 import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
+
 import '../../component/float_window/global_float_window_manager.dart';
 
 typedef ShowEndViewCallback = void Function(Map<String, dynamic> endInfo, bool isAnchor);
@@ -51,6 +53,7 @@ class VoiceRoomRootWidget extends StatefulWidget {
 }
 
 class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
+  String _currentLiveID = '';
   late final bool isOwner;
   final ValueNotifier<bool> enterRoomSuccess = ValueNotifier(false);
   late BarrageSendController _barrageSendController;
@@ -108,7 +111,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
       _closeAllDialog();
     });
     if (widget.isCreate) {
-      GlobalFloatWindowManager.instance.setOwnerId(TUIRoomEngine.getSelfInfo().userId);
+      GlobalFloatWindowManager.instance.setOwnerId(_getSelfID());
       _start(liveID: widget.liveID);
     } else {
       _join(liveID: widget.liveID);
@@ -167,9 +170,11 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
     if (isOwner) {
       _liveListStore.endLive();
     } else {
-      _liveListStore.leaveLive();
+      if (_currentLiveID.isNotEmpty) {
+        _currentLiveID = '';
+        _liveListStore.leaveLive();
+      }
     }
-    BarrageDisplayController.resetState();
     _giftPlayController?.dispose();
   }
 
@@ -227,17 +232,13 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
                 }
 
                 final currentLive = _liveListStore.liveState.currentLive.value;
-                final selfInfo = TUIRoomEngine.getSelfInfo();
+                final selfInfo = LoginStore.shared.loginState.loginUserInfo;
                 _barrageDisplayController ??= BarrageDisplayController(
-                    roomId: currentLive.liveID,
-                    ownerId: currentLive.liveOwner.userID,
-                    selfUserId: selfInfo.userId,
-                    selfName: selfInfo.userName ?? selfInfo.userId,
-                    onError: (code, message) {
-                      makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '',
-                          type: ToastType.error);
-                    });
-                _barrageDisplayController?.setCustomBarrageBuilder(GiftBarrageItemBuilder(selfUserId: selfInfo.userId));
+                  roomId: currentLive.liveID,
+                  ownerId: currentLive.liveOwner.userID,
+                );
+                _barrageDisplayController
+                    ?.setCustomBarrageBuilder(GiftBarrageItemBuilder(selfUserId: selfInfo?.userID ?? ''));
                 return BarrageDisplayWidget(controller: _barrageDisplayController!);
               }),
         ));
@@ -252,7 +253,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
             child: SeatGridWidget(
                 controller: widget.seatGridController,
                 onSeatWidgetTap: (seatInfo) {
-                  _onTapSeatGridWidget(engineSeatInfoFromSeatInfo(seatInfo));
+                  _onTapSeatGridWidget(seatInfo);
                 })));
   }
 
@@ -323,13 +324,11 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
               if (!enterRoomSuccess.value) {
                 return Container();
               }
-              final currentLive = _liveListStore.liveState.currentLive.value;
-              final selfInfo = TUIRoomEngine.getSelfInfo();
               _barrageSendController = BarrageSendController(
-                  roomId: currentLive.liveID,
-                  ownerId: currentLive.liveOwner.userID,
-                  selfUserId: selfInfo.userId,
-                  selfName: selfInfo.userName ?? selfInfo.userId);
+                  roomId: widget.liveID,
+                  onError: (code, message) {
+                    makeToast(context, ErrorHandler.convertToErrorMessage(code, message), type: ToastType.error);
+                  });
               return BarrageSendWidget(controller: _barrageSendController, parentContext: context);
             },
           ),
@@ -344,7 +343,7 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
           child: ListenableBuilder(
               listenable: Listenable.merge([_liveSeatStore.liveSeatState.seatList]),
               builder: (context, child) {
-                final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+                final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
                 final seatInfo = _liveSeatStore.liveSeatState.seatList.value
                     .firstWhereOrNull((seatInfo) => seatInfo.userInfo.userID == selfUserId);
                 final hasAudio = seatInfo != null && seatInfo.userInfo.microphoneStatus == DeviceStatus.on;
@@ -400,6 +399,10 @@ class _VoiceRoomRootWidgetState extends State<VoiceRoomRootWidget> {
           }
         });
   }
+
+  String _getSelfID() {
+    return LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
+  }
 }
 
 extension _RoomOperation on _VoiceRoomRootWidgetState {
@@ -424,9 +427,6 @@ extension _RoomOperation on _VoiceRoomRootWidgetState {
 
   void _onStartSuccess(LiveInfo liveInfo) {
     _audienceStore.fetchAudienceList();
-    final selfInfo = TUIRoomEngine.getSelfInfo();
-    _addEnterBarrage(LiveUserInfo(
-        userID: selfInfo.userId, userName: selfInfo.userName ?? selfInfo.userId, avatarURL: selfInfo.avatarUrl ?? ''));
     return _didEnterRoom(liveInfo);
   }
 
@@ -436,10 +436,11 @@ extension _RoomOperation on _VoiceRoomRootWidgetState {
     barrage.sender = userInfo;
     barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
     barrage.timestampInSecond = DateTime.now().microsecondsSinceEpoch ~/ 1000;
-    _barrageStore.appendLocalTip(barrage);
+    _barrageDisplayController?.insertMessage(barrage);
   }
 
   void _onJoinSuccess(LiveInfo liveInfo) {
+    _currentLiveID = liveInfo.liveID;
     _audienceStore.fetchAudienceList();
     _didEnterRoom(liveInfo);
     if (!isOwner) {
@@ -474,16 +475,24 @@ extension _RoomOperation on _VoiceRoomRootWidgetState {
 
 extension _MediaOperation on _VoiceRoomRootWidgetState {
   void _startMicrophone() async {
-    var microphonePermission = await Permission.microphone.request();
-    if (!microphonePermission.isGranted) {
-      widget.toastService.showToast(
-          ErrorHandler.convertToErrorMessage(TUIError.errPermissionDenied.rawValue, 'microphone permission denied') ??
-              '');
-      return;
+    final microphoneStatus = await Permission.check(PermissionType.microphone);
+    if (microphoneStatus.isUsable) {
+      _startForegroundService();
+      return _startMicrophoneInternal();
     }
 
+    final statusMap = await Permission.request([PermissionType.microphone]);
+    PermissionStatus microphonePermissionStatus = statusMap[PermissionType.microphone] ?? PermissionStatus.denied;
+    if (!microphonePermissionStatus.isUsable) {
+      widget.toastService.showToast(ErrorHandler.convertToErrorMessage(-1003, 'microphone permission denied') ?? '');
+      return;
+    }
+    _startForegroundService();
+    _startMicrophoneInternal();
+  }
+
+  void _startMicrophoneInternal() async {
     _deviceStore.openLocalMicrophone().then((result) {
-      TUIRoomEngine.sharedInstance().updateAudioQuality(TUIAudioQuality.audioProfileMusic);
       if (!result.isSuccess) {
         widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
@@ -504,6 +513,11 @@ extension _MediaOperation on _VoiceRoomRootWidgetState {
     if (!result.isSuccess) {
       widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
     }
+  }
+
+  void _startForegroundService() async {
+    String description = LiveKitLocalizations.of(TUILiveKitNavigatorObserver.instance.getContext())!.common_app_running;
+    TUILiveKitPlatform.instance.startForegroundService(ForegroundServiceType.audio, "", description);
   }
 }
 
@@ -548,7 +562,7 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   void _normalUserLeave() async {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = _getSelfID();
     if (!_liveSeatStore.liveSeatState.seatList.value.any((seatInfo) => seatInfo.userInfo.userID == selfUserId)) {
       return _leaveRoom();
     }
@@ -575,13 +589,14 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
   }
 
   Future<void> _leaveRoom() async {
-    final future = _liveListStore.leaveLive();
-    _closePage();
-
-    final result = await future;
-    if (!result.isSuccess) {
-      widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
-    }
+    if (_currentLiveID.isEmpty) return;
+    _currentLiveID = '';
+    _liveListStore.leaveLive().then((result) {
+      _closePage();
+      if (!result.isSuccess) {
+        widget.toastService.showToast(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+      }
+    });
   }
 
   void _onLoginStatusChanged() {
@@ -606,30 +621,30 @@ extension _TopWidgetTapEventHandler on _VoiceRoomRootWidgetState {
 }
 
 extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
-  void _onTapSeatGridWidget(TUISeatInfo seatInfo) {
+  void _onTapSeatGridWidget(SeatInfo seatInfo) {
     showSeatOperationMenu(seatInfo);
   }
 
-  void showSeatOperationMenu(TUISeatInfo seatInfo) {
+  void showSeatOperationMenu(SeatInfo seatInfo) {
     isOwner ? _showRoomOwnerSeatOperationMenu(seatInfo) : _showNormalUserSeatOperationMenu(seatInfo);
   }
 
-  void _showRoomOwnerSeatOperationMenu(TUISeatInfo seatInfo) {
-    if (seatInfo.userId.isEmpty) {
+  void _showRoomOwnerSeatOperationMenu(SeatInfo seatInfo) {
+    if (seatInfo.userInfo.userID.isEmpty) {
       return _showRoomOwnerEmptySeatOperationMenu(seatInfo);
     }
 
-    final isSelf = seatInfo.userId == TUIRoomEngine.getSelfInfo().userId;
+    final isSelf = seatInfo.userInfo.userID == _getSelfID();
     if (!isSelf) {
       _showUserManagementPanel(seatInfo);
     }
   }
 
-  void _showRoomOwnerEmptySeatOperationMenu(TUISeatInfo seatInfo) {
-    final isSeatLocked = seatInfo.isLocked ?? false;
+  void _showRoomOwnerEmptySeatOperationMenu(SeatInfo seatInfo) {
+    final isSeatLocked = seatInfo.isLocked;
     final List<ActionSheetItem> actions = [];
 
-    if (seatInfo.isLocked != null && !seatInfo.isLocked!) {
+    if (!seatInfo.isLocked) {
       actions.add(ActionSheetItem(
         title: LiveKitLocalizations.of(context)!.common_voiceroom_invite,
         onTap: () => _showSeatInvitationPanel(seatInfo),
@@ -650,18 +665,18 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
     );
   }
 
-  void _showSeatInvitationPanel(TUISeatInfo seatInfo) {
+  void _showSeatInvitationPanel(SeatInfo seatInfo) {
     _seatInvitationPanelSheetHandler = popupWidget(
         SeatInvitationPanelWidget(liveID: widget.liveID, toastService: widget.toastService, seatIndex: seatInfo.index),
         context: context);
   }
 
-  void _lockSeat(TUISeatInfo seatInfo) {
-    final isSeatLocked = seatInfo.isLocked ?? false;
+  void _lockSeat(SeatInfo seatInfo) {
+    final isSeatLocked = seatInfo.isLocked;
     isSeatLocked ? _liveSeatStore.unlockSeat(seatInfo.index) : _liveSeatStore.lockSeat(seatInfo.index);
   }
 
-  void _showUserManagementPanel(TUISeatInfo seatInfo) {
+  void _showUserManagementPanel(SeatInfo seatInfo) {
     _userManagementPanelSheetHandler = popupWidget(
         UserManagementPanelWidget(
             liveID: widget.liveID,
@@ -672,26 +687,26 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
         context: context);
   }
 
-  void _showNormalUserSeatOperationMenu(TUISeatInfo seatInfo) {
-    final isLocked = seatInfo.isLocked ?? false;
-    if (seatInfo.userId.isEmpty && !isLocked) {
+  void _showNormalUserSeatOperationMenu(SeatInfo seatInfo) {
+    final isLocked = seatInfo.isLocked;
+    if (seatInfo.userInfo.userID.isEmpty && !isLocked) {
       return _showNormalUserEmptySeatOperationMenu(seatInfo);
     }
 
-    if (seatInfo.userId.isNotEmpty && seatInfo.userId != TUIRoomEngine.getSelfInfo().userId) {
+    if (seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != _getSelfID()) {
       _showUserManagementPanel(seatInfo);
     }
   }
 
-  void _showNormalUserEmptySeatOperationMenu(TUISeatInfo seatInfo) {
+  void _showNormalUserEmptySeatOperationMenu(SeatInfo seatInfo) {
     _takeSeatSheetHandler = BaseBottomSheet.showWithHandler(
       context,
       actions: [
         ActionSheetItem(
           title: LiveKitLocalizations.of(context)!.common_voiceroom_take_seat,
           onTap: () {
-            final isOnSeat = _liveSeatStore.liveSeatState.seatList.value
-                .any((seat) => seat.userInfo.userID == TUIRoomEngine.getSelfInfo().userId);
+            final isOnSeat =
+                _liveSeatStore.liveSeatState.seatList.value.any((seat) => seat.userInfo.userID == _getSelfID());
             isOnSeat ? _moveToSeat(seatInfo) : _takeSeat(seatInfo);
           },
         ),
@@ -700,8 +715,8 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
     );
   }
 
-  void _moveToSeat(TUISeatInfo seatInfo) async {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+  void _moveToSeat(SeatInfo seatInfo) async {
+    final selfUserId = _getSelfID();
     final result = await _liveSeatStore.moveUserToSeat(
         userID: selfUserId, targetIndex: seatInfo.index, policy: MoveSeatPolicy.abortWhenOccupied);
     if (!result.isSuccess) {
@@ -709,7 +724,7 @@ extension _SeatGridWidgetTapEventHandler on _VoiceRoomRootWidgetState {
     }
   }
 
-  void _takeSeat(TUISeatInfo seatInfo) async {
+  void _takeSeat(SeatInfo seatInfo) async {
     if (_viewStore.state.isApplyingToTakeSeat.value) {
       return widget.toastService
           .showToast(LiveKitLocalizations.of(Global.appContext())!.common_client_error_request_id_repeat);
@@ -777,11 +792,7 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
     _audienceStore.addLiveAudienceListener(_liveAudienceListener);
   }
 
-  void _handleReceivedRequest(RequestType requestType, LiveUserInfo userInfo) {
-    if (requestType == RequestType.applyToTakeSeat) {
-      return;
-    }
-
+  void _handleReceivedRequest(LiveUserInfo userInfo) {
     final invitorName = _liveListStore.liveState.currentLive.value.liveOwner.userName.isNotEmpty
         ? _liveListStore.liveState.currentLive.value.liveOwner.userName
         : _liveListStore.liveState.currentLive.value.liveOwner.userID;
@@ -813,10 +824,7 @@ extension _SeatGridObserver on _VoiceRoomRootWidgetState {
     }
   }
 
-  void _handleCancelledRequest(RequestType requestType, LiveUserInfo userInfo) {
-    if (requestType == RequestType.applyToTakeSeat) {
-      return;
-    }
+  void _handleCancelledRequest(LiveUserInfo userInfo) {
     _receivedRequestAlertHandler?.close();
   }
 }
@@ -828,9 +836,9 @@ extension _SubscribeState on _VoiceRoomRootWidgetState {
         inviterUserInfo = hostUser;
         return;
       }
-      _handleReceivedRequest(RequestType.inviteToTakeSeat, hostUser);
+      _handleReceivedRequest(hostUser);
     }, onHostInvitationCancelled: (hostUser) {
-      _handleCancelledRequest(RequestType.inviteToTakeSeat, hostUser);
+      _handleCancelledRequest(hostUser);
     }, onGuestApplicationResponded: (isAccept, hostUser) {
       _viewStore.onRespondedTakeSeatRequest();
       if (!isAccept) {
@@ -862,7 +870,7 @@ extension _SubscribeState on _VoiceRoomRootWidgetState {
   }
 
   void _onSeatListChange() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = _getSelfID();
     SeatInfo? seatInfo = _liveSeatStore.liveSeatState.seatList.value
         .firstWhereOrNull((seatInfo) => seatInfo.userInfo.userID == selfUserId);
     _isLinked.value = seatInfo != null;
@@ -895,7 +903,7 @@ extension _SubscribeState on _VoiceRoomRootWidgetState {
     bool isFullScreen = widget.floatWindowController!.isFullScreen.value;
     if (!isFullScreen) return;
     if (inviterUserInfo == null) return;
-    _handleReceivedRequest(RequestType.inviteToTakeSeat, inviterUserInfo!);
+    _handleReceivedRequest(inviterUserInfo!);
     inviterUserInfo = null;
   }
 }
@@ -909,11 +917,12 @@ extension _BarrageOperation on _VoiceRoomRootWidgetState {
     final liveOwner = _liveListStore.liveState.currentLive.value.liveOwner;
     final receiverUserId = liveOwner.userID;
     String receiverUserName = liveOwner.userName;
-    if (receiverUserId == TUIRoomEngine.getSelfInfo().userId) {
+    if (receiverUserId == _getSelfID()) {
       receiverUserName = LiveKitLocalizations.of(Global.appContext())!.common_gift_me;
     }
 
     Barrage barrage = Barrage();
+    barrage.liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
     barrage.textContent = "gift";
     barrage.sender = sender;
     barrage.extensionInfo[Constants.keyGiftViewType] = Constants.valueGiftViewType;
@@ -924,18 +933,5 @@ extension _BarrageOperation on _VoiceRoomRootWidgetState {
 
     barrage.extensionInfo[Constants.keyGiftReceiverUsername] = receiverUserName;
     _barrageDisplayController?.insertMessage(barrage);
-  }
-}
-
-extension _TypeConvert on _VoiceRoomRootWidgetState {
-  TUISeatInfo engineSeatInfoFromSeatInfo(SeatInfo seatInfo) {
-    return TUISeatInfo(
-        index: seatInfo.index,
-        userId: seatInfo.userInfo.userID,
-        userName: seatInfo.userInfo.userName,
-        avatarUrl: seatInfo.userInfo.avatarURL,
-        isLocked: seatInfo.isLocked,
-        isAudioLocked: !seatInfo.userInfo.allowOpenMicrophone,
-        isVideoLocked: !seatInfo.userInfo.allowOpenCamera);
   }
 }

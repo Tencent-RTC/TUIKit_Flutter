@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "tencent_live_uikit",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

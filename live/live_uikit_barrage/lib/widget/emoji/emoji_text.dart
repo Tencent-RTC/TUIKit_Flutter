@@ -1,4 +1,4 @@
-import 'package:extended_text_field/extended_text_field.dart';
+import 'package:live_uikit_barrage/third_party/extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/index.dart';

@@ -11,6 +11,7 @@ import '../../common/resources/colors.dart';
 
 class GiftBarrageItemBuilder extends CustomBarrageBuilder {
   final String selfUserId;
+  final void Function(Barrage)? onClickItem;
 
   List<Color> giftMessageColor = [
     LiveColors.barrageColorMsg1,
@@ -22,13 +23,19 @@ class GiftBarrageItemBuilder extends CustomBarrageBuilder {
     LiveColors.barrageColorMsg7
   ];
 
-  GiftBarrageItemBuilder({required this.selfUserId});
+  GiftBarrageItemBuilder({required this.selfUserId, this.onClickItem});
 
   @override
   Widget buildWidget(BuildContext context, Barrage barrage) {
+    return GestureDetector(
+      onTap: () => onClickItem?.call(barrage),
+      child: _buildItemWidget(context, barrage),
+    );
+  }
+
+  Widget _buildItemWidget(BuildContext context, Barrage barrage) {
     String receiverUserId = barrage.extensionInfo[Constants.keyGiftReceiverUserId] ?? '';
-    String receiverUserName =
-        barrage.extensionInfo[Constants.keyGiftReceiverUsername] ?? '';
+    String receiverUserName = barrage.extensionInfo[Constants.keyGiftReceiverUsername] ?? '';
     String giftUrl = barrage.extensionInfo[Constants.keyGiftImage] ?? '';
     String giftName = barrage.extensionInfo[Constants.keyGiftName] ?? '';
     int giftCount = int.tryParse(barrage.extensionInfo[Constants.keyGiftCount] ?? '0') ?? 0;
@@ -55,33 +62,24 @@ class GiftBarrageItemBuilder extends CustomBarrageBuilder {
                 TextSpan(
                   text: senderUserName,
                   style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: LiveColors.barrageUserNameColor),
+                      fontSize: 12, fontWeight: FontWeight.w700, color: LiveColors.barrageUserNameColor),
                 ),
                 const TextSpan(text: ' '),
                 TextSpan(
                   text: LiveKitLocalizations.of(context)!.common_sent,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
                 ),
                 const TextSpan(text: ' '),
                 TextSpan(
                   text: receiverUserName,
                   style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: LiveColors.barrageUserNameColor),
+                      fontSize: 12, fontWeight: FontWeight.w700, color: LiveColors.barrageUserNameColor),
                 ),
                 const TextSpan(text: ' '),
                 TextSpan(
                   text: giftName,
                   style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: giftMessageColor[Random().nextInt(7)]),
+                      fontSize: 12, fontWeight: FontWeight.w700, color: giftMessageColor[Random().nextInt(7)]),
                 ),
                 const TextSpan(text: ' '),
                 WidgetSpan(
@@ -98,10 +96,7 @@ class GiftBarrageItemBuilder extends CustomBarrageBuilder {
                 const TextSpan(text: ' '),
                 TextSpan(
                   text: "x$giftCount",
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
                 ),
               ],
             ),

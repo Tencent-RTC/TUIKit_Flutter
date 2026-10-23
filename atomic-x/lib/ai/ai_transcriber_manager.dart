@@ -3,7 +3,6 @@ library ai_transcriber_manager;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:tencent_rtc_sdk/trtc_cloud.dart';
 import '../base_component/localizations/atomic_localizations.dart';
 
 // ==================== Button Widget ====================
@@ -189,7 +188,6 @@ class AITranscriberConfigManager {
       _transcriberStore?.startRealtimeTranscriber(
         _currentSettings.value.toTranscriberConfig(),
       );
-      _closeVAD();
     }
     _isRunning.value = true;
   }
@@ -233,36 +231,6 @@ class AITranscriberConfigManager {
     }
   }
 
-  void _closeVAD() async {
-    final trtcCloud = await TRTCCloud.sharedInstance();
-    
-    final resetObj = {
-      "api": "setPrivateConfig",
-      "params": {
-        "configs": [
-          {
-            "key": "Liteav.Audio.common.enable.send.eos.packet.in.dtx",
-            "action": "reset"
-          }
-        ]
-      }
-    };
-    trtcCloud.callExperimentalAPI(jsonEncode(resetObj));
-
-    final closeObj = {
-      "api": "setPrivateConfig",
-      "params": {
-        "configs": [
-          {
-            "key": "Liteav.Audio.common.enable.send.eos.packet.in.dtx",
-            "value": 0,
-            "default": 0
-          }
-        ]
-      }
-    };
-    trtcCloud.callExperimentalAPI(jsonEncode(closeObj));
-  }
 }
 
 final aiTranscriberConfigManager = AITranscriberConfigManager();

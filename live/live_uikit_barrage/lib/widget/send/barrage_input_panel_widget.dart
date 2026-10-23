@@ -1,10 +1,10 @@
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:atomic_x_core/api/barrage/barrage_store.dart';
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
-import 'package:extended_text_field/extended_text_field.dart';
+import 'package:live_uikit_barrage/third_party/extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/index.dart';
-import '../../state/store.dart';
 import '../send/index.dart';
 import '../emoji/index.dart';
 
@@ -184,12 +184,13 @@ class _BarrageInputPanelWidgetState extends State<BarrageInputPanelWidget> {
 
   Barrage _generateSendBarrage() {
     LiveUserInfo sender = LiveUserInfo();
-    sender.userID = Store().selfUserId;
-    sender.userName = Store().selfName;
+    sender.userID = LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
+    sender.userName = LoginStore.shared.loginState.loginUserInfo?.nickname ?? '';
 
     Barrage barrage = Barrage();
     barrage.textContent = widget.controller.textEditingController.text;
     barrage.sender = sender;
+    barrage.liveID = widget.controller.roomId;
     return barrage;
   }
 

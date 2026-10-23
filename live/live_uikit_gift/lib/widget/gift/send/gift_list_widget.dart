@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:live_uikit_gift/common/screen/screen_adapter.dart';
 
 import '../../../common/index.dart';
-import '../../../state/index.dart';
 import 'gift_list_controller.dart';
 
 class GiftListWidget extends StatefulWidget {
@@ -17,13 +16,10 @@ class GiftListWidget extends StatefulWidget {
 }
 
 class GiftListWidgetState extends State<GiftListWidget> {
-  List<PageWidget> pages = [];
-
   @override
   void initState() {
     super.initState();
     widget.giftListController.pageController = PageController();
-    _initWidget();
   }
 
   @override
@@ -50,9 +46,15 @@ class GiftListWidgetState extends State<GiftListWidget> {
             width: MediaQuery
                 .sizeOf(context)
                 .width,
-            child: PageView(
-              controller: widget.giftListController.pageController,
-              children: pages,
+            child: ValueListenableBuilder<List<GiftCategory>>(
+              valueListenable: GiftStore.create(widget.giftListController.roomId).giftState.usableGifts,
+              builder: (context, giftCategoryList, _) {
+                final pages = _buildPages(giftCategoryList);
+                return PageView(
+                  controller: widget.giftListController.pageController,
+                  children: pages,
+                );
+              },
             ),
           ),
         ],
@@ -66,21 +68,23 @@ class GiftListWidgetState extends State<GiftListWidget> {
     super.dispose();
   }
 
-  void _initWidget() {
+  List<PageWidget> _buildPages(List<GiftCategory> giftCategoryList) {
     const int pagerCount = 8;
-    final giftList = TUIGiftStore().giftListMap.value[widget.giftListController.roomId];
-    if (giftList == null) {
-      return;
+    final List<PageWidget> pages = [];
+    final List<Gift> giftList = List.empty(growable: true);
+    for (final giftCategory in giftCategoryList) {
+      giftList.addAll(giftCategory.giftList);
     }
-    int listLength = giftList.length;
+    final int listLength = giftList.length;
     for (int i = 0; i < (listLength / pagerCount).ceil(); i++) {
-      List<Gift> dataList =
-      giftList.sublist(i * pagerCount, ((i + 1) * pagerCount < listLength) ? ((i + 1) * pagerCount) : listLength);
+      final List<Gift> dataList = giftList.sublist(
+          i * pagerCount, ((i + 1) * pagerCount < listLength) ? ((i + 1) * pagerCount) : listLength);
       pages.add(PageWidget(
         giftListController: widget.giftListController,
         dataList: dataList,
       ));
     }
+    return pages;
   }
 }
 
@@ -109,7 +113,7 @@ class PageWidgetState extends State<PageWidget> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: widget.dataList.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4, childAspectRatio: 0.67, crossAxisSpacing: 10),
+          crossAxisCount: 4, childAspectRatio: 0.62, crossAxisSpacing: 10),
       itemBuilder: (context, index) {
         final Gift gift = widget.dataList[index];
         return GestureDetector(
@@ -122,6 +126,7 @@ class PageWidgetState extends State<PageWidget> {
             width: context.adapter.getWidth(80),
             height: context.adapter.getHeight(120),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -190,7 +195,7 @@ class PageWidgetState extends State<PageWidget> {
                 SizedBox(height: context.adapter.getHeight(3)),
                 Text(
                   "${gift.coins}",
-                  style: const TextStyle(color: Colors.white54, fontSize: 10),
+                  style: const TextStyle(color: Colors.white54, fontSize: 10, height: 1.2),
                 ),
               ],
             ),

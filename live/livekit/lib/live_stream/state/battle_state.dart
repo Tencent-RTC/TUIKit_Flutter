@@ -3,9 +3,6 @@ import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 
 class LSBattleState {
-  static const int battleDuration = 30;
-  static const int battleRequestTime = 10;
-  static const int battleEndInfoDuration = 5;
 
   final ValueNotifier<String> battleId = ValueNotifier('');
   final ValueNotifier<List<BattleUser>> battleUsers = ValueNotifier([]);

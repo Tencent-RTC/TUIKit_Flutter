@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:atomic_x_core/atomicxcore.dart' hide LiveStatus;
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
 import 'package:live_uikit_gift/live_uikit_gift.dart';
+import 'package:rtc_room_engine/api/extension/tui_live_list_manager.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_guest/anchor_co_guest_float_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import '../../../../common/index.dart';
 import '../../../../component/index.dart';
@@ -43,7 +43,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   GiftPlayController? _giftPlayController;
   BottomSheetHandler? _userManagementPanelSheetHandler;
   AlertHandler? _closePanelSheetHandler;
-  final NetworkInfoManager _networkInfoManager = NetworkInfoManager();
+  late NetworkInfoManager _networkInfoManager;
   late final VoidCallback _userEnterRoomListener = _onRemoteUserEnterRoom;
   late final VoidCallback _isFloatWindowModeListener = _isFloatWindowModeChanged;
   late final LiveListListener _liveListListener;
@@ -57,6 +57,7 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   void initState() {
     super.initState();
     liveStreamManager = widget.liveStreamManager;
+    _networkInfoManager = NetworkInfoManager(liveStreamManager.roomState.roomId);
     liveStreamManager.setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy.always);
     liveListStore = LiveListStore.shared;
     _liveSummaryStore = LiveSummaryStore.create(liveStreamManager.roomState.roomId);
@@ -268,7 +269,6 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
               }
               return NetworkInfoButton(
                 manager: _networkInfoManager,
-                createTime: liveStreamManager.roomState.createTime,
                 isAudience: !liveStreamManager.roomState.liveInfo.keepOwnerOnSeat,
                 isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode,
               );
@@ -292,8 +292,8 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
   Widget _buildBarrageDisplayWidget() {
     return Positioned(
         left: 16.height,
-        bottom: 108.height,
-        height: 214.height,
+        bottom: 80.height,
+        height: 182.height,
         width: 1.screenWidth - 146.width,
         child: ValueListenableBuilder(
           valueListenable: liveStreamManager.roomState.liveStatus,
@@ -303,37 +303,36 @@ class _AnchorLivingWidgetState extends State<AnchorLivingWidget> {
             }
             if (_barrageDisplayController == null) {
               _barrageDisplayController = BarrageDisplayController(
-                  roomId: liveStreamManager.roomState.roomId,
-                  ownerId: liveStreamManager.roomState.liveInfo.liveOwner.userID,
-                  selfUserId: TUIRoomEngine.getSelfInfo().userId,
-                  selfName: TUIRoomEngine.getSelfInfo().userName,
-                  onError: (code, message) {
-                    makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '', type: ToastType.error);
-                  });
-              _barrageDisplayController
-                  ?.setCustomBarrageBuilder(GiftBarrageItemBuilder(selfUserId: TUIRoomEngine.getSelfInfo().userId));
+                roomId: liveStreamManager.roomState.roomId,
+                ownerId: liveStreamManager.roomState.liveInfo.liveOwner.userID,
+              );
+              _barrageDisplayController?.setCustomBarrageBuilder(
+                GiftBarrageItemBuilder(
+                    selfUserId: LoginStore.shared.loginState.loginUserInfo?.userID ?? '',
+                    onClickItem: (barrage) => _onClickBarrageItem(barrage)),
+              );
             }
             return BarrageDisplayWidget(
               controller: _barrageDisplayController!,
-              onClickBarrageItem: (barrage) {
-                final isOwner = liveStreamManager.roomState.liveInfo.liveOwner.userID == barrage.sender.userID;
-                if (isOwner) {
-                  return;
-                }
-                final user = LiveUserInfo(
-                    userID: barrage.sender.userID,
-                    userName: barrage.sender.userName,
-                    avatarURL: barrage.sender.avatarURL);
-                _userManagementPanelSheetHandler = popupWidget(
-                    context: context,
-                    AnchorUserManagementForAudiencePanel(
-                      user: user,
-                      liveStreamManager: liveStreamManager,
-                      closeCallback: () => _userManagementPanelSheetHandler?.close(),
-                    ));
-              },
+              onClickBarrageItem: (barrage) => _onClickBarrageItem(barrage),
             );
           },
+        ));
+  }
+
+  void _onClickBarrageItem(Barrage barrage) {
+    final isOwner = liveStreamManager.roomState.liveInfo.liveOwner.userID == barrage.sender.userID;
+    if (isOwner) {
+      return;
+    }
+    final user = LiveUserInfo(
+        userID: barrage.sender.userID, userName: barrage.sender.userName, avatarURL: barrage.sender.avatarURL);
+    _userManagementPanelSheetHandler = popupWidget(
+        context: context,
+        AnchorUserManagementForAudiencePanel(
+          user: user,
+          liveStreamManager: liveStreamManager,
+          closeCallback: () => _userManagementPanelSheetHandler?.close(),
         ));
   }
 
@@ -419,9 +418,11 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _onRemoteUserEnterRoom() {
-    LiveUserInfo barrageUser = liveStreamManager.userState.enterUser.value;
+    final sender = widget.liveStreamManager.userState.enterUser.value;
+    if (sender.userID.isEmpty) return;
     Barrage barrage = Barrage();
-    barrage.sender = barrageUser;
+    barrage.liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    barrage.sender = sender;
     barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
     _barrageDisplayController?.insertMessage(barrage);
   }
@@ -433,7 +434,7 @@ extension on _AnchorLivingWidgetState {
   }
 
   void _closeButtonClick() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     final isSelfInBattle = liveStreamManager.battleState.battleUsers.value.any((user) => user.userId == selfUserId);
     final isSelfInCoHost = coHostStore.coHostState.connected.value.length > 1;
     final isSelfInCoGuest = liveSeatStore.liveSeatState.seatList.value
@@ -443,17 +444,11 @@ extension on _AnchorLivingWidgetState {
     closeAlert() => _closePanelSheetHandler?.close();
     if (isSelfInBattle) {
       final alertInfo = AlertInfo(
-        description: LiveKitLocalizations.of(context)!.common_end_pk_tips,
+        description: LiveKitLocalizations.of(context)!.common_anchor_end_link_tips,
         itemList: [
           ButtonConfig(
-              text: LiveKitLocalizations.of(context)!.common_battle_end_pk,
-              type: TextColorPreset.red,
-              onClick: () {
-                closeAlert();
-                _exitBattle();
-              }),
-          ButtonConfig(
               text: LiveKitLocalizations.of(context)!.common_end_live,
+              type: TextColorPreset.red,
               onClick: () {
                 closeAlert.call();
                 _stopLiveStream();
@@ -516,10 +511,6 @@ extension on _AnchorLivingWidgetState {
     }
   }
 
-  void _exitBattle() {
-    battleStore.exitBattle(liveStreamManager.battleState.battleId.value);
-  }
-
   void _exitCoHost() {
     coHostStore.exitHostConnection();
   }
@@ -536,14 +527,12 @@ extension on _AnchorLivingWidgetState {
         liveStreamManager.mediaManager.stopScreenShare();
       }
       final future = liveListStore.endLive();
-      BarrageDisplayController.resetState();
       _giftPlayController?.dispose();
 
       final result = await future;
       if (_isLiveEndedByServer) return;
-      if (result.errorCode != TUIError.success.rawValue) {
-        liveStreamManager.toastSubject
-            .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+      if (result.errorCode != 0) {
+        liveStreamManager.toastSubject.add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage));
       }
       widget.onEndLive.call(result.statisticsData, LiveEndedReason.endedByHost);
       liveStreamManager.onStopLive();
@@ -560,18 +549,18 @@ extension on _AnchorLivingWidgetState {
       liveListStore.leaveLive();
     } else {
       liveListStore.endLive();
-      BarrageDisplayController.resetState();
       _giftPlayController?.dispose();
     }
   }
 
   void _insertToBarrageMessage(Gift gift, int count, LiveUserInfo sender) {
     final receiver = widget.liveStreamManager.roomState.liveInfo.liveOwner;
-    if (receiver.userID == TUIRoomEngine.getSelfInfo().userId) {
+    if (receiver.userID == LoginStore.shared.loginState.loginUserInfo?.userID) {
       receiver.userName = LiveKitLocalizations.of(Global.appContext())!.common_gift_me;
     }
 
     Barrage barrage = Barrage();
+    barrage.liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
     barrage.textContent = "gift";
     barrage.sender = sender;
     barrage.extensionInfo[Constants.keyGiftViewType] = Constants.valueGiftViewType;

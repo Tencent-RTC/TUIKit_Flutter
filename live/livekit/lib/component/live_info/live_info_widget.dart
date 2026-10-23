@@ -70,7 +70,7 @@ class _LiveInfoWidgetState extends State<LiveInfoWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _initOwnerAvatarWidget(),
-            _initOwnerNameWidget(),
+            Flexible(child: _initOwnerNameWidget()),
             SizedBox(width: 12.width),
             _initFollowWidget(),
           ],
@@ -126,8 +126,12 @@ class _LiveInfoWidgetState extends State<LiveInfoWidget> {
     return ValueListenableBuilder(
       valueListenable: manager.state.ownerId,
       builder: (context, value, child) {
+        final showFollow = manager.state.ownerId.value != manager.state.selfUserId;
         return Visibility(
-          visible: manager.state.ownerId.value != manager.state.selfUserId,
+          visible: showFollow,
+          maintainState: false,
+          maintainAnimation: false,
+          maintainSize: false,
           child: ValueListenableBuilder(
             valueListenable: manager.state.followingList,
             builder: (BuildContext context, value, Widget? child) {

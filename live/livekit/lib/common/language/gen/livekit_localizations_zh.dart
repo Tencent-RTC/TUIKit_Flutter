@@ -108,6 +108,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_end_pk_tips => '当前处于PK状态，是否需要「结束PK」或「关闭直播间」';
 
   @override
+  String get common_anchor_end_pk_tips => '当前处于PK状态，是否需要「关闭直播间」';
+
+  @override
   String get common_kick_out_of_room => '移除';
 
   @override
@@ -674,7 +677,7 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get common_server_error_not_started_yet => '该 battle 场次还未开始';
 
   @override
-  String get common_server_error_param_illegal => '请参数非法，请根据错误描述检查请求是否正确';
+  String get common_server_error_param_illegal => '请求参数非法，请根据错误描述检查请求参数是否正确';
 
   @override
   String get common_server_error_requires_password => '当前房间需要密码才能进入';
@@ -1031,6 +1034,19 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
   String get live_video_resolution_changed => '清晰度已切换至';
 
   @override
+  String get common_go_settings => '去设置';
+
+  @override
+  String get common_permission_request => '权限申请';
+
+  @override
+  String get common_permission_camera_reason =>
+      '需要访问您的相机权限，开启后用于视频互动等功能，在您使用美颜功能时，我们会对您实时拍摄的面部的像素信息进行实时智能识别，在识别过程中会实时收集您面部的像素信息，以为您提供更好的美颜效果。';
+
+  @override
+  String get common_permission_mic_reason => '需要访问您的麦克风权限，开启后用于视频互动等功能，并且开启后录制的视频才会有声音。';
+
+  @override
   String get common_template_601_ui_exception_toast => '该布局模板在特定机型上会显示异常，建议更换其他布局模板';
 
   @override
@@ -1131,6 +1147,9 @@ class LiveKitLocalizationsZh extends LiveKitLocalizations {
 
   @override
   String get common_enter_anchor_live_room => '去TA的直播间';
+
+  @override
+  String get common_battle_all_member_exit_win => '所有PK成员提前退出，本局判当前主播胜利';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1235,6 +1254,9 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_end_pk_tips => '當前處於PK狀態，是否需要「結束PK」或「關閉直播間」';
+
+  @override
+  String get common_anchor_end_pk_tips => '當前處於PK狀態，是否需要「關閉直播間」';
 
   @override
   String get common_kick_out_of_room => '移除';
@@ -1803,7 +1825,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get common_server_error_not_started_yet => '該 battle 場次還未開始';
 
   @override
-  String get common_server_error_param_illegal => '請參數非法，請根據錯誤描述檢查請求是否正確';
+  String get common_server_error_param_illegal => '請求參數非法，請根據錯誤描述檢查請求參數是否正確';
 
   @override
   String get common_server_error_requires_password => '當前房間需要密碼才能進入';
@@ -2160,6 +2182,19 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
   String get live_video_resolution_changed => '清晰度已切換至';
 
   @override
+  String get common_go_settings => '去設置';
+
+  @override
+  String get common_permission_request => '權限申請';
+
+  @override
+  String get common_permission_camera_reason =>
+      '需要訪問您的相機權限，開啟後用於視頻互動等功能，在您使用美顏功能時，我們會對您實時拍攝的面部的像素信息進行實時智能識別，在識別過程中會實時收集您面部的像素信息，以為您提供更好的美顏效果。';
+
+  @override
+  String get common_permission_mic_reason => '需要訪問您的麥克風權限，開啟後用於視頻互動等功能，並且開啟後錄製的視頻才會有聲音。';
+
+  @override
   String get common_template_601_ui_exception_toast => '此佈局模板在特定機型上會顯示異常，建議更換其他佈局模板';
 
   @override
@@ -2260,4 +2295,7 @@ class LiveKitLocalizationsZhHant extends LiveKitLocalizationsZh {
 
   @override
   String get common_enter_anchor_live_room => '去TA的直播間';
+
+  @override
+  String get common_battle_all_member_exit_win => '所有PK成員提前退出，本局判當前主播勝利';
 }

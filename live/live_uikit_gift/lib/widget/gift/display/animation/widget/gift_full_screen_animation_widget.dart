@@ -1,9 +1,10 @@
-import 'package:atomic_x_core/api/live/live_audience_store.dart';
+import 'dart:io';
+
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_effect_player/ftceffect_player.dart';
 import 'package:live_uikit_gift/live_uikit_gift.dart';
 import 'package:live_uikit_gift/widget/gift/display/animation/manager/list_manager.dart';
-import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
 
 import '../../../../../manager/cache/gift_cache_manager.dart';
 import '../../../../svga_player/parser.dart';
@@ -56,12 +57,14 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
         valueListenable: currentAnimationUrl,
         builder: (context, animationUrl, _) {
           return Stack(children: [
-            FTCEffectAnimView(
+            if (Platform.isAndroid || Platform.isIOS)
+              FTCEffectAnimView(
                 controllerCallback: (controller) async {
                   await _setupEffectViewController(controller);
                   _playAnimation();
                 }
-            ),
+              ),
+              
             SVGAImage(
               _svgaAnimationController,
               fit: BoxFit.contain,
@@ -120,11 +123,15 @@ class GiftFullScreenAnimationWidgetState extends State<GiftFullScreenAnimationWi
   Widget _getAnimationWidget(String animationUrl) {
     AnimationSourceType sourceType = _getSourceType(animationUrl);
     if (isTCEffectPlayerUsable && sourceType == AnimationSourceType.mp4) {
-      return FTCEffectAnimView(
-        controllerCallback: (controller) async {
-          await _setupEffectViewController(controller);
-        },
-      );
+      if (Platform.isAndroid || Platform.isIOS) {
+        return FTCEffectAnimView(
+          controllerCallback: (controller) async {
+            await _setupEffectViewController(controller);
+          },
+        );
+      } else {
+        return Container();
+      }
     } else {
       return SVGAImage(
         _svgaAnimationController,
@@ -263,9 +270,7 @@ extension on GiftFullScreenAnimationWidgetState {
 
 extension on LiveUserInfo {
   bool isSelf() {
-    return userID == TUIRoomEngine
-        .getSelfInfo()
-        .userId;
+    return userID == LoginStore.shared.loginState.loginUserInfo?.userID;
   }
 }
 

@@ -30,7 +30,6 @@ class _PlayerMenuWidgetState extends State<PlayerMenuWidget> {
     _isPlaying = ValueNotifier(!widget.liveStreamManager.mediaState.isRemoteVideoStreamPaused.value);
     _volume = ValueNotifier(widget.liveStreamManager.mediaState.currentPlayoutVolume.value.toDouble());
     widget.liveStreamManager.roomState.liveStatus.addListener(_liveStatusChangedListener);
-    _kickedOutSubscription = widget.liveStreamManager.kickedOutSubject.stream.listen((_) => _handleKickedOut());
   }
 
   @override
@@ -166,12 +165,6 @@ extension on _PlayerMenuWidgetState {
 
   void _onLiveStatusChanged() {
     if (mounted && widget.liveStreamManager.roomState.liveStatus.value == LiveStatus.finished) {
-      Navigator.pop(context);
-    }
-  }
-
-  void _handleKickedOut() {
-    if (mounted) {
       Navigator.pop(context);
     }
   }

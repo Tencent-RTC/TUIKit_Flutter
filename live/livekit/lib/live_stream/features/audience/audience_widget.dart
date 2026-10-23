@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart' hide LiveStatus;
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:atomic_x_core/api/view/live/live_core_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:live_uikit_barrage/live_uikit_barrage.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_navigator_observer.dart';
@@ -19,52 +20,128 @@ import 'package:tencent_live_uikit/live_stream/features/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
+import '../../../common/widget/float_window/float_window_mode.dart';
 import '../../../component/float_window/global_float_window_manager.dart';
 import '../../live_define.dart';
 import '../../state/co_guest_state.dart';
 import '../decorations/co_guest/co_guest_seat_list_widget.dart';
 import 'living_widget/background_image_widget.dart';
 
-class AudienceWidget extends StatefulWidget {
+class AudienceController {
   final String roomId;
-  final LiveCoreController liveCoreController;
-  final LiveStreamManager liveStreamManager;
+  final LiveCoreController liveCoreController = LiveCoreController.create(CoreViewType.playView);
+  final LiveStreamManager liveStreamManager = LiveStreamManager();
+  ValueChanged<bool>? onKeepLiveChanged;
+  ValueChanged<bool>? onSwitchFloatWindowOutOfApp;
+  VoidCallback? onTapEnterFloatWindowInApp;
+
+  AudienceController({required this.roomId}) {
+    liveCoreController.setLiveID(roomId);
+    liveStreamManager.setLiveID(roomId);
+  }
+
+  _AudienceWidgetState? _state;
+
+  void _attach(_AudienceWidgetState state) {
+    _state = state;
+  }
+
+  void _detach(_AudienceWidgetState state) {
+    if (_state == state) {
+      _state = null;
+    }
+  }
+
+  void joinLive() {
+    _state?._joinLiveStream();
+  }
+
+  void leaveLive() {
+    _state?._leaveLiveStream(reset: true);
+  }
+
+  void startPreload() {
+    _state?._startPreload();
+  }
+
+  void stopPreload() {
+    _state?._stopPreload();
+  }
+
+  void setFullScreenChanged(bool isFullScreen) {
+    _state?._setFullScreenChanged(isFullScreen);
+  }
+
+  void dispose() {}
+}
+
+class AudienceWidget extends StatefulWidget {
+  final LiveInfo liveInfo;
+  final AudienceController audienceController;
   final VoidCallback? onTapEnterFloatWindowInApp;
 
-  final ValueChanged<bool>? onJoinLiveStateChanged;
   final ValueChanged<bool>? onCoGuestStateChanged;
+  final VoidCallback? onInitState;
   final VoidCallback? onDispose;
 
-  const AudienceWidget(
-      {super.key,
-      required this.roomId,
-      required this.liveCoreController,
-      required this.liveStreamManager,
-      this.onTapEnterFloatWindowInApp,
-      this.onJoinLiveStateChanged,
-      this.onCoGuestStateChanged,
-      this.onDispose});
+  const AudienceWidget({
+    super.key,
+    required this.liveInfo,
+    required this.audienceController,
+    this.onTapEnterFloatWindowInApp,
+    this.onCoGuestStateChanged,
+    this.onInitState,
+    this.onDispose,
+  });
 
   @override
   State<AudienceWidget> createState() => _AudienceWidgetState();
 }
 
 class _AudienceWidgetState extends State<AudienceWidget> {
+  late final String roomId;
+  late final AudienceController audienceController;
+  late final LiveCoreController liveCoreController;
+  late final LiveStreamManager liveStreamManager;
+
   late final VoidCallback _liveStatusListener = _onLiveStatusChange;
   late final VoidCallback _coGuestStatusListener = _onCoGuestStatusChanged;
   late final VoidCallback _isFloatWindowModeListener = _isFloatWindowModeChanged;
+  late final VoidCallback _floatWindowModeListener = _onFloatWindowModeChanged;
 
   BottomSheetHandler? _audienceUserInfoPanelHandler;
   BottomSheetHandler? _audienceUserManagementPanelHandler;
 
+  final ValueNotifier<int> _joinLiveVersion = ValueNotifier(0);
+
   late final LiveListListener _liveListListener;
   late final LiveSeatListener _liveSeatListener;
+  LiveSeatStore? _liveSeatStore;
+
+  late final StreamSubscription? _toastSubscription;
 
   @override
   void initState() {
-    LiveKitLogger.info("AudienceWidget init");
+    roomId = widget.liveInfo.liveID;
+    LiveKitLogger.info("AudienceWidget init, liveID=$roomId");
     super.initState();
+    audienceController = widget.audienceController;
+    liveCoreController = widget.audienceController.liveCoreController;
+    liveStreamManager = widget.audienceController.liveStreamManager;
+    liveStreamManager.roomState.roomId = roomId;
+    liveStreamManager.roomState.liveInfo = widget.liveInfo;
+    widget.audienceController._attach(this);
     _init();
+    widget.onInitState?.call();
+  }
+
+  @override
+  void didUpdateWidget(covariant AudienceWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.audienceController != widget.audienceController) {
+      oldWidget.audienceController._detach(this);
+      widget.audienceController._attach(this);
+    }
   }
 
   @override
@@ -75,20 +152,29 @@ class _AudienceWidgetState extends State<AudienceWidget> {
         children: [
           _buildBackgroundImageWidget(),
           _buildMainWidget(),
-          AudienceLivingWidget(
-            liveCoreController: widget.liveCoreController,
-            liveStreamManager: widget.liveStreamManager,
-            onTapEnterFloatWindowInApp: widget.onTapEnterFloatWindowInApp,
+          ValueListenableBuilder(
+            valueListenable: _joinLiveVersion,
+            builder: (BuildContext context, joinLiveVersion, Widget? child) {
+              return  AudienceLivingWidget(
+                key: ValueKey('AudienceLivingWidget_${roomId}_$joinLiveVersion'),
+                liveCoreController: liveCoreController,
+                liveStreamManager: liveStreamManager,
+                onTapEnterFloatWindowInApp: () {
+                  widget.onTapEnterFloatWindowInApp?.call();
+                  audienceController.onTapEnterFloatWindowInApp?.call();
+                },
+              );
+            },
           ),
           ValueListenableBuilder(
-            valueListenable: widget.liveStreamManager.roomState.liveStatus,
+            valueListenable: liveStreamManager.roomState.liveStatus,
             builder: (BuildContext context, value, Widget? child) {
               return Visibility(
-                visible: widget.liveStreamManager.roomState.liveStatus.value == LiveStatus.finished,
+                visible: liveStreamManager.roomState.liveStatus.value == LiveStatus.finished,
                 child: AudienceEndStatisticsWidget(
-                  roomId: widget.roomId,
-                  avatarUrl: widget.liveStreamManager.roomState.liveInfo.liveOwner.avatarURL,
-                  userName: widget.liveStreamManager.roomState.liveInfo.liveOwner.userName,
+                  roomId: roomId,
+                  avatarUrl: liveStreamManager.roomState.liveInfo.liveOwner.avatarURL,
+                  userName: liveStreamManager.roomState.liveInfo.liveOwner.userName,
                 ),
               );
             },
@@ -99,30 +185,30 @@ class _AudienceWidgetState extends State<AudienceWidget> {
   }
 
   Widget _buildMainWidget() {
-    return ValueListenableBuilder(
-        valueListenable: widget.liveStreamManager.roomState.liveStatus,
-        builder: (BuildContext context, LiveStatus liveStatus, Widget? child) {
-          if (liveStatus == LiveStatus.none) {
-            return const SizedBox.shrink();
-          } else {
-            return Stack(
-              children: [
-                _buildLiveCoreWidget(),
-                _buildSeatListWidget(),
-              ],
-            );
-          }
-        });
+    return Stack(
+      children: [
+        _buildLiveCoreWidget(),
+        ValueListenableBuilder(
+            valueListenable: liveStreamManager.roomState.liveStatus,
+            builder: (BuildContext context, LiveStatus liveStatus, Widget? child) {
+              if (liveStatus == LiveStatus.none) {
+                return const SizedBox.shrink();
+              } else {
+                return _buildSeatListWidget();
+              }
+            }),
+      ],
+    );
   }
 
   Widget _buildLiveCoreWidget() {
-    final seatTemplate = widget.liveStreamManager.roomState.liveInfo.seatTemplate;
+    final seatTemplate = liveStreamManager.roomState.liveInfo.seatTemplate;
     if (seatTemplate is VideoLandscape4Seats) {
       return LayoutBuilder(builder: (context, constraints) {
         final isPortrait = MediaQuery.orientationOf(context) == Orientation.portrait;
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
-        final isFloating = widget.liveStreamManager.floatWindowState.isFloatWindowMode.value;
+        final isFloating = liveStreamManager.floatWindowState.isFloatWindowMode.value;
         double height = isFloating ? screenHeight : (isPortrait ? 9 / 16.0 * screenWidth : screenHeight);
         double top = isFloating ? 0 : (isPortrait ? 120.height : 0);
         return Container(
@@ -132,8 +218,8 @@ class _AudienceWidgetState extends State<AudienceWidget> {
           height: height,
           child: Stack(
             children: [
-              LiveCoreWidget(controller: widget.liveCoreController),
-              HostAbsentWidget(liveStreamManager: widget.liveStreamManager),
+              LiveCoreWidget(controller: liveCoreController),
+              HostAbsentWidget(liveStreamManager: liveStreamManager),
             ],
           ),
         );
@@ -142,36 +228,35 @@ class _AudienceWidgetState extends State<AudienceWidget> {
       return Stack(
         children: [
           LiveCoreWidget(
-            controller: widget.liveCoreController,
+            controller: liveCoreController,
             videoWidgetBuilder: VideoWidgetBuilder(
                 coGuestWidgetBuilder: _createCoGuestWidgetBuilder(),
                 coHostWidgetBuilder: (context, seatInfo, viewLayer) {
                   if (viewLayer == ViewLayer.background) {
                     return CoHostBackgroundWidget(
-                        seatInfo: seatInfo,
-                        isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                        seatInfo: seatInfo, isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
                   } else {
                     return CoHostForegroundWidget(
                       seatInfo: seatInfo,
-                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode,
+                      isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode,
                       onTap: () => _onTapCoHostForegroundWidget(seatInfo),
                     );
                   }
                 },
                 battleWidgetBuilder: (context, seatInfo) {
                   return BattleMemberInfoWidget(
-                      liveStreamManager: widget.liveStreamManager,
+                      liveStreamManager: liveStreamManager,
                       battleUserId: seatInfo.userInfo.userID,
-                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                      isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
                 },
                 battleContainerWidgetBuilder: (context) {
                   return BattleInfoWidget(
-                      liveStreamManager: widget.liveStreamManager,
+                      liveStreamManager: liveStreamManager,
                       isOwner: false,
-                      isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode);
+                      isFloatWindowMode: liveStreamManager.floatWindowState.isFloatWindowMode);
                 }),
           ),
-          HostAbsentWidget(liveStreamManager: widget.liveStreamManager),
+          HostAbsentWidget(liveStreamManager: liveStreamManager),
         ],
       );
     }
@@ -186,7 +271,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
         AudienceUserInfoPanelWidget(
           user: userInfo,
           liveID: seatInfo.userInfo.liveID,
-          liveStreamManager: widget.liveStreamManager,
+          liveStreamManager: liveStreamManager,
           enableEnterRoom: LiveListStore.shared.liveState.currentLive.value.liveID != seatInfo.userInfo.liveID,
           onClose: () {
             _audienceUserInfoPanelHandler?.close();
@@ -203,35 +288,40 @@ class _AudienceWidgetState extends State<AudienceWidget> {
   }
 
   Widget _buildSeatListWidget() {
-    if (!widget.liveStreamManager.roomManager.isScreenShareLive()) {
+    if (!liveStreamManager.roomManager.isScreenShareLive()) {
       return const SizedBox.shrink();
     }
     return ValueListenableBuilder(
-      valueListenable: widget.liveStreamManager.floatWindowState.isFloatWindowMode,
+      valueListenable: liveStreamManager.floatWindowState.isFloatWindowMode,
       builder: (context, isFloatWindowMode, child) {
         return Visibility(
           visible: !isFloatWindowMode,
           child: Center(
             child: CoGuestSeatListWidget(
-              liveID: widget.liveStreamManager.roomState.roomId,
+              liveID: liveStreamManager.roomState.roomId,
               onTapSeat: (seatInfo) {
                 if (seatInfo.userInfo.userID.isEmpty) {
-                  final coGuestStatus = widget.liveStreamManager.coGuestState.coGuestStatus.value;
+                  final coGuestStatus = liveStreamManager.coGuestState.coGuestStatus.value;
                   if (coGuestStatus == CoGuestStatus.applying || coGuestStatus == CoGuestStatus.linking) {
                     LiveKitLogger.info("can't link, coGuestStatus:$coGuestStatus");
                   } else {
-                    bool enableCamera = !widget.liveStreamManager.roomManager.isScreenShareLive();
-                    popupWidget(
+                    bool enableCamera = !liveStreamManager.roomManager.isScreenShareLive();
+                    BottomSheetHandler? sheetHandler;
+                    sheetHandler = popupWidget(
                         CoGuestTypeSelectPanelWidget(
-                          liveStreamManager: widget.liveStreamManager,
+                          parentContext: context,
+                          liveStreamManager: liveStreamManager,
                           seatIndex: seatInfo.index,
                           enableCamera: enableCamera,
+                          onClose: () {
+                            sheetHandler?.close();
+                          },
                         ),
                         context: context);
                   }
                   return;
                 }
-                final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
+                final isSelf = LoginStore.shared.loginState.loginUserInfo?.userID == seatInfo.userInfo.userID;
                 final user = LiveUserInfo(
                     userID: seatInfo.userInfo.userID,
                     userName: seatInfo.userInfo.userName,
@@ -240,7 +330,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
                   _audienceUserManagementPanelHandler = popupWidget(
                       AudienceUserManagementPanelWidget(
                         user: user,
-                        liveStreamManager: widget.liveStreamManager,
+                        liveStreamManager: liveStreamManager,
                         closeCallback: () {
                           _audienceUserManagementPanelHandler?.close();
                         },
@@ -248,7 +338,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
                       context: context);
                 } else {
                   _audienceUserInfoPanelHandler = popupWidget(
-                      AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+                      AudienceUserInfoPanelWidget(user: user, liveStreamManager: liveStreamManager),
                       context: context,
                       backgroundColor: LiveColors.designStandardTransparent);
                 }
@@ -261,22 +351,32 @@ class _AudienceWidgetState extends State<AudienceWidget> {
   }
 
   CoGuestWidgetBuilder _createCoGuestWidgetBuilder() {
-    final isFloatWindowMode = widget.liveStreamManager.floatWindowState.isFloatWindowMode;
+    final isFloatWindowMode = liveStreamManager.floatWindowState.isFloatWindowMode;
     return (context, seatInfo, viewLayer) {
       if (seatInfo.userInfo.userID.isEmpty) {
         if (viewLayer == ViewLayer.background) {
-          return AudienceEmptySeatWidget(seatInfo: seatInfo, liveStreamManager: widget.liveStreamManager);
+          return AudienceEmptySeatWidget(seatInfo: seatInfo, liveStreamManager: liveStreamManager);
         }
         return Container();
       }
       if (viewLayer == ViewLayer.background) {
-        return CoGuestBackgroundWidget(seatInfo: seatInfo, isFloatWindowMode: isFloatWindowMode);
+        final isVideoDynamicFloat7SeatsTemplate =
+            LiveListStore.shared.liveState.currentLive.value.seatTemplate is VideoDynamicFloat7Seats;
+        if (!isVideoDynamicFloat7SeatsTemplate) {
+          return CoGuestBackgroundWidget(seatInfo: seatInfo, isFloatWindowMode: isFloatWindowMode);
+        }
+
+        final isOwner = LiveListStore.shared.liveState.currentLive.value.liveOwner.userID == seatInfo.userInfo.userID;
+        final isFeaturedHost = seatInfo.isFeaturedHost;
+        return (isOwner || isFeaturedHost)
+            ? SizedBox.shrink()
+            : CoGuestBackgroundWidget(seatInfo: seatInfo, isFloatWindowMode: isFloatWindowMode);
       } else {
         return CoGuestForegroundWidget(
           seatInfo: seatInfo,
           isFloatWindowMode: isFloatWindowMode,
           onTap: () {
-            final isSelf = TUIRoomEngine.getSelfInfo().userId == seatInfo.userInfo.userID;
+            final isSelf = LoginStore.shared.loginState.loginUserInfo?.userID == seatInfo.userInfo.userID;
             final user = LiveUserInfo(
                 userID: seatInfo.userInfo.userID,
                 userName: seatInfo.userInfo.userName,
@@ -285,7 +385,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
               _audienceUserManagementPanelHandler = popupWidget(
                   AudienceUserManagementPanelWidget(
                     user: user,
-                    liveStreamManager: widget.liveStreamManager,
+                    liveStreamManager: liveStreamManager,
                     closeCallback: () {
                       _audienceUserManagementPanelHandler?.close();
                     },
@@ -293,7 +393,7 @@ class _AudienceWidgetState extends State<AudienceWidget> {
                   context: context);
             } else {
               _audienceUserInfoPanelHandler = popupWidget(
-                  AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+                  AudienceUserInfoPanelWidget(user: user, liveStreamManager: liveStreamManager),
                   context: context,
                   backgroundColor: LiveColors.designStandardTransparent);
             }
@@ -307,23 +407,32 @@ class _AudienceWidgetState extends State<AudienceWidget> {
     return ListenableBuilder(
         listenable: LiveListStore.shared.liveState.currentLive,
         builder: (BuildContext context, Widget? child) {
-          if (LiveListStore.shared.liveState.currentLive.value.liveID.isEmpty) {
+          final liveInfo = LiveListStore.shared.liveState.currentLive.value;
+          if (liveInfo.liveID.isEmpty || liveInfo.liveID != widget.liveInfo.liveID) {
             return const SizedBox.shrink();
           }
-          return BackgroundImageWidget(backgroundURL: LiveListStore.shared.liveState.currentLive.value.backgroundURL);
+          final url = liveInfo.backgroundURL.isEmpty ? liveInfo.coverURL : liveInfo.backgroundURL;
+          if (url.isEmpty) return SizedBox.shrink();
+          return BackgroundImageWidget(backgroundURL: url);
         });
   }
 
   @override
   void dispose() {
-    LiveKitLogger.info("AudienceWidget dispose");
+    LiveKitLogger.info("AudienceWidget dispose, roomId=$roomId");
     _dispose();
+    liveStreamManager.dispose();
+    audienceController._detach(this);
     super.dispose();
   }
 }
 
 extension on _AudienceWidgetState {
   void _init() {
+    _toastSubscription = liveStreamManager.toastSubject.stream.listen((toast) {
+      if (!mounted) return;
+      makeToast(context, toast);
+    });
     _liveListListener = LiveListListener(
       onLiveEnded: (String liveID, LiveEndedReason reason, String message) {
         _closeAllDialog();
@@ -333,16 +442,12 @@ extension on _AudienceWidgetState {
       },
     );
     LiveListStore.shared.addLiveListListener(_liveListListener);
-    // Defer _joinLiveStream to avoid setState() during build phase.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _joinLiveStream();
-    });
     _addLiveStatusListener();
     _addCoGuestStatusListener();
-    widget.liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
+    liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
+    liveStreamManager.floatWindowState.floatWindowMode.addListener(_floatWindowModeListener);
     _liveSeatListener = LiveSeatListener(onLocalCameraClosedByAdmin: () {
-      widget.liveStreamManager.mediaManager.closeLocalCamera();
+      liveStreamManager.mediaManager.closeLocalCamera();
       if (!mounted) return;
       final toastMessage = LiveKitLocalizations.of(context)!.common_mute_video_by_owner;
       makeToast(context, toastMessage);
@@ -363,30 +468,27 @@ extension on _AudienceWidgetState {
         makeToast(context, toastMessage);
       }
     });
-    LiveSeatStore.create(widget.roomId).addLiveSeatEventListener(_liveSeatListener);
+    _addStoreObserver();
   }
 
   void _dispose() {
+    _toastSubscription?.cancel();
     widget.onDispose?.call();
     LiveListStore.shared.removeLiveListListener(_liveListListener);
     _closeAllDialog();
     _removeCoGuestStatusListener();
     _removeLiveStatusListener();
-    // Reset liveStatus to prevent stale state when PageResources are reused.
-    // Without this, a cached page returning to current index would see
-    // liveStatus == playing and render LiveCoreWidget before joinLive completes.
-    widget.liveStreamManager.roomState.liveStatus.value = LiveStatus.none;
     // Defer _leaveLiveStream to avoid setState() when widget tree is locked.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _leaveLiveStream();
     });
-    _resetControllers();
-    widget.liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
-    LiveSeatStore.create(widget.roomId).removeLiveSeatEventListener(_liveSeatListener);
+    liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
+    liveStreamManager.floatWindowState.floatWindowMode.removeListener(_floatWindowModeListener);
+    _removeStoreObserver();
   }
 
   void _handleKickedOut() {
-    makeToast(context, LiveKitLocalizations.of(context)!.common_kicked_out_of_room_by_owner);
+    makeToast(context, LiveKitLocalizations.of(context)!.common_kicked_out_of_room_by_owner, useRootOverlay: true);
     _closePage();
   }
 
@@ -405,54 +507,87 @@ extension on _AudienceWidgetState {
     }
   }
 
-  void _joinLiveStream() async {
+  void _startPreload() {
+    LiveKitLogger.info('AudienceWidget _startPreload: $roomId');
+    liveCoreController.startPreviewLiveStream(roomId, true, null);
+  }
+
+  void _stopPreload() {
+    LiveKitLogger.info('AudienceWidget _stopPreload: $roomId');
+    liveCoreController.stopPreviewLiveStream(roomId);
+  }
+
+  void _onKeepLiveChanged(bool keepLive) {
+    LiveKitLogger.info("onKeepLiveChanged: $keepLive, roomId=$roomId");
+    audienceController.onKeepLiveChanged?.call(keepLive);
+  }
+
+  Future<void> _joinLiveStream() async {
+    LiveKitLogger.info('AudienceWidget _joinLiveStream: $roomId');
     KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
-    widget.onJoinLiveStateChanged?.call(true);
+    _addStoreObserver();
     try {
-      LiveListStore liveListStore = LiveListStore.shared;
-      var result = await liveListStore.joinLive(widget.roomId);
-      widget.onJoinLiveStateChanged?.call(false);
+      _onKeepLiveChanged(true);
+      var result = await liveStreamManager.joinLive(roomId);
+      LiveKitLogger.info("joinLive:$roomId, code=${result.errorCode}, mounted=$mounted");
       if (!mounted) return;
-      if (result.errorCode != TUIError.success.rawValue) {
-        makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
+      if (result.errorCode != 0) {
+        makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage),
             type: ToastType.error, useRootOverlay: true);
         _closePage();
         return;
       }
-      widget.liveStreamManager.onJoinLive(result.liveInfo);
+      _onKeepLiveChanged(false);
+      liveStreamManager.onJoinLive(result.liveInfo);
     } catch (e) {
       if (!mounted) return;
-      widget.onJoinLiveStateChanged?.call(false);
       LiveKitLogger.error('AudienceWidget _joinLiveStream error: $e');
-      makeToast(context, ErrorHandler.convertToErrorMessage(-1, e.toString()) ?? '',
+      makeToast(context, ErrorHandler.convertToErrorMessage(-1, e.toString()),
           type: ToastType.error, useRootOverlay: true);
       _closePage();
     }
   }
 
-  void _leaveLiveStream() {
-    LiveListStore liveListStore = LiveListStore.shared;
-    if (liveListStore.liveState.currentLive.value.liveID.isEmpty) {
-      LiveKitLogger.warning('AudienceWidget _leaveLiveStream currentLive is Empty');
-      return;
-    }
-    liveListStore.leaveLive();
+  // The old Store is cleared on leave; reset the Store to prepare for the next join on slide-in.
+  void _leaveLiveStream({bool reset = false}) {
+    LiveKitLogger.info('AudienceWidget _leaveLiveStream: $roomId, reset=$reset');
+    _removeStoreObserver();
+    liveStreamManager.leaveLive().then((result) {
+      if (!mounted) return;
+      if (result.isSuccess) {
+        liveStreamManager.onLeaveLive();
+        if (reset) {
+          LiveKitLogger.info("resetManagerStore, roomId=$roomId, joinLiveVersion=${_joinLiveVersion.value}");
+          liveStreamManager.resetManagerStore();
+          _joinLiveVersion.value++;
+        }
+      } else {
+        LiveKitLogger.error("leaveLive, error=${result.errorCode} ${result.errorMessage}");
+      }
+    });
+  }
+  
+  void _addStoreObserver() {
+    _liveSeatStore = LiveSeatStore.create(roomId);
+    _liveSeatStore!.addLiveSeatEventListener(_liveSeatListener);
+  }
+
+  void _removeStoreObserver() {
+    if (_liveSeatStore == null) return;
+    _liveSeatStore!.removeLiveSeatEventListener(_liveSeatListener);
+    _liveSeatStore = null;
   }
 
   void _addLiveStatusListener() {
-    widget.liveStreamManager.roomState.liveStatus.addListener(_liveStatusListener);
+    liveStreamManager.roomState.liveStatus.addListener(_liveStatusListener);
   }
 
   void _removeLiveStatusListener() {
-    widget.liveStreamManager.roomState.liveStatus.removeListener(_liveStatusListener);
-  }
-
-  void _resetControllers() {
-    BarrageDisplayController.resetState();
+    liveStreamManager.roomState.liveStatus.removeListener(_liveStatusListener);
   }
 
   void _onLiveStatusChange() {
-    final status = widget.liveStreamManager.roomState.liveStatus.value;
+    final status = liveStreamManager.roomState.liveStatus.value;
     if (status == LiveStatus.finished) {
       GlobalFloatWindowManager floatWindowManager = GlobalFloatWindowManager.instance;
       if (floatWindowManager.isEnableFloatWindowFeature()) {
@@ -466,23 +601,45 @@ extension on _AudienceWidgetState {
   }
 
   void _addCoGuestStatusListener() {
-    widget.liveStreamManager.coGuestState.coGuestStatus.addListener(_coGuestStatusListener);
+    liveStreamManager.coGuestState.coGuestStatus.addListener(_coGuestStatusListener);
   }
 
   void _removeCoGuestStatusListener() {
-    widget.liveStreamManager.coGuestState.coGuestStatus.removeListener(_coGuestStatusListener);
+    liveStreamManager.coGuestState.coGuestStatus.removeListener(_coGuestStatusListener);
     widget.onCoGuestStateChanged?.call(false);
+    audienceController.onKeepLiveChanged?.call(false);
   }
 
   void _onCoGuestStatusChanged() {
-    final status = widget.liveStreamManager.coGuestState.coGuestStatus.value;
+    final status = liveStreamManager.coGuestState.coGuestStatus.value;
     final shouldDisableScroll = status == CoGuestStatus.applying || status == CoGuestStatus.linking;
     widget.onCoGuestStateChanged?.call(shouldDisableScroll);
+    audienceController.onKeepLiveChanged?.call(shouldDisableScroll);
   }
 
   void _isFloatWindowModeChanged() {
-    if (widget.liveStreamManager.floatWindowState.isFloatWindowMode.value) {
+    if (liveStreamManager.floatWindowState.isFloatWindowMode.value) {
       _closeAllDialog();
+    }
+  }
+
+  void _onFloatWindowModeChanged() {
+    FloatWindowMode floatWindowMode = liveStreamManager.floatWindowState.floatWindowMode.value;
+    if (floatWindowMode == FloatWindowMode.outOfApp) {
+      widget.audienceController.onSwitchFloatWindowOutOfApp?.call(true);
+    } else if (floatWindowMode == FloatWindowMode.none) {
+      widget.audienceController.onSwitchFloatWindowOutOfApp?.call(false);
+    }
+  }
+
+  void _setFullScreenChanged(bool isFullScreen) {
+    FloatWindowMode floatWindowMode = liveStreamManager.floatWindowState.floatWindowMode.value;
+    if (isFullScreen) {
+      if (floatWindowMode != FloatWindowMode.outOfApp) {
+        liveStreamManager.setFloatWindowMode(FloatWindowMode.none);
+      }
+    } else {
+      liveStreamManager.setFloatWindowMode(FloatWindowMode.inApp);
     }
   }
 }

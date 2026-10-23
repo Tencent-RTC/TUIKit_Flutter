@@ -108,6 +108,9 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get common_end_pk_tips => '現在、PKステータスでは、「PKを終了」する必要がありますか、それとも「ライブブロードキャストルームを閉じる」必要がありますか？';
 
   @override
+  String get common_anchor_end_pk_tips => '現在、PKステータスです。「ライブブロードキャストルームを閉じる」必要がありますか？';
+
+  @override
   String get common_kick_out_of_room => '取り除く';
 
   @override
@@ -1041,6 +1044,19 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
   String get live_video_resolution_changed => '解像度が切り替わりました';
 
   @override
+  String get common_go_settings => '設定へ';
+
+  @override
+  String get common_permission_request => '権限申請';
+
+  @override
+  String get common_permission_camera_reason =>
+      'カメラへのアクセスが必要です。ライブなどの機能に使用されます。美顔フィルターを使用する際、カメラでキャプチャした顔情報をリアルタイムで収集し、顔の特徴を検出します。';
+
+  @override
+  String get common_permission_mic_reason => 'マイクへのアクセスが必要です。ライブなどの機能に使用され、有効にすると録画されたビデオに音声が含まれます。';
+
+  @override
   String get common_template_601_ui_exception_toast =>
       'このレイアウトテンプレートは、一部の機種で正常に表示されない場合があります。別のレイアウトテンプレートに変更することをお勧めします。';
 
@@ -1142,4 +1158,7 @@ class LiveKitLocalizationsJa extends LiveKitLocalizations {
 
   @override
   String get common_enter_anchor_live_room => '配信ルームへ';
+
+  @override
+  String get common_battle_all_member_exit_win => 'すべてのPKメンバーが途中で退場しました。今回は現在のホストの勝利として判定されます';
 }

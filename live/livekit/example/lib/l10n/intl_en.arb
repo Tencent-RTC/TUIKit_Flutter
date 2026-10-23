@@ -24,5 +24,6 @@
   "app_video_description": "Live preview/Beauty filters/Multi-hostK",
   "app_voice": "Voice",
   "app_voice_description": "High audio quality/Large room/Smooth mic on/off",
-  "app_broadcast": "{xxx} Broadcast"
+  "app_broadcast": "{xxx} Broadcast",
+  "app_live_float_window_tip": "Live streaming in progress. Please try again later."
 }

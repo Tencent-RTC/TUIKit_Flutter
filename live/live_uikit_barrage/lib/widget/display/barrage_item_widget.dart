@@ -1,19 +1,19 @@
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:extended_text/extended_text.dart';
+import 'package:live_uikit_barrage/third_party/extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
-import 'package:live_uikit_barrage/state/store.dart';
 
 import '../../common/index.dart';
 import '../emoji/index.dart';
 import 'barrage_display_widget.dart';
 
 class BarrageItemWidget extends StatelessWidget {
-  const BarrageItemWidget({super.key, required this.barrage, this.senderTagConfig});
+  const BarrageItemWidget({super.key, required this.ownerId, required this.barrage, this.senderTagConfig});
 
+  final String ownerId;
   final Barrage barrage;
   final SenderTagConfig? senderTagConfig;
 
-  bool get _needTag => senderTagConfig != null || barrage.sender.userID == Store().ownerId;
+  bool get _needTag => senderTagConfig != null || barrage.sender.userID == ownerId;
 
   @override
   Widget build(BuildContext context) {

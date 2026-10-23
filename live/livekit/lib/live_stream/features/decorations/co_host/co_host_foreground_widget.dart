@@ -1,12 +1,10 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/constants/index.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/resources/colors.dart';
 import 'package:tencent_live_uikit/common/resources/images.dart';
-import 'package:tencent_live_uikit/common/screen/index.dart';
 
-import '../../../../common/language/index.dart';
 import '../../../../common/widget/index.dart';
 
 class CoHostForegroundWidget extends StatefulWidget {
@@ -58,47 +56,47 @@ class _CoHostForegroundWidgetState extends State<CoHostForegroundWidget> {
     return ValueListenableBuilder(
       valueListenable: coHostStore.coHostState.connected,
       builder: (context, connected, _) {
-        return Visibility(
-          visible: connected.length > 1,
-          child: Positioned(
-            left: 10.width,
-            bottom: 4.height,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth - 20.width),
-              child: Container(
-                padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
-                decoration: BoxDecoration(
-                  color: LiveColors.userNameBlackColor,
-                  borderRadius: BorderRadius.circular(37.radius),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Visibility(
-                      visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
-                      child: SizedBox(
-                        width: 12.width,
-                        height: 12.width,
-                        child: Image.asset(
-                          LiveImages.muteMicrophone,
-                          package: Constants.pluginName,
-                        ),
+        if (connected.length <= 1) {
+          return SizedBox.shrink();
+        }
+        return Positioned(
+          left: 10.width,
+          bottom: 4.height,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: (maxWidth - 20.width).clamp(0.0, double.infinity)),
+            child: Container(
+              padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
+              decoration: BoxDecoration(
+                color: LiveColors.userNameBlackColor,
+                borderRadius: BorderRadius.circular(37.radius),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Visibility(
+                    visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
+                    child: SizedBox(
+                      width: 12.width,
+                      height: 12.width,
+                      child: Image.asset(
+                        LiveImages.muteMicrophone,
+                        package: Constants.pluginName,
                       ),
                     ),
-                    SizedBox(
-                      width: 2.width,
+                  ),
+                  SizedBox(
+                    width: 2.width,
+                  ),
+                  Flexible(
+                    child: Text(
+                      (widget.seatInfo.userInfo.userName.isNotEmpty)
+                          ? widget.seatInfo.userInfo.userName
+                          : widget.seatInfo.userInfo.userID,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
                     ),
-                    Flexible(
-                      child: Text(
-                        (widget.seatInfo.userInfo.userName.isNotEmpty)
-                            ? widget.seatInfo.userInfo.userName
-                            : widget.seatInfo.userInfo.userID,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

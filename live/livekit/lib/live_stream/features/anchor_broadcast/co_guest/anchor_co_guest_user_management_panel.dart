@@ -211,7 +211,7 @@ extension on _AnchorCoGuestUserManagementPanelState {
     final isMicrophoneMuted = _isMicrophoneMuted.value;
     if (isMicrophoneMuted) {
       liveSeatStore.unmuteMicrophone().then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           widget.liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
@@ -228,28 +228,30 @@ extension on _AnchorCoGuestUserManagementPanelState {
   }
 
   void _remoteMicrophoneButtonClicked() async {
-    final lockParams = TUISeatLockParams();
-    lockParams.lockAudio = !_isAudioLocked();
-    lockParams.lockVideo = _isVideoLocked();
-    widget.liveStreamManager.onLockMediaStatusBtnClicked(user.userID, lockParams).then((result) {
-      if (result.code != TUIError.success) {
-        widget.liveStreamManager.toastSubject
-            .add(ErrorHandler.convertToErrorMessage(result.code.rawValue, result.message) ?? '');
-      }
-    });
+    final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    if (liveID.isEmpty) return;
+    LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
+    final result = await (_isAudioLocked()
+        ? liveSeatStore.openRemoteMicrophone(userID: user.userID, policy: DeviceControlPolicy.unlockOnly)
+        : liveSeatStore.closeRemoteMicrophone(user.userID));
+    if (result.errorCode != 0) {
+      widget.liveStreamManager.toastSubject
+          .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+    }
     widget.closeCallback.call();
   }
 
-  void _remoteCameraButtonClicked() {
-    final lockParams = TUISeatLockParams();
-    lockParams.lockAudio = _isAudioLocked();
-    lockParams.lockVideo = !_isVideoLocked();
-    widget.liveStreamManager.onLockMediaStatusBtnClicked(user.userID, lockParams).then((result) {
-      if (result.code != TUIError.success) {
-        widget.liveStreamManager.toastSubject
-            .add(ErrorHandler.convertToErrorMessage(result.code.rawValue, result.message) ?? '');
-      }
-    });
+  void _remoteCameraButtonClicked() async {
+    final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    if (liveID.isEmpty) return;
+    LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
+    final result = await (_isVideoLocked()
+        ? liveSeatStore.openRemoteCamera(userID: user.userID, policy: DeviceControlPolicy.unlockOnly)
+        : liveSeatStore.closeRemoteCamera(user.userID));
+    if (result.errorCode != 0) {
+      widget.liveStreamManager.toastSubject
+          .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+    }
     widget.closeCallback.call();
   }
 
@@ -294,11 +296,10 @@ extension on _AnchorCoGuestUserManagementPanelState {
 
   void _featuredHostButtonClicked() {
     final isFeaturedHost = _isUserFeaturedHost();
-    final future = isFeaturedHost
-        ? liveSeatStore.revokeFeaturedHost(user.userID)
-        : liveSeatStore.setFeaturedHost(user.userID);
+    final future =
+        isFeaturedHost ? liveSeatStore.revokeFeaturedHost(user.userID) : liveSeatStore.setFeaturedHost(user.userID);
     future.then((result) {
-      if (result.errorCode != TUIError.success.rawValue) {
+      if (result.errorCode != 0) {
         widget.liveStreamManager.toastSubject
             .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }

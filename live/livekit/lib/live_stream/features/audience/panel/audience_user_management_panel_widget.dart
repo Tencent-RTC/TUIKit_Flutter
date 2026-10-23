@@ -3,6 +3,7 @@ import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_operation_result.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_type_check_result.dart';
@@ -118,7 +119,7 @@ class _AudienceUserManagementPanelWidgetState extends State<AudienceUserManageme
                   valueListenable: _isFollow,
                   builder: (context, isFollow, child) {
                     return Visibility(
-                      visible: widget.user.userID != TUIRoomEngine.getSelfInfo().userId,
+                      visible: widget.user.userID != LoginStore.shared.loginState.loginUserInfo?.userID,
                       child: GestureDetector(
                         onTap: () => _followButtonClicked(),
                         child: Container(
@@ -292,7 +293,7 @@ extension on _AudienceUserManagementPanelWidgetState {
     }
   }
 
-  void _microphoneButtonClicked() {
+  void _microphoneButtonClicked() async {
     widget.closeCallback.call();
     final isAudioLocked = widget.liveStreamManager.mediaState.isAudioLocked.value;
     if (isAudioLocked) {
@@ -302,8 +303,11 @@ extension on _AudienceUserManagementPanelWidgetState {
     LiveSeatStore liveSeatStore = LiveSeatStore.create(widget.liveStreamManager.roomState.roomId);
     final isMicrophoneMuted = _isMicrophoneMuted.value;
     if (isMicrophoneMuted) {
+      if (DeviceStore.shared.state.microphoneStatus.value == DeviceStatus.off) {
+        await DeviceStore.shared.openLocalMicrophone();
+      }
       liveSeatStore.unmuteMicrophone().then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (!result.isSuccess) {
           widget.liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
@@ -326,9 +330,9 @@ extension on _AudienceUserManagementPanelWidgetState {
     } else {
       final isFrontCamera = DeviceStore.shared.state.isFrontCamera.value;
       widget.liveStreamManager.mediaManager.openLocalCamera(isFrontCamera).then((result) {
-        if (result.code != TUIError.success) {
+        if (!result.isSuccess) {
           widget.liveStreamManager.toastSubject
-              .add(ErrorHandler.convertToErrorMessage(result.code.rawValue, result.message) ?? '');
+              .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
       });
     }

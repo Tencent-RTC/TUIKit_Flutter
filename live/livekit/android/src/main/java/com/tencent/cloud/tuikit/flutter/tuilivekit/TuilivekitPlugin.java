@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.EmptyActivityLifecycleCallbacks;
 
-import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.LiveKitLog;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.MethodUtils;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.SettingsManager;
 import com.tencent.cloud.tuikit.flutter.tuilivekit.utils.ThermalManager;
@@ -133,27 +132,6 @@ public class TuilivekitPlugin implements FlutterPlugin, MethodCallHandler, Activ
         } catch (Exception e) {
             Log.e(TAG, "onMethodCall |method=" + call.method + "|arguments=" + call.arguments + "|error=" + e);
         }
-    }
-
-    public void apiLog(MethodCall call, MethodChannel.Result result) {
-        String logString = MethodUtils.getMethodRequiredParams(call, "logString", result);
-        int level = MethodUtils.getMethodRequiredParams(call, "level", result);
-        String module = MethodUtils.getMethodRequiredParams(call, "module", result);
-        String file = MethodUtils.getMethodRequiredParams(call, "file", result);
-        int line = MethodUtils.getMethodRequiredParams(call, "line", result);
-
-        switch (level) {
-            case 1:
-                LiveKitLog.warn(mContext, module, file, line, logString);
-                break;
-            case 2:
-                LiveKitLog.error(mContext, module, file, line, logString);
-                break;
-            default:
-                LiveKitLog.info(mContext, module, file, line, logString);
-                break;
-        }
-        result.success(0);
     }
 
     public void startForegroundService(MethodCall call, MethodChannel.Result result) {

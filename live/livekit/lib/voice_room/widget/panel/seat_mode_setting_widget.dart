@@ -1,6 +1,5 @@
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/api/room/tui_room_define.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 
@@ -77,8 +76,7 @@ class _SeatModeSettingPanelWidgetState extends State<SeatModeSettingPanelWidget>
                               activeTrackColor: LiveColors.designStandardB1,
                               value: seatMode == TakeSeatMode.apply,
                               onChanged: (opened) {
-                                final mode = opened ? TUISeatMode.applyToTake : TUISeatMode.freeToTake;
-                                widget.prepareStore.onChangedSeatMode(mode);
+                                widget.prepareStore.onChangedSeatMode(seatMode);
                               }),
                         ),
                       );

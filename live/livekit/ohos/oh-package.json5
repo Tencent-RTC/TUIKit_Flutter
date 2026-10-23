@@ -1,0 +1,9 @@
+{
+  "name": "tencent_live_uikit",
+  "version": "1.0.0",
+  "description": "TUILiveKit enables interactive live streaming for scenarios such as social entertainment, shopping, and fitness classes.",
+  "main": "index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {}
+}

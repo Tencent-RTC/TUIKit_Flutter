@@ -1,5 +1,5 @@
 class Constants {
-  static const String pluginVersion = '4.1.0';
+  static const String pluginVersion = '5.1.0';
   static const String pluginName = 'tencent_live_uikit';
 
   static const String liveKitLog = 'LiveKitLog';
@@ -36,11 +36,15 @@ class Constants {
   static const String eventSubKeyLinkStatusChange = 'EVENT_SUB_KEY_LINK_STATUS_CHANGE';
   static const String eventParamsKeyEnableSlide = 'EVENT_PARAMS_KEY_ENABLE_SLIDE';
 
+  static const bool kDevMode = bool.fromEnvironment('DEV_MODE', defaultValue: false);
+
   static const int defaultMaxSeatCount = 8;
   static const int defaultRequestTimeout = 60;
   static const int roomMaxShowUserCount = 100;
-  static const int battleDuration = 30;
-  static const int battleRequestTimeout = 10;
+  static const bool battleNeedResponse = false;
+  static const int coHostRequestTimeout = kDevMode ? 30 : 10;
+  static const int battleRequestTimeout = battleNeedResponse ? (kDevMode ? 30 : 10) : 0;
+  static const int battleDuration = kDevMode ? 60 : 30;
   static const int battleEndInfoDuration = 5;
 
   static const int dataReportComponentLiveRoom = 21;

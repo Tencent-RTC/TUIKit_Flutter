@@ -3,11 +3,10 @@ import 'dart:math';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
+import 'package:rtc_room_engine/api/extension/tui_live_list_manager.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_guest/anchor_empty_seat_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/index.dart';
-import 'package:tencent_live_uikit/live_stream/state/battle_state.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../common/widget/base_bottom_sheet.dart';
 import '../../manager/live_stream_manager.dart';
@@ -35,7 +34,6 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
   final ValueNotifier<LiveEndedReason?> liveEndedReason = ValueNotifier(null);
   late final LiveStreamManager liveStreamManager;
   late final LiveCoreController liveCoreController;
-  late final StreamSubscription<String> _toastSubscription;
   late final VoidCallback _connectionRequestListener = _handleConnectionRequest;
   late final VoidCallback _battleRequestListener = _handleBattleRequest;
   late final VoidCallback _battleWaitingStatusListener = _handleBattleWaitingStatusChanged;
@@ -92,8 +90,8 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
           child: Stack(
             children: [
               _buildMainWidget(),
-              _buildLivingWidget(),
               _buildSeatListWidget(),
+              _buildLivingWidget(),
               _buildDashboardWidget(),
             ],
           ),
@@ -238,6 +236,7 @@ class _AnchorBroadcastWidgetState extends State<AnchorBroadcastWidget> {
       onEndLive: (data, reason) {
         liveStatisticsData.value = data;
         liveEndedReason.value = reason;
+        _closeAllDialog();
       },
       onTapEnterFloatWindowInApp: widget.onTapEnterFloatWindowInApp,
     );
@@ -270,11 +269,6 @@ extension on _AnchorBroadcastWidgetState {
     liveStreamManager.battleState.receivedBattleRequest.addListener(_battleRequestListener);
     liveStreamManager.battleState.isInWaiting.addListener(_battleWaitingStatusListener);
     liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_isFloatWindowModeListener);
-
-    _toastSubscription = liveStreamManager.toastSubject.stream.listen((toast) {
-      if (!mounted) return;
-      makeToast(context, toast);
-    });
   }
 
   void _removeObserver() {
@@ -284,8 +278,6 @@ extension on _AnchorBroadcastWidgetState {
     liveStreamManager.battleState.receivedBattleRequest.removeListener(_battleRequestListener);
     liveStreamManager.battleState.isInWaiting.removeListener(_battleWaitingStatusListener);
     liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_isFloatWindowModeListener);
-
-    _toastSubscription.cancel();
   }
 
   void _handleConnectionRequest() {
@@ -308,7 +300,7 @@ extension on _AnchorBroadcastWidgetState {
           cancelCallback: () {
             _responseCoHostInvitation(inviter, false);
           },
-          defaultText: LiveKitLocalizations.of(Global.appContext())!.common_accept,
+          defaultText: LiveKitLocalizations.of(Global.appContext())!.common_receive,
           defaultCallback: () {
             _responseCoHostInvitation(inviter, true);
           });
@@ -322,14 +314,14 @@ extension on _AnchorBroadcastWidgetState {
 
     if (isAccepted) {
       coHostStore.acceptHostConnection(inviter.liveID).then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
       });
     } else {
       coHostStore.rejectHostConnection(inviter.liveID).then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
@@ -338,7 +330,7 @@ extension on _AnchorBroadcastWidgetState {
   }
 
   bool _canAcceptCoHostInvitation() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     final coGuestState = coGuestStore.coGuestState;
     if (coGuestState.applicants.value.isNotEmpty ||
         coGuestState.connected.value.where((user) => user.userID != selfUserId).isNotEmpty ||
@@ -381,14 +373,14 @@ extension on _AnchorBroadcastWidgetState {
     liveStreamManager.onResponseBattle();
     if (isAccepted) {
       battleStore.acceptBattle(battleId).then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
       });
     } else {
       battleStore.rejectBattle(battleId).then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }
@@ -407,11 +399,11 @@ extension on _AnchorBroadcastWidgetState {
         context: context,
         builder:(_) {
           return BattleCountDownWidget(
-            countdownTime: LSBattleState.battleRequestTime,
+            countdownTime: Constants.battleRequestTimeout,
             onCancel: () async {
               final inviteeIdList = coHostStore.coHostState.connected.value
                   .map((user) => user.userID)
-                  .where((userID) => userID != TUIRoomEngine.getSelfInfo().userId)
+                  .where((userID) => userID != LoginStore.shared.loginState.loginUserInfo?.userID)
                   .toList();
               battleStore.cancelBattleRequest(
                   battleID: liveStreamManager.battleState.battleId.value, userIDList: inviteeIdList);
@@ -454,7 +446,7 @@ extension on _AnchorBroadcastWidgetState {
   }
 
   bool _canAcceptCoGuestApplication() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     if (coHostStore.coHostState.invitees.value.isNotEmpty ||
         coHostStore.coHostState.applicant.value != null ||
         coHostStore.coHostState.connected.value.any((user) => user.userID == selfUserId)) {

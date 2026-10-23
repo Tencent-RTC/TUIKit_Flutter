@@ -34,6 +34,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "app_fans_count": MessageLookupByLibrary.simpleMessage("粉丝"),
     "app_follow_count": MessageLookupByLibrary.simpleMessage("关注"),
     "app_live": MessageLookupByLibrary.simpleMessage("直播"),
+    "app_live_float_window_tip": MessageLookupByLibrary.simpleMessage(
+      "正在直播中，请稍后再试。",
+    ),
     "app_login": MessageLookupByLibrary.simpleMessage("登录"),
     "app_login_fail": MessageLookupByLibrary.simpleMessage("登录失败"),
     "app_logout": MessageLookupByLibrary.simpleMessage("登出"),

@@ -1,3 +1,13 @@
+## 5.1.1
+
+- Add ohos platform.
+
+## 5.1.0
+
+- Add foreground service
+- Add two new permission statuses: limited and notDetermined
+- Fix other known issues
+
 ## 5.0.0
 
 ### Breaking changes

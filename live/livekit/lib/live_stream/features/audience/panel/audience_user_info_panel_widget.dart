@@ -308,8 +308,7 @@ extension on _AudienceUserInfoPanelWidgetState {
         makeToast(Global.appContext(), ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         return;
       }
-      TUILiveKitNavigatorObserver.instance.enteringRoomID.value = result.liveInfo.liveID;
-      await LiveListStore.shared.leaveLive();
+      await widget.liveStreamManager.leaveLive();
       if (mounted) widget.onExitRoom!.call();
       if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
         GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
@@ -317,7 +316,6 @@ extension on _AudienceUserInfoPanelWidgetState {
       TUILiveKitNavigatorObserver.instance.enterLiveRoomPage(Global.appContext(), result.liveInfo);
     } on Exception catch (e) {
       LiveKitLogger.error(e.toString());
-      TUILiveKitNavigatorObserver.instance.enteringRoomID.value = '';
     }
   }
 

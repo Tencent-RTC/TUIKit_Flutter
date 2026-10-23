@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -217,6 +216,16 @@ class S {
       name: 'app_broadcast',
       desc: '',
       args: [xxx],
+    );
+  }
+
+  /// `Live streaming in progress. Please try again later.`
+  String get app_live_float_window_tip {
+    return Intl.message(
+      'Live streaming in progress. Please try again later.',
+      name: 'app_live_float_window_tip',
+      desc: '',
+      args: [],
     );
   }
 }

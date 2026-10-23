@@ -1,5 +1,15 @@
 # LiveUIKitGift
 
+## 4.2.1
+
+- Removed unused dependencies.
+- Update GiftPlayController and GiftListController.
+- Fix GiftListWidget refresh bug.
+
+## 4.1.1
+
+- Removed unused dependencies.
+
 ## 4.1.0
 
 - Upgraded `flutter_effect_player` to 3.4.1, fixed the xmagic compilation conflict issue.

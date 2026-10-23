@@ -1,14 +1,15 @@
 import 'package:atomic_x_core/api/live/battle_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/co_host_store.dart';
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart' hide LiveStatus;
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_barrage/live_uikit_barrage.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/co_host/co_host_management_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_broadcast/living_widget/more_features_panel_widget.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../common/widget/float_window/float_window_mode.dart';
@@ -44,7 +45,6 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
   late final CoHostStore coHostStore;
   late final BattleStore battleStore;
   BarrageSendController? _barrageSendController;
-  AlertHandler? _exitBattleAlertHandler;
   BottomSheetHandler? _coHostPanelSheetHandler;
   BottomSheetHandler? _coGuestManagePanelSheetHandler;
   BottomSheetHandler? _moreFeaturesPanelSheetHandler;
@@ -76,7 +76,6 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
   }
 
   void _closeAllDialog() async {
-    _exitBattleAlertHandler?.close();
     _coHostPanelSheetHandler?.close();
     _coGuestManagePanelSheetHandler?.close();
     _moreFeaturesPanelSheetHandler?.close();
@@ -118,10 +117,11 @@ class _AnchorBottomMenuWidgetState extends State<AnchorBottomMenuWidget> {
                 return Container();
               }
               _barrageSendController ??= BarrageSendController(
-                  roomId: liveStreamManager.roomState.roomId,
-                  ownerId: liveStreamManager.roomState.liveInfo.liveOwner.userID,
-                  selfUserId: TUIRoomEngine.getSelfInfo().userId,
-                  selfName: TUIRoomEngine.getSelfInfo().userName);
+                roomId: liveStreamManager.roomState.roomId,
+                onError: (code, message) {
+                  makeToast(context, ErrorHandler.convertToErrorMessage(code, message), type: ToastType.error);
+                },
+              );
 
               return BarrageSendWidget(controller: _barrageSendController!, parentContext: context);
             },
@@ -163,7 +163,7 @@ extension on _AnchorBottomMenuWidgetState {
       builder: (context, _) {
         final hasCoGuestApplication = coGuestStore.coGuestState.applicants.value.isNotEmpty;
         final isInBattle = liveStreamManager.battleState.battleUsers.value
-            .any((user) => user.userId == TUIRoomEngine.getSelfInfo().userId);
+            .any((user) => user.userId == LoginStore.shared.loginState.loginUserInfo?.userID);
         final isCoGuesting = liveStreamManager.isCoGuesting();
         final normalImageUrl = (isInBattle || isCoGuesting || hasCoGuestApplication)
             ? LiveImages.connectionDisable
@@ -247,7 +247,7 @@ extension on _AnchorBottomMenuWidgetState {
     if (hasCoGuestApplication ||
         hasCoGuested ||
         liveStreamManager.battleState.battleUsers.value
-            .any((user) => user.userId == TUIRoomEngine.getSelfInfo().userId)) {
+            .any((user) => user.userId == LoginStore.shared.loginState.loginUserInfo?.userID)) {
       return;
     }
     _showCoHostPanel();
@@ -256,7 +256,12 @@ extension on _AnchorBottomMenuWidgetState {
   void _showCoHostPanel() {
     _coHostPanelSheetHandler = popupWidget(
       context: context,
-      CoHostManagementPanelWidget(liveStreamManager: liveStreamManager),
+      CoHostManagementPanelWidget(
+        liveStreamManager: liveStreamManager,
+        onClose: () {
+          _coHostPanelSheetHandler?.close();
+        },
+      ),
     );
   }
 
@@ -266,12 +271,12 @@ extension on _AnchorBottomMenuWidgetState {
       imageUrl = LiveImages.battleDisable;
     } else {
       final isSelfInBattle = liveStreamManager.battleState.battleUsers.value
-          .any((user) => user.userId == TUIRoomEngine.getSelfInfo().userId);
+          .any((user) => user.userId == LoginStore.shared.loginState.loginUserInfo?.userID);
       if (isSelfInBattle) {
         imageUrl = LiveImages.battleExit;
       } else {
-        final inSelfInConnection =
-            coHostStore.coHostState.connected.value.any((user) => user.userID == TUIRoomEngine.getSelfInfo().userId);
+        final inSelfInConnection = coHostStore.coHostState.connected.value
+            .any((user) => user.userID == LoginStore.shared.loginState.loginUserInfo?.userID);
         imageUrl = inSelfInConnection ? LiveImages.battle : LiveImages.battleDisable;
       }
     }
@@ -283,10 +288,10 @@ extension on _AnchorBottomMenuWidgetState {
     if (isOnDisplayResult) {
       return;
     }
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     final isSelfInBattle = liveStreamManager.battleState.battleUsers.value.any((user) => user.userId == selfUserId);
     if (isSelfInBattle) {
-      return _confirmToExitBattle();
+      return;
     }
     final isSelfInCoHost = coHostStore.coHostState.connected.value.any((user) => user.userID == selfUserId);
     if (!isSelfInCoHost) {
@@ -294,7 +299,7 @@ extension on _AnchorBottomMenuWidgetState {
     }
 
     final config = BattleConfig();
-    config.needResponse = true;
+    config.needResponse = Constants.battleNeedResponse;
     config.duration = Constants.battleDuration;
     final inviteeUserIds = coHostStore.coHostState.connected.value
         .where((user) => user.userID != selfUserId)
@@ -303,32 +308,14 @@ extension on _AnchorBottomMenuWidgetState {
 
     final result = await battleStore.requestBattle(
         config: config, userIDList: inviteeUserIds, timeout: Constants.battleRequestTimeout);
-    if (result.errorCode != TUIError.success.rawValue || result.battleInfo == null) {
+    if (result.errorCode != 0 || result.battleInfo == null) {
       return liveStreamManager.toastSubject
-          .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
+          .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage));
     }
     final requestedUserList = coHostStore.coHostState.connected.value
         .where((user) => result.resultMap?.containsKey(user.userID) ?? false)
         .toList();
-    liveStreamManager.onRequestBattle(result.battleInfo!.battleID, requestedUserList);
-  }
-
-  void _confirmToExitBattle() {
-    if (_exitBattleAlertHandler?.isShowing() == true) {
-      return;
-    }
-    final alertInfo = AlertInfo(
-      isDestructive: true,
-      description: LiveKitLocalizations.of(context)!.common_battle_end_pk_tips,
-      cancelText: LiveKitLocalizations.of(context)!.common_cancel,
-      cancelCallback: () => _exitBattleAlertHandler?.close(),
-      defaultText: LiveKitLocalizations.of(context)!.common_battle_end_pk,
-      defaultCallback: () {
-        battleStore.exitBattle(liveStreamManager.battleState.battleId.value);
-        _exitBattleAlertHandler?.close();
-      },
-    );
-    _exitBattleAlertHandler = Alert.showAlert(alertInfo, context);
+    liveStreamManager.onRequestBattle(result.battleInfo!.battleID, requestedUserList, config.needResponse);
   }
 
   void _handleCoGuestClick() {

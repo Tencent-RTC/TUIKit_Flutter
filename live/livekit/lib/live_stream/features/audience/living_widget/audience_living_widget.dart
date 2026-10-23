@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:atomic_x_core/atomicxcore.dart' hide LiveStatus;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/common/index.dart';
@@ -12,7 +12,6 @@ import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart'
 import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/alert_dialog.dart';
-import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../live_define.dart';
@@ -36,22 +35,26 @@ class AudienceLivingWidget extends StatefulWidget {
 class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
   BarrageDisplayController? _barrageDisplayController;
   GiftPlayController? _giftPlayController;
-  final NetworkInfoManager _networkInfoManager = NetworkInfoManager();
+  late NetworkInfoManager _networkInfoManager;
   late final VoidCallback _userEnterRoomListener = _onRemoteUserEnterRoom;
   late final VoidCallback _playbackVideoQualityChangedListener = _onPlaybackVideoQualityChanged;
-  TUIVideoQuality? playbackQuality;
+  VideoQuality? playbackQuality;
   AlertHandler? _closePanelSheetHandler;
   BottomSheetHandler? _adminUserManagementPanelHandler;
   BottomSheetHandler? _audienceUserInfoPanelHandler;
   BottomSheetHandler? _playerMenuPanelHandler;
 
   late final LiveListListener _liveListListener;
+  late final LiveAudienceStore _liveAudienceStore;
+  late final LiveAudienceListener _liveAudienceListener;
   late final VoidCallback _loginStatusListener = _onLoginStatusChanged;
   late final StreamSubscription<LoginEvent> _loginEventSubscription;
 
   @override
   void initState() {
     super.initState();
+    LiveKitLogger.info("AudienceLivingWidget init, ${widget.liveStreamManager.roomState.roomId}");
+    _networkInfoManager = NetworkInfoManager(widget.liveStreamManager.roomState.roomId);
     widget.liveStreamManager.setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy.always);
     widget.liveStreamManager.userState.enterUser.addListener(_userEnterRoomListener);
     widget.liveStreamManager.mediaState.playbackQuality.addListener(_playbackVideoQualityChangedListener);
@@ -69,27 +72,35 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
           break;
       }
     });
+    _liveAudienceListener = LiveAudienceListener(
+      onAudienceMessageDisabled: (LiveUserInfo audience, bool isDisable) {
+        LiveKitLogger.info("onAudienceMessageDisabled: userId:${audience.userID}, isDisable=$isDisable");
+        if (audience.userID != LoginStore.shared.loginState.loginUserInfo?.userID) {
+          return;
+        }
+        final message = isDisable
+            ? LiveKitLocalizations.of(Global.appContext())!.common_send_message_disabled
+            : LiveKitLocalizations.of(Global.appContext())!.common_send_message_enable;
+        makeToast(context, message);
+      },
+    );
+    _liveAudienceStore = LiveAudienceStore.create(widget.liveStreamManager.roomState.roomId);
+    _liveAudienceStore.addLiveAudienceListener(_liveAudienceListener);
   }
 
   @override
   void dispose() {
+    LiveKitLogger.info("AudienceLivingWidget dispose, ${widget.liveStreamManager.roomState.roomId}");
     _closeAllDialog();
     _loginEventSubscription.cancel();
     LoginStore.shared.removeListener(_loginStatusListener);
     LiveListStore.shared.removeLiveListListener(_liveListListener);
+    _liveAudienceStore.removeLiveAudienceListener(_liveAudienceListener);
     _giftPlayController?.dispose();
     _networkInfoManager.dispose();
     widget.liveStreamManager.mediaState.playbackQuality.removeListener(_playbackVideoQualityChangedListener);
     widget.liveStreamManager.userState.enterUser.removeListener(_userEnterRoomListener);
-    enablePictureInPicture(false);
     super.dispose();
-  }
-
-  void enablePictureInPicture(bool enable) {
-    final roomId = widget.liveStreamManager.roomState.roomId;
-    widget.liveStreamManager.enablePictureInPicture(roomId, enable).then((result) {
-      LiveKitLogger.info("enablePictureInPicture,enable=$enable,result=$result");
-    });
   }
 
   @override
@@ -139,7 +150,7 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
                 AudienceListWidget(
                   roomId: widget.liveStreamManager.roomState.roomId,
                   onClickUserItem: (user) {
-                    final isSelf = TUIRoomEngine.getSelfInfo().userId == user.userID;
+                    final isSelf = LoginStore.shared.loginState.loginUserInfo?.userID == user.userID;
                     if (!isSelf) {
                       _audienceUserInfoPanelHandler = popupWidget(
                           AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
@@ -226,7 +237,6 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
               final isOnSeat = widget.liveStreamManager.coGuestState.coGuestStatus.value == CoGuestStatus.linking;
               return NetworkInfoButton(
                 manager: _networkInfoManager,
-                createTime: widget.liveStreamManager.roomState.createTime,
                 isAudience: !isOnSeat,
                 isFloatWindowMode: widget.liveStreamManager.floatWindowState.isFloatWindowMode,
               );
@@ -264,40 +274,42 @@ class _AudienceLivingWidgetState extends State<AudienceLivingWidget> {
           _initBarrageDisPlayController();
           return BarrageDisplayWidget(
             controller: _barrageDisplayController!,
-            onClickBarrageItem: (barrage) {
-              final currentLive = LiveListStore.shared.liveState.currentLive.value;
-              final selfID = LoginStore.shared.loginState.loginUserInfo?.userID;
-              final isSelf = selfID == barrage.sender.userID;
-              if (currentLive.liveID.isEmpty || barrage.sender.userID.isEmpty || isSelf) {
-                return;
-              }
-              final user = LiveUserInfo(
-                  userID: barrage.sender.userID,
-                  userName: barrage.sender.userName,
-                  avatarURL: barrage.sender.avatarURL);
-              final adminList = LiveAudienceStore.create(currentLive.liveID).liveAudienceState.adminList.value;
-              final selfIsAdmin = adminList.any((user) => user.userID == selfID);
-              final senderIsAdmin = adminList.any((user) => user.userID == barrage.sender.userID);
-              final senderIsOwner = currentLive.liveOwner.userID == barrage.sender.userID;
-              if (selfIsAdmin && !senderIsAdmin && !senderIsOwner) {
-                _adminUserManagementPanelHandler = popupWidget(
-                    AdminUserManagementForAudiencePanel(
-                      user: user,
-                      liveStreamManager: widget.liveStreamManager,
-                      closeCallback: () => _adminUserManagementPanelHandler?.close(),
-                    ),
-                    context: context);
-              } else {
-                _audienceUserInfoPanelHandler = popupWidget(
-                    AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
-                    context: context,
-                    backgroundColor: LiveColors.designStandardTransparent);
-              }
-            },
+            onClickBarrageItem: (barrage) => _onClickBarrageItem(barrage),
           );
         },
       ),
     );
+  }
+
+  void _onClickBarrageItem(Barrage barrage) {
+    final currentLive = LiveListStore.shared.liveState.currentLive.value;
+    final selfID = LoginStore.shared.loginState.loginUserInfo?.userID;
+    final isSelf = selfID == barrage.sender.userID;
+    if (currentLive.liveID.isEmpty || barrage.sender.userID.isEmpty || isSelf) {
+      return;
+    }
+    final user = LiveUserInfo(
+        userID: barrage.sender.userID,
+        userName: barrage.sender.userName,
+        avatarURL: barrage.sender.avatarURL);
+    final adminList = LiveAudienceStore.create(currentLive.liveID).liveAudienceState.adminList.value;
+    final selfIsAdmin = adminList.any((user) => user.userID == selfID);
+    final senderIsAdmin = adminList.any((user) => user.userID == barrage.sender.userID);
+    final senderIsOwner = currentLive.liveOwner.userID == barrage.sender.userID;
+    if (selfIsAdmin && !senderIsAdmin && !senderIsOwner) {
+      _adminUserManagementPanelHandler = popupWidget(
+          AdminUserManagementForAudiencePanel(
+            user: user,
+            liveStreamManager: widget.liveStreamManager,
+            closeCallback: () => _adminUserManagementPanelHandler?.close(),
+          ),
+          context: context);
+    } else {
+      _audienceUserInfoPanelHandler = popupWidget(
+          AudienceUserInfoPanelWidget(user: user, liveStreamManager: widget.liveStreamManager),
+          context: context,
+          backgroundColor: LiveColors.designStandardTransparent);
+    }
   }
 
   Widget _buildGiftDisplayWidget(double screenWidth, double screenHeight) {
@@ -413,21 +425,8 @@ extension on _AudienceLivingWidgetState {
       _barrageDisplayController = BarrageDisplayController(
           roomId: widget.liveStreamManager.roomState.roomId,
           ownerId: widget.liveStreamManager.roomState.liveInfo.liveOwner.userID,
-          selfUserId: TUIRoomEngine.getSelfInfo().userId,
-          selfName: TUIRoomEngine.getSelfInfo().userName,
-          onError: (code, message) {
-            makeToast(context, ErrorHandler.convertToErrorMessage(code, message) ?? '', type: ToastType.error);
-          });
-      _supplementaryUserEnterRoomTipsIfNeeded();
-    }
-  }
-
-  void _supplementaryUserEnterRoomTipsIfNeeded() {
-    if (widget.liveStreamManager.userState.enterUser.value.userID.isNotEmpty) {
-      Barrage barrage = Barrage();
-      barrage.sender = widget.liveStreamManager.userState.enterUser.value;
-      barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
-      _barrageDisplayController!.insertMessage(barrage);
+      );
+      _onRemoteUserEnterRoom();
     }
   }
 
@@ -439,7 +438,8 @@ extension on _AudienceLivingWidgetState {
     _initBarrageDisPlayController();
 
     _barrageDisplayController?.setCustomBarrageBuilder(GiftBarrageItemBuilder(
-      selfUserId: TUIRoomEngine.getSelfInfo().userId,
+      selfUserId: LoginStore.shared.loginState.loginUserInfo?.userID ?? '',
+      onClickItem: (barrage) => _onClickBarrageItem(barrage),
     ));
 
     _giftPlayController = GiftPlayController(
@@ -448,19 +448,23 @@ extension on _AudienceLivingWidgetState {
   }
 
   void _onRemoteUserEnterRoom() {
+    final sender = widget.liveStreamManager.userState.enterUser.value;
+    if (sender.userID.isEmpty) return;
     Barrage barrage = Barrage();
-    barrage.sender = widget.liveStreamManager.userState.enterUser.value;
+    barrage.liveID = widget.liveStreamManager.roomState.roomId;
+    barrage.sender = sender;
     barrage.textContent = LiveKitLocalizations.of(Global.appContext())!.common_entered_room;
     _barrageDisplayController?.insertMessage(barrage);
   }
 
   void _insertToBarrageMessage(Gift gift, int count, LiveUserInfo sender) {
     final receiver = widget.liveStreamManager.roomState.liveInfo.liveOwner;
-    if (receiver.userID == TUIRoomEngine.getSelfInfo().userId) {
+    if (receiver.userID == LoginStore.shared.loginState.loginUserInfo?.userID) {
       receiver.userName = LiveKitLocalizations.of(Global.appContext())!.common_gift_me;
     }
 
     Barrage barrage = Barrage();
+    barrage.liveID = widget.liveStreamManager.roomState.roomId;
     barrage.textContent = "gift";
     barrage.sender = sender;
     barrage.extensionInfo[Constants.keyGiftViewType] = Constants.valueGiftViewType;
@@ -491,6 +495,16 @@ extension on _AudienceLivingWidgetState {
     }
   }
 
+  void _leaveRoom() {
+    widget.liveStreamManager.leaveLive().then((result) {
+      widget.liveStreamManager.onLeaveLive();
+      _closePage();
+    });
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
   void _closePage() {
     if (GlobalFloatWindowManager.instance.isEnableFloatWindowFeature()) {
       GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
@@ -501,11 +515,7 @@ extension on _AudienceLivingWidgetState {
 
   void _onCloseIconTap() {
     if (widget.liveStreamManager.coGuestState.coGuestStatus.value != CoGuestStatus.linking) {
-      LiveListStore.shared.leaveLive();
-      _closePage();
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+      _leaveRoom();
       return;
     }
 
@@ -526,8 +536,7 @@ extension on _AudienceLivingWidgetState {
             text: LiveKitLocalizations.of(context)!.common_exit_live,
             onClick: () {
               _closePanelSheetHandler?.close();
-              LiveListStore.shared.leaveLive();
-              _closePage();
+             _leaveRoom();
             },
           ),
           ButtonConfig(
@@ -553,21 +562,21 @@ extension on _AudienceLivingWidgetState {
     }
   }
 
-  String _getVideoQualityString(TUIVideoQuality videoQuality) {
+  String _getVideoQualityString(VideoQuality videoQuality) {
     switch (videoQuality) {
-      case TUIVideoQuality.videoQuality_1080P:
+      case VideoQuality.quality1080P:
         return '1080P';
-      case TUIVideoQuality.videoQuality_720P:
+      case VideoQuality.quality720P:
         return '720P';
-      case TUIVideoQuality.videoQuality_540P:
+      case VideoQuality.quality540P:
         return '540P';
-      case TUIVideoQuality.videoQuality_360P:
+      case VideoQuality.quality360P:
         return '360P';
     }
   }
 
   bool isPureViewingMode() {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     LiveSeatStore liveSeatStore = LiveSeatStore.create(widget.liveStreamManager.roomState.roomId);
     return !liveSeatStore.liveSeatState.seatList.value.any((seat) => seat.userInfo.userID == selfUserId);
   }

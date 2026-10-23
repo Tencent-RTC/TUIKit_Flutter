@@ -49,7 +49,7 @@ class _AudienceListWidgetState extends State<AudienceListWidget> {
         builder: (context, audienceList, child) {
           return Container(
             constraints: BoxConstraints(minWidth: 24.width, maxWidth: 126.width),
-            height: 24.height,
+            height: 24.radius,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -123,7 +123,7 @@ class _AudienceListWidgetState extends State<AudienceListWidget> {
           child: Container(
             color: LiveColors.black.withAlpha(0x40),
             constraints: BoxConstraints(minWidth: 24.width, maxWidth: 42.width),
-            height: 24.height,
+            height: 24.radius,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,

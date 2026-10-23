@@ -109,6 +109,9 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   String get common_end_pk_tips => 'أنت حالياً في وضع المنافسة. هل تريد [إنهاء المنافسة] أم [إنهاء البث]؟';
 
   @override
+  String get common_anchor_end_pk_tips => 'أنت حالياً في وضع المنافسة. هل تريد [إنهاء البث]؟';
+
+  @override
   String get common_kick_out_of_room => 'إزالة';
 
   @override
@@ -1050,6 +1053,18 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
   String get live_video_resolution_changed => 'تم تغيير الدقة إلى';
 
   @override
+  String get common_go_settings => 'الانتقال إلى الإعدادات';
+
+  @override
+  String get common_permission_request => 'طلب الإذن';
+
+  @override
+  String get common_permission_camera_reason => 'يحتاج الوصول إلى الكاميرا الخاصة بك';
+
+  @override
+  String get common_permission_mic_reason => 'يحتاج الوصول إلى الميكروفون الخاص بك';
+
+  @override
   String get common_template_601_ui_exception_toast =>
       'قد يُعرض قالب التخطيط هذا بشكل غير طبيعي على بعض الطرازات. يُنصح بالتغيير إلى قالب تخطيط آخر.';
 
@@ -1151,4 +1166,8 @@ class LiveKitLocalizationsAr extends LiveKitLocalizations {
 
   @override
   String get common_enter_anchor_live_room => 'الذهاب إلى غرفة البث';
+
+  @override
+  String get common_battle_all_member_exit_win =>
+      'غادر جميع أعضاء المنافسة مبكرًا، يمنح الفوز للمضيف الحالي في هذه الجولة';
 }

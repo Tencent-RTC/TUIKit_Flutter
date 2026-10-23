@@ -33,6 +33,7 @@
   "common_end_connect": "断开连线",
   "common_end_connection_tips": "当前处于连线状态，是否需要「断开连线」或「关闭直播间」",
   "common_end_pk_tips": "当前处于PK状态，是否需要「结束PK」或「关闭直播间」",
+  "common_anchor_end_pk_tips": "当前处于PK状态，是否需要「关闭直播间」",
   "common_kick_out_of_room": "移除",
   "common_kicked_out_of_room_by_owner": "您已被踢出房间",
   "common_more": "更多",
@@ -221,7 +222,7 @@
   "common_server_error_not_on_the_mic_queue": "没有在排麦列表中",
   "common_server_error_not_on_the_mic_seat": "未在麦上",
   "common_server_error_not_started_yet": "该 battle 场次还未开始",
-  "common_server_error_param_illegal": "请参数非法，请根据错误描述检查请求是否正确",
+  "common_server_error_param_illegal": "请求参数非法，请根据错误描述检查请求参数是否正确",
   "common_server_error_requires_password": "当前房间需要密码才能进入",
   "common_server_error_room_admin_quantity_exceeds_the_upper_limit": "管理员数量超过上限",
   "common_server_error_room_does_not_exist": "房间不存在，或者曾经存在过，但是目前已经被解散",
@@ -340,6 +341,10 @@
   "live_video_resolution": "清晰度",
   "live_video_reduce_resolution": "降低清晰度",
   "live_video_resolution_changed": "清晰度已切换至",
+  "common_go_settings": "去设置",
+  "common_permission_request": "权限申请",
+  "common_permission_camera_reason": "需要访问您的相机权限，开启后用于视频互动等功能，在您使用美颜功能时，我们会对您实时拍摄的面部的像素信息进行实时智能识别，在识别过程中会实时收集您面部的像素信息，以为您提供更好的美颜效果。",
+  "common_permission_mic_reason": "需要访问您的麦克风权限，开启后用于视频互动等功能，并且开启后录制的视频才会有声音。",
   "common_template_601_ui_exception_toast": "该布局模板在特定机型上会显示异常，建议更换其他布局模板",
   "seat_locked": "已锁定",
   "seat_unlocked": "解锁麦位",
@@ -373,5 +378,6 @@
   "live_song_unknown_artist": "未知",
   "live_anchor_manager_set_featured_host": "设为主咖",
   "live_anchor_manager_revoke_featured_host": "取消主咖",
-  "common_enter_anchor_live_room": "去TA的直播间"
+  "common_enter_anchor_live_room": "去TA的直播间",
+  "common_battle_all_member_exit_win": "所有PK成员提前退出，本局判当前主播胜利"
 }

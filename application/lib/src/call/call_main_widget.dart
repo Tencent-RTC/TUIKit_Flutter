@@ -16,7 +16,7 @@ class _CallMainWidgetState extends State<CallMainWidget> {
   String _groupId = '';
   String _userIDsStr = '';
   List<String> _userIDs = [];
-  bool _isAudioCall = false;
+  bool _isAudioCall = true;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +327,7 @@ class _CallMainWidgetState extends State<CallMainWidget> {
       return;
     }
     TUICallKit.instance
-        .calls(_userIDs, _isAudioCall ? CallMediaType.audio : CallMediaType.video)
+        .calls(_userIDs, _isAudioCall ? CallMediaType.audio : CallMediaType.video, getCallParams())
         .then((handler) {
       if (!handler.isSuccess) {
         final errorMessage = _getCallErrorMessage(handler.errorCode);
@@ -336,6 +336,13 @@ class _CallMainWidgetState extends State<CallMainWidget> {
         }
       }
     });
+  }
+
+  CallParams getCallParams() {
+    CallParams params = CallParams(
+      timeout: 60,
+    );
+    return params;
   }
 
   String? _getCallErrorMessage(int? errorCode) {

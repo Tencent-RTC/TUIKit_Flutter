@@ -211,7 +211,7 @@ class _AudioEffectPanelWidgetState extends State<AudioEffectPanelWidget> {
                           style: const TextStyle(color: LiveColors.notStandardWhite, fontSize: 16),
                         ),
                         ValueListenableBuilder(
-                          valueListenable: _deviceStore.state.outputVolume,
+                          valueListenable: _deviceStore.state.captureVolume,
                           builder: (context, voiceVolume, child) {
                             return SizedBox(
                               width: 150.width,
@@ -302,6 +302,6 @@ extension on _AudioEffectPanelWidgetState {
   }
 
   void _setVoiceVolume(double volume) {
-    _deviceStore.setOutputVolume(volume.toInt());
+    _deviceStore.setCaptureVolume(volume.toInt());
   }
 }

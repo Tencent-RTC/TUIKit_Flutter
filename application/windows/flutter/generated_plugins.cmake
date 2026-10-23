@@ -1,8 +1,10 @@
 #
 # Generated file, do not edit.
 #
+# // Author: lanqiiliu
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_windows
   permission_handler_windows
   tencent_cloud_chat_sdk
   tencent_rtc_sdk

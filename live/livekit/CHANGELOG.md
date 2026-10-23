@@ -1,5 +1,24 @@
 # TUILiveKit
 
+## 5.1.0
+
+- Optimized swipe-to-play and the room list.
+- Fixed several bugs.
+- Disable enableMultiPlaybackQuality.
+
+## 5.0.0
+
+- Support viewers to switch to other streamers' live rooms during connected PK
+- Support main host feature when starting live broadcast with VideoFixedFloat7Seats
+- Add background music function to the video live settings entry
+- Add administrator functions including kicking out and muting regular users
+- Adapt floating window for landscape small window mode
+- Add booth image prompt for scenarios where the streamer is not in the room during video live  broadcast
+- Adjust the default position of the audio chat room floating window to the middle right side
+- Add handling for forced kick-off/logout: exit live broadcast UI
+- Add error prompt logs for Android picture-in-picture configuration
+- Fix known issues
+
 ## 4.1.0
 
 - Added support for Tencent Effect beauty filters.

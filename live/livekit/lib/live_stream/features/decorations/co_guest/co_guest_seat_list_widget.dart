@@ -1,11 +1,11 @@
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:collection/collection.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 typedef GestureTapCallback = void Function(SeatInfo seatInfo);
 
@@ -89,7 +89,7 @@ class SeatWidgetState extends State<SeatWidget> {
 
   Widget _buildEmptyWidget() {
     final liveInfo = LiveListStore.shared.liveState.currentLive.value;
-    bool isOwner = TUIRoomEngine.getSelfInfo().userId == liveInfo.liveOwner.userID;
+    bool isOwner = LoginStore.shared.loginState.loginUserInfo?.userID == liveInfo.liveOwner.userID;
     return SizedBox(
       width: 50.width,
       height: 50.width,
@@ -128,50 +128,45 @@ class SeatWidgetState extends State<SeatWidget> {
   }
 
   Widget _buildMicAndNameWidget() {
-    final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
-    if (liveID.isEmpty || widget.seatInfo.userInfo.userID.isEmpty) return const SizedBox.shrink();
-    CoGuestStore coGuestStore = CoGuestStore.create(liveID);
-    final show = coGuestStore.coGuestState.connected.value.length > 1 ||
-        TUIRoomEngine.getSelfInfo().userId == widget.seatInfo.userInfo.userID;
-    return Visibility(
-      visible: show,
-      child: SizedBox(
-        width: 60.width,
-        height: 20.height,
-        child: Container(
-          padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
-          decoration: BoxDecoration(
-            color: LiveColors.userNameBlackColor,
-            borderRadius: BorderRadius.circular(37.radius),
-          ),
-          child: Row(
-            children: [
-              Visibility(
-                visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
-                child: SizedBox(
-                  width: 12.width,
-                  height: 12.width,
-                  child: Image.asset(
-                    LiveImages.muteMicrophone,
-                    package: Constants.pluginName,
-                  ),
+    if (widget.seatInfo.userInfo.userID.isEmpty) return const SizedBox.shrink();
+    return SizedBox(
+      width: 60.width,
+      height: 20.height,
+      child: Container(
+        padding: EdgeInsets.only(left: 8.width, right: 8.width, top: 3.height, bottom: 3.height),
+        decoration: BoxDecoration(
+          color: LiveColors.userNameBlackColor,
+          borderRadius: BorderRadius.circular(37.radius),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Visibility(
+              visible: widget.seatInfo.userInfo.microphoneStatus != DeviceStatus.on,
+              child: SizedBox(
+                width: 12.width,
+                height: 12.width,
+                child: Image.asset(
+                  LiveImages.muteMicrophone,
+                  package: Constants.pluginName,
                 ),
               ),
-              SizedBox(
-                width: 2.width,
+            ),
+            SizedBox(
+              width: 2.width,
+            ),
+            Flexible(
+              child: Text(
+                (widget.seatInfo.userInfo.userName.isNotEmpty)
+                    ? widget.seatInfo.userInfo.userName
+                    : widget.seatInfo.userInfo.userID,
+                style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-              Flexible(
-                child: Text(
-                  (widget.seatInfo.userInfo.userName.isNotEmpty)
-                      ? widget.seatInfo.userInfo.userName
-                      : widget.seatInfo.userInfo.userID,
-                  style: const TextStyle(color: LiveColors.designStandardFlowkitWhite, fontSize: 10),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

@@ -1,8 +1,7 @@
-import 'package:atomic_x_core/api/live/live_audience_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:live_uikit_gift/common/screen/screen_adapter.dart';
-import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
 
 import '../../../../../common/index.dart';
 import '../../../../../state/index.dart';
@@ -256,8 +255,8 @@ class GiftBulletAnimationWidgetState extends State<GiftBulletAnimationWidget> wi
   }
 
   String _buildUserName(BuildContext context, LiveUserInfo user) {
-    final selfInfo = TUIRoomEngine.getSelfInfo();
-    if (user.userID == selfInfo.userId) {
+    final selfInfo = LoginStore.shared.loginState.loginUserInfo;
+    if (user.userID == selfInfo?.userID) {
       return GiftLocalizations.of(context)!.live_gift_me;
     }
     if (user.userName.isNotEmpty) {

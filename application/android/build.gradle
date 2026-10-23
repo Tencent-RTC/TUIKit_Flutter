@@ -1,7 +1,15 @@
+plugins {
+    id 'com.asarkar.gradle.build-time-tracker' version '5.0.2'
+}
+
 allprojects {
     repositories {
+        maven { url "https://mirrors.tencent.com/repository/maven/thirdparty/" }
         google()
         mavenCentral()
+        flatDir {
+            dirs project(':app').file('libs')
+        }
     }
 }
 

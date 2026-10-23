@@ -1,5 +1,7 @@
+import 'dart:io';
+
+import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
@@ -78,7 +80,7 @@ class _AudienceSettingsPanelWidgetState extends State<AudienceSettingsPanelWidge
                   // members who are NOT on seat (off-mic). Once an audience
                   // takes a seat (becomes a guest), this entry must be hidden.
                   final isOnSeat = coGuestStatus == CoGuestStatus.linking;
-                  final showPip = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature();
+                  final showPip = GlobalFloatWindowManager.instance.isEnableFloatWindowFeature() && (Platform.isIOS || Platform.isAndroid);
                   final isSupportMultiplePlaybackQuality =
                       widget.liveStreamManager.mediaState.playbackQualityList.value.length >= 2;
                   return Row(
@@ -160,15 +162,15 @@ extension on _AudienceSettingsPanelWidgetState {
     );
   }
 
-  String _getVideoQualityString(TUIVideoQuality videoQuality) {
+  String _getVideoQualityString(VideoQuality videoQuality) {
     switch (videoQuality) {
-      case TUIVideoQuality.videoQuality_1080P:
+      case VideoQuality.quality1080P:
         return '1080P';
-      case TUIVideoQuality.videoQuality_720P:
+      case VideoQuality.quality720P:
         return '720P';
-      case TUIVideoQuality.videoQuality_540P:
+      case VideoQuality.quality540P:
         return '540P';
-      case TUIVideoQuality.videoQuality_360P:
+      case VideoQuality.quality360P:
         return '360P';
     }
   }

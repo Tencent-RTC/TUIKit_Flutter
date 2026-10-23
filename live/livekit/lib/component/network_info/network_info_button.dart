@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,18 +9,15 @@ import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/component/network_info/index.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 class NetworkInfoButton extends StatefulWidget {
   final NetworkInfoManager manager;
-  final int createTime;
   final bool isAudience;
   final ValueListenable<bool>? isFloatWindowMode;
 
   const NetworkInfoButton({
     super.key,
     required this.manager,
-    required this.createTime,
     required this.isAudience,
     this.isFloatWindowMode,
   });
@@ -99,19 +98,19 @@ class _NetworkInfoButtonState extends State<NetworkInfoButton> {
 }
 
 extension on _NetworkInfoButtonState {
-  String _getNetworkWifiImagePathByNetworkQuality(TUINetworkQuality quality) {
+  String _getNetworkWifiImagePathByNetworkQuality(NetworkQuality quality) {
     switch (quality) {
-      case TUINetworkQuality.qualityExcellent:
+      case NetworkQuality.excellent:
         return LiveImages.networkInfoWifi;
-      case TUINetworkQuality.qualityGood:
+      case NetworkQuality.good:
         return LiveImages.networkInfoWifi;
-      case TUINetworkQuality.qualityPoor:
+      case NetworkQuality.poor:
         return LiveImages.networkInfoWifiPoor;
-      case TUINetworkQuality.qualityBad:
+      case NetworkQuality.bad:
         return LiveImages.networkInfoWifiBad;
-      case TUINetworkQuality.qualityVeryBad:
+      case NetworkQuality.veryBad:
         return LiveImages.networkInfoWifiError;
-      case TUINetworkQuality.qualityDown:
+      case NetworkQuality.down:
         return LiveImages.networkInfoWifiError;
       default:
         return LiveImages.networkInfoWifiError;
@@ -140,7 +139,10 @@ extension on _NetworkInfoButtonState {
   }
 
   void _updateFormatTime() {
-    final currentDuration = (DateTime.now().millisecondsSinceEpoch / 1000.0 - widget.createTime / 1000.0).toInt();
+    final createTime = LiveListStore.shared.liveState.currentLive.value.createTime;
+    int duration = (DateTime.now().millisecondsSinceEpoch / 1000.0 - createTime / 1000.0).toInt();
+    if (createTime <= 0) duration = 0;
+    final currentDuration = max(duration, 0);
     final hours = (currentDuration ~/ 3600).toString().padLeft(2, '0');
     final minutes = ((currentDuration % 3600) ~/ 60).toString().padLeft(2, '0');
     final seconds = (currentDuration % 60).toString().padLeft(2, '0');

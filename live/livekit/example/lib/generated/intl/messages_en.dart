@@ -38,6 +38,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "app_fans_count": MessageLookupByLibrary.simpleMessage("Fans"),
     "app_follow_count": MessageLookupByLibrary.simpleMessage("Likes"),
     "app_live": MessageLookupByLibrary.simpleMessage("Live"),
+    "app_live_float_window_tip": MessageLookupByLibrary.simpleMessage(
+      "Live streaming in progress. Please try again later.",
+    ),
     "app_login": MessageLookupByLibrary.simpleMessage("Login"),
     "app_login_fail": MessageLookupByLibrary.simpleMessage("Login failed"),
     "app_logout": MessageLookupByLibrary.simpleMessage("Logout"),

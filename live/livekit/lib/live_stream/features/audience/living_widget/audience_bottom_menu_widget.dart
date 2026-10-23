@@ -8,7 +8,7 @@ import 'package:tencent_live_uikit/common/widget/float_window/float_window_mode.
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/audience_settings_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_type_select_panel_widget.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
 import '../../../state/co_guest_state.dart';
 
@@ -33,6 +33,8 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
   final String kCoGuestPanelName = "CoGuestPanel";
   BottomSheetHandler? _settingsPanelHandler;
   BottomSheetHandler? _coGuestPanelHandler;
+  BottomSheetHandler? _coGuestCancelPanelHandler;
+  BottomSheetHandler? _coGuestClosePanelHandler;
   BarrageSendController? _barrageSendController;
   GiftListController? _giftListController;
   LikeSendController? _likeSendController;
@@ -58,6 +60,8 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
   }
 
   void _closeAllDialog() {
+    _coGuestCancelPanelHandler?.close();
+    _coGuestClosePanelHandler?.close();
     if (_coGuestPanelHandler?.isShowing() == true) {
       Navigator.of(context).popUntil((Route<dynamic> route) {
         return route.settings.name == kCoGuestPanelName;
@@ -197,9 +201,13 @@ class _AudienceBottomMenuWidgetState extends State<AudienceBottomMenuWidget> {
     bool enableCamera = !widget.liveStreamManager.roomManager.isScreenShareLive();
     _coGuestPanelHandler = popupWidget(
         CoGuestTypeSelectPanelWidget(
+          parentContext: context,
           liveStreamManager: widget.liveStreamManager,
           seatIndex: -1,
           enableCamera: enableCamera,
+          onClose: () {
+            _closeAllDialog();
+          },
         ),
         context: context,
         routeSettings: RouteSettings(name: kCoGuestPanelName));
@@ -213,11 +221,10 @@ extension on _AudienceBottomMenuWidgetState {
 
   void _initBarrageSendController() {
     _barrageSendController ??= BarrageSendController(
-      roomId: _getLiveID(),
-      ownerId: widget.liveStreamManager.roomState.liveInfo.liveOwner.userID,
-      selfUserId: TUIRoomEngine.getSelfInfo().userId,
-      selfName: TUIRoomEngine.getSelfInfo().userName,
-    );
+        roomId: _getLiveID(),
+        onError: (code, message) {
+          makeToast(context, ErrorHandler.convertToErrorMessage(code, message), type: ToastType.error);
+        });
   }
 
   void _initGiftSendController() {
@@ -230,13 +237,14 @@ extension on _AudienceBottomMenuWidgetState {
   }
 
   void _showCancelRequestPanelWidget() {
-    BaseBottomSheet.showWithHandler(
+    _coGuestCancelPanelHandler = BaseBottomSheet.showWithHandler(
       context,
       actions: [
         ActionSheetItem(
           title: LiveKitLocalizations.of(context)!.common_text_cancel_link_mic_apply,
           isDestructive: true,
           onTap: () async {
+            _coGuestCancelPanelHandler = null;
             final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
             if (liveID.isEmpty) return;
             CoGuestStore coGuestStore = CoGuestStore.create(liveID);
@@ -249,13 +257,14 @@ extension on _AudienceBottomMenuWidgetState {
   }
 
   void _showCloseCoGuestPanelWidget() {
-    BaseBottomSheet.showWithHandler(
+    _coGuestClosePanelHandler = BaseBottomSheet.showWithHandler(
       context,
       actions: [
         ActionSheetItem(
           title: LiveKitLocalizations.of(context)!.common_text_close_link_mic,
           isDestructive: true,
           onTap: () async {
+            _coGuestClosePanelHandler = null;
             final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
             if (liveID.isEmpty) return;
             CoGuestStore coGuestStore = CoGuestStore.create(liveID);

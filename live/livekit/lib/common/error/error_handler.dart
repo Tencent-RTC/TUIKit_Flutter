@@ -1,38 +1,19 @@
-import 'package:rtc_room_engine/rtc_room_engine.dart';
-
 import '../index.dart';
 
 class ErrorHandler {
   static const Set<LiveError> _interceptToastOnlyPrintLogOnLive = {
     LiveError.freqLimit,
     LiveError.roomMismatch,
+    LiveError.errSdkCommApiCallFrequencyLimit,
   };
 
-  static const Set<TIMError> _interceptToastOnlyPrintLogOnIM = {
-    TIMError.errSdkCommApiCallFrequencyLimit,
-  };
-
-  static String? convertToErrorMessage(int code, String? message) {
-    LiveKitLogger.info('ErrorHandler :[error: $code, message: $message]');
+  static String convertToErrorMessage(int code, String? message) {
+    LiveKitLogger.error('ErrorHandler :[error: $code, message: $message]');
     final liveError = LiveError.fromInt(code);
     if (liveError != null) {
-      return _interceptToastOnlyPrintLogOnLive.contains(liveError) ? '' : liveError.description;
-    }
-    final imError = TIMError.fromInt(code);
-    if (imError != null) {
-      return _interceptToastOnlyPrintLogOnIM.contains(imError) ? '' : imError.description;
+      return _interceptToastOnlyPrintLogOnLive.contains(liveError) ? '' : liveError.description ?? '';
     }
     return "code: $code, message: $message";
-  }
-
-  static String? convertToConnectionErrorMessage(TUIConnectionCode connectionCode) {
-    LiveKitLogger.info('ErrorHandler :[error: $connectionCode]');
-    return connectionCode.description;
-  }
-
-  static String? convertToBattleErrorMessage(TUIBattleCode battleCode) {
-    LiveKitLogger.info('ErrorHandler :[error: $battleCode]');
-    return battleCode.description;
   }
 }
 
@@ -80,7 +61,6 @@ enum LiveError {
   sendMessageDisabledForCurrent(-2381),
   roomNotSupportPreloading(-4001),
   invalidUserId(7002),
-  hasBeenMuted(10017),
   systemInternalError(100001),
   paramIllegal(100002),
   roomIdOccupied(100003),
@@ -130,7 +110,36 @@ enum LiveError {
   metadataValueSizeExceedsByteLimit(100501),
   metadataTotalValueSizeExceedsByteLimit(100502),
   metadataNoValidKey(100503),
-  metadataKeySizeExceedsByteLimit(100504);
+  metadataKeySizeExceedsByteLimit(100504),
+
+  // Connection(CoHost) Error
+  liveConnectionRoomNotExists(1),
+  liveConnectionConnecting(2),
+  liveConnectionConnectingOtherRoom(3),
+  liveConnectionConnectionFull(4),
+  liveConnectionRetry(5),
+  liveConnectionRoomMismatch(6),
+
+  // IM Error
+  failed(-1),
+  invalidParam(6017),
+  errSdkCommApiCallFrequencyLimit(7008),
+  errSdkBlockedBySensitiveWord(7015),
+  errSdkNetDisconnect(9508),
+  errSdkNetAllReadyConn(9509),
+  errSdkNetConnTimeout(9510),
+  errSdkNetConnRefuse(9511),
+  errSdkNetNetUnReach(9512),
+  errSdkNetWaitInQueueTimeout(9518),
+  errSdkNetWaitSendTimeout(9519),
+  errSdkNetWaitAckTimeout(9520),
+  errSdkNetWaitSendRemainingTimeout(9521),
+  errSdkNetPkgSizeLimit(9522),
+  errSdkNetWaitSendTimeoutNoNetwork(9523),
+  errSdkNetWaitAckTimeoutNoNetwork(9524),
+  errSdkNetSendRemainingTimeoutNoNetwork(9525),
+  errSvrGroupShutUpDeny(10017),
+  errSvrSensitiveWordsBan(80001);
 
   final int code;
 
@@ -141,42 +150,6 @@ enum LiveError {
       if (enumValue.code == code) return enumValue;
     }
     return null;
-  }
-}
-
-extension TUIBattleCodeWithLocalization on TUIBattleCode {
-  String? get description {
-    switch (this) {
-      case TUIBattleCode.unknown:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_failed;
-      case TUIBattleCode.success:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_success;
-      case TUIBattleCode.battlingOtherRoom:
-        return LiveKitLocalizations.of(Global.appContext())?.livestreamcore_battle_error_conflict;
-      default:
-        return LiveKitLocalizations.of(Global.appContext())?.livestreamcore_battle_error_other;
-    }
-  }
-}
-
-extension TUIConnectionCodeWithLocalization on TUIConnectionCode {
-  String? get description {
-    switch (this) {
-      case TUIConnectionCode.success:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_success;
-      case TUIConnectionCode.roomNotExists:
-        return LiveKitLocalizations.of(Global.appContext())?.live_error_connection_notexit;
-      case TUIConnectionCode.connecting:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_connection_connecting;
-      case TUIConnectionCode.connectingOtherRoom:
-        return LiveKitLocalizations.of(Global.appContext())?.common_connect_conflict;
-      case TUIConnectionCode.connectionFull:
-        return LiveKitLocalizations.of(Global.appContext())?.common_connection_room_full;
-      case TUIConnectionCode.retry:
-        return LiveKitLocalizations.of(Global.appContext())?.live_error_connection_retry;
-      default:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_failed;
-    }
   }
 }
 
@@ -270,8 +243,6 @@ extension LiveErrorWithLocalization on LiveError {
         return LiveKitLocalizations.of(Global.appContext())?.common_client_error_room_not_support_preloading;
       case LiveError.invalidUserId:
         return LiveKitLocalizations.of(Global.appContext())?.live_invalid_userId;
-      case LiveError.hasBeenMuted: // 100017
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_send_message_disabled_for_current;
       case LiveError.systemInternalError: // 100001
         return LiveKitLocalizations.of(Global.appContext())?.common_client_error_room_not_support_preloading;
       case LiveError.paramIllegal: // 100002
@@ -379,73 +350,44 @@ extension LiveErrorWithLocalization on LiveError {
       case LiveError.metadataKeySizeExceedsByteLimit: // 100504
         return LiveKitLocalizations.of(Global.appContext())
             ?.common_server_error_metadata_the_size_of_key_exceeds_the_maximum_byte_limit;
-      default:
-        return '${LiveKitLocalizations.of(Global.appContext())?.common_client_error_failed}, code: $code';
-    }
-  }
-}
 
-enum TIMError {
-  success(0),
-  failed(-1),
-  invalidUserId(7002),
-  errSdkCommApiCallFrequencyLimit(7008),
-  errSdkBlockedBySensitiveWord(7015),
-  errSdkNetDisconnect(9508),
-  errSdkNetAllReadyConn(9509),
-  errSdkNetConnTimeout(9510),
-  errSdkNetConnRefuse(9511),
-  errSdkNetNetUnReach(9512),
-  errSdkNetWaitInQueueTimeout(9518),
-  errSdkNetWaitSendTimeout(9519),
-  errSdkNetWaitAckTimeout(9520),
-  errSdkNetWaitSendRemainingTimeout(9521),
-  errSdkNetPkgSizeLimit(9522),
-  errSdkNetWaitSendTimeoutNoNetwork(9523),
-  errSdkNetWaitAckTimeoutNoNetwork(9524),
-  errSdkNetSendRemainingTimeoutNoNetwork(9525),
-  errSvrGroupShutUpDeny(10017),
-  errSvrSensitiveWordsBan(80001);
+      case LiveError.liveConnectionRoomNotExists:
+        return LiveKitLocalizations.of(Global.appContext())?.live_error_connection_notexit;
+      case LiveError.liveConnectionConnecting:
+        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_connection_connecting;
+      case LiveError.liveConnectionConnectingOtherRoom:
+        return LiveKitLocalizations.of(Global.appContext())?.common_connect_conflict;
+      case LiveError.liveConnectionConnectionFull:
+        return LiveKitLocalizations.of(Global.appContext())?.common_connection_room_full;
+      case LiveError.liveConnectionRetry:
+        return LiveKitLocalizations.of(Global.appContext())?.live_error_connection_retry;
+      case LiveError.liveConnectionRoomMismatch:
+        return LiveKitLocalizations.of(Global.appContext())?.live_error_room_mismatch;
 
-  final int code;
-
-  const TIMError(this.code);
-
-  static TIMError? fromInt(int code) {
-    for (var enumValue in TIMError.values) {
-      if (enumValue.code == code) return enumValue;
-    }
-    return null;
-  }
-}
-
-extension TIMErrorWithLocalization on TIMError {
-  String? get description {
-    switch (this) {
-      case TIMError.success:
-        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_success;
-      case TIMError.invalidUserId:
+      case LiveError.invalidParam:
         return LiveKitLocalizations.of(Global.appContext())?.live_invalid_userId;
-      case TIMError.errSdkCommApiCallFrequencyLimit:
+      case LiveError.errSdkCommApiCallFrequencyLimit:
         return LiveKitLocalizations.of(Global.appContext())?.common_client_error_freq_limit;
-      case TIMError.errSdkBlockedBySensitiveWord:
+      case LiveError.errSdkBlockedBySensitiveWord:
         return LiveKitLocalizations.of(Global.appContext())?.live_barrage_error_sensitive_word;
-      case TIMError.errSdkNetPkgSizeLimit:
+      case LiveError.errSdkNetPkgSizeLimit:
         return LiveKitLocalizations.of(Global.appContext())?.live_barrage_error_content_is_long;
-      case TIMError.errSdkNetDisconnect:
-      case TIMError.errSdkNetWaitAckTimeout:
-      case TIMError.errSdkNetAllReadyConn:
-      case TIMError.errSdkNetConnTimeout:
-      case TIMError.errSdkNetConnRefuse:
-      case TIMError.errSdkNetNetUnReach:
-      case TIMError.errSdkNetWaitInQueueTimeout:
-      case TIMError.errSdkNetWaitSendTimeout:
-      case TIMError.errSdkNetWaitSendRemainingTimeout:
-      case TIMError.errSdkNetWaitSendTimeoutNoNetwork:
-      case TIMError.errSdkNetWaitAckTimeoutNoNetwork:
-      case TIMError.errSdkNetSendRemainingTimeoutNoNetwork:
+      case LiveError.errSdkNetDisconnect:
+      case LiveError.errSdkNetWaitAckTimeout:
+      case LiveError.errSdkNetAllReadyConn:
+      case LiveError.errSdkNetConnTimeout:
+      case LiveError.errSdkNetConnRefuse:
+      case LiveError.errSdkNetNetUnReach:
+      case LiveError.errSdkNetWaitInQueueTimeout:
+      case LiveError.errSdkNetWaitSendTimeout:
+      case LiveError.errSdkNetWaitSendRemainingTimeout:
+      case LiveError.errSdkNetWaitSendTimeoutNoNetwork:
+      case LiveError.errSdkNetWaitAckTimeoutNoNetwork:
+      case LiveError.errSdkNetSendRemainingTimeoutNoNetwork:
         return LiveKitLocalizations.of(Global.appContext())?.live_barrage_error_network;
-      case TIMError.errSvrSensitiveWordsBan:
+      case LiveError.errSvrGroupShutUpDeny:
+        return LiveKitLocalizations.of(Global.appContext())?.common_client_error_send_message_disabled_for_current;
+      case LiveError.errSvrSensitiveWordsBan:
         return LiveKitLocalizations.of(Global.appContext())?.common_server_error_im_sensitive_words_ban;
       default:
         return '${LiveKitLocalizations.of(Global.appContext())?.common_client_error_failed}, code: $code';

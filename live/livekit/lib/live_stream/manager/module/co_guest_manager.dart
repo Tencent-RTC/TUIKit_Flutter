@@ -4,11 +4,10 @@ import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_audience_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
-import '../../api/live_stream_service.dart';
 import '../../state/co_guest_state.dart';
 import '../live_stream_manager.dart';
 
@@ -16,17 +15,17 @@ class CoGuestManager {
   LSCoGuestState coGuestState = LSCoGuestState();
 
   late final Context context;
-  late final LiveStreamService service;
 
   late final VoidCallback _onSeatListListener = _onSeatListChanged;
-  late GuestListener? guestListener;
+  GuestListener? guestListener;
+  String _liveID = '';
 
   void init(Context context) {
     this.context = context;
-    service = context.service;
   }
 
   void setLiveID(String liveID) {
+    _liveID = liveID;
     _subscribeListener();
   }
 
@@ -38,15 +37,8 @@ class CoGuestManager {
     _unSubscribeListener();
   }
 
-  Future<TUIActionCallback> onLockMediaStatusBtnClicked(String userId, TUISeatLockParams params) async {
-    final liveID = _getLiveID();
-    LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
-    final seatIndex =
-        liveSeatStore.liveSeatState.seatList.value.where((seat) => seat.userInfo.userID == userId).firstOrNull?.index;
-
-    return seatIndex != null
-        ? service.lockSeatByAdmin(seatIndex, params)
-        : TUIActionCallback(code: TUIError.errUserNotInSeat, message: 'Not on the seat');
+  void resetStore() {
+    _subscribeListener();
   }
 
   void onStartRequestIntraRoomConnection() {
@@ -95,10 +87,11 @@ class CoGuestManager {
 extension on CoGuestManager {
   void _subscribeListener() {
     final liveID = _getLiveID();
+    if (liveID.isEmpty) return;
     LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
     liveSeatStore.liveSeatState.seatList.addListener(_onSeatListListener);
 
-    guestListener = GuestListener(
+    guestListener ??= GuestListener(
       onHostInvitationReceived: (LiveUserInfo hostUser) {},
       onHostInvitationCancelled: (LiveUserInfo hostUser) {},
       onGuestApplicationResponded: (bool isAccept, LiveUserInfo hostUser) {
@@ -128,6 +121,7 @@ extension on CoGuestManager {
   void _onSeatListChanged() {
     bool isSelfOnSeat = coGuestState.coGuestStatus.value == CoGuestStatus.linking;
     final liveID = _getLiveID();
+    if (liveID.isEmpty) return;
     LiveSeatStore liveSeatStore = LiveSeatStore.create(liveID);
     final seatList = liveSeatStore.liveSeatState.seatList.value;
     _updateCoGuestStatusBySeatList(seatList);
@@ -176,10 +170,10 @@ extension on CoGuestManager {
   }
 
   String _getLiveID() {
-    return context.roomManager.target!.roomState.roomId;
+    return context.roomManager.target?.roomState.roomId ?? _liveID;
   }
 
   String _getSelfID() {
-    return TUIRoomEngine.getSelfInfo().userId;
+    return LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
   }
 }

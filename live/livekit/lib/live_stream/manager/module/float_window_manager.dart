@@ -9,26 +9,44 @@ import '../../../common/widget/float_window/float_window_mode.dart';
 import '../../state/float_window_state.dart';
 import '../live_stream_manager.dart';
 
+class AndroidPipManager {
+  static AndroidPipManager instance = AndroidPipManager();
+
+  final ValueNotifier<bool> pipMode = ValueNotifier(false);
+
+  AndroidPipManager() {
+    TUILiveKitPlatform.instance.onPipModeChanged.listen((isPipMode) {
+      pipMode.value = isPipMode;
+      LiveKitLogger.info("AndroidPipManager, pipMode=$isPipMode");
+    });
+  }
+}
+
 class FloatWindowManager {
   final LSFloatWindowState floatWindowState = LSFloatWindowState();
 
   late final Context context;
 
+  late final VoidCallback _androidPipListener = _onAndroidPipChanged;
   late final VoidCallback _onPipModeChangedListener = _onPipModeChanged;
   late final VoidCallback _onFloatWindowModeChangedListener = _onFloatWindowModeChanged;
 
   void init(Context context) {
     this.context = context;
-    TUILiveKitPlatform.instance.onPipModeChanged.listen((isPipMode) {
-      floatWindowState.pipMode.value = isPipMode;
-    });
+    AndroidPipManager.instance.pipMode.addListener(_androidPipListener);
     floatWindowState.pipMode.addListener(_onPipModeChangedListener);
     floatWindowState.floatWindowMode.addListener(_onFloatWindowModeChangedListener);
   }
 
   void dispose() {
+    enablePipMode(false);
+    AndroidPipManager.instance.pipMode.removeListener(_androidPipListener);
     floatWindowState.pipMode.removeListener(_onPipModeChangedListener);
     floatWindowState.floatWindowMode.removeListener(_onFloatWindowModeChangedListener);
+  }
+
+  void onLeaveLive() {
+    enablePipMode(false);
   }
 
   void enablePipMode(bool enable) {
@@ -83,6 +101,10 @@ class FloatWindowManager {
     };
     final jsonString = jsonEncode(jsonObject);
     return jsonString;
+  }
+
+  void _onAndroidPipChanged() {
+    floatWindowState.pipMode.value = AndroidPipManager.instance.pipMode.value;
   }
 
   void _onPipModeChanged() {

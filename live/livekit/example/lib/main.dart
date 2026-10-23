@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
+import 'package:tencent_live_uikit_example/src/common/app_navigator_observer.dart';
 import 'package:tencent_live_uikit_example/src/view/index.dart';
 import 'package:tuikit_atomic_x/atomicx.dart';
 
@@ -40,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       themeState: _themeState,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [TUILiveKitNavigatorObserver.instance],
+        navigatorObservers: [AppNavigatorObserver.instance, TUILiveKitNavigatorObserver.instance],
         localizationsDelegates: const [
           ...LiveKitLocalizations.localizationsDelegates,
           ...BarrageLocalizations.localizationsDelegates,

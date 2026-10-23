@@ -29,6 +29,7 @@ class _MoreFeaturesPanelWidgetState extends State<MoreFeaturesPanelWidget> {
   BottomSheetHandler? _audioEffectSheetHandler;
   BottomSheetHandler? _bgmSheetHandler;
   BottomSheetHandler? _pipConfigPanelHandler;
+  BottomSheetHandler? _mirrorPanelHandler;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _MoreFeaturesPanelWidgetState extends State<MoreFeaturesPanelWidget> {
     _audioEffectSheetHandler?.close();
     _bgmSheetHandler?.close();
     _pipConfigPanelHandler?.close();
+    _mirrorPanelHandler?.close();
   }
 
   @override
@@ -186,9 +188,7 @@ extension on _MoreFeaturesPanelWidgetState {
         DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
         break;
       case FeaturesItemType.mirror:
-        DeviceStore.shared.switchMirror(DeviceStore.shared.state.localMirrorType.value == MirrorType.enable
-            ? MirrorType.disable
-            : MirrorType.enable);
+        _showMirrorSelectionPanel();
         break;
       case FeaturesItemType.pip:
         _showPipConfigPanel();
@@ -256,6 +256,37 @@ extension on _MoreFeaturesPanelWidgetState {
           title: LiveKitLocalizations.of(Global.appContext())!.common_video_settings_item_pip,
           icon: LiveImages.settingsItemPip,
           type: FeaturesItemType.pip));
+    }
+  }
+
+  void _showMirrorSelectionPanel() {
+    _mirrorPanelHandler = BaseBottomSheet.showWithHandler(
+      context,
+      actions: [
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.auto),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.auto),
+        ),
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.enable),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.enable),
+        ),
+        ActionSheetItem(
+          title: _getMirrorString(MirrorType.disable),
+          onTap: () => DeviceStore.shared.switchMirror(MirrorType.disable),
+        ),
+      ],
+    );
+  }
+
+  String _getMirrorString(MirrorType mirrorType) {
+    switch (mirrorType) {
+      case MirrorType.auto:
+        return LiveKitLocalizations.of(context)!.mirror_type_auto;
+      case MirrorType.enable:
+        return LiveKitLocalizations.of(context)!.mirror_type_enable;
+      case MirrorType.disable:
+        return LiveKitLocalizations.of(context)!.mirror_type_disable;
     }
   }
 }

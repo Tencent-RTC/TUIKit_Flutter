@@ -1,84 +1,57 @@
 import 'dart:async';
+import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:atomic_x_core/api/device/device_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
 
-import 'package:permission_handler/permission_handler.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/component/network_info/manager/network_info_service.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
-import 'package:tencent_rtc_sdk/trtc_cloud_def.dart';
-import 'package:tencent_rtc_sdk/trtc_cloud_listener.dart';
 
 import '../state/network_info_state.dart';
 
-class NetworkInfoManager extends TUIRoomObserver {
+class NetworkInfoManager {
+  final String liveID;
   final NetWorkInfoState state = NetWorkInfoState();
-  final NetworkInfoService _service = NetworkInfoService();
   Timer? _poorNetworkTimer;
   bool _hasAudioPermission = false;
   bool _hasVideoPermission = false;
-  bool _isNetworkAvailable = false;
-  late TRTCCloudListener _trtcObserver;
+  // bool _isNetworkAvailable = false;
   bool _isDisposed = false;
   int _countdown = 0;
-  StreamSubscription<bool>? _networkStatusSubscription;
+  // StreamSubscription<bool>? _networkStatusSubscription;
+  StreamSubscription<ThermalState>? _thermalSubscription;
 
-  NetworkInfoManager() {
-    super.onUserNetworkQualityChanged = (networkMap) async {
-      if (!_isNetworkAvailable) {
-        return;
-      }
+  LiveSeatStore? liveSeatStore;
+  late final VoidCallback _avStatisticsListener = _onAVStatisticsChanged;
+  late final VoidCallback _seatListListener = _onSeatListChanged;
+  late final VoidCallback _currentLiveListener = _onCurrentLiveChanged;
+  late final VoidCallback _networkInfoListener = _onNetworkInfoChanged;
 
-      final userId = _service.getSelfUserId();
-      if (!networkMap.containsKey(userId)) {
-        return;
-      }
-      final matchedInfo = networkMap[userId];
-      if (matchedInfo == null) return;
-      state.rtt.value = matchedInfo.delay;
-      state.downLoss.value = matchedInfo.downLoss;
-      state.upLoss.value = matchedInfo.upLoss;
-      if (_isNetworkAvailable) {
-        state.networkQuality.value = matchedInfo.quality;
-      }
-      _handleNetworkQualityChanged(matchedInfo.quality);
-    };
-
-    super.onUserAudioStateChanged = (userId, hasAudio, reason) {
-      if (userId != _service.getSelfUserId()) {
-        return;
-      }
-      state.audioState.value = hasAudio ? AudioState.normal : AudioState.close;
-    };
-
-    super.onUserVideoStateChanged = (userId, streamType, hasVideo, reason) {
-      if (userId != _service.getSelfUserId()) {
-        return;
-      }
-      state.videoState.value = hasVideo ? VideoState.normal : VideoState.close;
-    };
-
-    _trtcObserver = _getTRTCObserver();
-    _service.addTRTCObserver(_trtcObserver);
-    _service.addRoomEngineObserver(this);
+  NetworkInfoManager(this.liveID) {
+    DeviceStore.shared.state.networkInfo.addListener(_networkInfoListener);
+    LiveListStore.shared.liveState.currentLive.addListener(_currentLiveListener);
     _addThermalObserver();
     _initManager();
   }
 
   void dispose() {
-    _service.removeTRTCObserver(_trtcObserver);
-    _service.removeRoomEngineObserver(this);
+    _thermalSubscription?.cancel();
+    DeviceStore.shared.state.networkInfo.removeListener(_networkInfoListener);
+    LiveListStore.shared.liveState.currentLive.removeListener(_currentLiveListener);
+    liveSeatStore?.liveSeatState.avStatistics.removeListener(_avStatisticsListener);
+    liveSeatStore?.liveSeatState.seatList.removeListener(_seatListListener);
     _poorNetworkTimer?.cancel();
     _poorNetworkTimer = null;
-    _stopNetworkMonitoring();
+    // _stopNetworkMonitoring();
     _isDisposed = true;
   }
 }
 
 extension NetowrkInfoManagerWithCallback on NetworkInfoManager {
   void handleAudioSliderChanged(int volume) {
-    _service.setAudioCaptureVolume(volume);
-    state.volume.value = volume;
+    DeviceStore.shared.setCaptureVolume(volume);
   }
 
   void onNetworkInfoStatusToastWidgetClosed() {
@@ -89,99 +62,148 @@ extension NetowrkInfoManagerWithCallback on NetworkInfoManager {
 }
 
 extension on NetworkInfoManager {
-  TRTCCloudListener _getTRTCObserver() {
-    return TRTCCloudListener(onStatistics: (statistics) {
-      final bigStreamStatus =
-          statistics.localStatisticsArray?.firstWhereOrNull((s) => s.streamType == TRTCVideoStreamType.big);
-      if (bigStreamStatus == null) {
-        return;
-      }
+  void _onCurrentLiveChanged() {
+    final currentLiveID = LiveListStore.shared.liveState.currentLive.value.liveID;
+    if (currentLiveID.isEmpty) {
+      liveSeatStore?.liveSeatState.avStatistics.removeListener(_avStatisticsListener);
+      liveSeatStore?.liveSeatState.seatList.removeListener(_seatListListener);
+      liveSeatStore = null;
+      return;
+    }
+    if (liveID != currentLiveID) return;
+    liveSeatStore = LiveSeatStore.create(liveID);
+    liveSeatStore!.liveSeatState.avStatistics.addListener(_avStatisticsListener);
+    liveSeatStore!.liveSeatState.seatList.addListener(_seatListListener);
+  }
 
-      final videoWidth = bigStreamStatus.width;
-      state.videoResolution.value = videoWidth;
-      if (!_hasVideoPermission) {
-        return;
-      }
+  void _onAVStatisticsChanged() {
+    if (liveSeatStore == null) return;
+    final avStatistics = liveSeatStore!.liveSeatState.avStatistics.value;
+    if (avStatistics.isEmpty || avStatistics[0].userID.isNotEmpty) {
+      return;
+    }
+    final bigStreamStatus = avStatistics[0];
 
-      if (state.videoState.value != VideoState.close) {
-        final isLowFrameRate = bigStreamStatus.frameRate < 15;
-        bool isLowBitrate = false;
-        switch (videoWidth) {
-          case 240:
-            isLowBitrate = bigStreamStatus.videoBitrate < 100;
-            break;
-          case 360:
-            isLowBitrate = bigStreamStatus.videoBitrate < 200;
-            break;
-          case 480:
-            isLowBitrate = bigStreamStatus.videoBitrate < 350;
-          case 540:
-            isLowBitrate = bigStreamStatus.videoBitrate < (bigStreamStatus.height == 960 ? 800 : 500);
-            break;
-          case 1080:
-            isLowBitrate = bigStreamStatus.videoBitrate < 1500;
-            break;
-          default:
-            isLowBitrate = false;
-            break;
-        }
-        state.videoState.value = (isLowFrameRate || _isPoorNetworkQuality(state.networkQuality.value) || isLowBitrate)
-            ? VideoState.exception
-            : VideoState.normal;
-      }
+    final videoWidth = bigStreamStatus.videoWidth;
+    state.videoResolution.value = videoWidth;
+    if (!_hasVideoPermission) {
+      return;
+    }
 
-      if (!_hasAudioPermission) {
-        return;
+    if (state.videoState.value != VideoState.close) {
+      final isLowFrameRate = bigStreamStatus.frameRate < 15;
+      bool isLowBitrate = false;
+      switch (videoWidth) {
+        case 240:
+          isLowBitrate = bigStreamStatus.videoBitrate < 100;
+          break;
+        case 360:
+          isLowBitrate = bigStreamStatus.videoBitrate < 200;
+          break;
+        case 480:
+          isLowBitrate = bigStreamStatus.videoBitrate < 350;
+        case 540:
+          isLowBitrate = bigStreamStatus.videoBitrate < (bigStreamStatus.videoHeight == 960 ? 800 : 500);
+          break;
+        case 1080:
+          isLowBitrate = bigStreamStatus.videoBitrate < 1500;
+          break;
+        default:
+          isLowBitrate = false;
+          break;
       }
+      state.videoState.value = (isLowFrameRate || _isPoorNetworkQuality(state.networkQuality.value) || isLowBitrate)
+          ? VideoState.exception
+          : VideoState.normal;
+    }
 
-      if (state.volume.value == 0) {
-        state.audioState.value = AudioState.mute;
-        return;
-      }
-      const audioCaptureStateNormal = 0;
-      if (bigStreamStatus.audioCaptureState != audioCaptureStateNormal) {
-        state.audioState.value = AudioState.exception;
-        return;
-      }
+    if (!_hasAudioPermission) {
+      return;
+    }
+    if (state.audioState.value == AudioState.close) return;
+    if (DeviceStore.shared.state.captureVolume.value == 0) {
+      state.audioState.value = AudioState.mute;
+    } else {
+      state.audioState.value = bigStreamStatus.audioBitrate > 0 ? AudioState.normal : AudioState.exception;
+    }
+  }
 
-      state.audioState.value = AudioState.normal;
-    });
+  void _onSeatListChanged() {
+    if (liveSeatStore == null) return;
+    final seatList = liveSeatStore!.liveSeatState.seatList.value;
+    for (final item in seatList) {
+      final userInfo = item.userInfo;
+      if (userInfo.userID == LoginStore.shared.loginState.loginUserInfo?.userID) {
+        _onVideoStatusChanged(userInfo.cameraStatus == DeviceStatus.on);
+        _onAudioStatusChanged(userInfo.microphoneStatus == DeviceStatus.on);
+        break;
+      }
+    }
+  }
+
+  void _onNetworkInfoChanged() {
+    final networkInfo = DeviceStore.shared.state.networkInfo.value;
+    // if (!_isNetworkAvailable) {
+    //   return;
+    // }
+    state.networkQuality.value = networkInfo.quality;
+    state.rtt.value = networkInfo.delay;
+    state.downLoss.value = networkInfo.downLoss;
+    state.upLoss.value = networkInfo.upLoss;
+    // if (_isNetworkAvailable) {
+    //   state.networkQuality.value = networkInfo.quality;
+    // }
+    if (state.showToast.value) {
+      return;
+    }
+    _isPoorNetworkQuality(networkInfo.quality) ? _startPoorNetworkCountdown() : _stopPoorNetworkCountdown();
+  }
+
+  void _onAudioStatusChanged(bool hasAudio) {
+    state.audioState.value = hasAudio ? AudioState.normal : AudioState.close;
+  }
+
+  void _onVideoStatusChanged(bool hasVideo) {
+    state.videoState.value = hasVideo ? VideoState.normal : VideoState.close;
   }
 
   void _addThermalObserver() {
-    TUILiveKitPlatform.instance.onThermalStateChanged.listen((status) {
+    _thermalSubscription = TUILiveKitPlatform.instance.onThermalStateChanged.listen((status) {
       state.deviceTemperature.value = status.value;
     });
   }
 
   void _initManager() async {
-    _startNetworkMonitoring();
+    // _startNetworkMonitoring();
     _checkMediaPermission();
-    state.volume.value = await _service.getVolume();
-    _isNetworkAvailable = await TUILiveKitPlatform.instance.isNetworkConnected();
+    handleAudioSliderChanged(DeviceStore.shared.state.captureVolume.value);
+    // _isNetworkAvailable = await TUILiveKitPlatform.instance.isNetworkConnected();
   }
 
   void _startNetworkMonitoring() {
-    _networkStatusSubscription?.cancel();
-    _networkStatusSubscription = null;
-
-    _networkStatusSubscription = TUILiveKitPlatform.instance.onNetworkConnectionStateChanged.listen((connected) {
-      _isNetworkAvailable = connected;
-      if (!_isNetworkAvailable) {
-        state.networkQuality.value = TUINetworkQuality.qualityDown;
-        state.videoState.value = VideoState.exception;
-      }
-    });
+    // _networkStatusSubscription?.cancel();
+    // _networkStatusSubscription = null;
+    //
+    // _networkStatusSubscription = TUILiveKitPlatform.instance.onNetworkConnectionStateChanged.listen((connected) {
+    //   _isNetworkAvailable = connected;
+    //   if (!_isNetworkAvailable) {
+    //     state.networkQuality.value = NetworkQuality.down;
+    //     state.videoState.value = VideoState.exception;
+    //   }
+    // });
   }
 
   void _stopNetworkMonitoring() {
-    _networkStatusSubscription?.cancel();
-    _networkStatusSubscription = null;
+    // _networkStatusSubscription?.cancel();
+    // _networkStatusSubscription = null;
   }
 
   void _checkMediaPermission() async {
-    _hasAudioPermission = await Permission.microphone.isGranted;
-    _hasVideoPermission = await Permission.camera.isGranted;
+    final microphoneStatus = await Permission.check(PermissionType.microphone);
+    final cameraStatus = await Permission.check(PermissionType.camera);
+
+    _hasAudioPermission = microphoneStatus.isUsable;
+    _hasVideoPermission = cameraStatus.isUsable;
 
     if (!_hasAudioPermission) {
       state.audioState.value = AudioState.close;
@@ -192,17 +214,8 @@ extension on NetworkInfoManager {
     }
   }
 
-  bool _isPoorNetworkQuality(TUINetworkQuality quality) {
-    return quality == TUINetworkQuality.qualityVeryBad ||
-        quality == TUINetworkQuality.qualityBad ||
-        quality == TUINetworkQuality.qualityDown;
-  }
-
-  void _handleNetworkQualityChanged(TUINetworkQuality quality) {
-    if (state.showToast.value) {
-      return;
-    }
-    _isPoorNetworkQuality(quality) ? _startPoorNetworkCountdown() : _stopPoorNetworkCountdown();
+  bool _isPoorNetworkQuality(NetworkQuality quality) {
+    return quality == NetworkQuality.veryBad || quality == NetworkQuality.bad || quality == NetworkQuality.down;
   }
 
   void _startPoorNetworkCountdown() {

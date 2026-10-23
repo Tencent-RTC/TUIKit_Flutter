@@ -223,17 +223,12 @@ extension _RoomMainWidgetStatePrivate on _RoomMainWidgetState {
     _barrageDisplayController ??= BarrageDisplayController(
       roomId: widget.roomID,
       ownerId: _roomStore.state.currentRoom.value?.roomOwner.userID ?? '',
-      selfUserId: localParticipant?.userID ?? '',
-      selfName: localParticipant?.nickname,
-      onError: (code, message) {
-        Toast.error(context, ErrorLocalized.convertToErrorMessage(code, message));
-      },
     );
     _barrageSendController ??= BarrageSendController(
       roomId: widget.roomID,
-      ownerId: _roomStore.state.currentRoom.value?.roomOwner.userID ?? '',
-      selfUserId: localParticipant?.userID ?? '',
-      selfName: localParticipant?.nickname,
+      onError: (code, message) {
+        Toast.error(context, ErrorLocalized.convertToErrorMessage(code, message));
+      },
     );
     return Padding(
       padding: EdgeInsets.only(left: 10.width, bottom: 21.height),

@@ -11,7 +11,7 @@ class GiftPlayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final oritation = MediaQuery.orientationOf(context);
+    final orientation = MediaQuery.orientationOf(context);
     return Stack(
       children: [
         Positioned(
@@ -27,7 +27,7 @@ class GiftPlayWidget extends StatelessWidget {
         ),
         Positioned(
           left: 0,
-          top: oritation == Orientation.landscape ? context.adapter.getHeight(60) : context.adapter.getHeight(120),
+          top: orientation == Orientation.landscape ? context.adapter.getHeight(60) : context.adapter.getHeight(120),
           child: GiftBulletGroupWidget(roomId: giftPlayController.roomId),
         ),
         Positioned(

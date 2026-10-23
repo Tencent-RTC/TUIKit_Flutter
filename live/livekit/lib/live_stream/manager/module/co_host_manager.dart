@@ -2,12 +2,8 @@ import 'dart:ui';
 
 import 'package:atomic_x_core/api/live/co_host_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
-import 'package:rtc_room_engine/api/common/tui_common_define.dart';
-import 'package:rtc_room_engine/api/extension/tui_live_connection_manager.dart';
-import 'package:rtc_room_engine/api/extension/tui_live_list_manager.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
-import '../../api/live_stream_service.dart';
 import '../../state/co_host_state.dart';
 import '../live_stream_manager.dart';
 
@@ -15,22 +11,32 @@ class CoHostManager {
   LSCoHostState coHostState = LSCoHostState();
 
   late final Context context;
-  late final LiveStreamService service;
 
   CoHostListener? coHostListener;
   late final VoidCallback _onConnectionUserListListener = onConnectionUserListChanged;
 
   void init(Context context) {
     this.context = context;
-    service = context.service;
   }
 
   void setLiveID(String liveID) {
     coHostState.currentRoomId = liveID;
+    _subscribeListener();
+  }
+
+  void dispose() {
+    _unSubscribeListener();
+  }
+
+  void resetStore() {
+    _subscribeListener();
+  }
+
+  void _subscribeListener() {
     CoHostStore coHostStore = CoHostStore.create(coHostState.currentRoomId);
     coHostStore.coHostState.connected.addListener(_onConnectionUserListListener);
 
-    coHostListener = CoHostListener(
+    coHostListener ??= CoHostListener(
       onCoHostRequestReceived: (SeatUserInfo inviter, String extensionInfo) {},
       onCoHostRequestCancelled: (SeatUserInfo inviter, SeatUserInfo? invitee) {},
       onCoHostRequestAccepted: (SeatUserInfo invitee) {
@@ -48,9 +54,7 @@ class CoHostManager {
     coHostStore.addCoHostListener(coHostListener!);
   }
 
-  final int _listCount = 20;
-
-  void dispose() {
+  void _unSubscribeListener() {
     CoHostStore coHostStore = CoHostStore.create(coHostState.currentRoomId);
     coHostStore.coHostState.connected.removeListener(_onConnectionUserListListener);
     coHostStore.removeCoHostListener(coHostListener!);
@@ -58,48 +62,29 @@ class CoHostManager {
 
   bool get isCoHostConnecting => CoHostStore.create(coHostState.currentRoomId).coHostState.connected.value.isNotEmpty;
 
-  Future<void> fetchRecommendedList({String cursor = ''}) async {
-    final cursor = coHostState.recommendListCursor.value;
-    final result = await service.fetchRecommendedList(cursor, _listCount);
-    if (result.code != TUIError.success || result.data == null) {
-      LiveKitLogger.error('fetchRecommendedList failed. code:${result.code}, message:${result.message}');
-      return;
-    }
-    final recommendListResult = result.data!;
-    if (cursor.isEmpty) {
-      coHostState.recommendedUsers.value.clear();
-    }
+  Future<void> fetchRecommendedList(bool isRefresh) async {
     CoHostStore coHostStore = CoHostStore.create(coHostState.currentRoomId);
+    final cursor = isRefresh ? "" : coHostStore.coHostState.candidatesCursor.value;
+    await coHostStore.getCoHostCandidates(cursor);
     final sentRequestList = coHostStore.coHostState.invitees.value;
-    final List<TUIConnectionUser> recommendUsers = recommendListResult.liveInfoList
-        .map((liveInfo) {
-          final isConnected = coHostStore.coHostState.connected.value.any((user) => user.liveID == liveInfo.roomId);
-          if (!isConnected) {
-            final user = _convertLiveInfo2ConnectionUser(liveInfo);
-            if (sentRequestList.any((invitee) => invitee.userID == user.userId)) {
-              user.connectionStatus = TUIConnectionStatus.inviting;
-            }
-            return user;
-          } else {
-            return TUIConnectionUser();
+    final List<SeatUserInfo> recommendUsers = [...coHostStore.coHostState.candidates.value]
+        .map((user) {
+          if (sentRequestList.any((invitee) => invitee.userID == user.userID)) {
+            user.connectionStatus = TUIConnectionStatus.inviting;
           }
+          return user;
         })
-        .where((user) => user.roomId.isNotEmpty)
+        .where((user) => user.liveID.isNotEmpty)
         .toList();
-
-    final List<TUIConnectionUser> newRecommendedUsers = coHostState.recommendedUsers.value.toList();
-    newRecommendedUsers.addAll(recommendUsers);
-
-    coHostState.recommendedUsers.value = newRecommendedUsers;
-    coHostState.recommendListCursor.value = recommendListResult.cursor;
+    coHostState.recommendedUsers.value = recommendUsers;
   }
 }
 
 extension CoHostManagerCallback on CoHostManager {
-  void onRequestConnection(TUIConnectionUser user) {
+  void onRequestConnection(SeatUserInfo user) {
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     for (var recommendedUser in newRecommendUsers) {
-      if (recommendedUser.roomId == user.roomId) {
+      if (recommendedUser.liveID == user.liveID) {
         recommendedUser.connectionStatus = TUIConnectionStatus.inviting;
       }
     }
@@ -109,7 +94,7 @@ extension CoHostManagerCallback on CoHostManager {
   void onRequestConnectionFailed(String roomId) {
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     for (var recommendedUser in newRecommendUsers) {
-      if (recommendedUser.roomId == roomId) {
+      if (recommendedUser.liveID == roomId) {
         recommendedUser.connectionStatus = TUIConnectionStatus.none;
       }
     }
@@ -121,14 +106,14 @@ extension CoHostManagerCallback on CoHostManager {
     List<SeatUserInfo> connected = coHostStore.coHostState.connected.value;
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     newRecommendUsers
-        .removeWhere((recommendUser) => connected.any((connectedUser) => connectedUser.liveID == recommendUser.roomId));
+        .removeWhere((recommendUser) => connected.any((connectedUser) => connectedUser.liveID == recommendUser.liveID));
     coHostState.recommendedUsers.value = newRecommendUsers;
   }
 
   void onConnectionRequestAccept(SeatUserInfo invitee) {
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     for (var recommendedUser in newRecommendUsers) {
-      if (recommendedUser.roomId == invitee.liveID) {
+      if (recommendedUser.liveID == invitee.liveID) {
         recommendedUser.connectionStatus = TUIConnectionStatus.connected;
       }
     }
@@ -138,7 +123,7 @@ extension CoHostManagerCallback on CoHostManager {
   void onConnectionRequestTimeout(SeatUserInfo inviter, SeatUserInfo invitee) {
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     for (var recommendedUser in newRecommendUsers) {
-      if (inviter.liveID == coHostState.currentRoomId && recommendedUser.roomId == invitee.liveID) {
+      if (inviter.liveID == coHostState.currentRoomId && recommendedUser.liveID == invitee.liveID) {
         recommendedUser.connectionStatus = TUIConnectionStatus.none;
       }
     }
@@ -150,7 +135,7 @@ extension CoHostManagerCallback on CoHostManager {
   void onConnectionRequestReject(SeatUserInfo invitee) {
     final newRecommendUsers = coHostState.recommendedUsers.value.toList();
     for (var recommendedUser in newRecommendUsers) {
-      if (recommendedUser.roomId == invitee.liveID) {
+      if (recommendedUser.liveID == invitee.liveID) {
         recommendedUser.connectionStatus = TUIConnectionStatus.none;
       }
     }
@@ -158,17 +143,5 @@ extension CoHostManagerCallback on CoHostManager {
     final name = invitee.userName.isNotEmpty ? invitee.userName : invitee.userID;
     final toast = LiveKitLocalizations.of(Global.appContext())!.common_request_rejected.replaceAll('xxx', name);
     context.toastSubject.target?.add(toast);
-  }
-}
-
-extension on CoHostManager {
-  TUIConnectionUser _convertLiveInfo2ConnectionUser(TUILiveInfo liveInfo) {
-    final connectionUser = TUIConnectionUser();
-    connectionUser.roomId = liveInfo.roomId;
-    connectionUser.userId = liveInfo.ownerId;
-    connectionUser.userName = liveInfo.ownerName;
-    connectionUser.avatarUrl = liveInfo.ownerAvatarUrl;
-    connectionUser.joinConnectionTime = 0;
-    return connectionUser;
   }
 }

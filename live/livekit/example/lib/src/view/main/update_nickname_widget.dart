@@ -35,7 +35,7 @@ class _UpdateNicknameWidgetState extends State<UpdateNicknameWidget> {
         children: [
           _initTitleWidget(),
           _initInputNameWidget(),
-          _initSubmitWidget()
+          _initSubmitWidget(),
         ],
       ),
     );
@@ -66,10 +66,7 @@ class _UpdateNicknameWidgetState extends State<UpdateNicknameWidget> {
           Center(
             child: Text(
               S.current.app_set_nickname,
-              style: const TextStyle(
-                  color: Color(0xFF0F1014),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16),
+              style: const TextStyle(color: Color(0xFF0F1014), fontWeight: FontWeight.w500, fontSize: 16),
             ),
           ),
         ],
@@ -133,22 +130,17 @@ class _UpdateNicknameWidgetState extends State<UpdateNicknameWidget> {
             onPressed: () => _updateNickname(),
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(const Color(0xff056DF6)),
-              shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24))),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))),
             ),
             child: Text(
               S.current.app_save,
               style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white),
+                  fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white),
             )));
   }
 }
 
-extension _UpdateNicknameWidgetStateLogicExtension
-    on _UpdateNicknameWidgetState {
+extension _UpdateNicknameWidgetStateLogicExtension on _UpdateNicknameWidgetState {
   void _clearInput() {
     _controller.text = "";
   }
@@ -161,10 +153,9 @@ extension _UpdateNicknameWidgetStateLogicExtension
       makeToast(context, S.current.app_enter_nickname);
       return;
     }
-    final result =
-        await AppManager.setSelfInfo(AppStore.userAvatar, _inputNickname);
+    final result = await AppManager.setSelfInfo(AppStore.userAvatar, _inputNickname);
     if (!mounted) return;
-    if (result.code == 0) {
+    if (result.errorCode == 0) {
       Navigator.of(context).pop();
     }
   }
