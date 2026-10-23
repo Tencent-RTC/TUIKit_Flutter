@@ -1,0 +1,39 @@
+name: live_kit_access
+description: "TUILiveKit Flutter 接入验证 App，只负责登录后的组件接入和功能验证，不承载直播业务状态。"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # 线上 SDK；本机联调可在被忽略的 pubspec_overrides.yaml 中覆盖。
+  atomic_x_core: 5.3.0
+  crypto: ^3.0.3
+  # 接入 App 负责 MP4 礼物特效 License 初始化，使用与组件相同的播放器。
+  flutter_effect_player: ^3.4.1
+  # 入口 userID 的本地持久化，与 iOS UserDefaults 保持一致。
+  shared_preferences: ^2.3.2
+  tencent_live_uikit: 5.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+
+# flutter_effect_player 提供播放链路；宿主 Podfile 指定官方特效依赖来源。
+# NoXMagic 排除独立授权库；两端统一由高级美颜 TencentEffect 提供授权实现。
+EffectPlayer:
+  sub_spec: NoXMagic
+
+dependency_overrides:
+  # 本机 Flutter 3.22.2 将 meta 钉在 1.12.0，atomic_x_core 5.x 声明 meta ^1.15.0。
+  # 实际只用到 1.12 已有的注解，构建机升级 Flutter >= 3.24 后可删除本 override。
+  meta: 1.12.0

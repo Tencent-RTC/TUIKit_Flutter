@@ -1,0 +1,18 @@
+{
+    "displayName":"3D贴纸",
+    "displayNameEn":"3D",
+    "downloadPath":"MotionRes/3dMotionRes/",
+    "propertyList":[
+        {
+            "displayName":"无",
+            "displayNameEn":"None",
+            "icon":"beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName":"知性玫瑰",
+            "displayNameEn":"Glasses1",
+            "icon":"beauty_panel/panel_icon/motions_icon/video_zhixingmeigui.png",
+            "resourceUri":"MotionRes/3dMotionRes/video_zhixingmeigui"
+        }
+    ]
+}

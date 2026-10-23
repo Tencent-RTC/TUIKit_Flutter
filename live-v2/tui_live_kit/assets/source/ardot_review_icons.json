@@ -1,0 +1,2867 @@
+{
+  "file_id": "709144137533935",
+  "file_name": "LiveKit 移动端【交互视觉】",
+  "file_url": "https://ardot.tencent.com/file/709144137533935",
+  "export_tool": "Ardot export_nodes",
+  "exported_on": "2026-10-18",
+  "format": "png",
+  "note": "Direct 1x/2x/3x exports; retain original canvas, alpha and colors. Flutter applies existing template display slots/tints. No crop, redraw, resampling or iOS conversion. Mic settings use full 44x44 including circle; seat mic uses the dedicated 12x12 component.",
+  "assets": [
+    {
+      "name": "livekit_prepare_beauty",
+      "node_id": "18:18",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_prepare_beauty.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            23,
+            21
+          ],
+          "sha256": "9b85386c2d6665c4169483bc947e54231ba9a85e2d9bc05819f28b02b47f32a4"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_prepare_beauty.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            5,
+            4,
+            45,
+            41
+          ],
+          "sha256": "317f342f4cdc98089243b47032c84fa00ab2f94ebf097321e7dca01587ecb730"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_prepare_beauty.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            8,
+            7,
+            68,
+            61
+          ],
+          "sha256": "9ebdfc7c6b313ab3d541d65b00ea8922c7e73670bb121ccd44b322fab4e69e06"
+        }
+      ]
+    },
+    {
+      "name": "livekit_prepare_flip",
+      "node_id": "18:27",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_prepare_flip.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            3,
+            4,
+            21,
+            20
+          ],
+          "sha256": "c1281b55502aa604206f643c95d5ce9e4d445b6c0f46aa899e01d65c26961116"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_prepare_flip.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            6,
+            8,
+            42,
+            40
+          ],
+          "sha256": "e1c6630e1454301527a2b4936ce303a1b2a77af4e965e5e4a0933d96039e943f"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_prepare_flip.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            9,
+            12,
+            63,
+            60
+          ],
+          "sha256": "75f2165a9c04d26f3108af4814756b8bd36f9c4a82c1b69dbdfa19b928871e30"
+        }
+      ]
+    },
+    {
+      "name": "livekit_prepare_more",
+      "node_id": "18:35",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_prepare_more.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            22,
+            22
+          ],
+          "sha256": "259b7e8453cad5959547ba56bb2ee24b0af5254fba16a8da83e4ee004490d4ff"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_prepare_more.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            4,
+            4,
+            44,
+            44
+          ],
+          "sha256": "37b8ac26b8fb92bd8954e79f6257c6a542b23b5b745a1f92454b51595571da6b"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_prepare_more.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            6,
+            6,
+            66,
+            66
+          ],
+          "sha256": "b427fd0d397e8c7b0e149cb465aa8316ad6eb2f99099a51cf3d141abc9b5a93b"
+        }
+      ]
+    },
+    {
+      "name": "livekit_settings_audio_effect",
+      "node_id": "77:75",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_settings_audio_effect.png",
+          "pixels": [
+            22,
+            22
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            19,
+            20
+          ],
+          "sha256": "e46a7fd65ac0be42f175934020fbd7d81c3ad402f6c8e9351001f9a7d0b8d02f"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_settings_audio_effect.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            4,
+            4,
+            38,
+            39
+          ],
+          "sha256": "9efd43119f597ed56da28781b4e2ba6a1606ea646b49d650e99fbf3078cffb02"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_settings_audio_effect.png",
+          "pixels": [
+            66,
+            66
+          ],
+          "alpha_bounds": [
+            6,
+            6,
+            57,
+            59
+          ],
+          "sha256": "57e031d5be5ceb9a18b3f129e492c7fa7fe125834a4b241da0d5980d1d351faa"
+        }
+      ]
+    },
+    {
+      "name": "livekit_voice_original",
+      "node_id": "77:292",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_voice_original.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            23,
+            23
+          ],
+          "sha256": "ba7a00184e627c543508a38f5e7ca833eba524f90e431dba5558abd32a93bfc1"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_voice_original.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            45,
+            45
+          ],
+          "sha256": "0ada38b3315c4c353afeb31e216c13ecf295637c620f2ba9fe06d2ccd86a9e5a"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_voice_original.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            8,
+            8,
+            67,
+            67
+          ],
+          "sha256": "f7f6ab287bd880da932f966c3136721c42e7402ae2de670d41ba93506c33ed5d"
+        }
+      ]
+    },
+    {
+      "name": "livekit_voice_child",
+      "node_id": "77:295",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_voice_child.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            4,
+            2,
+            21,
+            22
+          ],
+          "sha256": "2efbdd86e01ad3d829f46a6784c51c4812245b108034ead1c7e0c008bd6aec6e"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_voice_child.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            8,
+            4,
+            42,
+            43
+          ],
+          "sha256": "52842e2cd2f24334d692c4f93ecedc5a5658bdd4c9a079fa742dd84dd533e03e"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_voice_child.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            13,
+            7,
+            62,
+            64
+          ],
+          "sha256": "6ca7635b335dddd039f4d142af1324b26d4ce112e643f48db717144d1a2a02d9"
+        }
+      ]
+    },
+    {
+      "name": "livekit_voice_loli",
+      "node_id": "77:331",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_voice_loli.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            3,
+            2,
+            22,
+            21
+          ],
+          "sha256": "109fa9ff8dab0fb807a4d89d632f5e7a5216c6804ba8c78e9df1c76db4aefa0b"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_voice_loli.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            6,
+            4,
+            44,
+            41
+          ],
+          "sha256": "3f4f5a412c5174f27bbf1cbcc15ce6567586eaa6c6f9c54a1ce33c4711ac79cc"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_voice_loli.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            9,
+            7,
+            66,
+            61
+          ],
+          "sha256": "a388338dd1ef4b84b732f8c994fdafb5e289dab83d963fc47039c73050cc248a"
+        }
+      ]
+    },
+    {
+      "name": "livekit_voice_uncle",
+      "node_id": "77:305",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_voice_uncle.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            5,
+            2,
+            20,
+            23
+          ],
+          "sha256": "c8ccff4996d92fa356cf9dc107d46971f476ea8fbd06bfbb0a0619f301aaeedc"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_voice_uncle.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            11,
+            5,
+            39,
+            45
+          ],
+          "sha256": "a161bcbca581d838a4aa84fa81dc2d7e2c5898ee2b6c74d001be41b8da768ccd"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_voice_uncle.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            16,
+            8,
+            59,
+            67
+          ],
+          "sha256": "b788792dd6f12250c32be25712ba095846a96c808fe0251cd541a62783c1889e"
+        }
+      ]
+    },
+    {
+      "name": "livekit_voice_spirit",
+      "node_id": "77:310",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_voice_spirit.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            4,
+            2,
+            21,
+            22
+          ],
+          "sha256": "ab8ba96564bc15b1554c6a6caf0d588e4a22d6815497722c13e6969a22f6551f"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_voice_spirit.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            9,
+            5,
+            41,
+            44
+          ],
+          "sha256": "488c9240f9081a2c1765e7ca0006707cdd4eac6c280239a0df5fdac2119dc385"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_voice_spirit.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            13,
+            8,
+            62,
+            66
+          ],
+          "sha256": "b15632fe2c432d67c1e7cf4269cdbc8fbf931fbf3fbe224f0c2307eb1ce0f29c"
+        }
+      ]
+    },
+    {
+      "name": "livekit_reverb_none",
+      "node_id": "77:313",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_reverb_none.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            23,
+            23
+          ],
+          "sha256": "83a0ef1ce7c005e8c935fce3bdd0d4736d3bcfb09e6494b8e86241091bb00fdf"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_reverb_none.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            45,
+            45
+          ],
+          "sha256": "389b9d03c5bdf2b78b56b2a2513bdc9db56f600242c575bd55da20c5aad1f9fb"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_reverb_none.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            8,
+            8,
+            67,
+            67
+          ],
+          "sha256": "5edb800cd9c74f3e0e47a66aabae418fb11176ded494e12eee27f4bb4726199f"
+        }
+      ]
+    },
+    {
+      "name": "livekit_reverb_ktv",
+      "node_id": "77:316",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_reverb_ktv.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            5,
+            2,
+            22,
+            23
+          ],
+          "sha256": "14276fd2d5e4107a4e6b73acf16a342b0309be583d0ffe5fcdf7b47d7811d330"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_reverb_ktv.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            10,
+            4,
+            44,
+            46
+          ],
+          "sha256": "d30925812425fdbd96f16e494f78c320710ebb8892d55089769ba95fe317cec3"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_reverb_ktv.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            16,
+            6,
+            66,
+            69
+          ],
+          "sha256": "74ee42eacdfc9c11402f897b7f22f834d426e16a7ee7ca07bb2179d4d6def8e9"
+        }
+      ]
+    },
+    {
+      "name": "livekit_reverb_metal",
+      "node_id": "77:320",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_reverb_metal.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            4,
+            3,
+            24,
+            23
+          ],
+          "sha256": "751545c1d0f4dc18f828250fdfe9ee1966f0599f51c9a3f1f3fde610c0bd5074"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_reverb_metal.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            9,
+            7,
+            48,
+            45
+          ],
+          "sha256": "cf0622f9c6899950fc03376b48b7db6683329aa3b3f6aeaf571da30eaacce4da"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_reverb_metal.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            13,
+            11,
+            72,
+            68
+          ],
+          "sha256": "cdf90a0dae749035f0829a8ec28d237162fa9e99c247b7a6f853c0c1f34d17d6"
+        }
+      ]
+    },
+    {
+      "name": "livekit_reverb_deep",
+      "node_id": "77:325",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_reverb_deep.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            3,
+            5,
+            24,
+            20
+          ],
+          "sha256": "c2fa360fdecdc6ec688b600a9f7808b17f8249344940f5e9e6284375e1d2ac03"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_reverb_deep.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            6,
+            10,
+            48,
+            40
+          ],
+          "sha256": "f682ea5e63ddd73294639089e51028fd2a29dee59dbbc1c3243108d0ceff14d7"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_reverb_deep.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            9,
+            16,
+            72,
+            59
+          ],
+          "sha256": "a209276d1956418ea4a7def0a8627c6246bf1760e14ea40bf7efbe0a6eb1984d"
+        }
+      ]
+    },
+    {
+      "name": "livekit_reverb_bright",
+      "node_id": "77:328",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_reverb_bright.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            4,
+            5,
+            22,
+            20
+          ],
+          "sha256": "c36f7a7f0000827b140e17f505260fcfb59bbd7367c4544fe8be63be37a477c7"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_reverb_bright.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            8,
+            10,
+            44,
+            40
+          ],
+          "sha256": "e201802760297df3d70dae85fad4b566d72d6fce65645d942535d47e2ef0808e"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_reverb_bright.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            13,
+            16,
+            66,
+            59
+          ],
+          "sha256": "8f2526d3a89fc70a74c5a2f8f20b6de8eebe603c44d53dfb0b2eed31edd0d7a8"
+        }
+      ]
+    },
+    {
+      "name": "livekit_level_basic",
+      "node_id": "77:772",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_level_basic.png",
+          "pixels": [
+            10,
+            10
+          ],
+          "alpha_bounds": [
+            1,
+            1,
+            9,
+            9
+          ],
+          "sha256": "acd6f0bf2a8f8267271039e2d27e8fa5159876233eb885e52fd4df79ac894e90"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_level_basic.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            18,
+            18
+          ],
+          "sha256": "83778ebf78cf05b0c342af5bb83ed74639c8ee0b4c54e131a769b52a9aa06128"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_level_basic.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            3,
+            3,
+            27,
+            27
+          ],
+          "sha256": "1e187208f9675f3d6a01f7bde423f9f60cd0b4b8ecac6f008bde03b639061f51"
+        }
+      ]
+    },
+    {
+      "name": "livekit_level_advanced",
+      "node_id": "77:776",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_level_advanced.png",
+          "pixels": [
+            10,
+            10
+          ],
+          "alpha_bounds": [
+            1,
+            1,
+            9,
+            9
+          ],
+          "sha256": "b9daa6584801f7de00e6d000077fd7b029940604458a16c958441a92131d8b5b"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_level_advanced.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            3,
+            3,
+            17,
+            18
+          ],
+          "sha256": "ddb901b0111a700327e694844345306db0c5161dae2749f2abd55dfe4af9b53b"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_level_advanced.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            25,
+            27
+          ],
+          "sha256": "4e524d2cd1318f06f2640037a602f6038f23dba8630aeaae2718687d03c86db8"
+        }
+      ]
+    },
+    {
+      "name": "livekit_level_premium",
+      "node_id": "77:780",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_level_premium.png",
+          "pixels": [
+            10,
+            10
+          ],
+          "alpha_bounds": [
+            0,
+            1,
+            10,
+            9
+          ],
+          "sha256": "316c3bbea3b001fb08e48978603ffeeca2acbf274ee4a0f5ef941f749bab7ed8"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_level_premium.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            1,
+            2,
+            19,
+            18
+          ],
+          "sha256": "df3484163e2902bbfa1a7ca4ff6dc95655260bd86fbe4ea811525af3f692e2b5"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_level_premium.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            2,
+            3,
+            28,
+            27
+          ],
+          "sha256": "3a517980cd0721314e546f3ea2058c7bd2b0104c5a7c58fea3104baed79ea670"
+        }
+      ]
+    },
+    {
+      "name": "livekit_level_elite",
+      "node_id": "77:784",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_level_elite.png",
+          "pixels": [
+            10,
+            10
+          ],
+          "alpha_bounds": [
+            1,
+            1,
+            9,
+            8
+          ],
+          "sha256": "ccdeeaf3b1ecca5694dae9507d80d71f5a1c9ec41192e89321eeb4d0865fb62c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_level_elite.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            18,
+            15
+          ],
+          "sha256": "a264dafdbcdf512fa0596ade19d31e2c60376c65e903fa218dc297237a7a7623"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_level_elite.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            3,
+            4,
+            27,
+            23
+          ],
+          "sha256": "692b20436d72af43dc178ec9ff81658f6db997a383292d22b977fa34161b7770"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_fan",
+      "node_id": "77:409",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_fan.png",
+          "pixels": [
+            42,
+            28
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            42,
+            28
+          ],
+          "sha256": "e8ca725d4aac1f35e99e969f0bc1f48b77f2e649b7699dc35b021cdf69080dd7"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_fan.png",
+          "pixels": [
+            84,
+            56
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            84,
+            56
+          ],
+          "sha256": "7859bc4fab3b9fbbb49fa12194deaff71340c4a91786c84655b3fd1aa6c51976"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_fan.png",
+          "pixels": [
+            126,
+            84
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            126,
+            84
+          ],
+          "sha256": "3f59520f95a28ad7d3d77ae9d4527f0f93140e0b6f5c56c2bb4e0eeb066a8568"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_close",
+      "node_id": "77:424",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_close.png",
+          "pixels": [
+            15,
+            15
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            13,
+            13
+          ],
+          "sha256": "0db4fee5eac14a822604b57fc049ec4885a37e8326e873429295cb3dfc8c1288"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_close.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            4,
+            4,
+            26,
+            26
+          ],
+          "sha256": "3fcc29b790210e837556058d9163ea022f030bcf1e306107feb6ed2d96709ded"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_close.png",
+          "pixels": [
+            45,
+            45
+          ],
+          "alpha_bounds": [
+            7,
+            7,
+            38,
+            38
+          ],
+          "sha256": "38ac32429424cc5e78967c6030f76212508379ed4e21cfdaae196577930f30f7"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_more",
+      "node_id": "77:465",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_more.png",
+          "pixels": [
+            27,
+            27
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            25,
+            25
+          ],
+          "sha256": "81fc54b6a558d2f71e7ea019b1d4a1e796dca3a66e2d60abfa874108d03aa335"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_more.png",
+          "pixels": [
+            54,
+            54
+          ],
+          "alpha_bounds": [
+            4,
+            4,
+            50,
+            50
+          ],
+          "sha256": "9fdf877bc92c7220c9f8db249e20cdb8a69759d54dc09f81336f1b24462f0112"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_more.png",
+          "pixels": [
+            81,
+            81
+          ],
+          "alpha_bounds": [
+            7,
+            7,
+            74,
+            74
+          ],
+          "sha256": "3a6a684bf81d2e04122bd0182f93e6d98bfccb62b0486be464c80b04b9816fd4"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_pause",
+      "node_id": "77:709",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_pause.png",
+          "pixels": [
+            19,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            19,
+            19
+          ],
+          "sha256": "a4dce34078b9c242b296c941ab7a92de19bc6ab6159d406920b6382ac0aae85d"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_pause.png",
+          "pixels": [
+            37,
+            37
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            37,
+            37
+          ],
+          "sha256": "e8409c462816ba14f5248451eb9b1b93611e7dfde6a880c66e6094b5df2cd7a6"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_pause.png",
+          "pixels": [
+            56,
+            56
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            56,
+            56
+          ],
+          "sha256": "cdccb1ffe5caf6f2121b7520a38e375fa43b23cc6415debdb07c0a07aaedc7ef"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_music",
+      "node_id": "77:756",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_music.png",
+          "pixels": [
+            16,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            16,
+            18
+          ],
+          "sha256": "bfb327994a702ce96c9e903123565442be9636c3b046329235cfbe5aaaee0bcb"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_music.png",
+          "pixels": [
+            32,
+            38
+          ],
+          "alpha_bounds": [
+            1,
+            0,
+            32,
+            36
+          ],
+          "sha256": "43d765ed66d14b2c27fe8f3938b1e1f1d228c42f2c66a323b7df9f31e18fdc35"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_music.png",
+          "pixels": [
+            47,
+            56
+          ],
+          "alpha_bounds": [
+            2,
+            0,
+            47,
+            54
+          ],
+          "sha256": "4e2c7326906848012bab87b476f4f69679e99758d91b7b35db1a45e6f71c1cbc"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_comment",
+      "node_id": "77:762",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_comment.png",
+          "pixels": [
+            21,
+            18
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            21,
+            18
+          ],
+          "sha256": "c65707862f6fccf94530268c64f6b0e25cb94b2bc850ea511cad8fb7bd423e56"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_comment.png",
+          "pixels": [
+            41,
+            35
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            41,
+            35
+          ],
+          "sha256": "982707be7fba0f8a12a563db25211633e0ff461b7919cae7bda5f8aaf359ec09"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_comment.png",
+          "pixels": [
+            62,
+            53
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            62,
+            53
+          ],
+          "sha256": "e4d7e48f03c52648c353611005414c26fcf0a8ea6b39a7d3b641389af9422335"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_mic_on",
+      "node_id": "77:713",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_mic_on.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            44,
+            44
+          ],
+          "sha256": "a113f8d9ec9352d3afc8dd0ef6609a65e664f453f9552f22f1944db37d525837"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_mic_on.png",
+          "pixels": [
+            88,
+            88
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            88,
+            88
+          ],
+          "sha256": "ccaa4f8e1a5985786f76a496aab4818043a7605de37d7765b8158ed3f88fc904"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_mic_on.png",
+          "pixels": [
+            132,
+            132
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            132,
+            132
+          ],
+          "sha256": "864f33be07fae0d5f2afee42ab283599462d2c16a864def07bc20624543f4551"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_mic_off",
+      "node_id": "77:1009",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_mic_off.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            44,
+            44
+          ],
+          "sha256": "a9296d3e7cad5101a6b21e06dba99332787736a00ec4057cc44a82d051776da3"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_mic_off.png",
+          "pixels": [
+            88,
+            88
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            88,
+            88
+          ],
+          "sha256": "9d0dda7a7aeef95424bc17a44aa1f01fd8a554786f93dfda2244677feabe1671"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_mic_off.png",
+          "pixels": [
+            132,
+            132
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            132,
+            132
+          ],
+          "sha256": "6ceff16dd653f474156af81a30f3431b01e1a257a4e17a3aa338b612b27fcdb6"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_layout_floating",
+      "node_id": "81:331",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_layout_floating.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            5,
+            2,
+            15,
+            18
+          ],
+          "sha256": "2a7494d1cacbf3aee55c498dda861cdac2eedef8e55a1408a01b935ee381ea73"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_layout_floating.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            10,
+            5,
+            30,
+            35
+          ],
+          "sha256": "4e401e8698c7a3cd59b31b0aeda6760069c98841a7e8085af7b8ef32d9060537"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_layout_floating.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            16,
+            7,
+            44,
+            53
+          ],
+          "sha256": "4eaa524bac426d49dc0e8c9dae42bf9bbefa6f017000f190a70b6be781415e58"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_layout_grid2",
+      "node_id": "81:325",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_layout_grid2.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            2,
+            4,
+            18,
+            16
+          ],
+          "sha256": "76c3b3a11b7932e7069a69a36ff6c281216ff26276d6861e676ead3dc7bfa286"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_layout_grid2.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            4,
+            8,
+            35,
+            32
+          ],
+          "sha256": "19304f2050370004f8cd1292b77e124586b5b283f890133185c7c8c004b2717d"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_layout_grid2.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            7,
+            12,
+            53,
+            48
+          ],
+          "sha256": "3f84284deaccfc57e02bfa247b9ef8a7b83edac62ef092bb5dcc0123f439c24e"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_layout_fixed",
+      "node_id": "81:327",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_layout_fixed.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            2,
+            3,
+            18,
+            17
+          ],
+          "sha256": "1d51642a4a79ff9ae4ae26a003dfe4dde0d8a940abcc22036f712f2103518bc7"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_layout_fixed.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            5,
+            6,
+            35,
+            34
+          ],
+          "sha256": "d0a180f02c3f5d955ca49b2f074a47ebecf8e9f509b500288dea6a700754cdeb"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_layout_fixed.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            7,
+            9,
+            53,
+            51
+          ],
+          "sha256": "79567c22ca51075e747aa6a8d350e0ee4b7c68dc2b6e1f11a3cad73e49f1cada"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_layout_grid9",
+      "node_id": "81:329",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_layout_grid9.png",
+          "pixels": [
+            20,
+            20
+          ],
+          "alpha_bounds": [
+            2,
+            4,
+            18,
+            16
+          ],
+          "sha256": "00db7344f5fff1a0c3d2474d3ec4a6933ce11410a57cf5e75ac1dd2704013e43"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_layout_grid9.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            4,
+            8,
+            35,
+            32
+          ],
+          "sha256": "b0e4be195526aaac3ef0b559e4d6f489952f1b0236f6196d43eac00c95f8af16"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_layout_grid9.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            7,
+            12,
+            53,
+            48
+          ],
+          "sha256": "eb816b73ba68b872fd7536fe56f37bb943558da0e326dbffef671b7e53ab643c"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_realtime",
+      "node_id": "82:273",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_realtime.png",
+          "pixels": [
+            34,
+            34
+          ],
+          "alpha_bounds": [
+            10,
+            12,
+            24,
+            23
+          ],
+          "sha256": "f38de6847bef5fe5d27f815b0eb37f9197888b2fd5e33a19f8c2287b6d57f160"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_realtime.png",
+          "pixels": [
+            68,
+            68
+          ],
+          "alpha_bounds": [
+            20,
+            25,
+            48,
+            45
+          ],
+          "sha256": "22feca14d020c886d2fee5d07cc2b5f9b8fbe24d1abc0c4f3c8ab8cfcb90bcd9"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_realtime.png",
+          "pixels": [
+            102,
+            102
+          ],
+          "alpha_bounds": [
+            30,
+            37,
+            72,
+            68
+          ],
+          "sha256": "54c200a5192e7370815dbbfb6246feff56db621ec50ccc19e0c53cf0bcc7e96d"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_video",
+      "node_id": "82:277",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_video.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "97278fdf2b408f5605fb492c1fd8c85deda1ebb8fb09d26c4ba326dc4c3df669"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_video.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "1e283d8450d4d427ccc1f341535401bdcefc1bd959017ad423ba0bd34dbbb8b3"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_video.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "8654602c24bad2d11f1820bac93f466a2611a7e14a4d1740ca053df3b15ba182"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_audio",
+      "node_id": "82:287",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_audio.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "ceeea3109f4c7a5e144e48cb8edd36a800e98965eb87c97e3bd49204bae62b3c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_audio.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "d7aca0f5a32b7f605de2690d1a3c80a5ff96278e1f5a85e79a147e82928d747d"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_audio.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "c388aedfa9664b7ab95d8b6efafe48f784560683708909da2e7766d189fca652"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_temperature",
+      "node_id": "82:298",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_temperature.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "62de8c4b4695f04f2109115ddc6d59838850cba5ef5df9b37813a742253ea960"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_temperature.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "cee8e0ed2018efe2aa5fe913638d58cdd7c21518990d48964958cdd011ed8c5d"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_temperature.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "32115b29ddfd2a4163a3e4891ee06b81e177198a9c6e16d100932e820fbf85fa"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_network",
+      "node_id": "82:307",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_network.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "cf17b1bbff18103da943fe32f03fbb5177f186c535ab25ffe49838ec92130bc7"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_network.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "eee6db33a3d55afaa11292498aac425ea7718bab2a67ca347939f87c5f9d83b4"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_network.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "64dc50b98b9840320150b054b6e25452a8d3bf5951f8c4aab7e2921030360c55"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_network_poor",
+      "node_id": "495:195",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_network_poor.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "3fe03cf61563570bddfa062ea82868e3d1257032a3c4ff408fb7c3679d8f0e18"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_network_poor.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "5df68090ef44ef299645abd0452807fe16afab08c31244d5f0262ef4bc71ee49"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_network_poor.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "86e9fe23db6f85203684c4ce0d922faca1e6dc6416b915121558ce08e0be69cb"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_network_bad",
+      "node_id": "495:201",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_network_bad.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "c4cae6f7d81b3cd6679cbb8a9295bbd1eab4ca7873ebae75de598fe5c5ba71c3"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_network_bad.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "2813c37c05646af5bc14287613beacac4e1a33121d45ba147abefca7aa8c7842"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_network_bad.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "1a2fa36a2eb68ddba4e22d961aad49e0424c72b55f30836982cea3a9f6440c8d"
+        }
+      ]
+    },
+    {
+      "name": "livekit_status_network_down",
+      "node_id": "495:207",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_status_network_down.png",
+          "pixels": [
+            30,
+            30
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            30,
+            30
+          ],
+          "sha256": "22117653ee7300fbb5b0f3d9b0dfe45fb0f296ae159ea660a686f97a7f11a2dd"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_status_network_down.png",
+          "pixels": [
+            60,
+            60
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            60,
+            60
+          ],
+          "sha256": "cfe1a0a1b3b24fb7445a010ad42fa753950d4b4ad45ae60b98508cdbc9f49260"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_status_network_down.png",
+          "pixels": [
+            90,
+            90
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            90,
+            90
+          ],
+          "sha256": "fbeba4a8e57c9b3aafd53ad08fc9e53b7cdbeca36cecc85190c68736fb087245"
+        }
+      ]
+    },
+    {
+      "name": "livekit_summary_back",
+      "node_id": "87:420",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_summary_back.png",
+          "pixels": [
+            21,
+            21
+          ],
+          "alpha_bounds": [
+            7,
+            4,
+            14,
+            17
+          ],
+          "sha256": "923c187dde299044e5696d3ba2ec6c6d421f4e07f04788484391a4258d3f962c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_summary_back.png",
+          "pixels": [
+            42,
+            42
+          ],
+          "alpha_bounds": [
+            14,
+            8,
+            28,
+            34
+          ],
+          "sha256": "1aba74f0a270ddd9c6061792b6f2f94e481c6a26f1c4d355da845d1469582e93"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_summary_back.png",
+          "pixels": [
+            63,
+            63
+          ],
+          "alpha_bounds": [
+            21,
+            13,
+            42,
+            50
+          ],
+          "sha256": "b91f7aa1e0c9ab9e00ef931f099482fb41731aa0f5f1222c29e006e9cb899f8c"
+        }
+      ]
+    },
+    {
+      "name": "livekit_summary_done",
+      "node_id": "87:427",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_summary_done.png",
+          "pixels": [
+            22,
+            18
+          ],
+          "alpha_bounds": [
+            1,
+            1,
+            21,
+            16
+          ],
+          "sha256": "3d317d73194780f288036e62054d0b3470f9ddb9ce628cfd53546d419486a2e3"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_summary_done.png",
+          "pixels": [
+            44,
+            36
+          ],
+          "alpha_bounds": [
+            3,
+            3,
+            41,
+            31
+          ],
+          "sha256": "fb2e1255bbeecb6f6c6854ac722297bb8d221125b69394702dc1f87af4b7d2ee"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_summary_done.png",
+          "pixels": [
+            66,
+            54
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            61,
+            46
+          ],
+          "sha256": "d3a17ae0d622bda6ee18064cf4923e4c33c4cd50c8c53784df4c48e188e6d454"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_poor",
+      "node_id": "725:94",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_poor.png",
+          "pixels": [
+            13,
+            13
+          ],
+          "alpha_bounds": [
+            0,
+            1,
+            13,
+            12
+          ],
+          "sha256": "23b9084d79cc024401f008f6e17b70b3faccdea8ab43a39ccbfbda297cbf2bf6"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_poor.png",
+          "pixels": [
+            26,
+            26
+          ],
+          "alpha_bounds": [
+            0,
+            3,
+            26,
+            24
+          ],
+          "sha256": "8d0ac2fba2772c809ea2c25dedda6fcbff882ddf303e899a624ad03e248352fc"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_poor.png",
+          "pixels": [
+            39,
+            39
+          ],
+          "alpha_bounds": [
+            1,
+            5,
+            38,
+            36
+          ],
+          "sha256": "24fddb8935d8f14d456a9b919a9e4f61e9487c594c87bc7bd32a857f77f54f03"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_very_poor",
+      "node_id": "725:95",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_very_poor.png",
+          "pixels": [
+            17,
+            13
+          ],
+          "alpha_bounds": [
+            0,
+            1,
+            16,
+            12
+          ],
+          "sha256": "0f21780c94dbad97cb04bf1cfdfeffc10f7f11b367e66523e4ed283d16eaba91"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_very_poor.png",
+          "pixels": [
+            34,
+            26
+          ],
+          "alpha_bounds": [
+            0,
+            3,
+            32,
+            24
+          ],
+          "sha256": "f3f76e2f829ed088a6b99b2228b25956f7248a1171ea3bf394f40d4905912a28"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_very_poor.png",
+          "pixels": [
+            51,
+            39
+          ],
+          "alpha_bounds": [
+            1,
+            5,
+            48,
+            36
+          ],
+          "sha256": "ea823a062f2e4d7f419a8f11e156ae915da707cebe7d874ef26551bd5858eae1"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_disconnected",
+      "node_id": "725:81",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_disconnected.png",
+          "pixels": [
+            17,
+            13
+          ],
+          "alpha_bounds": [
+            0,
+            1,
+            17,
+            12
+          ],
+          "sha256": "a2f33bf02365816f9a7fb24dfc9f444fd6fa56c2d4ddcae9c7fb85dc4a82398e"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_disconnected.png",
+          "pixels": [
+            34,
+            26
+          ],
+          "alpha_bounds": [
+            0,
+            3,
+            34,
+            24
+          ],
+          "sha256": "7c0cdadb58520786e336d9840236fa333a3f81ee6ddbc4cff5dba60c1199dca6"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_disconnected.png",
+          "pixels": [
+            51,
+            39
+          ],
+          "alpha_bounds": [
+            1,
+            5,
+            51,
+            36
+          ],
+          "sha256": "2c3e4fd2184da95c27a39d74518f0283ec6c950b9475115f7bf2060550935557"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_status_chevron",
+      "node_id": "126:1986",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_status_chevron.png",
+          "pixels": [
+            4,
+            6
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "sha256": "c08dcfc087feb15df59e5792d3f057db29544f9de4c11454a6fec9561a4de58c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_status_chevron.png",
+          "pixels": [
+            7,
+            12
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            7,
+            12
+          ],
+          "sha256": "93654c07a6b19a26a9cd67430fb85bd37339455bd479f950d2ab0f4769fa6be4"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_status_chevron.png",
+          "pixels": [
+            11,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            11,
+            19
+          ],
+          "sha256": "b09047a54df9bac426a4a1466ea1786cc3bdd963c796ba6da5fd1b0e0d20e716"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_poor_chevron",
+      "node_id": "725:55",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_poor_chevron.png",
+          "pixels": [
+            4,
+            6
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "sha256": "d99f42924c74fac69ccd40d3ca8738738ccee100eecbc9d62b1ea15ba71fda8c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_poor_chevron.png",
+          "pixels": [
+            8,
+            12
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            8,
+            12
+          ],
+          "sha256": "36d3e9207f6bd04ed599f39bb2ff080e7f6261fe26efeeca7406e836485adef1"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_poor_chevron.png",
+          "pixels": [
+            12,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            12,
+            19
+          ],
+          "sha256": "76594625d0a32b22fe9b040669de105354d710736aedd99a4fdc66f20e15f1ee"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_very_poor_chevron",
+      "node_id": "725:62",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_very_poor_chevron.png",
+          "pixels": [
+            4,
+            6
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "sha256": "62d066a9a432a103772ec02586b82a2a270322cedffcbb2f44715875ecb39300"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_very_poor_chevron.png",
+          "pixels": [
+            8,
+            12
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            8,
+            12
+          ],
+          "sha256": "4e2eba517f0db5ff53a90676f19e824a1f7714c5bb08b14736e7db85523f19eb"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_very_poor_chevron.png",
+          "pixels": [
+            12,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            12,
+            19
+          ],
+          "sha256": "f35513649c43372d4d119248f86a4d0557032c43e6c4471dfbaececcee6109e3"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_network_disconnected_chevron",
+      "node_id": "725:69",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_network_disconnected_chevron.png",
+          "pixels": [
+            4,
+            6
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "sha256": "8a0531bef98b5d55c3f7016e808c4df6915c3a68ec34ea38993b06e0b6b59d56"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_network_disconnected_chevron.png",
+          "pixels": [
+            8,
+            12
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            8,
+            12
+          ],
+          "sha256": "84bcdf8f8b52fd1f81e378380bd9a333a29308701014011f690edf38cef5f1c7"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_network_disconnected_chevron.png",
+          "pixels": [
+            12,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            12,
+            19
+          ],
+          "sha256": "84fb8ddd3f2a2bf4104646eb6fee971733a77d55f5cbe490ac52ddf6c1b517ee"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_action_mic",
+      "node_id": "641:236",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_action_mic.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            44,
+            44
+          ],
+          "sha256": "42edd3a378aee2268ffb2cc92beeb915bdd1f89550809ad1be2a5b8402c74833"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_action_mic.png",
+          "pixels": [
+            88,
+            88
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            88,
+            88
+          ],
+          "sha256": "c6d84a863cc98e60d461ec08dd811c0ff0275180b8ee4c543fa871bf373dc0d1"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_action_mic.png",
+          "pixels": [
+            132,
+            132
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            132,
+            132
+          ],
+          "sha256": "8cb81f6ad3c5b3452ba4d0255671324d79d60d4265dc22dacd23742aa69b7063"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_action_disconnect",
+      "node_id": "641:248",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_action_disconnect.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            44,
+            44
+          ],
+          "sha256": "c7a9f8f074de1a63875043f28f5d019bcc35ec7a6ea11e61d3d86201404b0321"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_action_disconnect.png",
+          "pixels": [
+            88,
+            88
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            88,
+            88
+          ],
+          "sha256": "bfa28b32800ba27e6b0723a5fbb7ca79286e05ced5b7ec912847bae135d986eb"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_action_disconnect.png",
+          "pixels": [
+            132,
+            132
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            132,
+            132
+          ],
+          "sha256": "c5daa8c93135cd1b4744266bf2e935d797e32cf5fa941f62b942d578c0d9b342"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_seat_mic",
+      "node_id": "1554:129",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_seat_mic.png",
+          "pixels": [
+            12,
+            12
+          ],
+          "alpha_bounds": [
+            2,
+            1,
+            9,
+            11
+          ],
+          "sha256": "36b5e7011cbe380bcf748303051c26e2576830d3a35ad7ec60b45f6a1be21868"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_seat_mic.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            5,
+            3,
+            19,
+            22
+          ],
+          "sha256": "51940a4859d388db4151583a52d18cdcc733e32c7eb2269e240577ae8ef2e624"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_seat_mic.png",
+          "pixels": [
+            36,
+            36
+          ],
+          "alpha_bounds": [
+            7,
+            4,
+            28,
+            33
+          ],
+          "sha256": "88c788f7f7b4ba86320b65186c5aa454773d8368d4d3c5d905146fde6904a4ea"
+        }
+      ]
+    },
+    {
+      "name": "livekit_pusher_audience_follow",
+      "node_id": "1608:27",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_pusher_audience_follow.png",
+          "pixels": [
+            22,
+            22
+          ],
+          "alpha_bounds": [
+            1,
+            2,
+            21,
+            19
+          ],
+          "sha256": "4c2ede936ee847074495c651b7128968b1f0a3f8fdb28da115c028930661b1b2"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_pusher_audience_follow.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            3,
+            5,
+            42,
+            38
+          ],
+          "sha256": "75bef0076b31fd923b221c0e7926aafab908186ee66bebc05082b25d1d65343b"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_pusher_audience_follow.png",
+          "pixels": [
+            66,
+            66
+          ],
+          "alpha_bounds": [
+            5,
+            8,
+            63,
+            57
+          ],
+          "sha256": "47e65f78fbfbaf96970f08fadc3ede1421c7eb5af84425286d2402857442ae07"
+        }
+      ]
+    },
+    {
+      "name": "livekit_pusher_audience_mute",
+      "node_id": "1608:28",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_pusher_audience_mute.png",
+          "pixels": [
+            22,
+            22
+          ],
+          "alpha_bounds": [
+            1,
+            2,
+            21,
+            20
+          ],
+          "sha256": "a6ca27b3bd6898243bb36308ad238a0496aa8483a9352b16ea0fc1f579d1fc3b"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_pusher_audience_mute.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            3,
+            4,
+            41,
+            40
+          ],
+          "sha256": "348ab196445cbf286deb62df632cd5d04bbfe3ae3a6289eff0be843dae6be595"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_pusher_audience_mute.png",
+          "pixels": [
+            66,
+            66
+          ],
+          "alpha_bounds": [
+            5,
+            6,
+            61,
+            60
+          ],
+          "sha256": "1fc82fed8125b15ac8052a2bfba7076a88adda31738142c6ed1f4b330205247c"
+        }
+      ]
+    },
+    {
+      "name": "livekit_pusher_audience_remove",
+      "node_id": "1608:29",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_pusher_audience_remove.png",
+          "pixels": [
+            21,
+            21
+          ],
+          "alpha_bounds": [
+            2,
+            3,
+            20,
+            19
+          ],
+          "sha256": "12bcc0f65469a0171a0183fd9dca0e530722e427d7cc68f4ada586970879d8cf"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_pusher_audience_remove.png",
+          "pixels": [
+            42,
+            42
+          ],
+          "alpha_bounds": [
+            4,
+            6,
+            40,
+            37
+          ],
+          "sha256": "a579615db1c590f9c315ac1785d77ce89002ff0f3612c91c76d8f1a9b7c101a7"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_pusher_audience_remove.png",
+          "pixels": [
+            63,
+            63
+          ],
+          "alpha_bounds": [
+            7,
+            10,
+            60,
+            55
+          ],
+          "sha256": "f7f89b1c91001f6c379abed84d89576cb4bb5995e5a50c9e1282a6ccd591a73d"
+        }
+      ]
+    },
+    {
+      "name": "livekit_pusher_coguest_background",
+      "node_id": "874:194",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_pusher_coguest_background.png",
+          "pixels": [
+            390,
+            844
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            390,
+            844
+          ],
+          "sha256": "2a267794eb3f5130f913f8c8fd68ffd3ba19723a218d2b04543181f8cc79094b"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_pusher_coguest_background.png",
+          "pixels": [
+            780,
+            1688
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            780,
+            1688
+          ],
+          "sha256": "63ace68fd1f571847ead00a147b0470bc99b5c52e5ef88d7b5aa2ee9d73422de"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_pusher_coguest_background.png",
+          "pixels": [
+            1170,
+            2532
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            1170,
+            2532
+          ],
+          "sha256": "21324c76276264d76687c7e9026faad3ae621f801c7a9dff229c55cf3e66e70e"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_action_mic_off",
+      "node_id": "77:1009",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_action_mic_off.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            44,
+            44
+          ],
+          "sha256": "a9296d3e7cad5101a6b21e06dba99332787736a00ec4057cc44a82d051776da3"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_action_mic_off.png",
+          "pixels": [
+            88,
+            88
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            88,
+            88
+          ],
+          "sha256": "9d0dda7a7aeef95424bc17a44aa1f01fd8a554786f93dfda2244677feabe1671"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_action_mic_off.png",
+          "pixels": [
+            132,
+            132
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            132,
+            132
+          ],
+          "sha256": "6ceff16dd653f474156af81a30f3431b01e1a257a4e17a3aa338b612b27fcdb6"
+        }
+      ]
+    },
+    {
+      "name": "livekit_coguest_seat_muted",
+      "node_id": "1554:16",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_coguest_seat_muted.png",
+          "pixels": [
+            25,
+            25
+          ],
+          "alpha_bounds": [
+            2,
+            3,
+            21,
+            23
+          ],
+          "sha256": "b34b33eb1e7fafd8ea01828a8a72bc50d2c39a35372fe7d91e85d674e77e1c0c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_coguest_seat_muted.png",
+          "pixels": [
+            50,
+            50
+          ],
+          "alpha_bounds": [
+            4,
+            6,
+            42,
+            46
+          ],
+          "sha256": "0c753185e96877b23c2613b7eb02cacb1e6d06d3017ddb40789d1bc45a3f02f6"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_coguest_seat_muted.png",
+          "pixels": [
+            75,
+            75
+          ],
+          "alpha_bounds": [
+            6,
+            9,
+            63,
+            69
+          ],
+          "sha256": "27e5a7e2aed892bb30d23d73e85019385e262bf18e7ba051446c5ade6c9beb37"
+        }
+      ]
+    }
+  ]
+}

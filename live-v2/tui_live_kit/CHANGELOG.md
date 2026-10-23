@@ -1,0 +1,130 @@
+# TUILiveKit
+
+## 5.3.0
+
+* Supports sound wave functionFix iOS compilation issues
+
+## 5.2.3
+
+* Fix iOS compilation issues
+
+## 5.2.2
+
+- Rename the Dart package to `tencent_live_uikit` and update the exported library file name accordingly.
+- Loosen `atomic_x_core` and `tencent_cloud_chat_sdk` version constraints to allow caret ranges.
+- Declare `stack_trace` as a direct dependency used by the internal logger.
+- Add `homepage` and `repository` metadata; move the Flutter 3.22 `meta` pin to a local `pubspec_overrides.yaml`.
+- Replace deprecated `withOpacity` / `activeColor` / `PopScope.onPopInvoked` usages; clean up unused imports and fields.
+- UI interaction upgrade.
+
+## 5.0.0
+
+- Support viewers to switch to other streamers' live rooms during connected PK
+- Support main host feature when starting live broadcast with VideoFixedFloat7Seats
+- Add background music function to the video live settings entry
+- Add administrator functions including kicking out and muting regular users
+- Adapt floating window for landscape small window mode
+- Add booth image prompt for scenarios where the streamer is not in the room during video live  broadcast
+- Adjust the default position of the audio chat room floating window to the middle right side
+- Add handling for forced kick-off/logout: exit live broadcast UI
+- Add error prompt logs for Android picture-in-picture configuration
+- Fix known issues
+
+## 4.1.0
+
+- Added support for Tencent Effect beauty filters.
+- Added swipe-to-switch live rooms.
+- Added single/double column view switching for the live list.
+- Added live stream preview feature.
+- Added support for co-anchors to mute remote anchors' audio streams.
+- The streaming start API has been changed from `createLive` to `startLive`.
+- UI optimizations including the introduction of AtomicX components.
+
+## 4.0.2
+
+- Update livestream room cover and background image.
+- Fixed issue with voice chat streaming parameters not taking effect.
+
+## 4.0.1
+
+- atomic_x_core upgraded to 4.0.1.
+- tencent_rtc_sdk upgraded to 13.2.
+- Default internationalization language set to English.
+- Added mobile game live-streaming (landscape game mode) with voice chat support.
+- TUILogin replaced with LoginStore.
+- Floating window functionality optimized.
+- Video streaming permission request flow optimized.
+- Fixed issue with voice chat streaming parameters not taking effect.
+- Updated live room cover image and background image.
+
+## 3.6.4
+
+- atomic_x_core upgraded to 3.6.4, adapt to LiveCoreWidget.
+- LiveKit disabled the floating window feature by default. It is enabled in the example.
+- Optimize network status component & temperature monitoring component thread issues.
+
+## 3.6.0
+
+- Architecture adjusted: the underlying dependency has been changed from live_stream_core to
+  atomic_x_core.
+- Audio chat rooms now support in-app floating windows.
+- The gift player is compatible with Tencent Effect Player, supporting the playback of gift assets
+  with sound effects.
+
+## 3.5.0
+
+- Video livestream supports picture-in-picture (PiP)
+- Video livestream supports user management (disable sending messages, kick out of room, kick out of
+  seat, local and remote audio/video management)
+
+## 3.4.0
+
+- Engine upgraded to v3.4.
+- Added multi-template seat layout for video live streaming.
+- Added network status panel.
+- Added OBS push streaming, anchor viewing.
+- New API Upgrade: `startLiveStreamV2`, `stopLiveStreamV2`, `joinLiveStreamV2` in
+  LiveCoreController.
+- New API Upgrade: `startVoiceRoomV2`, `stopVoiceRoomV2`, `joinVoiceRoomV2` in SeatGridController.
+
+## 3.2.0
+
+- Supported playback of landscape video streams.
+- Updated the gift component dependency to version 2.0 and use the new gift solution.
+  When using the new version of the gift solution, please ensure that the corresponding sdkAppId has
+  the gift feature enabled in the console. Also, configure the gift list in the gift backend before
+  use.
+  Console:
+  China Region Console: [https://console.cloud.tencent.com/trtc/app](https://console.cloud.tencent.com/trtc/app)
+  Overseas Region Console: [https://console.trtc.io/app](https://console.trtc.io/app)
+  Gift Configuration Guide:
+  [https://cloud.tencent.com/document/product/647/121321](https://cloud.tencent.com/document/product/647/121321)
+
+## 3.1.0
+
+- Refactored the video live streaming module
+- Added host linking and PK features
+- Removed the Mock data functionality
+
+## 3.0.0
+
+- Android & iOS: Supports voice chat room scene
+
+## 2.2.3
+
+- Android & iOS: Supports sending bullet messages
+- Android & iOS: Supports displaying bullet messages
+- Android & iOS: Supports inserting local bullet messages into bullet message display components
+- Android & iOS: Supports custom bullet messages in bullet message display components.
+
+## 2.2.2
+
+- Android&iOS: Supports play screen shared stream.
+
+## 2.2.1
+
+- Android&iOS: Supports HD live broadcast.
+- Android&iOS: Supports live broadcast.
+- Android&iOS: Supports viewer connection.
+- Android&iOS: Supports view audience list.
+- Android&iOS: Supports room list.

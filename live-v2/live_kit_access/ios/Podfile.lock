@@ -1,0 +1,122 @@
+PODS:
+  - atomic_x_core (0.0.1):
+    - AtomicXCore
+    - Flutter
+  - AtomicXCore (5.2.0):
+    - TXIMSDK_Plus_iOS_XCFramework
+    - TXLiteAVSDK_Professional (>= 13.5.21355)
+  - Flutter (1.0.0)
+  - flutter_effect_player (0.0.1):
+    - Flutter
+    - flutter_effect_player/NoXMagic (= 0.0.1)
+  - flutter_effect_player/NoXMagic (0.0.1):
+    - Flutter
+    - TCEffectPlayer
+    - TCMediaX
+  - HydraAsync (2.0.6)
+  - Masonry (1.1.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - permission_handler_apple (9.4.8):
+    - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - SSZipArchive (2.4.3)
+  - TCEffectPlayer (3.3.256):
+    - TCMediaX
+  - TCMediaX (3.3.256)
+  - TEBeautyKit/S1-07 (4.2.0.21):
+    - Masonry
+    - SSZipArchive
+    - TencentEffect_S1-07
+  - tencent_cloud_chat_sdk (8.0.0):
+    - Flutter
+    - HydraAsync
+    - TXIMSDK_Plus_iOS_XCFramework (~> 9.1.7822)
+  - tencent_live_uikit (0.0.1):
+    - Flutter
+    - TEBeautyKit/S1-07 (= 4.2.0.21)
+    - TencentEffect_S1-07 (= 4.3.0.25)
+    - TXLiteAVSDK_Professional
+  - TencentEffect_S1-07 (4.3.0.25):
+    - TencentEffect_S1-07/Default (= 4.3.0.25)
+  - TencentEffect_S1-07/Default (4.3.0.25)
+  - TXIMSDK_Plus_iOS_XCFramework (9.1.7822)
+  - TXLiteAVSDK_Professional (13.5.21355):
+    - TXLiteAVSDK_Professional/Professional (= 13.5.21355)
+  - TXLiteAVSDK_Professional/Professional (13.5.21355)
+
+DEPENDENCIES:
+  - atomic_x_core (from `.symlinks/plugins/atomic_x_core/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_effect_player (from `.symlinks/plugins/flutter_effect_player/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - TCEffectPlayer (from `https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCEffectPlayer.podspec`)
+  - TCMediaX (from `https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCMediaX.podspec`)
+  - TEBeautyKit/S1-07 (from `https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/TEBeautyKit/4.2.0.21/TEBeautyKit.podspec`)
+  - tencent_cloud_chat_sdk (from `.symlinks/plugins/tencent_cloud_chat_sdk/ios`)
+  - tencent_live_uikit (from `.symlinks/plugins/tencent_live_uikit/ios`)
+  - TencentEffect_S1-07 (from `https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/podspec/4.3.0.25/TencentEffect_S1-07.podspec`)
+
+SPEC REPOS:
+  trunk:
+    - AtomicXCore
+    - HydraAsync
+    - Masonry
+    - SSZipArchive
+    - TXIMSDK_Plus_iOS_XCFramework
+    - TXLiteAVSDK_Professional
+
+EXTERNAL SOURCES:
+  atomic_x_core:
+    :path: ".symlinks/plugins/atomic_x_core/ios"
+  Flutter:
+    :path: Flutter
+  flutter_effect_player:
+    :path: ".symlinks/plugins/flutter_effect_player/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  TCEffectPlayer:
+    :podspec: https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCEffectPlayer.podspec
+  TCMediaX:
+    :podspec: https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCMediaX.podspec
+  TEBeautyKit:
+    :podspec: https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/TEBeautyKit/4.2.0.21/TEBeautyKit.podspec
+  tencent_cloud_chat_sdk:
+    :path: ".symlinks/plugins/tencent_cloud_chat_sdk/ios"
+  tencent_live_uikit:
+    :path: ".symlinks/plugins/tencent_live_uikit/ios"
+  TencentEffect_S1-07:
+    :podspec: https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/podspec/4.3.0.25/TencentEffect_S1-07.podspec
+
+SPEC CHECKSUMS:
+  atomic_x_core: 0fc9e1cc7abec5f1bc070d36f3a33d64aa232f0f
+  AtomicXCore: a1e990dd894b7ead7df23e13b4e3cd6a8aeb043e
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_effect_player: bf6437b67850aeb556fcc975ad179b11ee9ebbe7
+  HydraAsync: 8d589bd725b0224f899afafc9a396327405f8063
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: ee2fe0fd04551b304eb002714ff067c371c822ed
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
+  TCEffectPlayer: 82ff257693c69184c6f047430d80da35ef2a1df2
+  TCMediaX: c47980265070cee414668267918ca8e1894813c8
+  TEBeautyKit: 97b354867cd76c2a09d43228427520dcd8322337
+  tencent_cloud_chat_sdk: a356b528e08aff3213f452390e8dfebddc888e6d
+  tencent_live_uikit: 62356e19b04f65d8a612ccedd244548f21a42489
+  TencentEffect_S1-07: 5f5d7679d46551f9240766492f76ee2b21cb1124
+  TXIMSDK_Plus_iOS_XCFramework: 44a00328c7d713206b2bab7219e6e4f82df254dc
+  TXLiteAVSDK_Professional: 914aa2e59545c8cdff80ab70c1bc8191c683ecfc
+
+PODFILE CHECKSUM: 7e7a7cbd39f226e4f155dba5a01287524659973b
+
+COCOAPODS: 1.17.0
