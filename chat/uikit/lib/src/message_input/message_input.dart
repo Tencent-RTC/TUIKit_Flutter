@@ -1625,7 +1625,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                 // Gap: 10pt between input field and emoji icon
                 const SizedBox(width: 10),
 
-                // Right: Emoji button (28×28pt icon)
+                // Right: Emoji button (26×26pt icon)
                 SizedBox(
                   height: 34,
                   child: Center(
@@ -1639,8 +1639,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                                 colorsTheme.textColorSecondary,
                                 BlendMode.srcIn,
                               ),
-                              width: 28,
-                              height: 28,
+                              width: 26,
+                              height: 26,
                             )
                           : SvgPicture.asset(
                               'chat_assets/icon/emoji.svg',
@@ -1825,7 +1825,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
             color: colorsTheme.bgColorInput,
             borderRadius: BorderRadius.circular(4),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           child: Text(
             chatLocale.sendMessageOrHoldToTalk,
             maxLines: 1,
@@ -2151,7 +2151,7 @@ class _MentionTextFieldState extends State<_MentionTextField> {
         border: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 6,
-          vertical: 6,
+          vertical: 4,
         ),
       ),
       specialTextSpanBuilder: ChatSpecialTextSpanBuilder(
