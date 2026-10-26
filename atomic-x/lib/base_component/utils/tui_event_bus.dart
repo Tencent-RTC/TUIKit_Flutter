@@ -77,6 +77,12 @@ class TUIEventBus {
     }
   }
 
+  bool hasSubscriber(String event, String? key) {
+    String eventKey = _buildEventKey(event, key);
+    final observers = observerMap[eventKey];
+    return observers != null && observers.isNotEmpty;
+  }
+
   String _buildEventKey(String event, String? key) {
     return key == null ? event : '$event:$key';
   }

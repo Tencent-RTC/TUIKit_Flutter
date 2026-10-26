@@ -4,10 +4,10 @@ description: "Demonstrates how to use the tuilivekit plugin."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-# EffectPlayer:
-#   sub_spec: 'NoXMagic' # Default or NoXMagic
-# TencentEffect:
-#   te_sub_spec: 'S1-07'
+EffectPlayer:
+  sub_spec: 'Default' # Default or NoXMagic
+TencentEffect:
+  te_sub_spec: 'S1-07'
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

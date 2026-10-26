@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_info.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
@@ -20,20 +20,20 @@ class AppManager {
     return;
   }
 
-  static Future<TUIResult> setSelfInfo(String avatar, String nickname) async {
-    if (nickname.isEmpty) {
-      return TUIResult(code: TUIError.errFailed.value(), message: "The nickname cannot be empty");
-    }
+  static Future<CompletionHandler> setSelfInfo(String avatar, String nickname) async {
+    final result = await LoginStore.shared.setSelfInfo(
+      userInfo: UserProfile(
+        userID: LoginStore.shared.loginState.loginUserInfo?.userID ?? '',
+        avatarURL: avatar,
+        nickname: nickname,
+      ),
+    );
 
-    V2TimUserFullInfo userFullInfo = V2TimUserFullInfo();
-    userFullInfo.nickName = nickname;
-    userFullInfo.faceUrl = avatar;
-    var result = await TencentImSDKPlugin.v2TIMManager.setSelfInfo(userFullInfo: userFullInfo);
-    if (result.code == 0) {
+    if (result.isSuccess) {
       AppStore.userName.value = nickname;
       AppStore.userAvatar = avatar;
     }
-    return TUIResult(code: result.code, message: result.desc);
+    return result;
   }
 
   static void getUserFollowInfo(String userId) async {

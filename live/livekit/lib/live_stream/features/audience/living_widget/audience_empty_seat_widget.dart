@@ -4,6 +4,7 @@ import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tencent_live_uikit/live_stream/state/co_guest_state.dart';
 
+import '../../../../common/widget/base_bottom_sheet.dart';
 import '../panel/co_guest_type_select_panel_widget.dart';
 
 class AudienceEmptySeatWidget extends StatelessWidget {
@@ -57,12 +58,18 @@ class AudienceEmptySeatWidget extends StatelessWidget {
       LiveKitLogger.info("can't link, coGuestStatus:$coGuestStatus");
     } else {
       bool enableCamera = !liveStreamManager.roomManager.isScreenShareLive();
-      popupWidget(
+      BottomSheetHandler? sheetHandler;
+      sheetHandler = popupWidget(
           CoGuestTypeSelectPanelWidget(
-        liveStreamManager: liveStreamManager,
-        seatIndex: seatIndex,
-        enableCamera: enableCamera,
-      ), context: context);
+            parentContext: context,
+            liveStreamManager: liveStreamManager,
+            seatIndex: seatIndex,
+            enableCamera: enableCamera,
+            onClose: () {
+              sheetHandler?.close();
+            },
+          ),
+          context: context);
     }
   }
 }

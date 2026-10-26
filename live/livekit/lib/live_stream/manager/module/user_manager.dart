@@ -1,8 +1,5 @@
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:tencent_live_uikit/common/index.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
-import '../../api/live_stream_service.dart';
 import '../../state/user_state.dart';
 import '../live_stream_manager.dart';
 
@@ -14,12 +11,9 @@ enum UserEnterRoomNotifyStrategy {
 
 class UserManager {
   LSUserState userState = LSUserState();
-  late final LiveAudienceStore _liveAudienceStore;
-  late final LiveAudienceListener _liveAudienceListener;
+  LiveAudienceStore? _liveAudienceStore;
+  LiveAudienceListener? _liveAudienceListener;
   late final Context context;
-  late final LiveStreamService service;
-
-  final int _volumeCanHeartMinLimit = 25;
 
   UserEnterRoomNotifyStrategy _enterRoomNotifyStrategy = UserEnterRoomNotifyStrategy.always;
   int _intervalSecondOnMerge = 60;
@@ -27,10 +21,13 @@ class UserManager {
 
   void init(Context context) {
     this.context = context;
-    service = context.service;
   }
 
   void setLiveID(String liveID) {
+    _subscribeListener();
+  }
+
+  void resetStore() {
     _subscribeListener();
   }
 
@@ -44,57 +41,7 @@ class UserManager {
   }
 
   void onLeaveLive() {
-    userState = LSUserState();
-  }
-}
-
-extension UserManagerCallback on UserManager {
-  void onUserVoiceVolumeChanged(Map<String, int> volumeMap) {
-    for (final entry in volumeMap.entries) {
-      entry.value > _volumeCanHeartMinLimit
-          ? userState.speakingUserList.add(entry.key)
-          : userState.speakingUserList.remove(entry.key);
-    }
-  }
-
-  void onRemoteUserEnterRoom(String roomId, TUIUserInfo userInfo) {
-    if (roomId != context.roomManager.target?.roomState.roomId) {
-      return;
-    }
-
-    if (userInfo.userId == TUIRoomEngine.getSelfInfo().userId) {
-      return;
-    }
-
-    userState.userList.value.add(userInfo);
-  }
-
-  void onRemoteUserLeaveRoom(String roomId, TUIUserInfo userInfo) {
-    if (roomId != context.roomManager.target?.roomState.roomId) {
-      return;
-    }
-
-    userState.userList.value.removeWhere((user) => user.userId == userInfo.userId);
-  }
-
-  void onUserInfoChanged(TUIUserInfo userInfo, List<TUIUserInfoModifyFlag> modifyFlags) {
-    for (var user in userState.userList.value) {
-      if (user.userId == userInfo.userId && modifyFlags.contains(TUIUserInfoModifyFlag.userRole)) {
-        user.userRole = user.userRole;
-      }
-    }
-
-    userState.userList.value = userState.userList.value.toSet();
-  }
-
-  void onSendMessageForUserDisableChanged(String roomId, String userId, bool isDisable) {
-    final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
-    if (roomId == liveID && userId == TUIRoomEngine.getSelfInfo().userId) {
-      final toast = isDisable
-          ? LiveKitLocalizations.of(Global.appContext())!.common_client_error_send_message_disabled_for_current
-          : LiveKitLocalizations.of(Global.appContext())!.common_send_message_enable;
-      context.toastSubject.target?.add(toast);
-    }
+    userState.enterUser.value = LiveUserInfo();
   }
 }
 
@@ -118,14 +65,16 @@ extension on UserManager {
   }
 
   void _subscribeListener() {
-    _liveAudienceListener = LiveAudienceListener(onAudienceJoined: (audience) {
-      _onAudienceJoined(audience);
-    });
+    _liveAudienceListener ??= LiveAudienceListener(onAudienceJoined: (audience) {
+        _onAudienceJoined(audience);
+      });
     _liveAudienceStore = LiveAudienceStore.create(_getLiveID());
-    _liveAudienceStore.addLiveAudienceListener(_liveAudienceListener);
+    _liveAudienceStore!.addLiveAudienceListener(_liveAudienceListener!);
   }
 
   void _unsubscribeListener() {
-    _liveAudienceStore.removeLiveAudienceListener(_liveAudienceListener);
+    if (_liveAudienceStore != null) {
+      _liveAudienceStore!.removeLiveAudienceListener(_liveAudienceListener!);
+    }
   }
 }

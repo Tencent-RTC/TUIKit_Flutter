@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../state/co_guest_state.dart';
 
@@ -82,7 +81,7 @@ class _CoGuestWaitingAgreeWidgetState extends State<CoGuestWaitingAgreeWidget> {
       ),
       child: ClipOval(
         child: Image.network(
-          TUIRoomEngine.getSelfInfo().avatarUrl ?? "",
+          LoginStore.shared.loginState.loginUserInfo?.avatarURL ?? "",
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Image.asset(

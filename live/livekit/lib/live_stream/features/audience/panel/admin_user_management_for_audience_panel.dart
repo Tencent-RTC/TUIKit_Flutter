@@ -3,7 +3,6 @@ import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 import '../../anchor_broadcast/common/anchor_user_management_panel_base.dart';
 
@@ -110,7 +109,7 @@ extension on _AdminUserManagementForAudiencePanelState {
     final userID = widget.user.userID;
     final isDisable = !_isMessageDisabled.value;
     liveAudienceStore!.disableSendMessage(userID: userID, isDisable: isDisable).then((result) {
-      if (result.errorCode != TUIError.success.rawValue) {
+      if (result.errorCode != 0) {
         widget.liveStreamManager.toastSubject
             .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
@@ -128,7 +127,7 @@ extension on _AdminUserManagementForAudiencePanelState {
         defaultCallback: () {
           if (liveAudienceStore == null) return;
           liveAudienceStore!.kickUserOutOfRoom(widget.user.userID).then((result) {
-            if (result.errorCode != TUIError.success.rawValue) {
+            if (result.errorCode != 0) {
               widget.liveStreamManager.toastSubject
                   .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
             }

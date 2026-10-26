@@ -1,17 +1,16 @@
+import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/api/extension/tui_live_connection_manager.dart';
 
 class LSCoHostState {
   String currentRoomId = '';
-  final ValueNotifier<List<TUIConnectionUser>> recommendedUsers = ValueNotifier([]);
-  final ValueNotifier<String> recommendListCursor = ValueNotifier('');
+  final ValueNotifier<List<SeatUserInfo>> recommendedUsers = ValueNotifier([]);
 }
 
 enum TUIConnectionStatus { none, inviting, connected }
 
 final _connectionStatus = Expando<TUIConnectionStatus>();
 
-extension TUIConnectionUserWithStatus on TUIConnectionUser {
+extension SeatUserInfoWithStatus on SeatUserInfo {
   TUIConnectionStatus? get connectionStatus => _connectionStatus[this];
 
   set connectionStatus(TUIConnectionStatus? status) =>

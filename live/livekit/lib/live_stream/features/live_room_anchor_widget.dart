@@ -1,10 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:live_uikit_barrage/widget/display/barrage_display_controller.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 
 import '../../common/index.dart';
 import '../../common/resources/live_theme_manager.dart';
@@ -12,13 +12,11 @@ import '../../common/widget/float_window/index.dart';
 import '../../component/beauty/live_beauty_store.dart';
 import '../../component/float_window/global_float_window_manager.dart';
 import '../../live_info_utils.dart';
-import '../../live_navigator_observer.dart';
 import '../live_define.dart';
 import '../manager/live_stream_manager.dart';
 import 'anchor_broadcast/index.dart';
 import 'anchor_prepare/anchor_preview_widget.dart';
 import 'anchor_broadcast/living_widget/screen_share_guide_dialog.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart' hide DeviceStatus;
 
 class TUILiveRoomAnchorWidget extends StatefulWidget {
   final String roomId;
@@ -27,13 +25,12 @@ class TUILiveRoomAnchorWidget extends StatefulWidget {
   final VoidCallback? onStartLive;
   final FloatWindowController? floatWindowController;
 
-  const TUILiveRoomAnchorWidget(
-      {super.key,
-      required this.roomId,
-      this.needPrepare = true,
-      this.liveInfo,
-      this.onStartLive,
-      this.floatWindowController});
+  const TUILiveRoomAnchorWidget({super.key,
+    required this.roomId,
+    this.needPrepare = true,
+    this.liveInfo,
+    this.onStartLive,
+    this.floatWindowController});
 
   @override
   State<TUILiveRoomAnchorWidget> createState() => _TUILiveRoomAnchorWidgetState();
@@ -42,6 +39,7 @@ class TUILiveRoomAnchorWidget extends StatefulWidget {
 class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
   final LiveCoreController _liveCoreController = LiveCoreController.create(CoreViewType.pushView);
   final LiveStreamManager _liveStreamManager = LiveStreamManager();
+  late final StreamSubscription? _toastSubscription;
   late final ValueNotifier<bool> _isShowingPreviewWidget = ValueNotifier(widget.needPrepare);
   late final VoidCallback _onFloatWindowModeChangedListener = _onFloatWindowModeChanged;
   late final VoidCallback _onFullScreenChangedListener = _onFullScreenChanged;
@@ -78,13 +76,11 @@ class _TUILiveRoomAnchorWidgetState extends State<TUILiveRoomAnchorWidget> {
     LiveThemeManager.instance.exitLiveKitScene();
     _iOSScreenShareGuideDialog.dismiss();
     _stopWakeLock();
-    _stopForegroundService();
     _removeObserver();
     _unInitLiveStream();
     AudioEffectStore.shared.reset();
     DeviceStore.shared.reset();
     LiveBeautyStore.shared.reset();
-    BarrageDisplayController.resetState();
     super.dispose();
   }
 
@@ -145,7 +141,7 @@ extension on _TUILiveRoomAnchorWidgetState {
     _liveStreamManager.setLiveID(widget.roomId);
     if (_liveInfo == null) {
       final result = await LiveListStore.shared.fetchLiveInfo(widget.roomId);
-      if (result.errorCode == TUIError.success.value()) {
+      if (result.errorCode == 0) {
         _liveInfo = result.liveInfo;
       }
     }
@@ -173,28 +169,21 @@ extension on _TUILiveRoomAnchorWidgetState {
   }
 
   void _joinSelfCreatedRoom(bool isObsBroadcast) async {
-    if (!isObsBroadcast) {
-      _startMicrophone();
-      if (_liveInfo?.seatTemplate is VideoLandscape4Seats) {
-        // call after joinLive
-        // DeviceStore.shared.startScreenShare();
-      } else {
-        _startCamera();
-      }
-    }
     KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final result = await LiveListStore.shared.joinLive(widget.roomId);
-    if (result.errorCode != TUIError.success.rawValue) {
+    if (!result.isSuccess) {
       _toastAndPop(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       return;
     }
-    if (result.liveInfo.seatTemplate is VideoLandscape4Seats && result.liveInfo.keepOwnerOnSeat) {
-      LiveKitLogger.info("templateMode is 200, startScreenShare after joinLive!");
-      _liveStreamManager.mediaManager.startScreenShare();
+    if (!isObsBroadcast) {
+      _startMicrophone();
+      result.liveInfo.seatTemplate is VideoLandscape4Seats
+          ? _liveStreamManager.mediaManager.startScreenShare()
+          : _startCamera();
     }
+
     widget.onStartLive?.call();
     _liveStreamManager.onStartLive(true, result.liveInfo);
-    _startForegroundService();
   }
 
   void _startLiveStream(VideoStreamSource videoStreamSource, String? roomName, String? coverUrl,
@@ -210,9 +199,6 @@ extension on _TUILiveRoomAnchorWidgetState {
     if (coverUrl != null) {
       _liveStreamManager.onSetRoomCoverUrl(coverUrl);
     }
-    if (privacyMode != null) {
-      _liveStreamManager.onSetRoomPrivacy(privacyMode);
-    }
     KeyMetrics.reportKeyMetrics(KeyMetrics.kLiveIntegrationSuccessful);
     final liveInfo = LiveInfo();
     liveInfo.liveID = widget.roomId;
@@ -226,7 +212,7 @@ extension on _TUILiveRoomAnchorWidgetState {
     liveInfo.seatTemplate = LiveInfoUtils.convertToSeatLayoutTemplateByID(templateMode.id);
 
     final result = await LiveListStore.shared.startLive(liveInfo);
-    if (result.errorCode != TUIError.success.rawValue) {
+    if (result.errorCode != 0) {
       _toastAndPop(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       return;
     }
@@ -237,8 +223,8 @@ extension on _TUILiveRoomAnchorWidgetState {
       LiveKitLogger.info("templateMode is 200, startScreenShare after startLive!");
       _liveStreamManager.mediaManager.startScreenShare();
     }
+    _startMicrophone();
     _liveStreamManager.onStartLive(false, result.liveInfo);
-    _startForegroundService();
   }
 
   void _showScreenShareGuideDialog() {
@@ -265,79 +251,33 @@ extension on _TUILiveRoomAnchorWidgetState {
 
   void _startCamera() async {
     final startCameraResult = await _liveStreamManager.mediaManager.openLocalCamera(true);
-    if (startCameraResult.code != TUIError.success) {
+    if (!startCameraResult.isSuccess) {
       _liveStreamManager.toastSubject
-          .add(ErrorHandler.convertToErrorMessage(startCameraResult.code.rawValue, startCameraResult.message) ?? '');
+          .add(ErrorHandler.convertToErrorMessage(startCameraResult.errorCode, startCameraResult.errorMessage) ?? '');
     }
   }
 
   void _startMicrophone() async {
     final startMicrophoneResult = await _liveStreamManager.mediaManager.openLocalMicrophone();
-    if (startMicrophoneResult.code != TUIError.success) {
+    if (!startMicrophoneResult.isSuccess) {
       _liveStreamManager.toastSubject.add(
-          ErrorHandler.convertToErrorMessage(startMicrophoneResult.code.rawValue, startMicrophoneResult.message) ?? '');
+          ErrorHandler.convertToErrorMessage(startMicrophoneResult.errorCode, startMicrophoneResult.errorMessage) ??
+              '');
     }
-  }
-
-  void _startForegroundService() async {
-    final seatTemplate = _liveStreamManager.roomState.liveInfo.seatTemplate;
-    LiveKitLogger.info("_startForegroundService, seatTemplate=$seatTemplate");
-    if (seatTemplate is VideoLandscape4Seats) {
-      _startAudioForegroundService();
-    } else {
-      _startVideoForegroundService();
-    }
-  }
-
-  void _stopForegroundService() {
-    final seatTemplate = _liveStreamManager.roomState.liveInfo.seatTemplate;
-    LiveKitLogger.info("_stopForegroundService, seatTemplate=$seatTemplate");
-    if (seatTemplate is VideoLandscape4Seats) {
-      _stopAudioForegroundService();
-    } else {
-      _stopVideoForegroundService();
-    }
-  }
-
-  void _startVideoForegroundService() async {
-    String description = LiveKitLocalizations.of(TUILiveKitNavigatorObserver.instance.getContext())!.common_app_running;
-    final hasCameraPermission = await Permission.camera.status == PermissionStatus.granted;
-    if (!hasCameraPermission) {
-      LiveKitLogger.error(
-          '[ForegroundService] failed to start video foreground service. reason: without camera permission');
-      return;
-    }
-    TUILiveKitPlatform.instance.startForegroundService(ForegroundServiceType.video, "", description);
-  }
-
-  void _stopVideoForegroundService() {
-    TUILiveKitPlatform.instance.stopForegroundService(ForegroundServiceType.video);
-    Permission.camera.onGrantedCallback(null);
-  }
-
-  void _startAudioForegroundService() async {
-    String description = LiveKitLocalizations.of(TUILiveKitNavigatorObserver.instance.getContext())!.common_app_running;
-    final hasMicrophonePermission = await Permission.microphone.status == PermissionStatus.granted;
-    if (!hasMicrophonePermission) {
-      LiveKitLogger.error(
-          '[ForegroundService] failed to start audio foreground service. reason: without microphone permission');
-      return;
-    }
-    TUILiveKitPlatform.instance.startForegroundService(ForegroundServiceType.audio, "", description);
-  }
-
-  void _stopAudioForegroundService() {
-    TUILiveKitPlatform.instance.stopForegroundService(ForegroundServiceType.audio);
-    Permission.microphone.onGrantedCallback(null);
   }
 
   void _addObserver() {
+    _toastSubscription = _liveStreamManager.toastSubject.stream.listen((toast) {
+      if (!mounted) return;
+      makeToast(context, toast);
+    });
     _liveStreamManager.floatWindowState.floatWindowMode.addListener(_onFloatWindowModeChangedListener);
     widget.floatWindowController?.isFullScreen.addListener(_onFullScreenChangedListener);
     _liveStreamManager.mediaState.isScreenCaptured.addListener(_onScreenCaptureListener);
   }
 
   void _removeObserver() {
+    _toastSubscription?.cancel();
     _liveStreamManager.floatWindowState.floatWindowMode.removeListener(_onFloatWindowModeChangedListener);
     widget.floatWindowController?.isFullScreen.removeListener(_onFullScreenChangedListener);
     _liveStreamManager.mediaState.isScreenCaptured.removeListener(_onScreenCaptureListener);

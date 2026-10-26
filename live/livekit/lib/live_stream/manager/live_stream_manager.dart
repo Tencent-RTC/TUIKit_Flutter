@@ -1,27 +1,26 @@
 import 'dart:async';
 
+import 'package:atomic_x_core/api/define.dart';
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
-import 'package:tencent_live_uikit/live_stream/live_define.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/module/float_window_manager.dart';
 import 'package:tencent_live_uikit/live_stream/state/float_window_state.dart';
 import 'package:tencent_live_uikit/live_stream/state/index.dart';
 
+import '../../common/error/error_handler.dart';
+import '../../common/logger/logger.dart';
 import '../../common/widget/float_window/float_window_mode.dart';
-import '../api/live_stream_service.dart';
+import '../../component/beauty/live_beauty_store.dart';
 import 'module/index.dart';
-import 'observer/index.dart';
 
 class LiveStreamManager {
-  late final LiveStreamService service;
-
   late final StreamController<String> toastSubject;
   late final StreamController<void> likeSubject;
-  late final StreamController<void> kickedOutSubject;
 
   late final RoomManager _roomManager;
   late final UserManager _userManager;
@@ -31,8 +30,9 @@ class LiveStreamManager {
   late final BattleManager _battleManager;
   late final FloatWindowManager _floatWindowManager;
 
-  late final RoomEngineObserver _roomEngineObserver;
   late final Context _context;
+
+  String _currentLiveID = '';
 
   LiveStreamManager() {
     _init();
@@ -50,20 +50,39 @@ class LiveStreamManager {
   void dispose() {
     _unInit();
   }
+
+  Future<LiveInfoCompletionHandler> joinLive(String liveID) {
+    _currentLiveID = liveID;
+    return LiveListStore.shared.joinLive(liveID);
+  }
+
+  Future<CompletionHandler> leaveLive() {
+    if (_currentLiveID.isEmpty) {
+      final info = 'leaveLive ignore, currentLiveID is empty, maybe repeat operation.';
+      LiveKitLogger.warning(info);
+      final handler = CompletionHandler();
+      handler.errorCode = LiveError.invalidParameter.code;
+      handler.errorMessage = info;
+      return Future.value(handler);
+    }
+    final currentLive = LiveListStore.shared.liveState.currentLive.value;
+    if (currentLive.liveID != _currentLiveID) {
+      LiveKitLogger.warning(
+          "leaveLive warning, _currentLiveID=$_currentLiveID, currentLive.liveID=${currentLive.liveID}");
+    }
+    final currentLiveID = _currentLiveID;
+    _currentLiveID = '';
+    mediaManager.stopForegroundService();
+    enablePictureInPicture(currentLiveID, false);
+    LiveBeautyStore.shared.reset();
+    return LiveListStore.shared.leaveLive();
+  }
 }
 
 extension LiveStreamManagerWithCommon on LiveStreamManager {
-  void onCameraOpened(int viewId) {
-    _mediaManager.onCameraOpened();
-    _mediaManager.setLocalVideoView(viewId);
-  }
 
-  void onReceiveGift(int price, String senderUserId) {
-    return _roomManager.onReceiveGift(price, senderUserId);
-  }
-
-  Future<void> fetchRecommendedList({String cursor = ''}) {
-    return _coHostManager.fetchRecommendedList(cursor: cursor);
+  Future<void> fetchRecommendedList(bool isRefresh) {
+    return _coHostManager.fetchRecommendedList(isRefresh);
   }
 
   void setUserEnterRoomNotifyStrategy(UserEnterRoomNotifyStrategy strategy, {int? intervalSecondOnMerge}) {
@@ -85,10 +104,6 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
     return _roomManager.onSetRoomName(roomName);
   }
 
-  void onSetRoomPrivacy(LiveStreamPrivacyStatus mode) {
-    return _roomManager.onSetRoomPrivacy(mode);
-  }
-
   void onSetRoomCoverUrl(String url) {
     return _roomManager.onSetRoomCoverUrl(url);
   }
@@ -107,15 +122,7 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
     return _roomManager.onStopLive();
   }
 
-  void onCoHostConnectUserChanged(List<TUIConnectionUser> connectedUserList) {
-    // TODO: krab needs to confirm whether needs changeVideoEncParams logic here
-  }
-
-  void onCoGuestConnectUserChanged(List<TUIUserInfo> connectedUserList) {
-    // TODO: krab needs to confirm whether needs changeVideoEncParams logic here
-  }
-
-  void onRequestCrossRoomConnection(TUIConnectionUser user) {
+  void onRequestCrossRoomConnection(SeatUserInfo user) {
     _coHostManager.onRequestConnection(user);
   }
 
@@ -124,8 +131,8 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
   }
 
   // Battle
-  void onRequestBattle(String battleId, List<SeatUserInfo> battleUserList) {
-    _battleManager.onRequestBattle(battleId, battleUserList);
+  void onRequestBattle(String battleId, List<SeatUserInfo> battleUserList, bool needResponse) {
+    _battleManager.onRequestBattle(battleId, battleUserList, needResponse);
   }
 
   void onCanceledBattle() {
@@ -144,21 +151,12 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
     return _battleManager.isBattleDraw();
   }
 
-  // Other
-  Future<TUIValueCallBack<TUILiveInfo>> fetchLiveInfo(String roomId) {
-    return _roomManager.fetchLiveInfo(roomId);
-  }
-
-  Future<TUIActionCallback> onLockMediaStatusBtnClicked(String userId, TUISeatLockParams params) {
-    return _coGuestManager.onLockMediaStatusBtnClicked(userId, params);
-  }
-
   bool isCoGuesting() {
     final liveID = LiveListStore.shared.liveState.currentLive.value.liveID;
     if (liveID.isEmpty) return false;
     CoGuestStore coGuestStore = CoGuestStore.create(liveID);
     return coGuestStore.coGuestState.connected.value
-        .where((user) => user.userID.isNotEmpty && user.userID != TUIRoomEngine.getSelfInfo().userId)
+        .where((user) => user.userID.isNotEmpty && user.userID != LoginStore.shared.loginState.loginUserInfo?.userID)
         .isNotEmpty;
   }
 
@@ -166,11 +164,7 @@ extension LiveStreamManagerWithAnchor on LiveStreamManager {
     return _mediaManager.updateVideoQuality(videoQuality);
   }
 
-  Future<TUIValueCallBack<List<TUIVideoQuality>>> getMultiPlaybackQuality(String roomId) {
-    return _mediaManager.getMultiPlaybackQuality(roomId);
-  }
-
-  void switchPlaybackQuality(TUIVideoQuality videoQuality) {
+  void switchPlaybackQuality(VideoQuality videoQuality) {
     return _mediaManager.switchPlaybackQuality(videoQuality);
   }
 
@@ -198,6 +192,14 @@ extension LiveStreamManagerWithAudience on LiveStreamManager {
     _roomManager.onLeaveLive();
     _userManager.onLeaveLive();
     _mediaManager.onLeaveLive();
+    _floatWindowManager.onLeaveLive();
+  }
+
+  void resetManagerStore() {
+    _coGuestManager.resetStore();
+    _coHostManager.resetStore();
+    _battleManager.resetStore();
+    _userManager.resetStore();
   }
 }
 
@@ -257,10 +259,8 @@ extension LiveStreamManagerWithTools on LiveStreamManager {
 
 extension on LiveStreamManager {
   void _init() {
-    service = LiveStreamService();
     toastSubject = StreamController.broadcast();
     likeSubject = StreamController.broadcast();
-    kickedOutSubject = StreamController.broadcast();
 
     _roomManager = RoomManager();
     _userManager = UserManager();
@@ -269,20 +269,16 @@ extension on LiveStreamManager {
     _coHostManager = CoHostManager();
     _battleManager = BattleManager();
     _floatWindowManager = FloatWindowManager();
-    _roomEngineObserver = RoomEngineObserver();
 
     _context = Context(
-      service: service,
       toastSubject: WeakReference(toastSubject),
       likeSubject: WeakReference(likeSubject),
-      kickedOutSubject: WeakReference(kickedOutSubject),
       roomManager: WeakReference(_roomManager),
       userManager: WeakReference(_userManager),
       mediaManager: WeakReference(_mediaManager),
       coGuestManager: WeakReference(_coGuestManager),
       coHostManager: WeakReference(_coHostManager),
       battleManager: WeakReference(_battleManager),
-      roomEngineObserver: WeakReference(_roomEngineObserver),
     );
 
     _roomManager.init(_context);
@@ -292,10 +288,6 @@ extension on LiveStreamManager {
     _coHostManager.init(_context);
     _battleManager.init(_context);
     _floatWindowManager.init(_context);
-
-    _roomEngineObserver.init(_context);
-
-    service.addEngineObserver(_roomEngineObserver);
   }
 
   void _unInit() {
@@ -307,24 +299,18 @@ extension on LiveStreamManager {
     _battleManager.dispose();
     _floatWindowManager.dispose();
 
-    service.removeEngineObserver(_roomEngineObserver);
     if (!toastSubject.isClosed) {
       toastSubject.close();
     }
     if (!likeSubject.isClosed) {
       likeSubject.close();
     }
-    if (!kickedOutSubject.isClosed) {
-      kickedOutSubject.close();
-    }
   }
 }
 
 class Context {
-  late final LiveStreamService service;
   late final WeakReference<StreamController<String>> toastSubject;
   late final WeakReference<StreamController<void>> likeSubject;
-  late final WeakReference<StreamController<void>> kickedOutSubject;
 
   late final WeakReference<RoomManager> roomManager;
   late final WeakReference<UserManager> userManager;
@@ -333,19 +319,14 @@ class Context {
   late final WeakReference<CoHostManager> coHostManager;
   late final WeakReference<BattleManager> battleManager;
 
-  late final WeakReference<RoomEngineObserver> roomEngineObserver;
-
   Context({
-    required this.service,
     required this.toastSubject,
     required this.likeSubject,
-    required this.kickedOutSubject,
     required this.roomManager,
     required this.userManager,
     required this.mediaManager,
     required this.coGuestManager,
     required this.coHostManager,
     required this.battleManager,
-    required this.roomEngineObserver,
   });
 }

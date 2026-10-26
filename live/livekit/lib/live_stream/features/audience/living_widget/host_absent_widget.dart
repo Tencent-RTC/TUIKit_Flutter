@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:atomic_x_core/api/live/live_list_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart' hide LiveStatus;
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
+import 'package:tencent_live_uikit/live_stream/live_define.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 
 /// Audience-side placeholder shown when no host is on any seat for >= 1s.
@@ -22,21 +23,23 @@ class _HostAbsentWidgetState extends State<HostAbsentWidget> {
   final ValueNotifier<bool> _isVisible = ValueNotifier<bool>(false);
   Timer? _showTimer;
 
-  late final LiveSeatStore _seatStore = LiveSeatStore.create(widget.liveStreamManager.roomState.roomId);
+  LiveSeatStore? _seatStore;
   late final VoidCallback _seatListListener = _onSeatListChanged;
+  late final VoidCallback _onLiveStatusListener = _onLiveStatusChanged;
   late final VoidCallback _floatWindowListener = _onFloatWindowChanged;
 
   @override
   void initState() {
     super.initState();
-    _seatStore.liveSeatState.seatList.addListener(_seatListListener);
+    widget.liveStreamManager.roomState.liveStatus.addListener(_onLiveStatusListener);
     widget.liveStreamManager.floatWindowState.isFloatWindowMode.addListener(_floatWindowListener);
     _onSeatListChanged();
   }
 
   @override
   void dispose() {
-    _seatStore.liveSeatState.seatList.removeListener(_seatListListener);
+    _disposeSeatListListener();
+    widget.liveStreamManager.roomState.liveStatus.removeListener(_onLiveStatusListener);
     widget.liveStreamManager.floatWindowState.isFloatWindowMode.removeListener(_floatWindowListener);
     _showTimer?.cancel();
     _showTimer = null;
@@ -44,15 +47,31 @@ class _HostAbsentWidgetState extends State<HostAbsentWidget> {
     super.dispose();
   }
 
+  void _disposeSeatListListener() {
+    _seatStore?.liveSeatState.seatList.removeListener(_seatListListener);
+    _seatStore = null;
+  }
+
   void _onFloatWindowChanged() {
     if (!mounted) return;
     setState(() {});
   }
 
-  void _onSeatListChanged() {
-    final seatList = _seatStore.liveSeatState.seatList.value;
-    final bool hasHost = seatList.isNotEmpty && seatList.any((SeatInfo s) => s.userInfo.userID.isNotEmpty);
+  void _onLiveStatusChanged() {
+    final liveStatus = widget.liveStreamManager.roomState.liveStatus.value;
+    if (liveStatus == LiveStatus.playing || liveStatus == LiveStatus.finished) {
+      _seatStore = LiveSeatStore.create(widget.liveStreamManager.roomState.roomId);
+      _seatStore!.liveSeatState.seatList.addListener(_seatListListener);
+      _onSeatListChanged();
+    } else if (liveStatus == LiveStatus.finished) {
+      _disposeSeatListListener();
+    }
+  }
 
+  void _onSeatListChanged() {
+    if (_seatStore == null) return;
+    final seatList = _seatStore!.liveSeatState.seatList.value;
+    final bool hasHost = seatList.isNotEmpty && seatList.any((SeatInfo s) => s.userInfo.userID.isNotEmpty);
     // Any state change cancels a pending show timer.
     _showTimer?.cancel();
     _showTimer = null;

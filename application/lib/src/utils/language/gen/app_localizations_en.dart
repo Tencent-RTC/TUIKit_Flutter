@@ -81,8 +81,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_voice => 'Voice';
 
   @override
-  String get app_voice_description =>
-      'High audio quality/Large room/Smooth mic on/off';
+  String get app_voice_description => 'High audio quality/Large room/Smooth mic on/off';
 
   @override
   String app_broadcast(Object xxx) {
@@ -96,8 +95,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_log => 'Log';
 
   @override
-  String get app_live_content =>
-      'Create Interactive Video Live with Live API for a Seamless Streaming Experience.';
+  String get app_live_content => 'Create Interactive Video Live with Live API for a Seamless Streaming Experience.';
 
   @override
   String get app_voice_content =>
@@ -107,8 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_conference => 'Conference';
 
   @override
-  String get app_conference_description =>
-      'Quick meeting/Invite/Manage participants/Share screen';
+  String get app_conference_description => 'Quick meeting/Invite/Manage participants/Share screen';
 
   @override
   String get app_call => 'Call';
@@ -156,12 +153,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_call_settings => 'Call Settings';
 
   @override
-  String get app_call_error_call_self =>
-      'You cannot call yourself, please use a different user ID';
+  String get app_call_error_call_self => 'You cannot call yourself, please use a different user ID';
 
   @override
-  String get app_call_error_user_not_exist =>
-      'Call failed, invalid user ID, please confirm the user is registered';
+  String get app_call_error_user_not_exist => 'Call failed, invalid user ID, please confirm the user is registered';
 
   @override
   String get app_chat => 'Chat';
@@ -170,8 +165,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_chat_description => 'Group chat/Contacts/Audio chat/Data sync';
 
   @override
-  String get app_can_not_start_room_during_call =>
-      'You are in a call. Please try again after it ends.';
+  String get app_can_not_start_room_during_call => 'You are in a call. Please try again after it ends.';
+
+  @override
+  String get app_live_float_window_tip => 'Live streaming in progress. Please try again later.';
 
   @override
   String get app_chat_welcome_message =>

@@ -5,8 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 import '../app_store/index.dart';
 import '../login/index.dart';
@@ -187,13 +185,8 @@ extension _MeWidgetStateLogicExtension on _MeWidgetState {
   }
 
   void _logout(BuildContext context) {
-    GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      TUIRoomEngine.logout().then((_) {
-        LoginStore.shared.logout().then((result) {
-          debugPrint("LoginStore logout, isSuccess = ${result.isSuccess}");
-        });
-      });
+    LoginStore.shared.logout().then((result) {
+      debugPrint("LoginStore logout, isSuccess = ${result.isSuccess}");
     });
     Navigator.of(context).pop();
     NavigatorState navigatorState = Navigator.of(context);

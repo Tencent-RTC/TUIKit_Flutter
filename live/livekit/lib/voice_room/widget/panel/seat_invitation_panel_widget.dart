@@ -1,9 +1,9 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/seat_grid_widget/seat_grid_define.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+
+const int defaultTimeout = 30;
 
 class SeatInvitationPanelWidget extends StatefulWidget {
   final String liveID;
@@ -90,7 +90,7 @@ class _SeatInvitationPanelWidgetState extends State<SeatInvitationPanelWidget> {
       ]),
       builder: (context, child) {
         final seatUserIds = _seatStore.liveSeatState.seatList.value.map((seat) => seat.userInfo.userID).toSet();
-        final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+        final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
         final invitedIds = _coGuestStore.coGuestState.invitees.value.map((invitee) => invitee.userID).toSet();
         final invitableUsers = _audienceStore.liveAudienceState.audienceList.value
             .where((user) => user.userID != selfUserId && !seatUserIds.contains(user.userID))

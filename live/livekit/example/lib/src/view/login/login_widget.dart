@@ -8,9 +8,9 @@ import 'package:tencent_live_uikit_example/src/service/app_manager.dart';
 import 'package:tencent_live_uikit_example/src/store/app_store.dart';
 import 'package:tencent_live_uikit_example/src/view/login/profile_widget.dart';
 import 'package:tencent_live_uikit_example/src/view/main/main_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
+import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -179,14 +179,10 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future<void> _switchTestEnvironment() async {
-    final Map<String, dynamic> params = {'enableRoomTestEnv': true};
-
-    final Map<String, dynamic> jsonObject = {
-      'api': 'setTestEnvironment',
-      'params': params
-    };
-
-    final jsonString = jsonEncode(jsonObject);
+    final api = 'setTestEnvironment';
+    final params = {'enableRoomTestEnv': true};
+    final Map<String, dynamic> jsonMap = {'api': api, 'params': params};
+    final jsonString = jsonEncode(jsonMap);
     TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
 
     final result = await TencentImSDKPlugin.v2TIMManager

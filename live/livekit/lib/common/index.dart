@@ -4,6 +4,7 @@ export 'constants/index.dart';
 export 'error/index.dart';
 export 'language/index.dart';
 export 'logger/index.dart';
+export 'permission/media_permission.dart';
 export 'platform/index.dart';
 export 'resources/index.dart';
 export 'screen/index.dart';

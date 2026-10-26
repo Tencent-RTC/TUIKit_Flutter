@@ -1,5 +1,6 @@
 import { abilityAccessCtrl, bundleManager, common, Permissions } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { preferences } from '@kit.ArkData';
 import notificationManager from '@ohos.notificationManager';
 
 /**
@@ -12,12 +13,17 @@ import notificationManager from '@ohos.notificationManager';
  *   PermissionStatus.value(granted/denied/permanentlyDenied/limited/notDetermined)
  *
  * 与 Android 差异,提前说清楚:
- *   1. 鸿蒙 abilityAccessCtrl.checkAccessToken 只返回 GRANTED/DENIED,
- *      没有 shouldShowRationale 概念,所以 checkPermissionStatus 无法区分
- *      "从未请求过" 和 "永久拒绝",一律返回 denied。permanentlyDenied 仅在
- *      requestPermissionsFromUser 之后靠 dialogShownResults 判定。
+ *   1. 鸿蒙 abilityAccessCtrl.checkAccessToken 只返回 GRANTED/DENIED,没有
+ *      shouldShowRationale 概念;dialogShownResults 又是 API 12+ 的可选字段,
+ *      实测部分设备拿不到。因此 permanentlyDenied 靠本类自己持久化的
+ *      "曾被用户拒绝过" 标记推导,见 hasBeenDeniedOnce。
  *   2. 鸿蒙没有 partial photos 权限,因此不会返回 limited。
  *   3. SYSTEM_FLOAT_WINDOW 是 restricted 权限,普通应用申请必失败,直接返回 denied。
+ *
+ * 为什么 "拒绝过一次" 就等于 permanentlyDenied:
+ * 鸿蒙的 requestPermissionsFromUser 在用户点过 "不允许" 之后就再也不会拉起弹框
+ * (系统机制,防骚扰),用户只能去设置里改。这一点与 Android 需要连续拒绝两次才
+ * 进入 "不再询问" 不同,所以标记语义是 "被拒绝过" 而非 Android 的 "被请求过"。
  */
 export default class PermissionHandler {
   private static readonly TAG = 'AtomicX.PermissionHandler';
@@ -42,10 +48,91 @@ export default class PermissionHandler {
   private static readonly PERM_READ_MEDIA: Permissions = 'ohos.permission.READ_IMAGEVIDEO';
   private static readonly PERM_WRITE_MEDIA: Permissions = 'ohos.permission.WRITE_IMAGEVIDEO';
 
+  // "曾被拒绝过" 标记的持久化位置,对齐 Android 的 SharedPreferences 方案
+  private static readonly PREFS_NAME = 'atomic_x_permissions';
+  private static readonly KEY_DENIED_ONCE_PREFIX = 'denied_once_';
+  // 通知不是 runtime permission,没有对应的 ohos.permission.* 名字,单独占一个 key
+  private static readonly PSEUDO_PERM_NOTIFICATION = 'notification';
+
   private uiAbilityContext: common.UIAbilityContext | null = null;
+  private prefsStore: preferences.Preferences | null = null;
+  // 进程内缓存,同时兼作 preferences 不可用时的降级存储
+  private deniedOnceCache: Set<string> = new Set<string>();
 
   setAbilityContext(ctx: common.UIAbilityContext | null): void {
     this.uiAbilityContext = ctx;
+  }
+
+  private async getPrefs(): Promise<preferences.Preferences | null> {
+    if (this.prefsStore !== null) {
+      return this.prefsStore;
+    }
+    const ctx = this.uiAbilityContext;
+    if (ctx === null) {
+      return null;
+    }
+    try {
+      const options: preferences.Options = { name: PermissionHandler.PREFS_NAME };
+      this.prefsStore = await preferences.getPreferences(ctx, options);
+      return this.prefsStore;
+    } catch (e) {
+      console.warn(`${PermissionHandler.TAG} getPreferences failed`, (e as BusinessError).message);
+      return null;
+    }
+  }
+
+  /**
+   * 该权限是否曾被用户拒绝过。鸿蒙上这等价于 "系统不会再弹框,只能去设置改",
+   * 也就是 Dart 侧的 permanentlyDenied。
+   */
+  private async hasBeenDeniedOnce(perm: string): Promise<boolean> {
+    if (this.deniedOnceCache.has(perm)) {
+      return true;
+    }
+    const store = await this.getPrefs();
+    if (store === null) {
+      return false;
+    }
+    try {
+      const v = store.getSync(`${PermissionHandler.KEY_DENIED_ONCE_PREFIX}${perm}`, false);
+      const denied = typeof v === 'boolean' ? v : false;
+      if (denied) {
+        this.deniedOnceCache.add(perm);
+      }
+      return denied;
+    } catch (e) {
+      console.warn(`${PermissionHandler.TAG} read deniedOnce(${perm}) failed`, (e as BusinessError).message);
+      return false;
+    }
+  }
+
+  /**
+   * 写入/清除 "曾被拒绝过" 标记。
+   *
+   * 授权成功时必须清除:鸿蒙的 "仅本次使用允许" 也会返回 authResults=0,
+   * 这次授权过期后应当能重新拉起系统弹框,而不是直接把用户送去设置页。
+   */
+  private async setDeniedOnce(perm: string, denied: boolean): Promise<void> {
+    if (denied) {
+      this.deniedOnceCache.add(perm);
+    } else {
+      this.deniedOnceCache.delete(perm);
+    }
+    const store = await this.getPrefs();
+    if (store === null) {
+      return;
+    }
+    try {
+      const key = `${PermissionHandler.KEY_DENIED_ONCE_PREFIX}${perm}`;
+      if (denied) {
+        store.putSync(key, true);
+      } else {
+        store.deleteSync(key);
+      }
+      await store.flush();
+    } catch (e) {
+      console.warn(`${PermissionHandler.TAG} write deniedOnce(${perm}) failed`, (e as BusinessError).message);
+    }
   }
 
   /**
@@ -75,7 +162,7 @@ export default class PermissionHandler {
 
   /**
    * checkPermissionStatus (Dart -> ArkTS 单权限查询)。
-   * @returns 'granted' | 'denied'  (鸿蒙 checkAccessToken 无 rationale,不返回 permanentlyDenied)
+   * @returns 'granted' | 'denied' | 'permanentlyDenied'
    */
   async checkPermissionStatus(type: string): Promise<string> {
     if (type === PermissionHandler.TYPE_NOTIFICATION) {
@@ -103,7 +190,10 @@ export default class PermissionHandler {
       try {
         const r = await atManager.checkAccessToken(tokenId, p);
         if (r !== abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED) {
-          return PermissionHandler.STATUS_DENIED;
+          // checkAccessToken 分不出 "从未请求过" 和 "已拒绝",靠持久化标记补上
+          return (await this.hasBeenDeniedOnce(p))
+            ? PermissionHandler.STATUS_PERMANENTLY_DENIED
+            : PermissionHandler.STATUS_DENIED;
         }
       } catch (e) {
         console.warn(`${PermissionHandler.TAG} checkAccessToken(${p}) failed`, (e as BusinessError).message);
@@ -166,6 +256,15 @@ export default class PermissionHandler {
       return result;
     }
 
+    // 必须在发起请求 "之前" 取快照:请求之后标记会被本次结果覆盖,
+    // 就无法判断用户是首次被弹框拒绝还是早就拒绝过了。
+    const deniedBefore: Set<string> = new Set<string>();
+    for (const p of runtimePerms) {
+      if (await this.hasBeenDeniedOnce(p)) {
+        deniedBefore.add(p);
+      }
+    }
+
     // 权限级别的状态,以最保守的结果作为 Dart type 的最终状态
     const permStatus: Map<string, string> = new Map();
     try {
@@ -177,11 +276,22 @@ export default class PermissionHandler {
         const shown = req.dialogShownResults ? req.dialogShownResults[i] : true;
         if (auth === 0) {
           permStatus.set(p, PermissionHandler.STATUS_GRANTED);
-        } else if (!shown) {
-          // 用户之前勾了"不再询问"或系统禁止 -> 永久拒绝
-          permStatus.set(p, PermissionHandler.STATUS_PERMANENTLY_DENIED);
-        } else {
+          await this.setDeniedOnce(p, false);
+        } else if (auth === 2) {
+          // 请求无效(权限未在 module.json5 声明 / 权限名非法 / 未满足特殊申请条件)。
+          // 这是应用自身的配置问题,把用户引到设置页也解决不了,所以不打标记。
           permStatus.set(p, PermissionHandler.STATUS_DENIED);
+          console.error(`${PermissionHandler.TAG} requestPermissions(${p}) invalid, check module.json5`);
+        } else if (!shown || deniedBefore.has(p)) {
+          // 系统没弹框(!shown),或此前已经拒绝过 -> 只能去设置页改
+          permStatus.set(p, PermissionHandler.STATUS_PERMANENTLY_DENIED);
+          await this.setDeniedOnce(p, true);
+        } else {
+          // 用户在本次弹框里点了 "不允许"。本次返回 denied 而非 permanentlyDenied,
+          // 以免刚拒绝就立刻弹引导框骚扰用户(与 Android / iOS 行为一致);
+          // 但要打上标记,下次触发时 check 与 request 都会返回 permanentlyDenied。
+          permStatus.set(p, PermissionHandler.STATUS_DENIED);
+          await this.setDeniedOnce(p, true);
         }
       }
     } catch (e) {
@@ -252,27 +362,38 @@ export default class PermissionHandler {
   private async checkNotification(): Promise<string> {
     try {
       const enabled = await notificationManager.isNotificationEnabled();
-      return enabled ? PermissionHandler.STATUS_GRANTED : PermissionHandler.STATUS_DENIED;
+      if (enabled) {
+        return PermissionHandler.STATUS_GRANTED;
+      }
+      return (await this.hasBeenDeniedOnce(PermissionHandler.PSEUDO_PERM_NOTIFICATION))
+        ? PermissionHandler.STATUS_PERMANENTLY_DENIED
+        : PermissionHandler.STATUS_DENIED;
     } catch (e) {
       console.warn(`${PermissionHandler.TAG} isNotificationEnabled failed`, (e as BusinessError).message);
       return PermissionHandler.STATUS_DENIED;
     }
   }
 
+  /**
+   * requestEnableNotification 与 requestPermissionsFromUser 同理:弹框只会展示一次,
+   * 用户拒绝之后再调用会直接失败,所以同样用 "曾被拒绝过" 标记推导 permanentlyDenied。
+   */
   private async requestNotification(): Promise<string> {
     const ctx = this.uiAbilityContext;
     if (ctx === null) {
       return await this.checkNotification();
     }
+    const deniedBefore = await this.hasBeenDeniedOnce(PermissionHandler.PSEUDO_PERM_NOTIFICATION);
     try {
       await notificationManager.requestEnableNotification(ctx);
+      await this.setDeniedOnce(PermissionHandler.PSEUDO_PERM_NOTIFICATION, false);
       return PermissionHandler.STATUS_GRANTED;
     } catch (e) {
       const err = e as BusinessError;
-      // 1600004: user rejected in the dialog(非永久,可再次请求)
-      // 其他错误码基本都视作 denied
+      // 1600004: 用户在弹框里拒绝,或弹框此前已展示过不再重复展示
       console.warn(`${PermissionHandler.TAG} requestEnableNotification failed code=${err.code}, msg=${err.message}`);
-      return PermissionHandler.STATUS_DENIED;
+      await this.setDeniedOnce(PermissionHandler.PSEUDO_PERM_NOTIFICATION, true);
+      return deniedBefore ? PermissionHandler.STATUS_PERMANENTLY_DENIED : PermissionHandler.STATUS_DENIED;
     }
   }
 }

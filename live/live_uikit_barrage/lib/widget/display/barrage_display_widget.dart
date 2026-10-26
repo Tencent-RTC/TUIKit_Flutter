@@ -1,7 +1,6 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
-import '../../state/store.dart';
 import 'barrage_display_controller.dart';
 import 'barrage_item_widget.dart';
 
@@ -36,8 +35,9 @@ class BarrageDisplayWidget extends StatelessWidget {
   }
 
   Widget _buildBarrageList(BuildContext context) {
+    final BarrageStore barrageStore = BarrageStore.create(controller.roomId);
     return ValueListenableBuilder(
-      valueListenable: Store().manager.barrageStore.barrageState.messageList,
+      valueListenable: barrageStore.barrageState.messageList,
       builder: (BuildContext context, value, Widget? child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           controller.scrollToBottom();
@@ -46,11 +46,11 @@ class BarrageDisplayWidget extends StatelessWidget {
           color: Colors.transparent,
           child: ListView.builder(
             controller: controller.scrollController,
-            itemCount: Store().manager.barrageStore.barrageState.messageList.value.length,
+            itemCount: barrageStore.barrageState.messageList.value.length,
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             itemBuilder: (context, index) {
-              Barrage barrage = Store().manager.barrageStore.barrageState.messageList.value[index];
+              Barrage barrage = barrageStore.barrageState.messageList.value[index];
               if (controller.customBarrageBuilder != null &&
                   controller.customBarrageBuilder!.shouldCustomizeBarrageItem(barrage)) {
                 return controller.customBarrageBuilder?.buildWidget(context, barrage);
@@ -58,6 +58,7 @@ class BarrageDisplayWidget extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onClickBarrageItem?.call(barrage),
                 child: BarrageItemWidget(
+                  ownerId: controller.ownerId,
                   barrage: barrage,
                   senderTagConfig: itemSenderTagProvider?.call(barrage.sender.userID),
                 ),

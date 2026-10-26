@@ -1,5 +1,14 @@
 # LiveUIKitBarrage
 
+## 4.0.0
+
+- Replaced extended_text_field with lib/third_party/extended_text_field.
+- Updated BarrageDisplayController.
+
+## 3.0.2
+
+- Removed unused dependencies.
+
 ## 3.0.1
 
 - Default internationalization language set to English.

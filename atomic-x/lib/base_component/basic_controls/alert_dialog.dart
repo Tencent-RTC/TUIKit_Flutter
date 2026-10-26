@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart' hide AlertDialog;
 import 'package:flutter/material.dart' as material show AlertDialog;
 import '../base_component.dart';
-import '../localizations/atomic_localizations.dart';
-import '../theme/theme_state.dart';
 
 enum TextColorPreset { primary, grey, blue, red }
 
@@ -51,14 +49,10 @@ class AlertDialogConfig {
     this.confirmConfig,
     this.cancelConfig,
     this.itemList = const [],
-    @Deprecated('Use cancelConfig instead')
-    this.cancelText,
-    @Deprecated('Use confirmConfig instead')
-    this.defaultText,
-    @Deprecated('Use confirmConfig with type = TextColorPreset.red instead')
-    this.isDestructive = false,
-    @Deprecated('Use confirmConfig.onClick instead')
-    this.defaultCallback,
+    @Deprecated('Use cancelConfig instead') this.cancelText,
+    @Deprecated('Use confirmConfig instead') this.defaultText,
+    @Deprecated('Use confirmConfig with type = TextColorPreset.red instead') this.isDestructive = false,
+    @Deprecated('Use confirmConfig.onClick instead') this.defaultCallback,
   });
 }
 
@@ -105,8 +99,8 @@ class AlertDialog extends StatelessWidget {
     final colorsTheme = BaseThemeProvider.colorsOf(context);
     final appLocale = AtomicLocalizations.of(context);
 
-    final effectiveCancelConfig = config.cancelConfig ??
-        (config.cancelText != null ? ButtonConfig(text: config.cancelText!) : null);
+    final effectiveCancelConfig =
+        config.cancelConfig ?? (config.cancelText != null ? ButtonConfig(text: config.cancelText!) : null);
     final effectiveConfirmConfig = config.confirmConfig ??
         (config.defaultText != null
             ? ButtonConfig(
@@ -244,8 +238,8 @@ class AtomicAlertDialog extends StatefulWidget {
   }) {
     final dialogId = 'alert_dialog_${DateTime.now().millisecondsSinceEpoch}';
 
-    final effectiveCancelConfig = config.cancelConfig ??
-        (config.cancelText?.isNotEmpty == true ? ButtonConfig(text: config.cancelText!) : null);
+    final effectiveCancelConfig =
+        config.cancelConfig ?? (config.cancelText?.isNotEmpty == true ? ButtonConfig(text: config.cancelText!) : null);
     final effectiveConfirmConfig = config.confirmConfig ??
         (config.defaultText?.isNotEmpty == true
             ? ButtonConfig(
@@ -355,7 +349,7 @@ class _AtomicAlertDialogState extends State<AtomicAlertDialog> {
     final widthScale = MediaQuery.sizeOf(context).width / AtomicAlertDialog.designWidth;
 
     return Container(
-      width: 259 * widthScale,
+      width: 280 * widthScale,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: colorsTheme.bgColorDialog,
@@ -393,7 +387,7 @@ class _AtomicAlertDialogState extends State<AtomicAlertDialog> {
               child: Text(
                 widget.config.title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   color: colorsTheme.textColorPrimary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -418,7 +412,7 @@ class _AtomicAlertDialogState extends State<AtomicAlertDialog> {
             child: Text(
               content ?? '',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: colorsTheme.textColorPrimary,
                 fontWeight: FontWeight.normal,
               ),
@@ -571,7 +565,7 @@ class DialogOverlayManager {
 
     final overlay = Overlay.of(context, rootOverlay: rootOverlay);
     late OverlayEntry overlayEntry;
-    final WidgetBuilder widgetBuilder = (builderContext) {
+    Widget widgetBuilder(BuildContext builderContext) {
       return Stack(
         children: [
           Positioned.fill(
@@ -591,13 +585,14 @@ class DialogOverlayManager {
           ),
         ],
       );
-    };
-    ValueNotifier<bool> isVisable = ValueNotifier(true);
+    }
+
+    ValueNotifier<bool> isVisible = ValueNotifier(true);
     if (enableHide) {
       overlayEntry = OverlayEntry(
         builder: (context) {
           return ValueListenableBuilder<bool>(
-            valueListenable: isVisable,
+            valueListenable: isVisible,
             builder: (_, visible, __) {
               return Offstage(
                 offstage: !visible,
@@ -614,7 +609,7 @@ class DialogOverlayManager {
     }
 
     overlay.insert(overlayEntry);
-    _overlays[dialogId] = OverlayEntryWrapper(overlayEntry: overlayEntry, isVisible: isVisable);
+    _overlays[dialogId] = OverlayEntryWrapper(overlayEntry: overlayEntry, isVisible: isVisible);
   }
 
   static void setVisible(String dialogId, bool visible) {

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../common/widget/index.dart';
 import '../../../tencent_live_uikit.dart';
-import '../../api/live_stream_service.dart';
 import '../../state/battle_state.dart';
 import '../live_stream_manager.dart';
 
@@ -14,7 +13,6 @@ class BattleManager {
   LSBattleState battleState = LSBattleState();
 
   late final Context context;
-  late final LiveStreamService service;
   Timer? _timer;
 
   // Absolute local timestamp (milliseconds) at which the current PK is expected
@@ -27,11 +25,10 @@ class BattleManager {
 
   final ValueNotifier<List<SeatUserInfo>> inviteeList = ValueNotifier([]);
   late final VoidCallback onBattleScoreListener = _onBattleScoreChanged;
-  late BattleListener? battleListener;
+  BattleListener? battleListener;
 
   void init(Context context) {
     this.context = context;
-    service = context.service;
   }
 
   void setLiveID(String liveID) {
@@ -40,6 +37,10 @@ class BattleManager {
 
   void dispose() {
     _unsubscribeListener();
+  }
+
+  void resetStore() {
+    _subscribeListener();
   }
 
   void resetState() {
@@ -56,9 +57,9 @@ class BattleManager {
     _pkEndLocalMs = 0;
   }
 
-  void onRequestBattle(String battleId, List<SeatUserInfo> battleUserList) {
+  void onRequestBattle(String battleId, List<SeatUserInfo> battleUserList, bool needResponse) {
     battleState.battleId.value = battleId;
-    battleState.isInWaiting.value = true;
+    battleState.isInWaiting.value = needResponse;
     inviteeList.value = [...battleUserList];
   }
 
@@ -228,7 +229,7 @@ extension on BattleManager {
     final liveID = _getLiveID();
     if (liveID.isEmpty) return;
     BattleStore battleStore = BattleStore.create(liveID);
-    battleListener = BattleListener(
+    battleListener ??= BattleListener(
       onBattleStarted: (BattleInfo battleInfo, SeatUserInfo inviter, List<SeatUserInfo> invitees) {
         _onBattleStarted(battleInfo, inviter, invitees);
       },

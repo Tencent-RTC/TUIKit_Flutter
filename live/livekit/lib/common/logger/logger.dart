@@ -1,5 +1,7 @@
-import 'package:tencent_live_uikit/common/platform/index.dart';
+import 'dart:convert';
+
 import 'package:stack_trace/stack_trace.dart';
+import 'package:tencent_rtc_sdk/trtc_cloud.dart';
 
 import '../constants/constants.dart';
 
@@ -22,17 +24,20 @@ class LiveKitLogger {
 
   static Future<void> _log(LiveKitLoggerLevel level, String message) async {
     var chain = Chain.current();
-    chain =
-        chain.foldFrames((frame) => frame.isCore || frame.package == "flutter");
+    chain = chain.foldFrames((frame) => frame.isCore || frame.package == "flutter");
     final frames = chain.toTrace().frames;
-    final index =
-        frames.indexWhere((frame) => frame.member == 'LiveKitLogger._log');
+    final index = frames.indexWhere((frame) => frame.member == 'LiveKitLogger._log');
     if (index == -1 || index + 2 >= frames.length) return;
 
     final frame = frames[index + 2];
     final file = frame.uri.toString().split('/').last;
     final line = frame.line ?? 0;
 
-    TUILiveKitPlatform.instance.apiLog(level, moduleName, file, line, message);
+    final Map<String, dynamic> jsonObject = {
+      'api': 'TuikitLog',
+      'params': {'module': moduleName, 'level': level.index, 'message': message, 'file': file, 'line': line}
+    };
+    final jsonString = jsonEncode(jsonObject);
+    TRTCCloud.sharedInstance().then((trtcCloud) => trtcCloud.callExperimentalAPI(jsonString));
   }
 }

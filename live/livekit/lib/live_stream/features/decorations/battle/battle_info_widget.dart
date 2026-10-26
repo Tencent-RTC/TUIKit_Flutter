@@ -1,11 +1,11 @@
 import 'package:atomic_x_core/api/live/co_host_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
-import 'package:atomic_x_core/api/live/live_seat_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 
 import '../../../manager/live_stream_manager.dart';
+import '../../../state/battle_state.dart';
 import 'single_battle_score_widget.dart';
 
 class BattleInfoWidget extends StatefulWidget {
@@ -86,9 +86,6 @@ class _BattleInfoWidgetState extends State<BattleInfoWidget> {
     if (liveID.isEmpty) return const SizedBox.shrink();
     final coHostState = CoHostStore.create(liveID).coHostState;
     final battleUserMap = {for (var user in liveStreamManager.battleState.battleUsers.value) user.userId: user};
-    LiveSeatState liveSeatState = LiveSeatStore.create(liveID).liveSeatState;
-    List<SeatInfo> seatInfos = liveSeatState.seatList.value;
-    final seatMap = {for (var seat in seatInfos) seat.userInfo.userID: seat};
 
     final connectedBattleUsers = coHostState.connected.value
         .where((user) => battleUserMap.containsKey(user.userID))
@@ -98,18 +95,18 @@ class _BattleInfoWidgetState extends State<BattleInfoWidget> {
     if (coHostState.connected.value.length != 2 || connectedBattleUsers.length != 2) {
       return const SizedBox.shrink();
     }
-    if (seatMap.length != 2 ||
-        !seatMap.keys.contains(connectedBattleUsers[0].userId) ||
-        !seatMap.keys.contains(connectedBattleUsers[1].userId)) {
-      return const SizedBox.shrink();
-    }
 
     // 1v1 battle
-
-    connectedBattleUsers.sort((a, b) => seatMap[a.userId]!.region.x.compareTo(seatMap[b.userId]!.region.x));
+    final ordered = List<BattleUser>.from(connectedBattleUsers);
+    final ownerIndex = ordered.indexWhere((user) => user.roomId == liveID);
+    if (ownerIndex == 1) {
+      final tmp = ordered[0];
+      ordered[0] = ordered[1];
+      ordered[1] = tmp;
+    }
     return SingleBattleScoreWidget(
-      leftScore: connectedBattleUsers[0].score.toInt(),
-      rightScore: connectedBattleUsers[1].score.toInt(),
+      leftScore: ordered[0].score.toInt(),
+      rightScore: ordered[1].score.toInt(),
     );
   }
 

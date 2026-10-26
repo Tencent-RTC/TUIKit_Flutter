@@ -8,7 +8,6 @@ import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/live_background_select_widget.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/seat_management_panel_widget.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/settings_panel_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 class BottomMenuWidget extends StatefulWidget {
   final String liveID;
@@ -99,15 +98,15 @@ extension on _BottomMenuWidgetState {
     final seatManagement = ValueListenableBuilder(
       valueListenable: _coGuestStore.coGuestState.applicants,
       builder: (context, applications, _) {
-        final filterApplications =
-            applications.toList().where((application) => application.userID != TUIRoomEngine.getSelfInfo().userId);
+        final currentUserID = LoginStore.shared.loginState.loginUserInfo?.userID;
+        final applicantCount = applications.where((application) => application.userID != currentUserID).length;
         return BottomButtonWidget(
             normalImage: Image.asset(LiveImages.functionSeatManagement, package: Constants.pluginName),
             normalTitle: Text(LiveKitLocalizations.of(Global.appContext())!.common_seat_management,
                 style: const TextStyle(fontSize: 12, color: LiveColors.designStandardFlowkitWhite),
                 textAlign: TextAlign.center),
             imageSize: 28.radius,
-            markCount: filterApplications.length,
+            markCount: applicantCount,
             onPressed: () {
               _showSeatManagementPanel();
             });
@@ -176,7 +175,7 @@ extension on _BottomMenuWidgetState {
         builder: (context, _) {
           final isApplying = widget.viewStore.state.isApplyingToTakeSeat.value;
           final isOnSeat = _coGuestStore.coGuestState.connected.value
-              .any((seatUserInfo) => seatUserInfo.userID == TUIRoomEngine.getSelfInfo().userId);
+              .any((seatUserInfo) => seatUserInfo.userID == LoginStore.shared.loginState.loginUserInfo?.userID);
           final normalImageUrl = isOnSeat ? LiveImages.functionLinked : LiveImages.functionVoiceRoomLink;
 
           final hangupLocalization = LiveKitLocalizations.of(Global.appContext())!.common_hang_up;
@@ -242,7 +241,7 @@ extension on _BottomMenuWidgetState {
   }
 
   void _handleAudienceLinkMic() async {
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = LoginStore.shared.loginState.loginUserInfo?.userID;
     final isApplying = widget.viewStore.state.isApplyingToTakeSeat.value;
 
     if (isApplying) {

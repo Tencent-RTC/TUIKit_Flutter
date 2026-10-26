@@ -1,12 +1,16 @@
 import 'package:atomic_x_core/atomicxcore.dart';
-import 'package:extended_text_field/extended_text_field.dart';
+import 'package:live_uikit_barrage/third_party/extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../common/index.dart';
-import '../../state/store.dart';
+
+typedef OnBarrageError = void Function(int code, String message);
 
 class BarrageSendController {
+  final String roomId;
+  final OnBarrageError? onError;
+
   ValueNotifier<bool> isFloatWindowMode = ValueNotifier(false);
   ValueNotifier<bool> showEmojiPanel = ValueNotifier(false);
   FocusNode focusNode = FocusNode();
@@ -14,9 +18,7 @@ class BarrageSendController {
   final GlobalKey<ExtendedTextFieldState> textFieldKey = GlobalKey<ExtendedTextFieldState>();
   double _inputKeyboardHeight = 0;
 
-  BarrageSendController(
-      {required String roomId, required String ownerId, required String selfUserId, String? selfName}) {
-    Store().manager.init(roomId, ownerId, selfUserId, selfName);
+  BarrageSendController({required this.roomId, this.onError}) {
     focusNode.addListener(_handleFocusChange);
   }
 
@@ -25,7 +27,13 @@ class BarrageSendController {
   }
 
   Future<bool> sendBarrage(Barrage barrage) async {
-    return Store().manager.sendBarrage(barrage);
+    if (barrage.liveID != roomId) return false;
+    final result = await BarrageStore.create(roomId).sendTextMessage(
+        text: barrage.textContent, extensionInfo: barrage.extensionInfo);
+    if (!result.isSuccess) {
+      onError?.call(result.errorCode, result.errorMessage ?? '');
+    }
+    return result.isSuccess;
   }
 
   void setInputKeyboardHeight(double height) {
@@ -35,7 +43,9 @@ class BarrageSendController {
   }
 
   double getInputKeyboardHeight(BuildContext context) {
-    return _inputKeyboardHeight > 0 ? _inputKeyboardHeight : MediaQuery.viewInsetsOf(context).bottom;
+    return _inputKeyboardHeight > 0 ? _inputKeyboardHeight : MediaQuery
+        .viewInsetsOf(context)
+        .bottom;
   }
 
   void inputEmoji(String displayText) {
@@ -60,7 +70,7 @@ class BarrageSendController {
       textEditingController.value = value.copyWith(
           text: newText,
           selection:
-              value.selection.copyWith(baseOffset: end + displayText.length, extentOffset: end + displayText.length));
+          value.selection.copyWith(baseOffset: end + displayText.length, extentOffset: end + displayText.length));
     } else {
       textEditingController.value = TextEditingValue(
         text: displayText,

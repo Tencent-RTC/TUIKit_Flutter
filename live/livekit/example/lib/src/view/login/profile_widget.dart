@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit_example/generated/l10n.dart';
 import 'package:tencent_live_uikit_example/src/service/app_manager.dart';
 import 'package:tencent_live_uikit_example/src/store/app_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 import '../main/main_widget.dart';
 
@@ -50,14 +51,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                 Column(
                   children: [
                     SizedBox(
-                        width: _calculateTextWidth(S.current.app_trtc,
-                                    const TextStyle(fontSize: 32)) >
+                        width: _calculateTextWidth(S.current.app_trtc, const TextStyle(fontSize: 32)) >
                                 (MediaQuery.sizeOf(context).width - 70 - 10)
-                            ? _calculateTextWidth(S.current.app_trtc,
-                                    const TextStyle(fontSize: 32)) /
-                                2
-                            : _calculateTextWidth(S.current.app_trtc,
-                                const TextStyle(fontSize: 32)),
+                            ? _calculateTextWidth(S.current.app_trtc, const TextStyle(fontSize: 32)) / 2
+                            : _calculateTextWidth(S.current.app_trtc, const TextStyle(fontSize: 32)),
                         child: Text(
                           S.current.app_trtc,
                           maxLines: 3,
@@ -97,10 +94,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   const SizedBox(width: 10),
                   Text(
                     S.current.app_nick_name,
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.normal,
-                        color: Colors.black),
+                    style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: Colors.black),
                   ),
                   const SizedBox(width: 10),
                   SizedBox(
@@ -124,17 +118,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               child: ElevatedButton(
                 onPressed: () => _isButtonEnabled ? _setUserInfo() : null,
                 style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStateProperty.all(const Color(0xff056DF6)),
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15))),
+                  backgroundColor: WidgetStateProperty.all(const Color(0xff056DF6)),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                 ),
                 child: Text(S.current.app_confirm,
                     style: const TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white)),
+                        fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white)),
               ),
             )
           ],
@@ -154,9 +143,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     _isButtonEnabled = false;
     if (AppStore.userName.value.isNotEmpty) {
       int index = Random().nextInt(_userAvatarArray.length);
-      var result = await AppManager.setSelfInfo(
-          _userAvatarArray[index], AppStore.userName.value);
-      if (result.code == 0) {
+
+      var result = await AppManager.setSelfInfo(_userAvatarArray[index], AppStore.userName.value);
+      if (result.isSuccess) {
         _enterMainWidget();
       } else {
         _showDialog(result);
@@ -173,14 +162,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     ), (route) => false);
   }
 
-  _showDialog(TUIResult result) {
+  _showDialog(CompletionHandler result) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(S.current.app_login_fail),
-          content: Text(
-              "result.code:${result.code}, result.message: ${result.message}？"),
+          content: Text("result.code:${result.errorCode}, result.message: ${result.errorMessage}？"),
           actions: [
             TextButton(
               onPressed: () {

@@ -1,38 +1,82 @@
 import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
-import 'package:tencent_live_uikit/common/constants/constants.dart';
-import 'package:tencent_live_uikit/common/error/error_handler.dart';
-import 'package:tencent_live_uikit/common/language/gen/livekit_localizations.dart';
-import 'package:tencent_live_uikit/common/resources/colors.dart';
-import 'package:tencent_live_uikit/common/resources/images.dart';
-import 'package:tencent_live_uikit/common/screen/index.dart';
-import 'package:tencent_live_uikit/common/widget/index.dart';
+import 'package:rtc_room_engine/api/common/tui_video_view.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
 
 import '../../../../common/widget/base_bottom_sheet.dart';
 import '../../../../component/beauty/index.dart';
+import '../../common/permission_request_dialog.dart';
 
 class CoGuestVideoSettingsPanelWidget extends StatefulWidget {
   final int seatIndex;
+  final VoidCallback onClose;
   final LiveStreamManager liveStreamManager;
 
-  const CoGuestVideoSettingsPanelWidget({super.key, required this.liveStreamManager, this.seatIndex = -1});
+  const CoGuestVideoSettingsPanelWidget({
+    super.key,
+    required this.liveStreamManager,
+    required this.onClose,
+    this.seatIndex = -1,
+  });
 
   @override
   State<CoGuestVideoSettingsPanelWidget> createState() => _CoGuestVideoSettingsPanelWidgetState();
 }
 
-class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPanelWidget> {
+class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPanelWidget> with WidgetsBindingObserver {
   BottomSheetHandler? _beautyPanelHandler;
+  AlertHandler? _cameraRequestAlertHandler;
+  AlertHandler? _microphoneRequestAlertHandler;
+  int _cameraViewID = 0;
+  AppLifecycleState? _lastLifecycleState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _lastLifecycleState = WidgetsBinding.instance.lifecycleState;
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _beautyPanelHandler?.close();
-    widget.liveStreamManager.mediaManager.closeLocalCamera();
+    _cameraRequestAlertHandler?.close();
+    _microphoneRequestAlertHandler?.close();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    final previous = _lastLifecycleState;
+    _lastLifecycleState = state;
+    LiveKitLogger.info('lifecycle change: $previous -> $state');
+    final backFromBackground = state == AppLifecycleState.resumed &&
+        (previous == AppLifecycleState.paused ||
+            previous == AppLifecycleState.inactive ||
+            previous == AppLifecycleState.hidden);
+    if (backFromBackground) {
+      _onPanelResumed();
+    }
+  }
+
+  void _onPanelResumed() {
+    if (!mounted) return;
+    LiveKitLogger.info(' resumed to foreground, cameraViewID=$_cameraViewID');
+    if (_cameraViewID == 0) return;
+    Permission.check(PermissionType.camera).then((result) {
+      if (!mounted) return;
+      if (!result.isUsable) return;
+      _cameraRequestAlertHandler?.close();
+      if (_cameraViewID != 0 && DeviceStore.shared.state.cameraStatus.value == DeviceStatus.off) {
+        _startCameraTest(_cameraViewID);
+      }
+    });
   }
 
   @override
@@ -77,8 +121,12 @@ class _CoGuestVideoSettingsPanelWidgetState extends State<CoGuestVideoSettingsPa
           height: 328.height,
           child: VideoView(
             onViewCreated: (id) {
-              widget.liveStreamManager.mediaManager.setLocalVideoView(id);
-              widget.liveStreamManager.mediaManager.openLocalCamera(DeviceStore.shared.state.isFrontCamera.value);
+              _cameraViewID = id;
+              _startCameraTest(id);
+            },
+            onViewDisposed: (id) {
+              _cameraViewID = 0;
+              widget.liveStreamManager.mediaManager.stopCameraTest();
             },
           ),
         ),
@@ -179,15 +227,57 @@ extension on _CoGuestVideoSettingsPanelWidgetState {
     DeviceStore.shared.switchCamera(!DeviceStore.shared.state.isFrontCamera.value);
   }
 
+  void _startCameraTest(int viewID) {
+    widget.liveStreamManager.mediaManager
+        .startCameraTest(viewID, useFrontCamera: true, mirrorType: MirrorType.auto)
+        .then((result) async {
+      if (result.isSuccess) return;
+
+      final statusMap = await Permission.request([PermissionType.camera]);
+      PermissionStatus cameraPermissionStatus = statusMap[PermissionType.camera] ?? PermissionStatus.denied;
+      if (!cameraPermissionStatus.isUsable) {
+        if (!mounted) return;
+        _cameraRequestAlertHandler = PermissionRequestDialog.showCameraRequestDialog(context, onClose: () {
+          _cameraRequestAlertHandler?.close();
+          _cameraRequestAlertHandler = null;
+        });
+        return;
+      }
+    });
+  }
+
   Future<void> _requestIntraRoomVideoConnection() async {
-    Navigator.of(context).pop();
+    final statusMap = await Permission.request([PermissionType.camera]);
+    PermissionStatus cameraPermissionStatus = statusMap[PermissionType.camera] ?? PermissionStatus.denied;
+    if (!cameraPermissionStatus.isUsable) {
+      if (!mounted) return;
+      _cameraRequestAlertHandler = PermissionRequestDialog.showCameraRequestDialog(context, onClose: () {
+        _cameraRequestAlertHandler?.close();
+        _cameraRequestAlertHandler = null;
+      });
+      return;
+    }
+
+    final microphoneStatusMap = await Permission.request([PermissionType.microphone]);
+    PermissionStatus microphonePermissionStatus =
+        microphoneStatusMap[PermissionType.microphone] ?? PermissionStatus.denied;
+    if (!microphonePermissionStatus.isUsable) {
+      if (!mounted) return;
+      _microphoneRequestAlertHandler = PermissionRequestDialog.showMicrophoneRequestDialog(context, onClose: () {
+        _microphoneRequestAlertHandler?.close();
+        _microphoneRequestAlertHandler = null;
+      });
+      return;
+    }
+
+    widget.onClose.call();
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(true);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
     final result =
         await coGuestStore.applyForSeat(seatIndex: widget.seatIndex, timeout: Constants.defaultRequestTimeout);
     if (!mounted) return;
-    if (result.errorCode != TUIError.success.rawValue) {
+    if (result.errorCode != 0) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
       makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
           type: ToastType.error);

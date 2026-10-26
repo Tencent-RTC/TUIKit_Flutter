@@ -1,5 +1,6 @@
 import 'package:atomic_x_core/api/live/co_host_store.dart';
 import 'package:atomic_x_core/api/live/live_seat_store.dart';
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/error/error_handler.dart';
 import 'package:tencent_live_uikit/common/screen/index.dart';
@@ -13,8 +14,9 @@ import '../../../manager/live_stream_manager.dart';
 
 class CoHostManagementPanelWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
+  final VoidCallback onClose;
 
-  const CoHostManagementPanelWidget({super.key, required this.liveStreamManager});
+  const CoHostManagementPanelWidget({super.key, required this.liveStreamManager, required this.onClose});
 
   @override
   State<CoHostManagementPanelWidget> createState() => _CoHostManagementPanelWidgetState();
@@ -22,7 +24,6 @@ class CoHostManagementPanelWidget extends StatefulWidget {
 
 class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidget> {
   late final LiveStreamManager liveStreamManager;
-  static const coHostTimeout = 10;
 
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey();
@@ -77,7 +78,24 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
     return SizedBox(
       height: 28.height,
       child: Stack(
+        alignment: Alignment.center,
         children: [
+          Positioned(
+            left: 24.width,
+            child: GestureDetector(
+              onTap: () {
+                widget.onClose.call();
+              },
+              child: SizedBox(
+                width: 24.width,
+                height: 24.width,
+                child: Image.asset(
+                  LiveImages.returnArrow,
+                  package: Constants.pluginName,
+                ),
+              ),
+            ),
+          ),
           Center(
             child: Text(
               LiveKitLocalizations.of(Global.appContext())!.common_connection,
@@ -246,7 +264,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
           final filterRecommendUsers = recommendedUsers
               .where((user) =>
                   user.connectionStatus != TUIConnectionStatus.connected &&
-                  user.roomId != liveStreamManager.roomState.roomId)
+                  user.liveID != liveStreamManager.roomState.roomId)
               .toList();
           return Column(
             children: [
@@ -274,7 +292,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
     );
   }
 
-  Widget _buildRecommendUserItem(TUIConnectionUser user) {
+  Widget _buildRecommendUserItem(SeatUserInfo user) {
     return Container(
       height: 60.height,
       color: LiveColors.designStandardG2,
@@ -291,7 +309,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
                 height: 40.radius,
                 child: ClipOval(
                   child: Image.network(
-                    user.avatarUrl,
+                    user.avatarURL,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
@@ -307,7 +325,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
                 constraints: BoxConstraints(maxWidth: 135.width),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  user.userName.isNotEmpty ? user.userName : user.userId,
+                  user.userName.isNotEmpty ? user.userName : user.userID,
                   style: const TextStyle(color: LiveColors.designStandardG7, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -322,7 +340,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
             child: ValueListenableBuilder(
                 valueListenable: coHostStore.coHostState.invitees,
                 builder: (context, inviteeList, _) {
-                  final isInInviting = inviteeList.any((invitee) => invitee.liveID == user.roomId);
+                  final isInInviting = inviteeList.any((invitee) => invitee.liveID == user.liveID);
                   return Container(
                     width: 64.width,
                     height: 24.height,
@@ -375,7 +393,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
 
   Widget _buildRecommendListFooter() {
     return ValueListenableBuilder(
-      valueListenable: liveStreamManager.coHostState.recommendListCursor,
+      valueListenable: coHostStore.coHostState.candidatesCursor,
       builder: (context, cursor, _) {
         return Visibility(
           visible: cursor.isEmpty && liveStreamManager.coHostState.recommendedUsers.value.isNotEmpty,
@@ -399,7 +417,7 @@ class _CoHostManagementPanelWidgetState extends State<CoHostManagementPanelWidge
 
 extension on _CoHostManagementPanelWidgetState {
   String _getSelfID() {
-    return TUIRoomEngine.getSelfInfo().userId;
+    return LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
   }
 
   void _addObserver() {
@@ -412,7 +430,7 @@ extension on _CoHostManagementPanelWidgetState {
 
   void _loadMore() {
     if (_isScrollToBottom()) {
-      final cursor = liveStreamManager.coHostState.recommendListCursor.value;
+      final cursor = coHostStore.coHostState.candidatesCursor.value;
       if (cursor.isNotEmpty && !_isLoading.value) {
         _fetchMoreRecommendUsers();
       }
@@ -439,7 +457,7 @@ extension on _CoHostManagementPanelWidgetState {
     if (_isLoading.value) return;
     _isLoading.value = true;
     try {
-      await liveStreamManager.fetchRecommendedList();
+      await liveStreamManager.fetchRecommendedList(true);
     } finally {
       _isLoading.value = false;
     }
@@ -449,9 +467,9 @@ extension on _CoHostManagementPanelWidgetState {
     if (_isLoading.value) return;
     _isLoading.value = true;
     try {
-      final cursor = liveStreamManager.coHostState.recommendListCursor.value;
+      final cursor = coHostStore.coHostState.candidatesCursor.value;
       if (cursor.isNotEmpty) {
-        await liveStreamManager.fetchRecommendedList(cursor: cursor);
+        await liveStreamManager.fetchRecommendedList(false);
       }
     } finally {
       _isLoading.value = false;
@@ -493,22 +511,21 @@ extension on _CoHostManagementPanelWidgetState {
     _disconnectCoHostHandler = Alert.showAlert(confirmInfo, context);
   }
 
-  void _inviteToCoHost(TUIConnectionUser user) async {
+  void _inviteToCoHost(SeatUserInfo user) async {
     final inviteeList = coHostStore.coHostState.invitees.value;
-    final isInInviting = inviteeList.any((invitee) => invitee.liveID == user.roomId);
+    final isInInviting = inviteeList.any((invitee) => invitee.liveID == user.liveID);
     if (isInInviting) return;
 
     liveStreamManager.onRequestCrossRoomConnection(user);
     final result = await coHostStore.requestHostConnection(
-        targetHostLiveID: user.roomId,
+        targetHostLiveID: user.liveID,
         layoutTemplate: CoHostLayoutTemplate.hostDynamicGrid,
-        timeout: _CoHostManagementPanelWidgetState.coHostTimeout);
-    if (result.errorCode != TUIConnectionCode.success.value()) {
-      liveStreamManager.onRequestCrossRoomConnectionFailed(user.roomId);
-      liveStreamManager.toastSubject
-          .add(ErrorHandler.convertToConnectionErrorMessage(TUIConnectionCodeExt.fromValue(result.errorCode)) ?? '');
+        timeout: Constants.coHostRequestTimeout);
+    if (result.errorCode != 0) {
+      liveStreamManager.onRequestCrossRoomConnectionFailed(user.liveID);
+      liveStreamManager.toastSubject.add(ErrorHandler.convertToErrorMessage(result.errorCode, ''));
       return;
     }
-    liveStreamManager.onRequestCrossRoomConnectionFailed(user.roomId);
+    liveStreamManager.onRequestCrossRoomConnectionFailed(user.liveID);
   }
 }

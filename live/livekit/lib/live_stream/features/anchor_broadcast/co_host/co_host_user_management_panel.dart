@@ -7,7 +7,6 @@ import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/live_stream/manager/live_stream_manager.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 import '../common/anchor_user_management_panel_base.dart';
 
@@ -136,7 +135,7 @@ class _CoHostUserManagementPanelState extends State<CoHostUserManagementPanel> {
               final liveID = widget.seatInfo.userInfo.liveID;
               final isMute = !isMicrophoneMuted;
               CoHostStore.create(liveInfo.liveID).muteRemoteHostAudio(liveID: liveID, isMuted: isMute).then((result) {
-                if (result.errorCode != TUIError.success.rawValue) {
+                if (result.errorCode != 0) {
                   widget.liveStreamManager.toastSubject
                       .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
                 }
@@ -173,7 +172,7 @@ extension on _CoHostUserManagementPanelState {
     final isMicrophoneMuted = _isMicrophoneMuted.value;
     if (isMicrophoneMuted) {
       liveSeatStore.unmuteMicrophone().then((result) {
-        if (result.errorCode != TUIError.success.rawValue) {
+        if (result.errorCode != 0) {
           widget.liveStreamManager.toastSubject
               .add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
         }

@@ -4,6 +4,7 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_info.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
+import '../../../common/logger/logger.dart';
 import '../state/follow_define.dart';
 import '../state/live_info_state.dart';
 
@@ -17,6 +18,8 @@ class LiveInfoManager {
     state.ownerId.value = liveInfo.liveOwner.userID;
     state.ownerName.value = liveInfo.liveOwner.userName;
     state.ownerAvatarUrl.value = liveInfo.liveOwner.avatarURL;
+    LiveKitLogger.info("initRoomInfo, roomId=${state.roomId}, selfUserId=${state.selfUserId}, ownerId=${state
+        .ownerId.value}, ownerName=${state.ownerName.value}");
     _syncUserFollowingStatus(liveInfo.liveOwner.userID);
   }
 
@@ -62,11 +65,18 @@ class LiveInfoManager {
 
 extension LiveInfoManagerCallback on LiveInfoManager {
   void onMyFollowingListChanged(List<V2TimUserFullInfo> userInfoList, bool isAdd) {
-    _syncUserFollowingStatus(state.ownerId.value);
+    final Set<String> followingList = Set.from(state.followingList.value);
+    final userIDs = userInfoList.map((item) => item.userID ?? '').where((item) => item.isNotEmpty);
+    if (isAdd) {
+      followingList.addAll(userIDs);
+    } else {
+      followingList.removeAll(userIDs);
+    }
+    state.followingList.value = followingList;
   }
 
   void onMyFollowersListChanged(List<V2TimUserFullInfo> userInfoList, bool isAdd) {
-    _syncUserFollowingStatus(state.ownerId.value);
+    getFansNumber();
   }
 }
 

@@ -1,9 +1,7 @@
 import 'package:atomic_x_core/api/device/audio_effect_store.dart';
 import 'package:atomic_x_core/api/device/device_store.dart';
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
-import 'package:live_uikit_barrage/live_uikit_barrage.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/float_window/float_window_mode.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
@@ -15,15 +13,17 @@ import 'package:tencent_live_uikit/voice_room/widget/index.dart';
 import '../common/resources/live_theme_manager.dart';
 import '../common/widget/float_window/float_window_controller.dart';
 
+import 'package:tuikit_atomic_x/permission/permission.dart';
+
 const maxConnectedViewersCount = 10;
 
 enum RoomBehavior { autoCreate, prepareCreate, join }
 
 class RoomParams {
   int maxSeatCount;
-  TUISeatMode seatMode;
+  TakeSeatMode seatMode;
 
-  RoomParams({this.maxSeatCount = maxConnectedViewersCount, this.seatMode = TUISeatMode.applyToTake});
+  RoomParams({this.maxSeatCount = maxConnectedViewersCount, this.seatMode = TakeSeatMode.apply});
 }
 
 class TUIVoiceRoomWidget extends StatefulWidget {
@@ -70,7 +70,6 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
     _prepareStore.prepareLiveIdBeforeEnterRoom(liveID: liveID, params: params);
     _subscribeToast();
     _needToPrepare.value = behavior == RoomBehavior.prepareCreate;
-    DeviceStore.shared.setFocus(DeviceFocusOwner.live);
     widget.floatWindowController?.isFullScreen.addListener(_onFullScreenChangedListener);
   }
 
@@ -93,7 +92,6 @@ class _TUIVoiceRoomWidgetState extends State<TUIVoiceRoomWidget> {
     seatGridController.dispose();
     DeviceStore.shared.reset();
     AudioEffectStore.shared.reset();
-    BarrageDisplayController.resetState();
     _stopForegroundService();
     super.dispose();
   }
@@ -165,8 +163,9 @@ extension on _TUIVoiceRoomWidgetState {
   void _startForegroundService() async {
     String description = LiveKitLocalizations.of(TUILiveKitNavigatorObserver.instance.getContext())!.common_app_running;
 
-    final hasMicrophonePermission = await Permission.microphone.status == PermissionStatus.granted;
-    if (!hasMicrophonePermission) {
+    final microphoneStatus = await Permission.check(PermissionType.microphone);
+
+    if (!microphoneStatus.isUsable) {
       LiveKitLogger.error(
           '[ForegroundService] failed to start audio foreground service. reason: without microphone permission');
       return;
@@ -176,6 +175,5 @@ extension on _TUIVoiceRoomWidgetState {
 
   void _stopForegroundService() {
     TUILiveKitPlatform.instance.stopForegroundService(ForegroundServiceType.audio);
-    Permission.microphone.onGrantedCallback(null);
   }
 }

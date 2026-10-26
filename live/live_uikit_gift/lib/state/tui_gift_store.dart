@@ -1,4 +1,3 @@
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
 import 'index.dart';
@@ -16,7 +15,6 @@ class TUIGiftStore {
   }
 
   OnGiftError? onError;
-  final ValueNotifier<Map<String, List<Gift>>> giftListMap = ValueNotifier({});
   final ValueNotifier<Map<String, TUIGiftData?>> giftDataMap = ValueNotifier({});
   final ValueNotifier<Map<String, TUILikeData?>> likeDataMap = ValueNotifier({});
   final ValueNotifier<int> showLikeStart = ValueNotifier(0);
@@ -25,7 +23,6 @@ class TUIGiftStore {
   void reset() {
     likeDataMap.value.clear();
     giftDataMap.value.clear();
-    giftListMap.value.clear();
     showLikeStart.value = 0;
     localLikeCount = 0;
   }

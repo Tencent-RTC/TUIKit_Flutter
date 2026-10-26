@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,7 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		85747CBF847182B9A00E22CD /* Pods_TUIKitReplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD97212E797E737460D388DB /* Pods_TUIKitReplay.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -80,12 +81,14 @@
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		571CADCCA085A0E64EF11F47 /* Pods-TUIKitReplay.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TUIKitReplay.release.xcconfig"; path = "Target Support Files/Pods-TUIKitReplay/Pods-TUIKitReplay.release.xcconfig"; sourceTree = "<group>"; };
 		58287820C630936DF7AB949D /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		709AEE655D496CF08A38D785 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		73EC85D537B46B11457C2D9D /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7C3BE0242EEAD3C49E68514A /* Pods-TUIKitReplay.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TUIKitReplay.debug.xcconfig"; path = "Target Support Files/Pods-TUIKitReplay/Pods-TUIKitReplay.debug.xcconfig"; sourceTree = "<group>"; };
 		7D4281AD9E64354BD972EF51 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		8B9A0501CAAFBBE44C9A51A5 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		905C860E430428801F4CC1EC /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +100,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9EE8AB305AEC4580BE43E154 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
+		CD97212E797E737460D388DB /* Pods_TUIKitReplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TUIKitReplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D25CDC252F8E3E4200A97085 /* 2dMotionRes.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = 2dMotionRes.bundle; sourceTree = "<group>"; };
 		D25CDC262F8E3E4200A97085 /* 3dMotionRes.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = 3dMotionRes.bundle; sourceTree = "<group>"; };
 		D25CDC272F8E3E4200A97085 /* ganMotionRes.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ganMotionRes.bundle; sourceTree = "<group>"; };
@@ -114,6 +118,7 @@
 		D29AD9D12F52FD220061A19F /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		D29AD9D22F52FD280061A19F /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		D29AD9D32F52FD310061A19F /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		E839536B5F21953DCF879239 /* Pods-TUIKitReplay.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TUIKitReplay.profile.xcconfig"; path = "Target Support Files/Pods-TUIKitReplay/Pods-TUIKitReplay.profile.xcconfig"; sourceTree = "<group>"; };
 		F18D64E5DB4B5E570680AD53 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -158,6 +163,7 @@
 				D29AD9D02F52FD130061A19F /* OpenAL.framework in Frameworks */,
 				D29AD9B92F52FC4B0061A19F /* ReplayKit.framework in Frameworks */,
 				D29AD9CA2F52FCF20061A19F /* AudioToolbox.framework in Frameworks */,
+				85747CBF847182B9A00E22CD /* Pods_TUIKitReplay.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +191,7 @@
 				905C860E430428801F4CC1EC /* Pods_Runner.framework */,
 				F18D64E5DB4B5E570680AD53 /* Pods_RunnerTests.framework */,
 				D29AD9B82F52FC4B0061A19F /* ReplayKit.framework */,
+				CD97212E797E737460D388DB /* Pods_TUIKitReplay.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -198,6 +205,9 @@
 				8B9A0501CAAFBBE44C9A51A5 /* Pods-RunnerTests.debug.xcconfig */,
 				58287820C630936DF7AB949D /* Pods-RunnerTests.release.xcconfig */,
 				9EE8AB305AEC4580BE43E154 /* Pods-RunnerTests.profile.xcconfig */,
+				7C3BE0242EEAD3C49E68514A /* Pods-TUIKitReplay.debug.xcconfig */,
+				571CADCCA085A0E64EF11F47 /* Pods-TUIKitReplay.release.xcconfig */,
+				E839536B5F21953DCF879239 /* Pods-TUIKitReplay.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -321,6 +331,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D29AD9C62F52FC4B0061A19F /* Build configuration list for PBXNativeTarget "TUIKitReplay" */;
 			buildPhases = (
+				19FF3FB3CB0DD901DAEF414C /* [CP] Check Pods Manifest.lock */,
 				D29AD9B32F52FC4B0061A19F /* Sources */,
 				D29AD9B42F52FC4B0061A19F /* Frameworks */,
 				D29AD9B52F52FC4B0061A19F /* Resources */,
@@ -333,8 +344,6 @@
 				D29AD9BA2F52FC4B0061A19F /* TUIKitReplay */,
 			);
 			name = TUIKitReplay;
-			packageProductDependencies = (
-			);
 			productName = TUIKitReplay;
 			productReference = D29AD9B72F52FC4B0061A19F /* TUIKitReplay.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -373,7 +382,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -442,6 +451,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		19FF3FB3CB0DD901DAEF414C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TUIKitReplay-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		1E03B8793B9DDD7C095E2D4D /* [CP] Check Pods Manifest.lock */ = {
@@ -908,6 +939,7 @@
 		};
 		D29AD9C22F52FC4B0061A19F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C3BE0242EEAD3C49E68514A /* Pods-TUIKitReplay.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -957,6 +989,7 @@
 		};
 		D29AD9C32F52FC4B0061A19F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 571CADCCA085A0E64EF11F47 /* Pods-TUIKitReplay.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1005,6 +1038,7 @@
 		};
 		D29AD9C42F52FC4B0061A19F /* Profile */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E839536B5F21953DCF879239 /* Pods-TUIKitReplay.profile.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1095,7 +1129,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

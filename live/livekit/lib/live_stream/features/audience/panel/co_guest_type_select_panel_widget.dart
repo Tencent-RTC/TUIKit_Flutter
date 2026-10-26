@@ -1,10 +1,11 @@
+import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/co_guest_store.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/api/common/tui_common_define.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/live_stream/features/audience/panel/co_guest_video_setting_panel_widget.dart';
-import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
+import 'package:tencent_live_uikit/live_stream/features/common/permission_request_dialog.dart';
+import 'package:tuikit_atomic_x/atomicx.dart';
 
 import '../../../manager/live_stream_manager.dart';
 
@@ -12,10 +13,14 @@ class CoGuestTypeSelectPanelWidget extends StatefulWidget {
   final LiveStreamManager liveStreamManager;
   final int seatIndex;
   final bool enableCamera;
+  final BuildContext parentContext;
+  final VoidCallback onClose;
 
   const CoGuestTypeSelectPanelWidget({
     super.key,
+    required this.parentContext,
     required this.liveStreamManager,
+    required this.onClose,
     this.seatIndex = -1,
     this.enableCamera = true,
   });
@@ -26,10 +31,14 @@ class CoGuestTypeSelectPanelWidget extends StatefulWidget {
 
 class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWidget> {
   BottomSheetHandler? _videoSettingsPanelHandler;
+  AlertHandler? _cameraRequestAlertHandler;
+  AlertHandler? _microphoneRequestAlertHandler;
 
   @override
   void dispose() {
     _videoSettingsPanelHandler?.close();
+    _cameraRequestAlertHandler?.close();
+    _microphoneRequestAlertHandler?.close();
     super.dispose();
   }
 
@@ -144,7 +153,13 @@ class _CoGuestTypeSelectPanelWidgetState extends State<CoGuestTypeSelectPanelWid
 
   void _showSettingsPanel() {
     _videoSettingsPanelHandler = popupWidget(
-      CoGuestVideoSettingsPanelWidget(liveStreamManager: widget.liveStreamManager, seatIndex: widget.seatIndex),
+      CoGuestVideoSettingsPanelWidget(
+        liveStreamManager: widget.liveStreamManager,
+        seatIndex: widget.seatIndex,
+        onClose: () {
+          widget.onClose.call();
+        },
+      ),
       context: context,
     );
   }
@@ -156,19 +171,44 @@ extension on _CoGuestTypeSelectPanelWidgetState {
   void _connectAudio() => _requestConnection(isVideo: false);
 
   Future<void> _requestConnection({required bool isVideo}) async {
-    Navigator.of(context).pop();
+    if (isVideo) {
+      final statusMap = await Permission.request([PermissionType.camera]);
+      PermissionStatus cameraPermissionStatus = statusMap[PermissionType.camera] ?? PermissionStatus.denied;
+      if (!cameraPermissionStatus.isUsable) {
+        if (!widget.parentContext.mounted) return;
+        _cameraRequestAlertHandler = PermissionRequestDialog.showCameraRequestDialog(widget.parentContext, onClose: () {
+          _cameraRequestAlertHandler?.close();
+          _cameraRequestAlertHandler = null;
+        });
+        return;
+      }
+    }
+
+    final statusMap = await Permission.request([PermissionType.microphone]);
+    PermissionStatus microphonePermissionStatus = statusMap[PermissionType.microphone] ?? PermissionStatus.denied;
+    if (!microphonePermissionStatus.isUsable) {
+      if (!widget.parentContext.mounted) return;
+      _microphoneRequestAlertHandler = PermissionRequestDialog.showMicrophoneRequestDialog(widget.parentContext, onClose: () {
+        _microphoneRequestAlertHandler?.close();
+        _microphoneRequestAlertHandler = null;
+      });
+      return;
+    }
+    widget.onClose.call();
     widget.liveStreamManager.coGuestManager.onStartRequestIntraRoomConnection();
     widget.liveStreamManager.coGuestManager.updateOpenCameraAfterTakeSeat(isVideo);
+    if (isVideo) DeviceStore.shared.switchMirror(MirrorType.auto);
     CoGuestStore coGuestStore = CoGuestStore.create(widget.liveStreamManager.roomState.roomId);
     final result = await coGuestStore.applyForSeat(
       seatIndex: widget.seatIndex,
       timeout: Constants.defaultRequestTimeout,
     );
-    if (!mounted) return;
-    if (result.errorCode != TUIError.success.rawValue) {
+    if (result.errorCode != 0) {
       widget.liveStreamManager.coGuestManager.onRequestIntraRoomConnectionFailed();
-      makeToast(context, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
-          type: ToastType.error);
+      if (widget.parentContext.mounted == true) {
+        makeToast(widget.parentContext, ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '',
+            type: ToastType.error);
+      }
     }
   }
 }

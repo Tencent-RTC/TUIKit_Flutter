@@ -1,6 +1,5 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../../../common/index.dart';
 
@@ -176,6 +175,7 @@ extension on _AudienceListPanelWidgetState {
 
 extension on _AudienceListPanelWidgetState {
   bool isSelfRoomOwner() {
-    return TUIRoomEngine.getSelfInfo().userId == LiveListStore.shared.liveState.currentLive.value.liveOwner.userID;
+    final selfID = LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
+    return selfID == LiveListStore.shared.liveState.currentLive.value.liveOwner.userID;
   }
 }

@@ -1,5 +1,5 @@
+import 'package:atomic_x_core/api/live/live_audience_store.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/enum/V2TimFriendshipListener.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_follow_type_check_result.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
@@ -8,7 +8,7 @@ import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import '../../component/live_info/state/follow_define.dart';
 
 class VoiceRoomIMState {
-  ValueNotifier<Set<TUIUserInfo>> myFollowingUserList = ValueNotifier({});
+  ValueNotifier<Set<LiveUserInfo>> myFollowingUserList = ValueNotifier({});
 }
 
 class VoiceRoomIMStore {
@@ -24,28 +24,28 @@ class VoiceRoomIMStore {
     _removeObserver();
   }
 
-  void followUser(TUIUserInfo userInfo) async {
-    final result = await _friendshipManager.followUser(userIDList: [userInfo.userId]);
+  void followUser(LiveUserInfo userInfo) async {
+    final result = await _friendshipManager.followUser(userIDList: [userInfo.userID]);
     const success = 0;
     if (result.code == success) {
-      final Set<TUIUserInfo> followingList = state.myFollowingUserList.value.toSet();
+      final Set<LiveUserInfo> followingList = state.myFollowingUserList.value.toSet();
       followingList.add(userInfo);
       state.myFollowingUserList.value = followingList;
     }
   }
 
-  void unfollowUser(TUIUserInfo userInfo) async {
-    final result = await _friendshipManager.unfollowUser(userIDList: [userInfo.userId]);
+  void unfollowUser(LiveUserInfo userInfo) async {
+    final result = await _friendshipManager.unfollowUser(userIDList: [userInfo.userID]);
     const success = 0;
     if (result.code == success) {
-      final Set<TUIUserInfo> followingList = Set.from(state.myFollowingUserList.value);
-      followingList.removeWhere((following) => following.userId == userInfo.userId);
+      final Set<LiveUserInfo> followingList = Set.from(state.myFollowingUserList.value);
+      followingList.removeWhere((following) => following.userID == userInfo.userID);
       state.myFollowingUserList.value = followingList;
     }
   }
 
-  void checkFollowType(String userId) async {
-    final result = await TencentImSDKPlugin.v2TIMManager.getFriendshipManager().checkFollowType(userIDList: [userId]);
+  void checkFollowType(String userID) async {
+    final result = await TencentImSDKPlugin.v2TIMManager.getFriendshipManager().checkFollowType(userIDList: [userID]);
     if (result.code != 0 || result.data == null || result.data is! List<V2TimFollowTypeCheckResult>) {
       return;
     }
@@ -55,8 +55,7 @@ class VoiceRoomIMStore {
     }
     final followType = IMFollowType.fromInt(result.data![0].followType ?? 0);
     final followed = followType == IMFollowType.inMyFollowingList || followType == IMFollowType.inBothFollowersList;
-    _updateFollowingUserList(
-        [TUIUserInfo(userId: userId, userName: '', avatarUrl: '', userRole: TUIRole.generalUser)], followed);
+    _updateFollowingUserList([LiveUserInfo(userID: userID, userName: '', avatarURL: '')], followed);
   }
 }
 
@@ -74,26 +73,25 @@ extension on VoiceRoomIMStore {
 
   void _onMyFollowingListChanged(List<V2TimUserFullInfo> userInfoList, bool isAdd) {
     final users = userInfoList
-        .map((imUserInfo) => TUIUserInfo(
-            userId: imUserInfo.userID ?? '',
+        .map((imUserInfo) => LiveUserInfo(
+            userID: imUserInfo.userID ?? '',
             userName: imUserInfo.nickName ?? '',
-            avatarUrl: imUserInfo.faceUrl ?? '',
-            userRole: TUIRole.generalUser))
+            avatarURL: imUserInfo.faceUrl ?? ''))
         .toList();
     _updateFollowingUserList(users, isAdd);
   }
 
-  void _updateFollowingUserList(List<TUIUserInfo> users, bool isFollow) {
+  void _updateFollowingUserList(List<LiveUserInfo> users, bool isFollow) {
     if (isFollow) {
-      for (TUIUserInfo user in users) {
-        if (state.myFollowingUserList.value.any((following) => following.userId == user.userId)) continue;
+      for (LiveUserInfo user in users) {
+        if (state.myFollowingUserList.value.any((following) => following.userID == user.userID)) continue;
         state.myFollowingUserList.value = {...state.myFollowingUserList.value, user};
       }
       return;
     }
 
-    final unfollowUserIds = users.map((user) => user.userId).toSet();
+    final unfollowUserIds = users.map((user) => user.userID).toSet();
     state.myFollowingUserList.value =
-        state.myFollowingUserList.value.where((user) => !unfollowUserIds.contains(user.userId)).toSet();
+        state.myFollowingUserList.value.where((user) => !unfollowUserIds.contains(user.userID)).toSet();
   }
 }

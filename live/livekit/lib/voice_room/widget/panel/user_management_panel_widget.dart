@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/voice_room_im_store.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 class UserManagementPanelWidget extends StatefulWidget {
   final String liveID;
   final VoiceRoomIMStore imStore;
   final ToastService toastService;
-  final TUISeatInfo seatInfo;
+  final SeatInfo seatInfo;
   final VoidCallback? onDismiss;
 
   const UserManagementPanelWidget(
@@ -25,7 +24,7 @@ class UserManagementPanelWidget extends StatefulWidget {
 }
 
 class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
-  late final TUISeatInfo seatInfo;
+  late final SeatInfo seatInfo;
   final ValueNotifier<bool> seatAudioLocked = ValueNotifier(false);
   late final VoidCallback _seatStatusChangedListener = _handleSeatStatusChanged;
 
@@ -33,13 +32,14 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
 
   LiveListStore get _liveStore => LiveListStore.shared;
 
-  bool get _isOwner => _liveStore.liveState.currentLive.value.liveOwner.userID == TUIRoomEngine.getSelfInfo().userId;
+  bool get _isOwner =>
+      _liveStore.liveState.currentLive.value.liveOwner.userID == LoginStore.shared.loginState.loginUserInfo?.userID;
 
   @override
   void initState() {
     super.initState();
     seatInfo = widget.seatInfo;
-    seatAudioLocked.value = seatInfo.isAudioLocked ?? false;
+    seatAudioLocked.value = seatInfo.userInfo.allowOpenMicrophone;
     _subscribeEmptySeatStatus();
   }
 
@@ -94,7 +94,7 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
               height: 40.width,
               child: ClipOval(
                 child: Image.network(
-                  seatInfo.avatarUrl ?? '',
+                  seatInfo.userInfo.avatarURL,
                   errorBuilder: (context, error, _) =>
                       Image.asset(LiveImages.defaultAvatar, package: Constants.pluginName),
                 ),
@@ -108,11 +108,11 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(seatInfo.userName ?? '',
+                    Text(seatInfo.userInfo.userName,
                         style: const TextStyle(color: LiveColors.designStandardG6, fontSize: 16),
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis),
-                    Text('Id: ${seatInfo.userId}',
+                    Text('Id: ${seatInfo.userInfo.userID}',
                         style: const TextStyle(
                           color: LiveColors.notStandardGrey,
                           fontSize: 12,
@@ -129,9 +129,9 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
                   valueListenable: widget.imStore.state.myFollowingUserList,
                   builder: (context, followingUserList, child) {
                     final isFollowed =
-                        followingUserList.any((followingUser) => followingUser.userId == seatInfo.userId);
+                        followingUserList.any((followingUser) => followingUser.userID == seatInfo.userInfo.userID);
                     return GestureDetector(
-                      onTap: () => _followUser(seatInfo.userId, !isFollowed),
+                      onTap: () => _followUser(seatInfo.userInfo.userID, !isFollowed),
                       child: Container(
                         width: 70.width,
                         height: 32.height,
@@ -237,20 +237,20 @@ class _UserManagementPanelWidgetState extends State<UserManagementPanelWidget> {
 
 extension on _UserManagementPanelWidgetState {
   void _followUser(String userId, bool isFollow) {
-    final userInfo = TUIUserInfo(userId: userId, userName: '', avatarUrl: '', userRole: TUIRole.generalUser);
+    final userInfo = LiveUserInfo(userID: userId, userName: '', avatarURL: '');
     isFollow ? widget.imStore.followUser(userInfo) : widget.imStore.unfollowUser(userInfo);
   }
 
   void _lockAudio() async {
-    final lockParam = TUISeatLockParams();
-    lockParam.lockAudio = !seatAudioLocked.value;
-    final result = await TUIRoomEngine.sharedInstance().lockSeatByAdmin(seatInfo.index, lockParam);
-    if (result.code == TUIError.success) {
+    final result = await (seatAudioLocked.value
+        ? _liveSeatStore.openRemoteMicrophone(userID: seatInfo.userInfo.userID, policy: DeviceControlPolicy.unlockOnly)
+        : _liveSeatStore.closeRemoteMicrophone(seatInfo.userInfo.userID));
+    if (result.errorCode == 0) {
       seatAudioLocked.value = !seatAudioLocked.value;
     }
   }
 
   void _kickOffSeat() {
-    _liveSeatStore.kickUserOutOfSeat(seatInfo.userId);
+    _liveSeatStore.kickUserOutOfSeat(seatInfo.userInfo.userID);
   }
 }

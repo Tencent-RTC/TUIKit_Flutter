@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/voice_room/manager/index.dart';
 import 'package:tencent_live_uikit/voice_room/widget/panel/seat_invitation_panel_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 class SeatManagementPanelWidget extends StatefulWidget {
   final String liveID;
@@ -109,9 +108,8 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
               listenable: Listenable.merge([_coGuestStore.coGuestState.applicants, _seatStore.liveSeatState.seatList]),
               builder: (context, child) {
                 final seatedCount = _seatStore.liveSeatState.seatList.value
-                    .where((seatInfo) =>
-                        seatInfo.userInfo.userID.isNotEmpty &&
-                        seatInfo.userInfo.userID != TUIRoomEngine.getSelfInfo().userId)
+                    .where(
+                        (seatInfo) => seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != _getSelfID())
                     .length;
                 final isAllEmpty = (seatedCount == 0) && (_coGuestStore.coGuestState.applicants.value.isEmpty);
                 return isAllEmpty ? _initEmptySeatManagement() : _initSeatManagement();
@@ -178,8 +176,7 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
       valueListenable: _seatStore.liveSeatState.seatList,
       builder: (context, seatList, child) {
         final seatedCount = seatList
-            .where((seatInfo) =>
-                seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != TUIRoomEngine.getSelfInfo().userId)
+            .where((seatInfo) => seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != _getSelfID())
             .length;
         return Visibility(
           visible: seatedCount > 0,
@@ -198,8 +195,7 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
       valueListenable: _seatStore.liveSeatState.seatList,
       builder: (context, seatList, child) {
         final seatedList = seatList
-            .where((seatInfo) =>
-                seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != TUIRoomEngine.getSelfInfo().userId)
+            .where((seatInfo) => seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != _getSelfID())
             .toList();
         currentSeatList.clear();
         currentSeatList.addAll(seatedList);
@@ -228,8 +224,7 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
         final seatApplicationList = _coGuestStore.coGuestState.applicants.value;
         final seatList = _seatStore.liveSeatState.seatList.value;
         final seatedCount = seatList
-            .where((seatInfo) =>
-                seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != TUIRoomEngine.getSelfInfo().userId)
+            .where((seatInfo) => seatInfo.userInfo.userID.isNotEmpty && seatInfo.userInfo.userID != _getSelfID())
             .length;
 
         return Visibility(
@@ -247,7 +242,7 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
     return ValueListenableBuilder(
       valueListenable: _coGuestStore.coGuestState.applicants,
       builder: (context, applicants, child) {
-        final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+        final selfUserId = _getSelfID();
         final filterApplications = applicants.where((applicant) => applicant.userID != selfUserId).toList();
         return Visibility(
           visible: filterApplications.isNotEmpty,
@@ -265,7 +260,7 @@ class _SeatManagementPanelWidgetState extends State<SeatManagementPanelWidget> {
     return ValueListenableBuilder(
       valueListenable: _coGuestStore.coGuestState.applicants,
       builder: (context, applicants, child) {
-        final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+        final selfUserId = _getSelfID();
         final filterApplications = applicants.where((applicant) => applicant.userID != selfUserId).toList();
         return Visibility(
           visible: filterApplications.isNotEmpty,
@@ -486,7 +481,7 @@ extension on _SeatManagementPanelWidgetState {
   double _calculateMicUpUserListHeight() {
     double totalHeight = 0;
     final seatList = _seatStore.liveSeatState.seatList.value;
-    final selfUserId = TUIRoomEngine.getSelfInfo().userId;
+    final selfUserId = _getSelfID();
     if (seatList.isNotEmpty) {
       final filterSeatList =
           seatList.where((seat) => seat.userInfo.userID.isNotEmpty && seat.userInfo.userID != selfUserId).toList();
@@ -504,5 +499,9 @@ extension on _SeatManagementPanelWidgetState {
     }
     final maxHeight = 5 * 60.height;
     return totalHeight > maxHeight ? maxHeight : totalHeight;
+  }
+
+  String _getSelfID() {
+    return LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
   }
 }

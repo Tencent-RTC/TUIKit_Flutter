@@ -1,0 +1,24 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "application"
+    },
+    {
+      "name": "camera_permission_request_reason",
+      "value": "需要访问你的相机权限，开启后录制的视频才会有画面"
+    },
+    {
+      "name": "microphone_permission_request_reason",
+      "value": "需要访问您的麦克风权限，开启后录制的视频才会有声音"
+    }
+  ]
+}

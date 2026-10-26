@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:rtc_room_engine/api/common/tui_common_define.dart';
+import 'package:rtc_room_engine/api/room/tui_room_define.dart';
+import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
 import 'package:tencent_live_uikit/common/logger/index.dart';
 
-import '../../tencent_live_uikit.dart';
 import 'index.dart';
 
 /// An implementation of [TUILiveKitPlatform] that uses method channels.
@@ -83,26 +87,25 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
   }
 
   @override
-  Future<void> apiLog(LiveKitLoggerLevel level, String module, String file, int line, String logString) async {
-    if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-      await methodChannel.invokeMethod(
-          'apiLog', {'level': level.index, 'module': module, 'file': file, 'line': line, 'logString': logString});
-    }
-  }
-
-  @override
   Future<void> startForegroundService(ForegroundServiceType type, String title, String description) async {
-    if (Platform.isAndroid) {
-      await methodChannel.invokeMethod(
-          'startForegroundService', {'serviceType': type.index, 'title': title, 'description': description});
-    }
+    LiveKitLogger.info("startForegroundService, type=$type");
+    if (Platform.isIOS) return;
+    await methodChannel.invokeMethod('startForegroundService', {
+      'serviceType': type.index,
+      'type': type.name,
+      'title': title,
+      'description': description,
+    });
   }
 
   @override
   Future<void> stopForegroundService(ForegroundServiceType type) async {
-    if (Platform.isAndroid) {
-      await methodChannel.invokeMethod('stopForegroundService', {'serviceType': type.index});
-    }
+    LiveKitLogger.info("stopForegroundService, type=$type");
+    if (Platform.isIOS) return;
+    await methodChannel.invokeMethod('stopForegroundService', {
+      'serviceType': type.index,
+      'type': type.name,
+    });
   }
 
   @override
@@ -168,11 +171,7 @@ class MethodChannelTUILiveKit extends TUILiveKitPlatform {
 
   Future<bool> _enablePictureInPictureIOS(String params) async {
     try {
-      TUIValueCallBack<String> result = await TUIRoomEngine.sharedInstance()
-          .invokeExperimentalAPI(params)
-          .timeout(const Duration(milliseconds: 100), onTimeout: () {
-        return TUIValueCallBack(code: TUIError.success, message: "");
-      });
+      TUIValueCallBack<String> result = await TUIRoomEngine.sharedInstance().invokeExperimentalAPI(params);
       return result.code == TUIError.success;
     } catch (e) {
       return false;

@@ -33,6 +33,7 @@
   "common_end_connect": "قطع الاتصال",
   "common_end_connection_tips": "أنت حالياً في بث مشترك. هل تريد [إنهاء البث المشترك] أم [إنهاء البث]؟",
   "common_end_pk_tips": "أنت حالياً في وضع المنافسة. هل تريد [إنهاء المنافسة] أم [إنهاء البث]؟",
+  "common_anchor_end_pk_tips": "أنت حالياً في وضع المنافسة. هل تريد [إنهاء البث]؟",
   "common_kick_out_of_room": "إزالة",
   "common_kicked_out_of_room_by_owner": "تم طردك من الغرفة",
   "common_more": "المزيد",
@@ -340,6 +341,10 @@
   "live_video_resolution": "الدقة",
   "live_video_reduce_resolution": "تقليل الدقة",
   "live_video_resolution_changed": "تم تغيير الدقة إلى",
+  "common_go_settings": "الانتقال إلى الإعدادات",
+  "common_permission_request": "طلب الإذن",
+  "common_permission_camera_reason": "يحتاج الوصول إلى الكاميرا الخاصة بك",
+  "common_permission_mic_reason": "يحتاج الوصول إلى الميكروفون الخاص بك",
   "common_template_601_ui_exception_toast": "قد يُعرض قالب التخطيط هذا بشكل غير طبيعي على بعض الطرازات. يُنصح بالتغيير إلى قالب تخطيط آخر.",
   "seat_locked": "مقفل",
   "seat_unlocked": "فتح قفل المقعد",
@@ -373,5 +378,6 @@
   "live_song_unknown_artist": "غير معروف",
   "live_anchor_manager_set_featured_host": "تعيين كمضيف رئيسي",
   "live_anchor_manager_revoke_featured_host": "إلغاء المضيف الرئيسي",
-  "common_enter_anchor_live_room": "الذهاب إلى غرفة البث"
+  "common_enter_anchor_live_room": "الذهاب إلى غرفة البث",
+  "common_battle_all_member_exit_win": "غادر جميع أعضاء المنافسة مبكرًا، يمنح الفوز للمضيف الحالي في هذه الجولة"
 }

@@ -1,19 +1,18 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_uikit/common/error/error_handler.dart';
-import 'package:tencent_live_uikit/common/screen/index.dart';
+import 'package:rtc_room_engine/api/common/tui_video_view.dart';
+import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/component/float_window/global_float_window_manager.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_prepare/anchor_preview_widget_define.dart';
 import 'package:tencent_live_uikit/live_stream/features/anchor_prepare/widgets/video_stream_source_widget.dart';
 import 'package:tencent_live_uikit/live_stream/live_define.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
+import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
 
-import '../../../common/constants/constants.dart';
-import '../../../common/language/index.dart';
-import '../../../common/resources/index.dart';
+import 'package:tuikit_atomic_x/permission/permission.dart';
+
 import '../../../common/widget/base_bottom_sheet.dart';
-import '../../../common/widget/index.dart';
 import '../../manager/live_stream_manager.dart';
+import '../common/permission_request_dialog.dart';
 import 'widgets/anchor_preview_function_widget.dart';
 import 'widgets/anchor_preview_info_edit_widget.dart';
 
@@ -28,22 +27,69 @@ class AnchorPreviewWidget extends StatefulWidget {
   State<AnchorPreviewWidget> createState() => _AnchorPreviewWidgetState();
 }
 
-class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
+class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> with WidgetsBindingObserver {
   late final LiveStreamManager liveStreamManager;
   late final EditInfo _editInfo;
+  AppLifecycleState? _lastLifecycleState;
+  AlertHandler? _cameraRequestAlertHandler;
+  AlertHandler? _microphoneRequestAlertHandler;
 
   @override
   void initState() {
     super.initState();
     liveStreamManager = widget.liveStreamManager;
     _initEditInfo();
-    liveStreamManager.mediaManager.requestAllPermission().then((value) {
+    WidgetsBinding.instance.addObserver(this);
+    _lastLifecycleState = WidgetsBinding.instance.lifecycleState;
+    Permission.request([PermissionType.camera, PermissionType.microphone]).then((permissionMap) {
       _startCamera();
       _startMicrophone();
     });
-    if (DeviceStore.shared.state.localMirrorType.value != MirrorType.enable) {
-      DeviceStore.shared.switchMirror(MirrorType.enable);
+    DeviceStore.shared.switchMirror(MirrorType.auto);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    final previous = _lastLifecycleState;
+    _lastLifecycleState = state;
+    LiveKitLogger.info('lifecycle change: $previous -> $state');
+    final backFromBackground = state == AppLifecycleState.resumed &&
+        (previous == AppLifecycleState.paused ||
+            previous == AppLifecycleState.inactive ||
+            previous == AppLifecycleState.hidden);
+    if (backFromBackground) {
+      _onPreviewResumed();
     }
+  }
+
+  void _onPreviewResumed() async {
+    if (!mounted) return;
+    LiveKitLogger.info('resumed to foreground, videoStreamSource=${_editInfo.videoStreamSource.value}');
+    if (_editInfo.videoStreamSource.value == VideoStreamSource.camera) {
+      Permission.check(PermissionType.camera).then((result) {
+        if (!mounted) return;
+        if (!result.isUsable) return;
+        _cameraRequestAlertHandler?.close();
+        if (DeviceStore.shared.state.cameraStatus.value == DeviceStatus.off) {
+          _startCamera();
+        }
+      });
+    }
+    Permission.check(PermissionType.microphone).then((result) {
+      if (!mounted) return;
+      if (!result.isUsable) return;
+      _microphoneRequestAlertHandler?.close();
+      if (DeviceStore.shared.state.microphoneStatus.value == DeviceStatus.off) {
+        _startMicrophone();
+      }
+    });
   }
 
   @override
@@ -89,6 +135,9 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
         width: 1.screenWidth,
         child: VideoStreamSourceWidget(videoStreamSourceChanged: (videoStreamSource) {
           _editInfo.videoStreamSource.value = videoStreamSource;
+          if (DeviceStore.shared.state.microphoneStatus.value == DeviceStatus.off) {
+            _startMicrophone();
+          }
           if (videoStreamSource == VideoStreamSource.camera) {
             _editInfo.coGuestTemplateMode.value = LiveTemplateMode.verticalDynamicGrid;
             _startCamera();
@@ -109,18 +158,21 @@ class _AnchorPreviewWidgetState extends State<AnchorPreviewWidget> {
           valueListenable: _editInfo.videoStreamSource,
           builder: (_, videoStreamSource, child) {
             if (videoStreamSource != VideoStreamSource.camera) return const SizedBox.shrink();
+            LiveCoreController liveCoreController = LiveCoreController.create(CoreViewType.pushView);
+            liveCoreController.setLiveID(liveStreamManager.roomState.roomId);
             return Padding(
               padding: EdgeInsets.only(top: 36.height, bottom: 96.height),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.radius),
-                  child: VideoView(
-                    onViewCreated: (id) {
-                      widget.liveStreamManager.mediaManager.setLocalVideoView(id);
-                    },
-                    onViewDisposed: (id) {
-                      widget.liveStreamManager.mediaManager.setLocalVideoView(0);
-                    },
-                  )),
+                borderRadius: BorderRadius.circular(16.radius),
+                child: VideoView(
+                  onViewCreated: (id) {
+                    widget.liveStreamManager.mediaManager.setLocalVideoView(id);
+                  },
+                  onViewDisposed: (id) {
+                    widget.liveStreamManager.mediaManager.setLocalVideoView(0);
+                  },
+                ),
+              ),
             );
           }),
     );
@@ -204,28 +256,33 @@ extension on _AnchorPreviewWidgetState {
   }
 
   String _getDefaultRoomName() {
-    final selfInfo = TUIRoomEngine.getSelfInfo();
-    if (selfInfo.userName == null || selfInfo.userName!.isEmpty) {
-      return selfInfo.userId;
+    final selfInfo = LoginStore.shared.loginState.loginUserInfo;
+    if (selfInfo == null) return '';
+    if (selfInfo.nickname == null || selfInfo.nickname!.isEmpty) {
+      return selfInfo.userID;
     }
-    return selfInfo.userName!;
+    return selfInfo.nickname!;
   }
 
   void _startCamera() async {
     final isFront = DeviceStore.shared.state.isFrontCamera.value;
     final startCameraResult = await liveStreamManager.mediaManager.openLocalCamera(isFront);
-    if (startCameraResult.code != TUIError.success) {
-      liveStreamManager.toastSubject
-          .add(ErrorHandler.convertToErrorMessage(startCameraResult.code.rawValue, startCameraResult.message) ?? '');
-    }
+    if (startCameraResult.isSuccess) return;
+    if (!mounted) return;
+    _cameraRequestAlertHandler = PermissionRequestDialog.showCameraRequestDialog(context, onClose: () {
+      _cameraRequestAlertHandler?.close();
+      _cameraRequestAlertHandler = null;
+    });
   }
 
   void _startMicrophone() async {
     final startMicrophoneResult = await liveStreamManager.mediaManager.openLocalMicrophone();
-    if (startMicrophoneResult.code != TUIError.success) {
-      liveStreamManager.toastSubject.add(
-          ErrorHandler.convertToErrorMessage(startMicrophoneResult.code.rawValue, startMicrophoneResult.message) ?? '');
-    }
+    if (startMicrophoneResult.isSuccess) return;
+    if (!mounted) return;
+    _microphoneRequestAlertHandler = PermissionRequestDialog.showMicrophoneRequestDialog(context, onClose: () {
+      _microphoneRequestAlertHandler?.close();
+      _microphoneRequestAlertHandler = null;
+    });
   }
 
   void _stopCamera() {
@@ -236,14 +293,31 @@ extension on _AnchorPreviewWidgetState {
     liveStreamManager.mediaManager.closeLocalMicrophone();
   }
 
-  void _createRoom() {
+  void _createRoom() async {
     if (BottomSheetGuard.instance.isCovered) {
+      return;
+    }
+    if (_editInfo.videoStreamSource.value == VideoStreamSource.camera) {
+      final checkCamera = await Permission.check(PermissionType.camera);
+      if (!checkCamera.isUsable) {
+        final tip = ErrorHandler.convertToErrorMessage(LiveError.cameraNotAuthorized.code, '');
+        if (!mounted) return;
+        makeToast(context, tip, type: ToastType.error);
+        return;
+      }
+    }
+    final checkMicrophone = await Permission.check(PermissionType.microphone);
+    if (!checkMicrophone.isUsable) {
+      if (!mounted) return;
+      final tip = ErrorHandler.convertToErrorMessage(LiveError.microphoneNotAuthorized.code, '');
+      makeToast(context, tip, type: ToastType.error);
       return;
     }
     widget.didClickStart?.call(_editInfo);
   }
 
   void _closeWidget() {
+    liveStreamManager.mediaManager.stopForegroundService();
     _stopMicrophone();
     if (_editInfo.videoStreamSource.value == VideoStreamSource.camera) {
       _stopCamera();

@@ -17,6 +17,5 @@ export 'theme/radius.dart';
 export 'theme/spacing.dart';
 export 'theme/theme_state.dart';
 export 'utils/app_builder.dart';
-export 'utils/chat_utils.dart';
 export 'utils/locale_provider.dart';
 export 'utils/storage_util.dart';

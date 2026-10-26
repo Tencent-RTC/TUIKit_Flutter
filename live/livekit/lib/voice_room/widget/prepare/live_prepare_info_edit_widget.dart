@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_live_uikit/common/index.dart';
 import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/voice_room/manager/voice_room_prepare_store.dart';
@@ -25,7 +25,7 @@ class _LivePrepareInfoEditWidgetState extends State<LivePrepareInfoEditWidget> {
   @override
   void initState() {
     super.initState();
-    final roomName = TUIRoomEngine.getSelfInfo().userName ?? '';
+    final roomName = LoginStore.shared.loginState.loginUserInfo?.nickname ?? '';
     _controller.text = roomName;
     widget.prepareStore.onSetRoomName(roomName);
   }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
@@ -64,14 +62,6 @@ class _NetworkStatusToastWidgetState extends State<NetworkStatusToastWidget> {
 
 extension on _NetworkStatusToastWidgetState {
   void _openAppWifiSettings() {
-    if (Platform.isAndroid) {
-      TUILiveKitPlatform.instance.openWifiSettings();
-      return;
-    }
-
-    if (Platform.isIOS) {
-      TUILiveKitPlatform.instance.openAppSettings();
-      return;
-    }
+    TUILiveKitPlatform.instance.openWifiSettings();
   }
 }

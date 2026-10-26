@@ -1,14 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/toast.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:flutter_effect_player/ftceffect_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:te_beauty_kit/te_beauty_kit.dart';
+//import 'package:te_beauty_kit/te_beauty_kit.dart';
+import 'package:rtc_room_engine/api/room/tui_room_engine.dart';
 
 import '../../debug/generate_test_user_sig.dart';
 import '../app_store/index.dart';
@@ -95,78 +95,87 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget _buildLogin() {
     return Positioned(
         left: 0,
+        right: 0,
         top: MediaQuery.sizeOf(context).height * 2 / 5,
-        width: MediaQuery.sizeOf(context).width,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            width: MediaQuery.sizeOf(context).width - 60,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(),
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(width: 10),
-                Text(
-                  AppLocalizations.of(context)!.app_user_id,
-                  style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: Colors.black),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
-                const SizedBox(width: 10),
-                SizedBox(
-                    width: MediaQuery.sizeOf(context).width - 160,
-                    child: TextField(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 10),
+                    Text(
+                      AppLocalizations.of(context)!.app_user_id,
+                      style: const TextStyle(fontSize: 16, fontStyle: FontStyle.normal, color: Colors.black),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
                         autofocus: true,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           labelStyle: TextStyle(fontSize: 16),
                         ),
-                        onChanged: ((value) => _userId = value)))
-              ],
-            ),
-          ),
-          const SizedBox(height: 40),
-          SizedBox(
-            height: 52,
-            width: MediaQuery.sizeOf(context).width - 60,
-            child: ElevatedButton(
-              onPressed: () => _isButtonEnabled ? _login() : null,
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(const Color(0xff056DF6)),
-                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                        onChanged: ((value) => _userId = value),
+                      ),
+                    )
+                  ],
+                ),
               ),
-              child: Text(
-                AppLocalizations.of(context)!.app_login,
-                style: const TextStyle(
-                    fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white),
+              const SizedBox(height: 40),
+              SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => _isButtonEnabled ? _login() : null,
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(const Color(0xff056DF6)),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.app_login,
+                    style: const TextStyle(
+                        fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500, color: Colors.white),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Test Environment'),
-              const SizedBox(width: 24),
-              Switch(
-                  value: _isTestEnvironment,
-                  onChanged: (value) {
-                    if (value == _isTestEnvironment) {
-                      return;
-                    }
-                    setState(() {
-                      _isTestEnvironment = value;
-                    });
-                  }),
-              const SizedBox(width: 24)
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('Test Environment'),
+                  const SizedBox(width: 24),
+                  Switch(
+                      value: _isTestEnvironment,
+                      onChanged: (value) {
+                        if (value == _isTestEnvironment) {
+                          return;
+                        }
+                        setState(() {
+                          _isTestEnvironment = value;
+                        });
+                      }),
+                ],
+              )
             ],
-          )
-        ]));
+          ),
+        ));
   }
 
   void _login() async {
+    if (_userId.isEmpty) {
+      Toast.error(context, AppLocalizations.of(context)!.app_enter_user_id);
+      return;
+    }
     _isButtonEnabled = false;
 
     if (_isTestEnvironment) {
@@ -196,7 +205,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   void _onLoginSuccess() {
     KeyMetrics.reportKeyMetrics(KeyMetrics.kDemoLoginSuccess);
-    // TUIBeautyKit.instance.init(tencentEffectLicenseURL, tencentEffectLicenseKey, BeautyLevel.S1_07);
+    _setTencentEffectBeautyLicense();
     _setTencentEffectPlayerLicense();
     _initCallKitSettings();
   }
@@ -212,20 +221,30 @@ class _LoginWidgetState extends State<LoginWidget> {
     TUICallKit.instance.enableMuteMode(enableMuteMode);
   }
 
+  void _setTencentEffectBeautyLicense() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      // TUIBeautyKit.instance.init(tencentEffectLicenseURL, tencentEffectLicenseKey, BeautyLevel.S1_07);
+    } else {
+      debugPrint("Current platform not support tencent effect Beauty.");
+    }
+  }
+
   void _setTencentEffectPlayerLicense() {
-    FTCMediaXBase.instance.setLicense(tencentEffectLicenseURL, tencentEffectLicenseKey, (code, msg) {
-      debugPrint("TCMediax setLicense code:$code | msg:$msg");
-    });
+    if (Platform.isAndroid || Platform.isIOS) {
+      FTCMediaXBase.instance.setLicense(tencentEffectLicenseURL, tencentEffectLicenseKey, (code, msg) {
+        debugPrint("TCMediax setLicense code:$code | msg:$msg");
+      });
+    } else {
+      debugPrint("Current platform not support tencent effect Player.");
+    }
   }
 
   Future<void> _switchTestEnvironment() async {
-    final Map<String, dynamic> params = {'enableRoomTestEnv': true};
-
-    final Map<String, dynamic> jsonObject = {'api': 'setTestEnvironment', 'params': params};
-
-    final jsonString = jsonEncode(jsonObject);
+    final api = 'setTestEnvironment';
+    final params = {'enableRoomTestEnv': true};
+    final Map<String, dynamic> jsonMap = {'api': api, 'params': params};
+    final jsonString = jsonEncode(jsonMap);
     TUIRoomEngine.sharedInstance().invokeExperimentalAPI(jsonString);
-
     final result = await TencentImSDKPlugin.v2TIMManager.callExperimentalAPI(api: 'setTestEnvironment', param: true);
     if (result.code == 0) {
       debugPrint('switchTestEnvironment success');

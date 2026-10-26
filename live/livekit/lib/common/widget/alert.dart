@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tuikit_atomic_x/base_component/basic_controls/alert_dialog.dart';
 
 class AlertInfo {
+  final String? title;
   final String description;
   bool isDestructive;
 
@@ -13,6 +14,7 @@ class AlertInfo {
 
   AlertInfo(
       {required this.description,
+      this.title,
       this.defaultText,
       this.defaultCallback,
       this.isDestructive = false,
@@ -69,7 +71,7 @@ class Alert {
       enableHide: true,
       rootOverlay: useRootNavigator,
       config: AlertDialogConfig(
-        title: '',
+        title: info.title ?? '',
         content: info.description,
         itemList: info.itemList,
         cancelConfig: info.cancelText?.isNotEmpty == true

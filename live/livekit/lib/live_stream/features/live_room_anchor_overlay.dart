@@ -28,21 +28,10 @@ class TUILiveRoomAnchorOverlayState extends State<TUILiveRoomAnchorOverlay> {
     LiveKitLogger.info('LiveKit Version: ${Constants.pluginVersion}');
     LiveKitLogger.info("TUILiveRoomAnchorOverlay initState");
     GlobalFloatWindowManager.instance.enableFloatWindowFeature(true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (GlobalFloatWindowManager.instance.isFloating()) {
-        GlobalFloatWindowState state = GlobalFloatWindowManager.instance.state;
-        if (state.ownerId.value == TUIRoomEngine.getSelfInfo().userId) {
-          makeToast(context, LiveKitLocalizations.of(Global.appContext())!.livelist_exit_float_window_tip,
-              type: ToastType.warning);
-          if (mounted) Navigator.pop(context);
-          return;
-        } else {
-          GlobalFloatWindowManager.instance.overlayManager.closeOverlay();
-        }
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final overlayEntry = OverlayEntry(builder: (context) => buildOverlayContent());
       GlobalFloatWindowManager.instance.setRoomId(widget.roomId);
-      GlobalFloatWindowManager.instance.setOwnerId(TUIRoomEngine.getSelfInfo().userId);
+      GlobalFloatWindowManager.instance.setOwnerId(LoginStore.shared.loginState.loginUserInfo?.userID ?? '');
       GlobalFloatWindowManager.instance.overlayManager.showOverlayEntry(overlayEntry);
       if (mounted) Navigator.pop(context);
     });

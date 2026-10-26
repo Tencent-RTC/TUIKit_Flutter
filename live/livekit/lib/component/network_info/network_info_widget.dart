@@ -1,10 +1,9 @@
+import 'package:atomic_x_core/api/device/device_store.dart';
 import 'package:atomic_x_core/api/live/live_list_store.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:tencent_live_uikit/common/widget/base_bottom_sheet.dart';
 import 'package:tencent_live_uikit/component/network_info/manager/network_info_manager.dart';
 import 'package:tencent_live_uikit/component/network_info/state/network_info_state.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
 
 class NetworkInfoWidget extends StatefulWidget {
   final bool isAudience;
@@ -151,8 +150,11 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                 }
                 return Row(
                   children: [
-                    Image.asset(LiveImages.networkInfoMic,
-                        width: 20.width, height: 20.width, package: Constants.pluginName),
+                    Image.asset(
+                        audioState == AudioState.normal ? LiveImages.networkInfoMic : LiveImages.networkInfoMicError,
+                        width: 20.width,
+                        height: 20.width,
+                        package: Constants.pluginName),
                     SizedBox(width: 6.width),
                     Text('${LiveKitLocalizations.of(context)!.common_audio_status}$statusText',
                         style: TextStyle(
@@ -178,7 +180,7 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                           color: LiveColors.designStandardFlowkitWhite.withAlpha(0x8C))),
                   SizedBox(height: 7.height),
                   ValueListenableBuilder(
-                      valueListenable: widget.manager.state.volume,
+                      valueListenable: DeviceStore.shared.state.captureVolume,
                       builder: (context, volume, _) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -264,27 +266,27 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                 late String statusText;
                 late String iconName;
                 switch (networkQuality) {
-                  case TUINetworkQuality.qualityExcellent:
+                  case NetworkQuality.excellent:
                     statusText = LiveKitLocalizations.of(context)!.common_excellent;
                     iconName = LiveImages.networkInfoWifi;
                     break;
-                  case TUINetworkQuality.qualityGood:
+                  case NetworkQuality.good:
                     statusText = LiveKitLocalizations.of(context)!.common_good;
                     iconName = LiveImages.networkInfoWifi;
                     break;
-                  case TUINetworkQuality.qualityPoor:
+                  case NetworkQuality.poor:
                     statusText = LiveKitLocalizations.of(context)!.common_poor;
                     iconName = LiveImages.networkInfoWifiPoor;
                     break;
-                  case TUINetworkQuality.qualityBad:
+                  case NetworkQuality.bad:
                     statusText = LiveKitLocalizations.of(context)!.common_bad;
                     iconName = LiveImages.networkInfoWifiBad;
                     break;
-                  case TUINetworkQuality.qualityVeryBad:
+                  case NetworkQuality.veryBad:
                     statusText = LiveKitLocalizations.of(context)!.common_verybad;
                     iconName = LiveImages.networkInfoWifiError;
                     break;
-                  case TUINetworkQuality.qualityDown:
+                  case NetworkQuality.down:
                     statusText = LiveKitLocalizations.of(context)!.common_down;
                     iconName = LiveImages.networkInfoWifiError;
                     break;
@@ -339,14 +341,14 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                         textColor = LiveColors.notStandardRed;
                       }
 
-                      if (networkQuality == TUINetworkQuality.qualityExcellent ||
-                          networkQuality == TUINetworkQuality.qualityGood ||
-                          networkQuality == TUINetworkQuality.qualityPoor) {
+                      if (networkQuality == NetworkQuality.excellent ||
+                          networkQuality == NetworkQuality.good ||
+                          networkQuality == NetworkQuality.poor) {
                         textColor = LiveColors.designTextColorSuccess;
                       }
-                      if (networkQuality == TUINetworkQuality.qualityBad ||
-                          networkQuality == TUINetworkQuality.qualityVeryBad ||
-                          networkQuality == TUINetworkQuality.qualityDown) {
+                      if (networkQuality == NetworkQuality.bad ||
+                          networkQuality == NetworkQuality.veryBad ||
+                          networkQuality == NetworkQuality.down) {
                         textColor = LiveColors.notStandardRed;
                       }
 
@@ -367,14 +369,14 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                         textColor = LiveColors.notStandardRed;
                       }
 
-                      if (networkQuality == TUINetworkQuality.qualityExcellent ||
-                          networkQuality == TUINetworkQuality.qualityGood ||
-                          networkQuality == TUINetworkQuality.qualityPoor) {
+                      if (networkQuality == NetworkQuality.excellent ||
+                          networkQuality == NetworkQuality.good ||
+                          networkQuality == NetworkQuality.poor) {
                         textColor = LiveColors.designTextColorSuccess;
                       }
-                      if (networkQuality == TUINetworkQuality.qualityBad ||
-                          networkQuality == TUINetworkQuality.qualityVeryBad ||
-                          networkQuality == TUINetworkQuality.qualityDown) {
+                      if (networkQuality == NetworkQuality.bad ||
+                          networkQuality == NetworkQuality.veryBad ||
+                          networkQuality == NetworkQuality.down) {
                         textColor = LiveColors.notStandardRed;
                       }
 
@@ -397,14 +399,14 @@ class _NetworkInfoWidgetState extends State<NetworkInfoWidget> {
                         textColor = LiveColors.notStandardRed;
                       }
 
-                      if (networkQuality == TUINetworkQuality.qualityExcellent ||
-                          networkQuality == TUINetworkQuality.qualityGood ||
-                          networkQuality == TUINetworkQuality.qualityPoor) {
+                      if (networkQuality == NetworkQuality.excellent ||
+                          networkQuality == NetworkQuality.good ||
+                          networkQuality == NetworkQuality.poor) {
                         textColor = LiveColors.designTextColorSuccess;
                       }
-                      if (networkQuality == TUINetworkQuality.qualityBad ||
-                          networkQuality == TUINetworkQuality.qualityVeryBad ||
-                          networkQuality == TUINetworkQuality.qualityDown) {
+                      if (networkQuality == NetworkQuality.bad ||
+                          networkQuality == NetworkQuality.veryBad ||
+                          networkQuality == NetworkQuality.down) {
                         textColor = LiveColors.notStandardRed;
                       }
 

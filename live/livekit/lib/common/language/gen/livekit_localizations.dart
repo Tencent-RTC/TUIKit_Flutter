@@ -114,7 +114,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_disconnect_guest_tips.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to disconnect xxx?'**
+  /// **'Do you want to remove xxx?'**
   String get common_disconnect_guest_tips;
 
   /// No description provided for @common_anchor_battle.
@@ -126,7 +126,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_anchor_end_link_tips.
   ///
   /// In en, this message translates to:
-  /// **'You are currently co-guesting with other streamers. Would you like to [End Live] ?'**
+  /// **'You have guests connected now. Do you want to end your live stream anyway?'**
   String get common_anchor_end_link_tips;
 
   /// No description provided for @common_battle_connecting.
@@ -309,6 +309,12 @@ abstract class LiveKitLocalizations {
   /// **'You are currently in PK mode. Would you like to [End PK] or [End Live] ?'**
   String get common_end_pk_tips;
 
+  /// No description provided for @common_anchor_end_pk_tips.
+  ///
+  /// In en, this message translates to:
+  /// **'You are currently in PK mode. Would you like to [End Live] ?'**
+  String get common_anchor_end_pk_tips;
+
   /// No description provided for @common_kick_out_of_room.
   ///
   /// In en, this message translates to:
@@ -408,7 +414,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_terminate_room_connection_message.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to disconnect?'**
+  /// **'Do you want to disconnect?'**
   String get common_terminate_room_connection_message;
 
   /// No description provided for @common_un_mute_audio_by_master.
@@ -522,7 +528,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_audience_end_link_tips.
   ///
   /// In en, this message translates to:
-  /// **'You are currently co-guesting with other streamers. Would you like to [End Co-guest] or [Exit Live] ?'**
+  /// **'You\'re now connected as a guest. Do you want to disconnect or exit the live stream?'**
   String get common_audience_end_link_tips;
 
   /// No description provided for @common_exit_live.
@@ -570,7 +576,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_apply_link_mic.
   ///
   /// In en, this message translates to:
-  /// **'Apply for link mic'**
+  /// **'Request to Join'**
   String get common_apply_link_mic;
 
   /// No description provided for @common_client_error_already_in_other_room.
@@ -936,7 +942,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_beauty_item_smooth.
   ///
   /// In en, this message translates to:
-  /// **'Microdermabrasion'**
+  /// **'Smooth Skin'**
   String get common_beauty_item_smooth;
 
   /// No description provided for @common_beauty_item_whiteness.
@@ -966,7 +972,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_change_voice_child.
   ///
   /// In en, this message translates to:
-  /// **'Naughty child'**
+  /// **'Kid'**
   String get common_change_voice_child;
 
   /// No description provided for @common_change_voice_ethereal.
@@ -978,13 +984,13 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_change_voice_girl.
   ///
   /// In en, this message translates to:
-  /// **'Loli'**
+  /// **'Girl'**
   String get common_change_voice_girl;
 
   /// No description provided for @common_change_voice_none.
   ///
   /// In en, this message translates to:
-  /// **'Original'**
+  /// **'Default'**
   String get common_change_voice_none;
 
   /// No description provided for @common_change_voice_uncle.
@@ -1050,7 +1056,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_end_link.
   ///
   /// In en, this message translates to:
-  /// **'End Co-guest'**
+  /// **'Disconnect'**
   String get common_end_link;
 
   /// No description provided for @common_end_live.
@@ -1110,7 +1116,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_link_mic_manager.
   ///
   /// In en, this message translates to:
-  /// **'Link Management'**
+  /// **'Manage Guests'**
   String get common_link_mic_manager;
 
   /// No description provided for @common_link.
@@ -1242,7 +1248,7 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_reverb_metallic_sound.
   ///
   /// In en, this message translates to:
-  /// **'Metallic sound'**
+  /// **'Metallic'**
   String get common_reverb_metallic_sound;
 
   /// No description provided for @common_reverb_none.
@@ -1644,31 +1650,31 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_text_cancel_link_mic_apply.
   ///
   /// In en, this message translates to:
-  /// **'Cancel application for link mic'**
+  /// **'Cancel Request'**
   String get common_text_cancel_link_mic_apply;
 
   /// No description provided for @common_text_close_link_mic.
   ///
   /// In en, this message translates to:
-  /// **'End Link'**
+  /// **'Disconnect'**
   String get common_text_close_link_mic;
 
   /// No description provided for @common_text_link_mic_audio.
   ///
   /// In en, this message translates to:
-  /// **'Apply for audio link'**
+  /// **'Join with Audio Only'**
   String get common_text_link_mic_audio;
 
   /// No description provided for @common_text_link_mic_selector.
   ///
   /// In en, this message translates to:
-  /// **'connect upon host\'s approval'**
+  /// **'The host must accept your request before you can join.'**
   String get common_text_link_mic_selector;
 
   /// No description provided for @common_text_link_mic_video.
   ///
   /// In en, this message translates to:
-  /// **'Apply for video link'**
+  /// **'Join with Video and Audio'**
   String get common_text_link_mic_video;
 
   /// No description provided for @common_tips_apply_link_mic.
@@ -1680,19 +1686,19 @@ abstract class LiveKitLocalizations {
   /// No description provided for @common_title_link_mic_selector.
   ///
   /// In en, this message translates to:
-  /// **'Choose Link Mode'**
+  /// **'Join as a Guest'**
   String get common_title_link_mic_selector;
 
   /// No description provided for @common_title_link_video_settings.
   ///
   /// In en, this message translates to:
-  /// **'Adjust the video link screen'**
+  /// **'Camera Preview'**
   String get common_title_link_video_settings;
 
   /// No description provided for @common_toast_apply_link_mic.
   ///
   /// In en, this message translates to:
-  /// **'You have submitted a link mic request, please wait for the author approval'**
+  /// **'Request sent. Waiting for host to accept...'**
   String get common_toast_apply_link_mic;
 
   /// No description provided for @common_unfollow_anchor.
@@ -2151,6 +2157,30 @@ abstract class LiveKitLocalizations {
   /// **'resolution changed to'**
   String get live_video_resolution_changed;
 
+  /// No description provided for @common_go_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get common_go_settings;
+
+  /// No description provided for @common_permission_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorization Request'**
+  String get common_permission_request;
+
+  /// No description provided for @common_permission_camera_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs access to your camera, and it can be used for functions such as Live etc. For beauty filters to work, we will collect the facial information captured by your camera in real time to detect your facial features.'**
+  String get common_permission_camera_reason;
+
+  /// No description provided for @common_permission_mic_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs access to your microphone, and it can be used for functions such as Live etc. such as Live etc.'**
+  String get common_permission_mic_reason;
+
   /// No description provided for @common_template_601_ui_exception_toast.
   ///
   /// In en, this message translates to:
@@ -2354,6 +2384,12 @@ abstract class LiveKitLocalizations {
   /// In en, this message translates to:
   /// **'Enter Live Room'**
   String get common_enter_anchor_live_room;
+
+  /// No description provided for @common_battle_all_member_exit_win.
+  ///
+  /// In en, this message translates to:
+  /// **'All PK members exited early, this round is judged as a victory for the current host'**
+  String get common_battle_all_member_exit_win;
 }
 
 class _LiveKitLocalizationsDelegate extends LocalizationsDelegate<LiveKitLocalizations> {

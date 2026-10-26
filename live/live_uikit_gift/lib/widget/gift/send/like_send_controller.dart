@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:atomic_x_core/api/live/live_audience_store.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:live_uikit_gift/manager/index.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../common/constants/constants.dart';
 import '../../../state/index.dart';
@@ -26,7 +24,7 @@ class PendingCount {
 
 class LikeSendController {
   final String roomId;
-  late LikeManager likeManager;
+  late LikeStore _likeStore;
 
   final int _minSendInterval = 6;
   int _lastSendTime = 0;
@@ -34,7 +32,7 @@ class LikeSendController {
   final PendingCount _pendingCount = PendingCount();
 
   LikeSendController({required this.roomId}) {
-    likeManager = LikeManagerFactory.getLikeManager(roomId);
+    _likeStore = LikeStore.create(roomId);
   }
 
   void dispose() {
@@ -46,26 +44,28 @@ class LikeSendController {
 
     _pendingCount.increment();
 
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final now = DateTime
+        .now()
+        .millisecondsSinceEpoch ~/ 1000;
     final elapsed = now - _lastSendTime;
     _afterSendLikeTimer?.cancel();
 
     if (elapsed >= _minSendInterval) {
       _sendLikeInternal();
-      _lastSendTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      _lastSendTime = DateTime
+          .now()
+          .millisecondsSinceEpoch ~/ 1000;
     } else {
       _afterSendLikeTimer = Timer(
         Duration(seconds: _minSendInterval - elapsed),
-        () {
+            () {
           _sendLikeInternal();
-          _lastSendTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          _lastSendTime = DateTime
+              .now()
+              .millisecondsSinceEpoch ~/ 1000;
         },
       );
     }
-  }
-
-  Future<TUIValueCallBack<int>> getLikesCount() {
-    return likeManager.getLikesCount();
   }
 }
 
@@ -76,7 +76,7 @@ extension on LikeSendController {
 
     try {
       debugPrint("sendLike count: $countToSend");
-      likeManager.sendLike(countToSend);
+      _likeStore.sendLike(countToSend);
       _pendingCount.reset();
     } catch (e) {
       debugPrint("sendLike failed: $e");
@@ -84,14 +84,14 @@ extension on LikeSendController {
   }
 
   void _showLikeAnimation() {
+    final selfInfo = LoginStore.shared.loginState.loginUserInfo;
+    if (selfInfo == null) return;
     TUIGiftStore().localLikeCount += 1;
     TUIGiftStore().showLikeStart.value = TUIGiftStore().localLikeCount;
-
-    final selfInfo = TUIRoomEngine.getSelfInfo();
     final sender = LiveUserInfo(
-        userID: selfInfo.userId,
-        userName: selfInfo.userName ?? '',
-        avatarURL: selfInfo.avatarUrl ?? Constants.defaultAvatar);
+        userID: selfInfo.userID,
+        userName: selfInfo.nickname ?? '',
+        avatarURL: selfInfo.avatarURL ?? Constants.defaultAvatar);
     TUIGiftStore().likeDataMap.value[roomId] = TUILikeData(sender: sender);
   }
 }

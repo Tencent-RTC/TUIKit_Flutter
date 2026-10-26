@@ -1,7 +1,6 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import 'package:tencent_live_uikit/common/index.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 import '../../../manager/live_stream_manager.dart';
 
@@ -342,9 +341,7 @@ class _CoGuestManagePanelWidgetState extends State<CoGuestManagePanelWidget> {
 
 extension on _CoGuestManagePanelWidgetState {
   String _getSelfID() {
-    return TUIRoomEngine
-        .getSelfInfo()
-        .userId;
+    return LoginStore.shared.loginState.loginUserInfo?.userID ?? '';
   }
 
   String _getLiveID() {
@@ -367,7 +364,7 @@ extension on _CoGuestManagePanelWidgetState {
   void _acceptIntraRoomConnection(String userId) {
     CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
     coGuestStore.acceptApplication(userId).then((result) {
-      if (result.errorCode != TUIError.success.rawValue) {
+      if (result.errorCode != 0) {
         manager.toastSubject.add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
     });
@@ -376,7 +373,7 @@ extension on _CoGuestManagePanelWidgetState {
   void _rejectIntraRoomConnection(String userId) {
     CoGuestStore coGuestStore = CoGuestStore.create(_getLiveID());
     coGuestStore.rejectApplication(userId).then((result) {
-      if (result.errorCode != TUIError.success.rawValue) {
+      if (result.errorCode != 0) {
         manager.toastSubject.add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
     });
@@ -385,7 +382,7 @@ extension on _CoGuestManagePanelWidgetState {
   void _disconnectUser(String userId) {
     LiveSeatStore liveSeatStore = LiveSeatStore.create(_getLiveID());
     liveSeatStore.kickUserOutOfSeat(userId).then((result) {
-      if (result.errorCode != TUIError.success.rawValue) {
+      if (result.errorCode != 0) {
         manager.toastSubject.add(ErrorHandler.convertToErrorMessage(result.errorCode, result.errorMessage) ?? '');
       }
     });

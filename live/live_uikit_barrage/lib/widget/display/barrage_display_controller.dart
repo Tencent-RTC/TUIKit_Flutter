@@ -1,25 +1,20 @@
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 
-import '../../state/store.dart';
 import 'custom_barrage_builder.dart';
 
 class BarrageDisplayController {
   final ScrollController scrollController = ScrollController();
   CustomBarrageBuilder? customBarrageBuilder;
 
-  BarrageDisplayController(
-      {required String roomId,
-      required String ownerId,
-      required String selfUserId,
-      String? selfName,
-      OnBarrageError? onError}) {
-    Store().manager.init(roomId, ownerId, selfUserId, selfName);
-    Store().onError = onError;
-  }
+  final String roomId;
+  final String ownerId;
+
+  BarrageDisplayController({required this.roomId, required this.ownerId});
 
   void insertMessage(Barrage barrage) {
-    Store().manager.insertBarrage(barrage);
+    if (barrage.liveID != roomId) return;
+    BarrageStore.create(roomId).appendLocalTip(barrage);
   }
 
   void setCustomBarrageBuilder(CustomBarrageBuilder? builder) {
@@ -34,12 +29,5 @@ class BarrageDisplayController {
         curve: Curves.easeOut,
       );
     }
-  }
-
-  static void resetState() {
-    Store().roomId = '';
-    Store().selfUserId = '';
-    Store().selfName = '';
-    Store().ownerId = '';
   }
 }

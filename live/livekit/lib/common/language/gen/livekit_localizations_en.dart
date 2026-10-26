@@ -9,14 +9,14 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   LiveKitLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get common_disconnect_guest_tips => 'Are you sure you want to disconnect xxx?';
+  String get common_disconnect_guest_tips => 'Do you want to remove xxx?';
 
   @override
   String get common_anchor_battle => 'Battle';
 
   @override
   String get common_anchor_end_link_tips =>
-      'You are currently co-guesting with other streamers. Would you like to [End Live] ?';
+      'You have guests connected now. Do you want to end your live stream anyway?';
 
   @override
   String get common_battle_connecting => 'Connecting';
@@ -111,6 +111,9 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_end_pk_tips => 'You are currently in PK mode. Would you like to [End PK] or [End Live] ?';
 
   @override
+  String get common_anchor_end_pk_tips => 'You are currently in PK mode. Would you like to [End Live] ?';
+
+  @override
   String get common_kick_out_of_room => 'Remove';
 
   @override
@@ -159,7 +162,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_stop_video => 'Stop Video';
 
   @override
-  String get common_terminate_room_connection_message => 'Are you sure you want to disconnect?';
+  String get common_terminate_room_connection_message => 'Do you want to disconnect?';
 
   @override
   String get common_un_mute_audio_by_master => 'The anchor has unmuted you';
@@ -218,7 +221,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_audience_end_link_tips =>
-      'You are currently co-guesting with other streamers. Would you like to [End Co-guest] or [Exit Live] ?';
+      'You\'re now connected as a guest. Do you want to disconnect or exit the live stream?';
 
   @override
   String get common_exit_live => 'Exit Live';
@@ -242,7 +245,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_like => 'Likes';
 
   @override
-  String get common_apply_link_mic => 'Apply for link mic';
+  String get common_apply_link_mic => 'Request to Join';
 
   @override
   String get common_client_error_already_in_other_room =>
@@ -452,7 +455,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_beauty_item_ruddy => 'Rosy';
 
   @override
-  String get common_beauty_item_smooth => 'Microdermabrasion';
+  String get common_beauty_item_smooth => 'Smooth Skin';
 
   @override
   String get common_beauty_item_whiteness => 'Whitening';
@@ -467,16 +470,16 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_change_voice => 'Voice changer';
 
   @override
-  String get common_change_voice_child => 'Naughty child';
+  String get common_change_voice_child => 'Kid';
 
   @override
   String get common_change_voice_ethereal => 'Ethereal';
 
   @override
-  String get common_change_voice_girl => 'Loli';
+  String get common_change_voice_girl => 'Girl';
 
   @override
-  String get common_change_voice_none => 'Original';
+  String get common_change_voice_none => 'Default';
 
   @override
   String get common_change_voice_uncle => 'Uncle';
@@ -509,7 +512,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_set_cover => 'Set Cover';
 
   @override
-  String get common_end_link => 'End Co-guest';
+  String get common_end_link => 'Disconnect';
 
   @override
   String get common_end_live => 'End Live';
@@ -539,7 +542,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_kick_user_confirm_message => 'Are you sure you want to remove xxx?';
 
   @override
-  String get common_link_mic_manager => 'Link Management';
+  String get common_link_mic_manager => 'Manage Guests';
 
   @override
   String get common_link => 'Link';
@@ -605,7 +608,7 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_reverb_low => 'Low';
 
   @override
-  String get common_reverb_metallic_sound => 'Metallic sound';
+  String get common_reverb_metallic_sound => 'Metallic';
 
   @override
   String get common_reverb_none => 'No effect';
@@ -825,32 +828,31 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get common_stream_privacy_status_privacy => 'Privacy';
 
   @override
-  String get common_text_cancel_link_mic_apply => 'Cancel application for link mic';
+  String get common_text_cancel_link_mic_apply => 'Cancel Request';
 
   @override
-  String get common_text_close_link_mic => 'End Link';
+  String get common_text_close_link_mic => 'Disconnect';
 
   @override
-  String get common_text_link_mic_audio => 'Apply for audio link';
+  String get common_text_link_mic_audio => 'Join with Audio Only';
 
   @override
-  String get common_text_link_mic_selector => 'connect upon host\'s approval';
+  String get common_text_link_mic_selector => 'The host must accept your request before you can join.';
 
   @override
-  String get common_text_link_mic_video => 'Apply for video link';
+  String get common_text_link_mic_video => 'Join with Video and Audio';
 
   @override
   String get common_tips_apply_link_mic => 'The screen effect will automatically take effect after connecting';
 
   @override
-  String get common_title_link_mic_selector => 'Choose Link Mode';
+  String get common_title_link_mic_selector => 'Join as a Guest';
 
   @override
-  String get common_title_link_video_settings => 'Adjust the video link screen';
+  String get common_title_link_video_settings => 'Camera Preview';
 
   @override
-  String get common_toast_apply_link_mic =>
-      'You have submitted a link mic request, please wait for the author approval';
+  String get common_toast_apply_link_mic => 'Request sent. Waiting for host to accept...';
 
   @override
   String get common_unfollow_anchor => 'Unfollow';
@@ -1082,6 +1084,20 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
   String get live_video_resolution_changed => 'resolution changed to';
 
   @override
+  String get common_go_settings => 'Go to Settings';
+
+  @override
+  String get common_permission_request => 'Authorization Request';
+
+  @override
+  String get common_permission_camera_reason =>
+      'Needs access to your camera, and it can be used for functions such as Live etc. For beauty filters to work, we will collect the facial information captured by your camera in real time to detect your facial features.';
+
+  @override
+  String get common_permission_mic_reason =>
+      'Needs access to your microphone, and it can be used for functions such as Live etc. such as Live etc.';
+
+  @override
   String get common_template_601_ui_exception_toast =>
       'This layout template may display abnormally on certain models. It is recommended to change to another layout template.';
 
@@ -1185,4 +1201,8 @@ class LiveKitLocalizationsEn extends LiveKitLocalizations {
 
   @override
   String get common_enter_anchor_live_room => 'Enter Live Room';
+
+  @override
+  String get common_battle_all_member_exit_win =>
+      'All PK members exited early, this round is judged as a victory for the current host';
 }

@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:atomic_x_core/atomicxcore.dart';
 
 import '../app_store/index.dart';
 import '../utils/language/index.dart';
-import '../app_store/app_manager.dart';
 import '../main/main_widget.dart';
 
 class RegisterWidget extends StatefulWidget {
@@ -148,7 +148,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     if (AppStore.userName.value.isNotEmpty) {
       int index = Random().nextInt(_userAvatarArray.length);
       var result = await AppManager.setSelfInfo(_userAvatarArray[index], AppStore.userName.value);
-      if (result.code == 0) {
+      if (result.errorCode == 0) {
         _enterMainWidget();
       } else {
         _showDialog(result);
@@ -165,13 +165,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     ), (route) => false);
   }
 
-  _showDialog(TUIResult result) {
+  _showDialog(CompletionHandler result) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.app_login_fail),
-          content: Text("result.code:${result.code}, result.message: ${result.message}？"),
+          content: Text("result.code:${result.errorCode}, result.message: ${result.errorMessage}？"),
           actions: [
             TextButton(
               onPressed: () {

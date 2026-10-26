@@ -26,17 +26,18 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App-UIKit needs access to your photo library to send images and videos</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App-UIKit需要访问你的相机权限，开启后录制的视频才会有画面</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>App-UIKit需要访问您的麦克风权限，开启后录制的视频才会有声音</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App-UIKit needs access to your photo library to send images and videos</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>voip</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:tencent_live_uikit/common/constants/constants.dart';
 
 import '../voice_room_widget.dart';
-import 'package:rtc_room_engine/rtc_room_engine.dart';
 
 String _randomCoverUrl() {
   final list = Constants.coverUrlList;
@@ -42,7 +41,7 @@ class VoiceRoomPrepareStore {
       state.liveInfo.value = liveInfo.copyWith(
         liveID: liveID,
         seatTemplate: AudioSalon(params.maxSeatCount),
-        seatMode: params.seatMode == TUISeatMode.applyToTake ? TakeSeatMode.apply : TakeSeatMode.free,
+        seatMode: params.seatMode,
       );
     }
   }
@@ -63,9 +62,8 @@ class VoiceRoomPrepareStore {
     state.liveInfo.value = state.liveInfo.value.copyWith(backgroundURL: backgroundUrl);
   }
 
-  void onChangedSeatMode(TUISeatMode seatMode) {
-    state.liveInfo.value = state.liveInfo.value
-        .copyWith(seatMode: seatMode == TUISeatMode.applyToTake ? TakeSeatMode.apply : TakeSeatMode.free);
+  void onChangedSeatMode(TakeSeatMode seatMode) {
+    state.liveInfo.value = state.liveInfo.value.copyWith(seatMode: seatMode);
   }
 
   void dispose() {
