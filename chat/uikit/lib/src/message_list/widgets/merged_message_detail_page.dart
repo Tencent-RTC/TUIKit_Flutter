@@ -190,10 +190,13 @@ class _MergedMessageDetailPageState extends State<MergedMessageDetailPage> {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final maxWidth = screenWidth - 32 - 36 - _config.avatarSpacing;
+    // Only the leading avatar column comes off here: a merged row is always
+    // left-aligned with an avatar, so there is no opposite column to reserve
+    // the way the main list does.
+    final maxWidth = screenWidth - _config.horizontalPadding * 2 - 36 - _config.avatarSpacing;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: _config.horizontalPadding, vertical: 8),
       child: ScrollablePositionedList.builder(
         itemScrollController: _itemScrollController,
         itemPositionsListener: _itemPositionsListener,

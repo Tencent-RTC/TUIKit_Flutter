@@ -22,5 +22,5 @@ tencent_chat_uikit is a chat-specific UI library built on top of tuikit_atomic_x
   s.swift_version = '5.0'
   s.platform = :ios, '14.0'
   s.resources = 'Assets/**/*'
-  s.frameworks = 'Photos', 'AVFoundation', 'UIKit', 'SwiftUI'
+  s.frameworks = 'Photos', 'AVFoundation', 'AudioToolbox', 'UIKit', 'SwiftUI'
 end

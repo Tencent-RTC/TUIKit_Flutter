@@ -1,6 +1,9 @@
+import 'package:atomic_x_core/atomicxcore.dart' show MessageInfo;
 import 'package:tuikit_atomic_x/base_component/utils/app_builder.dart';
 
 import 'widgets/message_types/custom_message_renderer.dart';
+
+typedef MessageListHidePredicate = bool Function(MessageInfo message);
 
 abstract class MessageListConfigProtocol {
   double get textBubbleCornerRadius;
@@ -30,6 +33,16 @@ abstract class MessageListConfigProtocol {
   /// Host-supplied renderers for custom messages, keyed by `businessID` and
   /// consulted before the built-in custom message handling.
   Map<String, CustomMessageBuilder> get customMessageBuilders;
+
+  /// When this returns true the message is omitted from the list (no row, no
+  /// avatar). Use it for demo control pings that must not appear as empty
+  /// custom bubbles.
+  MessageListHidePredicate? get shouldHideMessage;
+
+  /// In chatbot conversations, whether a text message the user just sent shows
+  /// the "typing" placeholder until the bot replies. Turn it off when a human
+  /// agent may answer instead, otherwise the placeholder waits until timeout.
+  bool get enableChatbotReplyPlaceholder;
 }
 
 class ChatMessageListConfig implements MessageListConfigProtocol {
@@ -57,6 +70,8 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   final bool _isSupportTongue;
   final bool _isSupportQuote;
   final Map<String, CustomMessageBuilder> _customMessageBuilders;
+  final MessageListHidePredicate? _shouldHideMessage;
+  final bool _enableChatbotReplyPlaceholder;
 
   @override
   double get textBubbleCornerRadius => _userTextBubbleCornerRadius ?? 10.0;
@@ -164,6 +179,12 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
   @override
   Map<String, CustomMessageBuilder> get customMessageBuilders => _customMessageBuilders;
 
+  @override
+  MessageListHidePredicate? get shouldHideMessage => _shouldHideMessage;
+
+  @override
+  bool get enableChatbotReplyPlaceholder => _enableChatbotReplyPlaceholder;
+
   const ChatMessageListConfig({
     double? textBubbleCornerRadius,
     String? alignment,
@@ -189,7 +210,11 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
     bool isSupportTongue = true,
     bool isSupportQuote = true,
     Map<String, CustomMessageBuilder> customMessageBuilders = const {},
+    MessageListHidePredicate? shouldHideMessage,
+    bool enableChatbotReplyPlaceholder = true,
   })  : _customMessageBuilders = customMessageBuilders,
+        _shouldHideMessage = shouldHideMessage,
+        _enableChatbotReplyPlaceholder = enableChatbotReplyPlaceholder,
         _userTextBubbleCornerRadius = textBubbleCornerRadius,
         _userAlignment = alignment,
         _userIsShowTimeMessage = isShowTimeMessage,
@@ -213,4 +238,44 @@ class ChatMessageListConfig implements MessageListConfigProtocol {
         _isSupportTranslate = isSupportTranslate,
         _isSupportTongue = isSupportTongue,
         _isSupportQuote = isSupportQuote;
+
+  /// Fields left unset here keep this config's value, including "unset", so
+  /// AppBuilder defaults still apply to them.
+  ChatMessageListConfig copyWith({
+    bool? isShowLeftAvatar,
+    bool? isShowRightAvatar,
+    bool? isSupportMultiSelect,
+    Map<String, CustomMessageBuilder>? customMessageBuilders,
+    MessageListHidePredicate? shouldHideMessage,
+    bool? enableChatbotReplyPlaceholder,
+  }) {
+    return ChatMessageListConfig(
+      textBubbleCornerRadius: _userTextBubbleCornerRadius,
+      alignment: _userAlignment,
+      isShowTimeMessage: _userIsShowTimeMessage,
+      isShowLeftAvatar: isShowLeftAvatar ?? _userIsShowLeftAvatar,
+      isShowLeftNickname: _userIsShowLeftNickname,
+      isShowRightAvatar: isShowRightAvatar ?? _userIsShowRightAvatar,
+      isShowRightNickname: _userIsShowRightNickname,
+      isShowTimeInBubble: _userIsShowTimeInBubble,
+      cellSpacing: _userCellSpacing,
+      isShowSystemMessage: _userIsShowSystemMessage,
+      isShowUnsupportMessage: _userIsShowUnsupportMessage,
+      isSupportCopy: _userIsSupportCopy,
+      isSupportDelete: _userIsSupportDelete,
+      isSupportRecall: _userIsSupportRecall,
+      horizontalPadding: _userHorizontalPadding,
+      avatarSpacing: _userAvatarSpacing,
+      enableReadReceipt: _userEnableReadReceipt,
+      isSupportForward: _isSupportForward,
+      isSupportMultiSelect: isSupportMultiSelect ?? _isSupportMultiSelect,
+      isSupportReaction: _isSupportReaction,
+      isSupportTranslate: _isSupportTranslate,
+      isSupportTongue: _isSupportTongue,
+      isSupportQuote: _isSupportQuote,
+      customMessageBuilders: customMessageBuilders ?? _customMessageBuilders,
+      shouldHideMessage: shouldHideMessage ?? _shouldHideMessage,
+      enableChatbotReplyPlaceholder: enableChatbotReplyPlaceholder ?? _enableChatbotReplyPlaceholder,
+    );
+  }
 }

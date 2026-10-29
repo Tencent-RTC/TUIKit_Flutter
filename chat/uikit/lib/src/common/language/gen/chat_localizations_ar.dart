@@ -1347,4 +1347,95 @@ class ChatLocalizationsAr extends ChatLocalizations {
 
   @override
   String get callingSwitchToAudioAccept => 'تأكيد تحويل الفيديو إلى صوتي';
+
+  @override
+  String get slideToTranscribeHint => 'اسحب للتحويل إلى نص';
+
+  @override
+  String get realtimeTranscribing => 'جارٍ الاستماع…';
+
+  @override
+  String get asrUnavailableTitle => 'التعرف على الكلام غير متاح';
+
+  @override
+  String get asrUnavailableContent =>
+      'نفدت حزمة التعرف على الكلام لهذا التطبيق أو لم يتم تفعيلها، لذا فإن تحويل الصوت إلى نص غير متاح مؤقتًا.';
+
+  @override
+  String get asrUnavailableConfirm => 'حسنًا';
+
+  @override
+  String get aiPageTitle => 'مساعد الذكاء الاصطناعي';
+
+  @override
+  String get aiSelectAgent => 'اختيار المساعد';
+
+  @override
+  String get aiAgentsEmpty => 'لا يوجد مساعدون متاحون';
+
+  @override
+  String get aiTransferToHuman => 'التحويل إلى موظف';
+
+  @override
+  String get aiCallButton => 'مكالمة صوتية';
+
+  @override
+  String get aiCallHandoffWaiting =>
+      'في انتظار اتصال الموظف، يرجى المحاولة لاحقًا';
+
+  @override
+  String get aiCallHandoffRequired =>
+      'يرجى التحويل إلى موظف أولاً قبل إجراء المكالمة';
+
+  @override
+  String get aiCallModeFree => 'محادثة حرة';
+
+  @override
+  String get aiCallListening => '...جارٍ الاستماع';
+
+  @override
+  String get aiCallThinking => '...جارٍ التفكير';
+
+  @override
+  String get aiCallSpeaking => 'يمكنك متابعة التحدث';
+
+  @override
+  String get aiCallMuted => 'تم كتم الصوت';
+
+  @override
+  String get aiCallDisclaimer => 'محتوى تم إنشاؤه بواسطة الذكاء الاصطناعي';
+
+  @override
+  String get aiCallPermissionDenied => 'تتطلب المحادثة الصوتية إذن الميكروفون';
+
+  @override
+  String get aiCallStartFailed =>
+      'تعذر بدء التعرف على الصوت، يرجى المحاولة مرة أخرى';
+
+  @override
+  String get aiCallAsrUnavailableTitle => 'التعرف على الكلام غير متاح';
+
+  @override
+  String get aiCallAsrUnavailableContent =>
+      'نفدت حزمة التعرف على الكلام لهذا التطبيق أو لم يتم تفعيلها، لذا فإن المكالمات الصوتية غير متاحة مؤقتًا.';
+
+  @override
+  String get aiCallAsrUnavailableExit => 'إنهاء المكالمة';
+
+  @override
+  String get aiCallStartFailedRetry =>
+      'فشل الاتصال، انقر على الميكروفون لإعادة المحاولة';
+
+  @override
+  String get aiCallSendFailed => 'فشل الإرسال، يرجى المحاولة مرة أخرى';
+
+  @override
+  String get aiCallReplyTimeout => 'لم يستجب المساعد، يرجى المحاولة مرة أخرى';
+
+  @override
+  String get aiCallAudioUnavailable => 'الميكروفون غير متاح';
+
+  @override
+  String get aiCallPlaybackUnavailable =>
+      'تشغيل الصوت غير متاح، وسيتم عرض الردود كنص';
 }

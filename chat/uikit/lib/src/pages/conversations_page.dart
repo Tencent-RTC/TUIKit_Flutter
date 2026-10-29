@@ -22,6 +22,9 @@ class ConversationsPage extends StatefulWidget {
   /// custom messages no matter how the user reached the conversation.
   final ChatMessageListConfig messageListConfig;
 
+  /// Forwarded to the [ConversationList] on this page.
+  final ConversationListHidePredicate? shouldHideConversation;
+
   const ConversationsPage({
     super.key,
     this.onBackPressed,
@@ -30,6 +33,7 @@ class ConversationsPage extends StatefulWidget {
       isShowVideoCall: true,
     ),
     this.messageListConfig = const ChatMessageListConfig(),
+    this.shouldHideConversation,
   });
 
   @override
@@ -279,6 +283,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
             ),
           Expanded(
             child: ConversationList(
+              shouldHideConversation: widget.shouldHideConversation,
               onConversationClick: (conversation) {
                 Navigator.push(
                   context,

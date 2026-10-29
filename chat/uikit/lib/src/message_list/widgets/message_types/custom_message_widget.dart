@@ -2,6 +2,7 @@ import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:atomic_x_core/atomicxcore.dart';
 import 'package:flutter/material.dart';
 import '../../../common/language/gen/chat_localizations.dart';
+import 'custom_message_renderer.dart';
 
 class CustomMessageWidget extends StatelessWidget {
   final MessageInfo message;
@@ -32,6 +33,7 @@ class CustomMessageWidget extends StatelessWidget {
       return _buildSystemMessage(context, colors, chatLocale, customContent);
     }
 
+    CustomMessageFallbackRegistry.notify(message);
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,

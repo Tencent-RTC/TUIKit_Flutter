@@ -1340,4 +1340,90 @@ class ChatLocalizationsJa extends ChatLocalizations {
 
   @override
   String get callingSwitchToAudioAccept => 'ビデオから音声への変換を確認する';
+
+  @override
+  String get slideToTranscribeHint => 'スライドしてテキスト化';
+
+  @override
+  String get realtimeTranscribing => '認識中…';
+
+  @override
+  String get asrUnavailableTitle => '音声認識を利用できません';
+
+  @override
+  String get asrUnavailableContent =>
+      'このアプリの音声認識パッケージを使い切ったか、有効になっていないため、一時的にテキスト化できません。';
+
+  @override
+  String get asrUnavailableConfirm => 'OK';
+
+  @override
+  String get aiPageTitle => 'AI アシスタント';
+
+  @override
+  String get aiSelectAgent => 'アシスタントを選択';
+
+  @override
+  String get aiAgentsEmpty => '利用できるアシスタントがありません';
+
+  @override
+  String get aiTransferToHuman => 'オペレーターに接続';
+
+  @override
+  String get aiCallButton => '音声通話';
+
+  @override
+  String get aiCallHandoffWaiting => 'オペレーターへの接続を待っています。しばらくしてから再試行してください';
+
+  @override
+  String get aiCallHandoffRequired => '通話を行う前にオペレーターに接続してください';
+
+  @override
+  String get aiCallModeFree => 'フリートーク';
+
+  @override
+  String get aiCallListening => '聞いています...';
+
+  @override
+  String get aiCallThinking => '考えています...';
+
+  @override
+  String get aiCallSpeaking => 'そのままお話しください';
+
+  @override
+  String get aiCallMuted => 'ミュート中';
+
+  @override
+  String get aiCallDisclaimer => 'AI により生成された内容';
+
+  @override
+  String get aiCallPermissionDenied => '音声チャットにはマイクの権限が必要です';
+
+  @override
+  String get aiCallStartFailed => '音声認識を開始できませんでした。再試行してください';
+
+  @override
+  String get aiCallAsrUnavailableTitle => '音声認識を利用できません';
+
+  @override
+  String get aiCallAsrUnavailableContent =>
+      'このアプリの音声認識リソースパックが使い切られたか、有効化されていないため、音声通話を一時的に利用できません。';
+
+  @override
+  String get aiCallAsrUnavailableExit => '通話を終了';
+
+  @override
+  String get aiCallStartFailedRetry => '接続に失敗しました。マイクをタップして再試行';
+
+  @override
+  String get aiCallSendFailed => '送信に失敗しました。再試行してください';
+
+  @override
+  String get aiCallReplyTimeout => 'アシスタントが応答しませんでした。再試行してください';
+
+  @override
+  String get aiCallAudioUnavailable => 'マイクを利用できません';
+
+  @override
+  String get aiCallPlaybackUnavailable => '音声再生を利用できません。返信はテキストで表示されます';
 }

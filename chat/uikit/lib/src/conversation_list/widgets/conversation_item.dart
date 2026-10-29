@@ -6,6 +6,7 @@ import 'package:tencent_chat_uikit/src/common/utils/time_util.dart';
 import 'package:tencent_chat_uikit/src/conversation_list/conversation_list.dart';
 import 'package:tencent_chat_uikit/src/conversation_list/conversation_list_config.dart';
 import 'package:tencent_chat_uikit/src/emoji_picker/emoji_manager.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/calling_message_data_provider.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/third_party/flutter_swipe_action_cell/core/cell.dart';
 import '../../common/language/gen/chat_localizations.dart';
@@ -289,19 +290,22 @@ class _ConversationItemState extends State<ConversationItem> {
             ? '[${_formatUnreadCount(widget.conversation.unreadCount)} ${chatLocale.messageNum}]'
             : '';
 
-    // If there's @ mention, show with red color
-    if (atPrefix.isNotEmpty) {
+    final InlineSpan? callIcon = _buildCallIconSpan(context, colorsTheme);
+
+    // If there's @ mention or a call icon, compose the line as spans
+    if (atPrefix.isNotEmpty || callIcon != null) {
       return RichText(
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         text: TextSpan(
           children: [
-            TextSpan(
-              text: atPrefix,
-              style: FontScheme.caption2Regular.copyWith(
-                color: colorsTheme.textColorError,
+            if (atPrefix.isNotEmpty)
+              TextSpan(
+                text: atPrefix,
+                style: FontScheme.caption2Regular.copyWith(
+                  color: colorsTheme.textColorError,
+                ),
               ),
-            ),
             if (unreadPrefix.isNotEmpty)
               TextSpan(
                 text: unreadPrefix,
@@ -309,6 +313,7 @@ class _ConversationItemState extends State<ConversationItem> {
                   color: colorsTheme.textColorTertiary,
                 ),
               ),
+            if (callIcon != null) callIcon,
             TextSpan(
               text: replaceText,
               style: FontScheme.caption2Regular.copyWith(
@@ -329,6 +334,30 @@ class _ConversationItemState extends State<ConversationItem> {
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  /// A voice/video icon to sit in front of the preview text, for conversations
+  /// whose last message is a call. Null for every other kind of last message.
+  InlineSpan? _buildCallIconSpan(BuildContext context, SemanticColorScheme colorsTheme) {
+    final mediaType = MessageUtil.getCallStreamMediaType(widget.conversation.lastMessage, context);
+    if (mediaType == null) {
+      return null;
+    }
+
+    return WidgetSpan(
+      alignment: PlaceholderAlignment.middle,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 4),
+        child: Image.asset(
+          mediaType == CallStreamMediaType.audio
+              ? 'chat_assets/icon/voice_call.png'
+              : 'chat_assets/icon/video_call.png',
+          package: 'tencent_chat_uikit',
+          height: 14,
+          color: colorsTheme.textColorTertiary,
+        ),
+      ),
     );
   }
 

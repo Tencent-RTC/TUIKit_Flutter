@@ -8,9 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:tencent_chat_uikit/src/common/utils/chat_background_store.dart';
 import 'package:tencent_chat_uikit/src/common/utils/time_util.dart';
+import 'package:tencent_chat_uikit/src/message_list/chatbot/chatbot_reply_waiting_controller.dart';
+import 'package:tencent_chat_uikit/src/message_list/chatbot/chatbot_typing_indicator.dart';
 import 'package:tencent_chat_uikit/src/message_list/message_list_config.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/asr_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/call_ui_extension.dart';
+import 'package:tencent_chat_uikit/src/message_list/utils/calling_message_data_provider.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/message_utils.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/translation_display_manager.dart';
 import 'package:tencent_chat_uikit/src/message_list/utils/translation_text_parser.dart';
@@ -118,6 +121,9 @@ class MessageList extends StatefulWidget {
   final List<GroupAtInfo>? groupAtInfoList;
   /// Initial unread count from ConversationInfo when entering the chat
   final int initialUnreadCount;
+  /// Space kept below the newest message so widgets floating over the list
+  /// bottom don't cover it. Messages still scroll underneath them.
+  final double contentBottomInset;
 
   const MessageList({
     super.key,
@@ -133,6 +139,7 @@ class MessageList extends StatefulWidget {
     this.onMultiSelectStateChanged,
     this.groupAtInfoList,
     this.initialUnreadCount = 0,
+    this.contentBottomInset = 0,
   });
 
   @override
@@ -243,6 +250,8 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
   MessageInfo? _quoteReturnSource;
 
   Widget? _callStatusWidget;
+  Timer? _groupAttributesRefreshTimer;
+  static const Duration _groupAttributesRefreshDebounce = Duration(milliseconds: 500);
 
   static const int _messageAggregationTime = 300;
 
@@ -275,6 +284,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   // ASR display manager for voice-to-text feature
   late AsrDisplayManager _asrDisplayManager;
+  late final ChatbotReplyWaitingController _chatbotReplyWaiting;
 
   // Translation display manager for text translation feature
   late TranslationDisplayManager _translationDisplayManager;
@@ -309,6 +319,10 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
     _asrDisplayManager = AsrDisplayManager();
     _translationDisplayManager = TranslationDisplayManager();
+    _chatbotReplyWaiting = ChatbotReplyWaitingController(
+      conversationID: widget.conversationID,
+      shouldHideMessage: widget.config.shouldHideMessage,
+    )..addListener(_onChatbotReplyWaitingChanged);
 
     // Initialize listener references
     _messageListStateChangedListener = _onMessageListStateChanged;
@@ -361,10 +375,18 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       GroupStore.shared.state.joinedGroupList.removeListener(_joinedGroupListChangedListener);
     }
     ChatBackgroundStore.shared.revision.removeListener(_chatBackgroundListener);
+    _groupAttributesRefreshTimer?.cancel();
     _receiptTimer?.cancel();
     _asrDisplayManager.dispose();
     _translationDisplayManager.dispose();
+    _chatbotReplyWaiting
+      ..removeListener(_onChatbotReplyWaitingChanged)
+      ..dispose();
     super.dispose();
+  }
+
+  void _onChatbotReplyWaitingChanged() {
+    if (mounted) setState(() {});
   }
 
   void _onChatBackgroundChanged() {
@@ -527,6 +549,9 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
 
   void _onMessageListStateChanged() {
     final state = _messageListStore.state;
+    _chatbotReplyWaiting
+      ..shouldHideMessage = widget.config.shouldHideMessage
+      ..onMessagesChanged(state.messageList.value);
 
     debugPrint('messageList, _onMessageListStateChanged, '
         'msgCount: ${state.messageList.value.length}, '
@@ -549,7 +574,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       case _NavToUnread()
           when _oldestUnreadMessageSeq != null && _oldestUnreadMessageSeq! > 0:
         setState(() {
-          _messages = state.messageList.value.reversed.toList();
+          _messages = _reversedVisible(state.messageList.value);
           isLoading = false;
         });
         _scrollToSeq(_oldestUnreadMessageSeq!);
@@ -560,7 +585,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             'targetSeq: $targetSeq, '
             'messageCount: ${state.messageList.value.length}');
         setState(() {
-          _messages = state.messageList.value.reversed.toList();
+          _messages = _reversedVisible(state.messageList.value);
           isLoading = false;
         });
         _scrollToSeq(targetSeq, alignment: 0);
@@ -593,7 +618,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
             'highlight: $highlightTarget, '
             'messageCount: ${state.messageList.value.length}');
         setState(() {
-          _messages = state.messageList.value.reversed.toList();
+          _messages = _reversedVisible(state.messageList.value);
           isLoading = false;
           if (highlightTarget) {
             _highlightedMessageId = targetMsgID;
@@ -624,7 +649,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     final oldFirstMsgID = _messages.isNotEmpty ? _messages.first.msgID : null;
 
     setState(() {
-      _messages = state.messageList.value.reversed.toList();
+      _messages = _reversedVisible(state.messageList.value);
     });
 
     // Only compensate when new messages are inserted at the HEAD of the list
@@ -704,6 +729,7 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
         if (widget.config.isSupportReaction) {
           _fetchMessageReactions([message]);
         }
+        _maybeRefreshGroupAttributesForCall(message);
     }
   }
 
@@ -807,6 +833,47 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     return '${message.msgID}-${message.timestamp}';
   }
 
+  List<MessageInfo> _reversedVisible(List<MessageInfo> chronological) {
+    final hide = widget.config.shouldHideMessage;
+    final visible = chronological
+        .where((message) => !_isEmptyStreamMessage(message) && (hide == null || !hide(message)))
+        .toList();
+    return visible.reversed.toList();
+  }
+
+  /// 流式消息先落一条没有正文的空壳，第一段文字到达前画出来就是一个空气泡。
+  /// 这段时间由机器人等待占位顶上。
+  static bool _isEmptyStreamMessage(MessageInfo message) {
+    if (message.messageType != MessageType.stream) return false;
+    final payload = message.messagePayload;
+    return payload is! StreamMessagePayload || payload.markdown.isEmpty;
+  }
+
+  Widget _buildChatbotTypingIndicator() {
+    MessageInfo? lastPeerMessage;
+    for (final message in _messages) {
+      if (!message.isSentBySelf) {
+        lastPeerMessage = message;
+        break;
+      }
+    }
+    final sender = lastPeerMessage?.from;
+    final fallbackName = widget.conversationID
+        .replaceFirst(c2cConversationIDPrefix, '')
+        .replaceFirst(groupConversationIDPrefix, '');
+    final senderName = sender == null
+        ? fallbackName
+        : (sender.nickname?.isNotEmpty == true ? sender.nickname! : sender.userID);
+    return Padding(
+      padding: EdgeInsets.only(top: widget.config.cellSpacing),
+      child: ChatbotTypingIndicator(
+        config: widget.config,
+        avatarURL: sender?.avatarURL,
+        name: senderName,
+      ),
+    );
+  }
+
   Widget _renderItem(BuildContext context, int index) {
     if (index >= _messages.length) return Container();
     final message = _messages[index];
@@ -834,25 +901,32 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       );
     }
 
+    // 挂在最新一条消息下面而不是单独占一个 index：列表的定位、未读气泡都按消息下标算，
+    // 多插一项会让它们全部错位
+    final showChatbotTyping = index == 0 &&
+        widget.config.enableChatbotReplyPlaceholder &&
+        _chatbotReplyWaiting.isWaiting &&
+        !_messageListStore.state.hasNewerMessages.value;
+
     return Column(
       children: [
         if (shouldShowTime) _buildTimeDivider(timeString, colors),
         messageWidget,
         spacing,
+        if (showChatbotTyping) _buildChatbotTypingIndicator(),
+        // Also part of the newest item rather than list padding: jumping to the
+        // latest message aligns that item to the edge and ignores padding.
+        if (index == 0 && widget.contentBottomInset > 0) SizedBox(height: widget.contentBottomInset),
       ],
     );
   }
 
-  /// Maximum width a bubble may occupy: the list's content width minus an avatar
-  /// column on *both* sides.
-  ///
-  /// Both are deducted no matter who sent the message, so a self bubble ends
-  /// exactly where a received bubble begins instead of growing into the empty
-  /// column on the left. Android reserves the same area through the 0.72
-  /// screen-width ratio in `resolvePreferredBubbleMaxWidth`.
   double _resolveBubbleMaxWidth(BuildContext context) {
-    final avatarColumn = AvatarSize.m.value + widget.config.avatarSpacing;
-    return MediaQuery.sizeOf(context).width - 32 - avatarColumn * 2;
+    return MessageUtil.bubbleMaxWidth(
+      contentWidth: MediaQuery.sizeOf(context).width - widget.config.horizontalPadding * 2,
+      avatarColumn: AvatarSize.m.value + widget.config.avatarSpacing,
+      isAvatarVisible: widget.config.isShowLeftAvatar || widget.config.isShowRightAvatar,
+    );
   }
 
   Widget _buildMessageItem(MessageInfo message, SemanticColorScheme colors) {
@@ -935,7 +1009,6 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
     final colorsTheme = BaseThemeProvider.colorsOf(context);
 
     final backgroundImageUri = _chatBackgroundImageUri;
-
     return Expanded(
       child: Container(
         color: colorsTheme.bgColorTopBar,
@@ -960,8 +1033,8 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
                 alignment: Alignment.topCenter,
                 child: Container(
                   padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
+                    left: widget.config.horizontalPadding,
+                    right: widget.config.horizontalPadding,
                     top: _callStatusWidget != null ? 70 : 0,
                     bottom: 8,
                   ),
@@ -1845,6 +1918,38 @@ class _MessageListState extends State<MessageList> with TickerProviderStateMixin
       });
       _updateCallStatusWidget();
     }
+  }
+
+  /// Re-pull group attributes when an in-group call signalling message lands,
+  /// debounced so a burst (e.g. the backlog synced down on reconnect) costs a
+  /// single refresh.
+  ///
+  /// Group attribute pushes are only delivered while connected, so the one
+  /// emitted when an in-group call ends during a network outage is lost for
+  /// good — and `_onJoinedGroupListChanged`, which owns the call banner, has
+  /// nothing else to fire off. The call signalling messages sent during the
+  /// outage *are* synced down once the connection is back, so they stand in
+  /// as the cue that the banner may no longer match the call.
+  void _maybeRefreshGroupAttributesForCall(MessageInfo message) {
+    if (!widget.conversationID.startsWith(groupConversationIDPrefix)) return;
+    if (message.messageType != MessageType.custom) return;
+    if (!mounted) return;
+
+    final bool isGroupCallSignal;
+    try {
+      final provider = CallingMessageDataProvider(message, context);
+      isGroupCallSignal = provider.isCallingSignal && provider.participantType == CallParticipantType.group;
+    } catch (e) {
+      debugPrint('maybeRefreshGroupAttributesForCall error: $e');
+      return;
+    }
+    if (!isGroupCallSignal) return;
+
+    _groupAttributesRefreshTimer?.cancel();
+    _groupAttributesRefreshTimer = Timer(_groupAttributesRefreshDebounce, () {
+      if (!mounted) return;
+      _loadGroupAttributes();
+    });
   }
 
   /// Sync call banner when GroupStore pushes group attribute / profile updates

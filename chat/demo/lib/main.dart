@@ -10,6 +10,8 @@ import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_cloud_chat_push/tencent_cloud_chat_push.dart';
 
 import 'common/language/gen/demo_localizations.dart';
+import 'common/message_input_call_red_dot_store.dart';
+import 'common/undisplayed_custom_message.dart';
 import 'custom_messages/custom_link_message.dart';
 import 'login_page.dart';
 import 'splash_page.dart';
@@ -26,6 +28,7 @@ void main() async {
   // Conversation list previews render outside any chat page, so the custom
   // message summary has to be registered globally rather than via page config.
   CustomLinkMessageManager.registerMessageSummary();
+  UndisplayedCustomMessageLogger.register();
 
   TencentCloudChatPush().registerOnAppWakeUpEvent(onAppWakeUpEvent: () async {
     debugPrint('onAppWakeUpEvent onAppWakeUpEvent');
@@ -76,6 +79,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initializeApp() async {
     await AppBuilder.init(path: 'assets/appConfig.json');
+    await MessageInputCallRedDotStore.load();
 
     if (mounted) {
       setState(() {

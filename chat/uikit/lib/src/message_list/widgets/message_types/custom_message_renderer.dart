@@ -72,3 +72,17 @@ typedef CustomMessageBuilder = Widget Function(
   BuildContext context,
   CustomMessageRenderInfo info,
 );
+
+/// Called when a custom message has no host renderer (or the renderer could
+/// not parse the payload) and the UIKit falls back to the generic bubble.
+typedef CustomMessageFallbackHandler = void Function(MessageInfo message);
+
+class CustomMessageFallbackRegistry {
+  CustomMessageFallbackRegistry._();
+
+  static CustomMessageFallbackHandler? handler;
+
+  static void notify(MessageInfo message) {
+    handler?.call(message);
+  }
+}

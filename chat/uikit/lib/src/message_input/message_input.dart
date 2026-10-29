@@ -28,9 +28,11 @@ import 'package:tuikit_atomic_x/permission/permission.dart';
 import 'package:tencent_chat_uikit/src/user_picker/user_picker.dart';
 import 'package:tencent_chat_uikit/src/video_recorder/video_recorder.dart';
 
+import 'asr/realtime_asr.dart';
 import 'mention/mention_info.dart';
 import 'mention/mention_member_picker.dart';
 import 'message_input_config.dart';
+import 'message_input_more_action.dart';
 import 'widget/audio_record_overlay.dart';
 import 'widget/quote_preview_bar.dart';
 import '../common/language/gen/chat_localizations.dart';
@@ -38,7 +40,6 @@ import '../common/language/gen/chat_localizations.dart';
 export 'mention/mention_info.dart';
 export 'message_input_config.dart';
 export 'message_input_more_action.dart';
-
 /// Three-state input mode for the message input bar.
 /// - [idle]: Default state on chat entry. Shows hint "发消息或按住说话...", mic icon, keyboard not shown.
 /// - [text]: Text input active. Keyboard shown, mic icon on left.
@@ -48,11 +49,13 @@ enum _InputMode { idle, text, voice }
 class MessageInput extends StatefulWidget {
   final String conversationID;
   final MessageInputConfigProtocol config;
+  final VoidCallback? onMessageSent;
 
   const MessageInput({
     super.key,
     required this.conversationID,
     this.config = const ChatMessageInputConfig(),
+    this.onMessageSent,
   });
 
   @override
@@ -89,15 +92,18 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   bool _showEmojiPanel = false;
   bool _showMorePanel = false;
   int _morePanelPageIndex = 0;
+
+  /// More panel entries whose red dot the user already consumed during this
+  /// session, so the dot stays gone even before the host persists it.
+  final Set<String> _dismissedRedDotIDs = {};
   final GlobalKey<AudioRecordOverlayState> _recordOverlayKey = GlobalKey();
   OverlayEntry? _recordOverlayEntry;
 
-  /// When `true`, the next [AudioRecordOverlay.onRecordFinish] callback should
-  /// be routed to the overlay's voice-to-text state machine instead of being
-  /// sent as a voice message. Set to `true` by [_onStopRecording] when the
-  /// user released on the convert-to-text button, and reset back to `false`
-  /// inside the overlay callback or when the overlay is cancelled.
-  bool _pendingConvertRecord = false;
+  /// Release action decided by [_onStopRecording] for the next
+  /// [AudioRecordOverlay.onRecordFinish] callback. Null when the recorder
+  /// stopped on its own (max duration reached while the finger is still
+  /// down); the action is then taken from where the finger currently hovers.
+  RecordPointerUpAction? _recordReleaseAction;
 
   double _bottomPadding = 0.0;
 
@@ -144,6 +150,9 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     _loadDraft();
     _extractGroupID();
     _fetchConversationInfo();
+    if (widget.config.enableVoiceToTextOnRecord && widget.config.enableRealtimeVoiceToText) {
+      unawaited(RealtimeAsr.ensureDefaultProvider());
+    }
   }
 
   /// Extract groupID from conversationID for group chats
@@ -741,6 +750,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     } else {
       // Clear quoted message after successful send
       clearQuotedMessage();
+      widget.onMessageSent?.call();
     }
 
     return result;
@@ -1068,6 +1078,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   void _showRecordOverlay() {
     _removeRecordOverlay();
+    _recordReleaseAction = null;
 
     // Capture inherited dependencies from current context before creating
     // the OverlayEntry, since the overlay lives in a different widget subtree
@@ -1076,6 +1087,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final chatLocalizations = ChatLocalizations.of(context);
     final overlay = Overlay.of(context);
     final enableConvert = widget.config.enableVoiceToTextOnRecord;
+    final enableRealtime = widget.config.enableRealtimeVoiceToText;
+    final allowSendVoice = widget.config.enableSendRecordedVoice;
 
     _recordOverlayEntry = OverlayEntry(
       builder: (overlayContext) {
@@ -1086,26 +1099,32 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
             colorScheme: colorScheme,
             chatLocalizations: chatLocalizations,
             enableVoiceToText: enableConvert,
+            enableRealtimeVoiceToText: enableRealtime,
+            enableSendRecordedVoice: allowSendVoice,
             onRecordFinish: (recordInfo) {
+              final overlayState = _recordOverlayKey.currentState;
+              final action = _recordReleaseAction ??
+                  overlayState?.hoverReleaseAction ??
+                  (allowSendVoice ? RecordPointerUpAction.send : RecordPointerUpAction.cancel);
+              _recordReleaseAction = null;
+              final recorded = recordInfo.errorCode == AudioRecordResultCode.success ||
+                  recordInfo.errorCode == AudioRecordResultCode.successExceedMaxDuration;
               // When the user released on the convert button, we DO NOT close
               // the overlay or send the audio: instead, hand the captured
               // file path to the overlay's converting state machine.
-              if (_pendingConvertRecord) {
-                _pendingConvertRecord = false;
-                if (recordInfo.errorCode == AudioRecordResultCode.success ||
-                    recordInfo.errorCode == AudioRecordResultCode.successExceedMaxDuration) {
-                  _recordOverlayKey.currentState
-                      ?.enterConverting(recordInfo.path, recordInfo.duration);
-                  return;
-                }
-                // Recording too short / failed: fall through to default
-                // close-and-toast behavior (legacy path).
+              if (action == RecordPointerUpAction.convert && recorded) {
+                overlayState?.enterConverting(recordInfo.path, recordInfo.duration);
+                return;
               }
               _removeRecordOverlay();
-              _onAudioRecorderFinished(recordInfo);
+              // Recording too short / failed is reported by the overlay's
+              // toast; _onAudioRecorderFinished ignores it.
+              if (action == RecordPointerUpAction.send) {
+                _onAudioRecorderFinished(recordInfo);
+              }
             },
             onRecordCancelled: () {
-              _pendingConvertRecord = false;
+              _recordReleaseAction = null;
               _removeRecordOverlay();
             },
             onSendText: (text) {
@@ -1238,11 +1257,17 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
       });
     } else {
       final overlayState = _recordOverlayKey.currentState;
+      // The recorder may already have stopped on its own (max duration) and
+      // moved the overlay on to converting; this release must not touch it.
+      if (overlayState != null && !overlayState.isInRecordingState) {
+        return;
+      }
       final overCancel = overlayState?.isPointerOverCancelButton(event.position) ?? false;
       final overConvert = overlayState?.isPointerOverConvertButton(event.position) ?? false;
       final action = recordPointerUpAction(
         overCancel: overCancel,
         overConvert: overConvert,
+        allowSendVoice: widget.config.enableSendRecordedVoice,
       );
       switch (action) {
         case RecordPointerUpAction.cancel:
@@ -1252,11 +1277,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         case RecordPointerUpAction.convert:
           // Stop recording; the captured file is routed to the overlay's
           // converting state machine in the onRecordFinish handler.
-          _pendingConvertRecord = true;
+          _recordReleaseAction = RecordPointerUpAction.convert;
           overlayState?.stopRecord();
           break;
         case RecordPointerUpAction.send:
           // stopRecord callback will call _removeRecordOverlay via onRecordFinish.
+          _recordReleaseAction = RecordPointerUpAction.send;
           overlayState?.stopRecord();
           break;
       }
@@ -1281,11 +1307,12 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     }
   }
 
-  Widget _buildMorePanelContent(SemanticColorScheme colorsTheme) {
+  List<_MorePanelItem> _buildMorePanelItems() {
     final List<_MorePanelItem> items = [];
 
     if (widget.config.isShowAlbum) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.album,
         icon: 'chat_assets/icon/image_action.svg',
         title: chatLocale.album,
         onTap: _onPickAlbum,
@@ -1294,6 +1321,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
     if (widget.config.isShowPhotoTaker) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.takePhoto,
         icon: 'chat_assets/icon/camera_action.svg',
         title: chatLocale.takeAPhoto,
         onTap: _onTakePhoto,
@@ -1302,6 +1330,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
     if (widget.config.isShowVideoRecorder) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.recordVideo,
         icon: 'chat_assets/icon/record_action.svg',
         title: chatLocale.recordAVideo,
         onTap: _onTakeVideo,
@@ -1310,26 +1339,24 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
     if (widget.config.isShowFile) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.file,
         icon: 'chat_assets/icon/file_action.svg',
         title: chatLocale.file,
         onTap: _onPickFile,
       ));
     }
 
-    // HarmonyOS: CallKit (client_uikit/atomic-x/flutter/call) 暂未适配纯血鸿蒙,
-    // 底层 tencent_calls_uikit 在 ohos 上不可用,点了会 crash / no-op。
-    // 先在鸿蒙平台隐藏音视频通话入口;等 CallKit 拉出 ohos 分支后去掉这个判断即可。
-    final bool hideCallOnOhos = Platform.operatingSystem == 'ohos';
-
-    if (widget.config.isShowVideoCall && !hideCallOnOhos) {
+    if (widget.config.isShowVideoCall) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.videoCall,
         icon: 'chat_assets/icon/video_call_action.svg',
         title: chatLocale.videoCall,
         onTap: _onVideoCallTap,
       ));
     }
-    if (widget.config.isShowAudioCall && !hideCallOnOhos) {
+    if (widget.config.isShowAudioCall) {
       items.add(_MorePanelItem.builtIn(
+        id: MessageInputActionIDs.audioCall,
         icon: 'chat_assets/icon/audio_call_action.svg',
         title: chatLocale.audioCall,
         onTap: _onAudioCallTap,
@@ -1338,11 +1365,57 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
     for (final action in widget.config.customMoreActions) {
       items.add(_MorePanelItem(
+        id: action.id,
         title: action.title,
         iconBuilder: action.buildIcon,
         onTap: () => action.onTap(context, widget.conversationID),
       ));
     }
+
+    return items;
+  }
+
+  bool _shouldShowRedDot(String actionID) {
+    if (_dismissedRedDotIDs.contains(actionID)) {
+      return false;
+    }
+    return widget.config.shouldShowMoreActionRedDot?.call(actionID) ?? false;
+  }
+
+  /// Whether the plus button should carry a dot, i.e. whether any entry behind
+  /// it still has an unconsumed one.
+  bool get _hasPendingMoreActionRedDot {
+    if (widget.config.shouldShowMoreActionRedDot == null) {
+      return false;
+    }
+    return _buildMorePanelItems().any((item) => _shouldShowRedDot(item.id));
+  }
+
+  /// Consumes the dot locally and lets the host persist that, mirroring the
+  /// plus button on the next build.
+  void _dismissRedDot(String actionID) {
+    if (!_shouldShowRedDot(actionID)) {
+      return;
+    }
+    setState(() {
+      _dismissedRedDotIDs.add(actionID);
+    });
+    widget.config.onMoreActionRedDotTap?.call(actionID);
+  }
+
+  Widget _buildRedDot(SemanticColorScheme colorsTheme) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: colorsTheme.textColorError,
+      ),
+    );
+  }
+
+  Widget _buildMorePanelContent(SemanticColorScheme colorsTheme) {
+    final List<_MorePanelItem> items = _buildMorePanelItems();
 
     // Each page shows 2 rows × 4 columns = 8 items max
     const int itemsPerPage = 8;
@@ -1459,21 +1532,35 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   /// Build a single action item widget in the more panel
   Widget _buildMorePanelItemWidget(_MorePanelItem item, SemanticColorScheme colorsTheme) {
+    final showRedDot = _shouldShowRedDot(item.id);
     return GestureDetector(
-      onTap: item.onTap,
+      onTap: () {
+        _dismissRedDot(item.id);
+        item.onTap();
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: colorsTheme.bgColorTopBar,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: item.iconBuilder(colorsTheme.textColorSecondary),
-            ),
+          Stack(
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: colorsTheme.bgColorTopBar,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: item.iconBuilder(colorsTheme.textColorSecondary),
+                ),
+              ),
+              if (showRedDot)
+                PositionedDirectional(
+                  top: 0,
+                  end: 0,
+                  child: _buildRedDot(colorsTheme),
+                ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
@@ -1668,15 +1755,25 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                         : widget.config.isShowMore
                             ? GestureDetector(
                                 onTap: _toggleMorePanel,
-                                child: SvgPicture.asset(
-                                  'chat_assets/icon/add.svg',
-                                  package: 'tencent_chat_uikit',
-                                  colorFilter: ColorFilter.mode(
-                                    colorsTheme.textColorSecondary,
-                                    BlendMode.srcIn,
-                                  ),
-                                  width: 26,
-                                  height: 26,
+                                child: Stack(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'chat_assets/icon/add.svg',
+                                      package: 'tencent_chat_uikit',
+                                      colorFilter: ColorFilter.mode(
+                                        colorsTheme.textColorSecondary,
+                                        BlendMode.srcIn,
+                                      ),
+                                      width: 26,
+                                      height: 26,
+                                    ),
+                                    if (_hasPendingMoreActionRedDot)
+                                      PositionedDirectional(
+                                        top: 0,
+                                        end: 0,
+                                        child: _buildRedDot(colorsTheme),
+                                      ),
+                                  ],
                                 ),
                               )
                             : const SizedBox.shrink(),
@@ -2164,6 +2261,7 @@ class _MentionTextFieldState extends State<_MentionTextField> {
 
 /// Data model for a "more" panel grid item
 class _MorePanelItem {
+  final String id;
   final String title;
   final VoidCallback onTap;
 
@@ -2171,6 +2269,7 @@ class _MorePanelItem {
   final Widget Function(Color color) iconBuilder;
 
   const _MorePanelItem({
+    required this.id,
     required this.title,
     required this.onTap,
     required this.iconBuilder,
@@ -2178,11 +2277,13 @@ class _MorePanelItem {
 
   /// Built-in item whose icon ships with the UIKit package.
   factory _MorePanelItem.builtIn({
+    required String id,
     required String icon,
     required String title,
     required VoidCallback onTap,
   }) {
     return _MorePanelItem(
+      id: id,
       title: title,
       onTap: onTap,
       iconBuilder: (color) => SvgPicture.asset(

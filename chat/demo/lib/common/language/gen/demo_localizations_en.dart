@@ -21,4 +21,7 @@ class DemoLocalizationsEn extends DemoLocalizations {
   @override
   String get welcomeMessage =>
       'Welcome to Chat Demo! Send a message to try out the basic chat.\nTo add friends, go to the Contacts page and tap the plus button.\nTo make audio or video calls, tap the plus button below -> Voice Call/Video Call.';
+
+  @override
+  String get aiTab => 'AI';
 }

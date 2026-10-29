@@ -252,6 +252,28 @@ class MessageUtil {
     return '$operator ${localizations.groupInviteMethodChangedTo} $approvalDesc';
   }
 
+  /// The media type of the call [messageInfo] describes, or null when
+  /// [getMessageAbstract] would not summarise it through
+  /// [CallingMessageDataProvider] — that is, for every message whose preview is
+  /// not a call. Follows the same resolution order as [getMessageAbstract] so a
+  /// preview icon can never disagree with the preview text beside it.
+  static CallStreamMediaType? getCallStreamMediaType(MessageInfo? messageInfo, BuildContext context) {
+    if (messageInfo == null || !context.mounted) return null;
+    if (messageInfo.messageType != MessageType.custom) return null;
+    if (messageInfo.status == MessageStatus.revoked) return null;
+
+    final businessID = customMessageBusinessID(messageInfo);
+    if (businessID != null && MessageSummaryRegistry.summaryFor(businessID, context, messageInfo) != null) {
+      return null;
+    }
+
+    final provider = CallingMessageDataProvider(messageInfo, context);
+    if (!provider.isCallingSignal || provider.content.isEmpty) return null;
+
+    final mediaType = provider.streamMediaType;
+    return mediaType == CallStreamMediaType.unknown ? null : mediaType;
+  }
+
   static String getMessageAbstract(MessageInfo? messageInfo, BuildContext context, {bool showMergedTitle = false}) {
     if (messageInfo == null) return '';
 
@@ -270,6 +292,12 @@ class MessageUtil {
       case MessageType.text:
         final textPayload = messageInfo.messagePayload as TextMessagePayload?;
         return textPayload?.text ?? '';
+
+      case MessageType.stream:
+        final streamPayload = messageInfo.messagePayload as StreamMessagePayload?;
+        final markdown = streamPayload?.markdown ?? '';
+        // Conversation and search previews are single-line.
+        return markdown.replaceAll(RegExp(r'\s+'), ' ').trim();
 
       case MessageType.image:
         return localizations.messageTypeImage;
@@ -430,5 +458,27 @@ class MessageUtil {
       bottomLeft: corner,
       bottomRight: corner,
     );
+  }
+
+  /// Maximum width a bubble may occupy inside a list whose content area is
+  /// [contentWidth] wide, with [avatarColumn] covering an avatar plus its
+  /// spacing. Every message type, stream answers included, gets the same
+  /// allowance so bubbles line up.
+  ///
+  /// With avatars shown, bubbles give up an avatar column on *both* sides,
+  /// whoever sent them, so an incoming bubble ends exactly where an outgoing
+  /// one ends instead of growing into the avatar column opposite.
+  ///
+  /// With [isAvatarVisible] false neither side has an avatar column, so every
+  /// bubble spans the whole content area.
+  static double bubbleMaxWidth({
+    required double contentWidth,
+    required double avatarColumn,
+    bool isAvatarVisible = true,
+  }) {
+    final reserved = isAvatarVisible ? avatarColumn * 2 : 0.0;
+    // Guard against a narrow window collapsing the allowance to zero or below,
+    // which would make the bubble unlayoutable.
+    return (contentWidth - reserved).clamp(0.0, double.infinity);
   }
 }

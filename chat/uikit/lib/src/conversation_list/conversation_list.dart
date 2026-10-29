@@ -18,16 +18,23 @@ class ConversationCustomAction {
   });
 }
 
+typedef ConversationListHidePredicate = bool Function(ConversationInfo conversation);
+
 class ConversationList extends StatefulWidget {
   final Function(ConversationInfo)? onConversationClick;
   final List<ConversationCustomAction> customActions;
   final ConversationActionConfigProtocol config;
+
+  /// When this returns true the conversation is left out of the list. Hidden
+  /// conversations still count toward the total unread count.
+  final ConversationListHidePredicate? shouldHideConversation;
 
   const ConversationList({
     super.key,
     this.onConversationClick,
     this.customActions = const [],
     this.config = const ChatConversationActionConfig(),
+    this.shouldHideConversation,
   });
 
   @override
@@ -70,10 +77,25 @@ class _ConversationListState extends State<ConversationList> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant ConversationList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.shouldHideConversation != widget.shouldHideConversation) {
+      conversations = _visibleConversations();
+    }
+  }
+
   void _onConversationListChanged() {
     setState(() {
-      conversations = conversationListStore.state.conversationList.value.toList();
+      conversations = _visibleConversations();
     });
+  }
+
+  List<ConversationInfo> _visibleConversations() {
+    final all = conversationListStore.state.conversationList.value;
+    final hide = widget.shouldHideConversation;
+    if (hide == null) return all.toList();
+    return all.where((conversation) => !hide(conversation)).toList();
   }
 
   void _scrollListener() {

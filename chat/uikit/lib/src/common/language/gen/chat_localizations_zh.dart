@@ -1339,6 +1339,90 @@ class ChatLocalizationsZh extends ChatLocalizations {
 
   @override
   String get callingSwitchToAudioAccept => '确认视频转语音';
+
+  @override
+  String get slideToTranscribeHint => '滑到转文字';
+
+  @override
+  String get realtimeTranscribing => '识别中…';
+
+  @override
+  String get asrUnavailableTitle => '语音识别不可用';
+
+  @override
+  String get asrUnavailableContent => '当前应用的语音识别资源包已用完或未开通，暂时无法转文字。';
+
+  @override
+  String get asrUnavailableConfirm => '知道了';
+
+  @override
+  String get aiPageTitle => 'AI 助手';
+
+  @override
+  String get aiSelectAgent => '选择助手';
+
+  @override
+  String get aiAgentsEmpty => '暂无可用助手';
+
+  @override
+  String get aiTransferToHuman => '转人工';
+
+  @override
+  String get aiCallButton => '语音通话';
+
+  @override
+  String get aiCallHandoffWaiting => '正在排队等待人工接入，请稍后再试';
+
+  @override
+  String get aiCallHandoffRequired => '请先转人工后再发起通话';
+
+  @override
+  String get aiCallModeFree => '自由对话';
+
+  @override
+  String get aiCallListening => '正在听...';
+
+  @override
+  String get aiCallThinking => '思考中...';
+
+  @override
+  String get aiCallSpeaking => '可继续说话';
+
+  @override
+  String get aiCallMuted => '已静音';
+
+  @override
+  String get aiCallDisclaimer => '内容由 AI 生成';
+
+  @override
+  String get aiCallPermissionDenied => '语音对话需要麦克风权限';
+
+  @override
+  String get aiCallStartFailed => '语音识别启动失败，请重试';
+
+  @override
+  String get aiCallAsrUnavailableTitle => '语音识别不可用';
+
+  @override
+  String get aiCallAsrUnavailableContent => '当前应用的语音识别资源包已用完或未开通，暂时无法进行语音通话。';
+
+  @override
+  String get aiCallAsrUnavailableExit => '退出通话';
+
+  @override
+  String get aiCallStartFailedRetry => '连接失败，点麦克风重试';
+
+  @override
+  String get aiCallSendFailed => '发送失败，请重试';
+
+  @override
+  String get aiCallReplyTimeout => '助手没有响应，请重试';
+
+  @override
+  String get aiCallAudioUnavailable => '麦克风不可用';
+
+  @override
+  String get aiCallPlaybackUnavailable => '语音播放不可用，回复将以文字显示';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2676,6 +2760,90 @@ class ChatLocalizationsZhHans extends ChatLocalizationsZh {
 
   @override
   String get callingSwitchToAudioAccept => '确认视频转语音';
+
+  @override
+  String get slideToTranscribeHint => '滑到转文字';
+
+  @override
+  String get realtimeTranscribing => '识别中…';
+
+  @override
+  String get asrUnavailableTitle => '语音识别不可用';
+
+  @override
+  String get asrUnavailableContent => '当前应用的语音识别资源包已用完或未开通，暂时无法转文字。';
+
+  @override
+  String get asrUnavailableConfirm => '知道了';
+
+  @override
+  String get aiPageTitle => 'AI 助手';
+
+  @override
+  String get aiSelectAgent => '选择助手';
+
+  @override
+  String get aiAgentsEmpty => '暂无可用助手';
+
+  @override
+  String get aiTransferToHuman => '转人工';
+
+  @override
+  String get aiCallButton => '语音通话';
+
+  @override
+  String get aiCallHandoffWaiting => '正在排队等待人工接入，请稍后再试';
+
+  @override
+  String get aiCallHandoffRequired => '请先转人工后再发起通话';
+
+  @override
+  String get aiCallModeFree => '自由对话';
+
+  @override
+  String get aiCallListening => '正在听...';
+
+  @override
+  String get aiCallThinking => '思考中...';
+
+  @override
+  String get aiCallSpeaking => '可继续说话';
+
+  @override
+  String get aiCallMuted => '已静音';
+
+  @override
+  String get aiCallDisclaimer => '内容由 AI 生成';
+
+  @override
+  String get aiCallPermissionDenied => '语音对话需要麦克风权限';
+
+  @override
+  String get aiCallStartFailed => '语音识别启动失败，请重试';
+
+  @override
+  String get aiCallAsrUnavailableTitle => '语音识别不可用';
+
+  @override
+  String get aiCallAsrUnavailableContent => '当前应用的语音识别资源包已用完或未开通，暂时无法进行语音通话。';
+
+  @override
+  String get aiCallAsrUnavailableExit => '退出通话';
+
+  @override
+  String get aiCallStartFailedRetry => '连接失败，点麦克风重试';
+
+  @override
+  String get aiCallSendFailed => '发送失败，请重试';
+
+  @override
+  String get aiCallReplyTimeout => '助手没有响应，请重试';
+
+  @override
+  String get aiCallAudioUnavailable => '麦克风不可用';
+
+  @override
+  String get aiCallPlaybackUnavailable => '语音播放不可用，回复将以文字显示';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4013,4 +4181,88 @@ class ChatLocalizationsZhHant extends ChatLocalizationsZh {
 
   @override
   String get callingSwitchToAudioAccept => '確認視頻轉語音';
+
+  @override
+  String get slideToTranscribeHint => '滑到轉文字';
+
+  @override
+  String get realtimeTranscribing => '識別中…';
+
+  @override
+  String get asrUnavailableTitle => '語音辨識不可用';
+
+  @override
+  String get asrUnavailableContent => '目前應用的語音辨識資源包已用完或未開通，暫時無法轉文字。';
+
+  @override
+  String get asrUnavailableConfirm => '知道了';
+
+  @override
+  String get aiPageTitle => 'AI 助手';
+
+  @override
+  String get aiSelectAgent => '選擇助手';
+
+  @override
+  String get aiAgentsEmpty => '暫無可用助手';
+
+  @override
+  String get aiTransferToHuman => '轉人工';
+
+  @override
+  String get aiCallButton => '語音通話';
+
+  @override
+  String get aiCallHandoffWaiting => '正在排隊等待人工接入，請稍後再試';
+
+  @override
+  String get aiCallHandoffRequired => '請先轉人工後再發起通話';
+
+  @override
+  String get aiCallModeFree => '自由對話';
+
+  @override
+  String get aiCallListening => '正在聽...';
+
+  @override
+  String get aiCallThinking => '思考中...';
+
+  @override
+  String get aiCallSpeaking => '可繼續說話';
+
+  @override
+  String get aiCallMuted => '已靜音';
+
+  @override
+  String get aiCallDisclaimer => '內容由 AI 生成';
+
+  @override
+  String get aiCallPermissionDenied => '語音對話需要麥克風權限';
+
+  @override
+  String get aiCallStartFailed => '語音辨識啟動失敗，請重試';
+
+  @override
+  String get aiCallAsrUnavailableTitle => '語音辨識不可用';
+
+  @override
+  String get aiCallAsrUnavailableContent => '目前應用的語音辨識資源包已用完或未開通，暫時無法進行語音通話。';
+
+  @override
+  String get aiCallAsrUnavailableExit => '結束通話';
+
+  @override
+  String get aiCallStartFailedRetry => '連線失敗，點麥克風重試';
+
+  @override
+  String get aiCallSendFailed => '傳送失敗，請重試';
+
+  @override
+  String get aiCallReplyTimeout => '助手沒有回應，請重試';
+
+  @override
+  String get aiCallAudioUnavailable => '麥克風不可用';
+
+  @override
+  String get aiCallPlaybackUnavailable => '語音播放不可用，回覆將以文字顯示';
 }

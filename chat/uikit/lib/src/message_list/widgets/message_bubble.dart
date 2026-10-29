@@ -21,6 +21,7 @@ import 'message_types/file_message_widget.dart';
 import 'message_types/image_message_widget.dart';
 import 'message_types/merged_message_widget.dart';
 import 'message_types/sound_message_widget.dart';
+import 'message_types/stream_message_widget.dart';
 import 'message_types/text_message_widget.dart';
 import 'message_types/video_message_widget.dart';
 import '../../common/language/gen/chat_localizations.dart';
@@ -324,6 +325,19 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
         );
         break;
 
+      case MessageType.stream:
+        messageWidget = StreamMessageWidget(
+          message: widget.message,
+          isSelf: widget.isSelf,
+          maxWidth: widget.maxWidth,
+          config: widget.config,
+          onLongPress: _longPressCallback,
+          bubbleKey: _messageKey,
+          backgroundBuilder: sharesBubbleWithReactions ? (child) => child : backgroundBuilder,
+          isInMergedDetailView: widget.isInMergedDetailView,
+        );
+        break;
+
       case MessageType.image:
         messageWidget = _wrapMediaHighlight(
           ImageMessageWidget(
@@ -490,6 +504,7 @@ class _MessageBubbleState extends State<MessageBubble> with SingleTickerProvider
   /// of sharing its bubble.
   bool get _payloadOwnsBubble => !const {
         MessageType.text,
+        MessageType.stream,
         MessageType.image,
         MessageType.video,
         MessageType.audio,

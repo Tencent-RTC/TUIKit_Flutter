@@ -20,4 +20,7 @@ class DemoLocalizationsKo extends DemoLocalizations {
   @override
   String get welcomeMessage =>
       'Chat Demo에 오신 것을 환영합니다! 먼저 메시지를 보내 기본 채팅 기능을 사용해 보세요.\n친구를 추가하려면 연락처 페이지로 이동해 더하기 버튼을 탭하세요.\n음성 통화나 영상 통화를 사용해 보려면 아래 더하기 버튼을 탭한 후 음성 통화/영상 통화를 선택하세요.';
+
+  @override
+  String get aiTab => 'AI';
 }

@@ -12,6 +12,8 @@ public class TencentChatUikitPlugin: NSObject, FlutterPlugin {
   private var audioPlayer: AtomicAudioPlayerPlugin?
   private var filePicker: AtomicFilePickerPlugin?
   private var videoPlayer: AtomicVideoPlayerPlugin?
+  private var realtimeAudio: AtomicRealtimeAudioPlugin?
+  private var opusPlayer: AtomicOpusPlayerPlugin?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
@@ -26,6 +28,15 @@ public class TencentChatUikitPlugin: NSObject, FlutterPlugin {
     instance.audioPlayer = AtomicAudioPlayerPlugin(registrar: registrar)
     instance.filePicker = AtomicFilePickerPlugin(registrar: registrar)
     instance.videoPlayer = AtomicVideoPlayerPlugin.register(with: registrar) as? AtomicVideoPlayerPlugin
+    instance.realtimeAudio = AtomicRealtimeAudioPlugin(registrar: registrar)
+    instance.opusPlayer = AtomicOpusPlayerPlugin(registrar: registrar)
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    realtimeAudio?.dispose()
+    realtimeAudio = nil
+    opusPlayer?.dispose()
+    opusPlayer = nil
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -42,5 +53,7 @@ public class TencentChatUikitPlugin: NSObject, FlutterPlugin {
     audioRecorder?.dispose()
     audioPlayer?.dispose()
     filePicker?.dispose()
+    realtimeAudio?.dispose()
+    opusPlayer?.dispose()
   }
 }
