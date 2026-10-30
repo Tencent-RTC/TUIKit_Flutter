@@ -21,4 +21,7 @@ class DemoLocalizationsAr extends DemoLocalizations {
   @override
   String get welcomeMessage =>
       'مرحبًا بك في Chat Demo! يمكنك أولاً إرسال رسالة لتجربة الدردشة الأساسية.\nلإضافة أصدقاء، انتقل إلى صفحة جهات الاتصال واضغط على زر الإضافة في الصفحة الرئيسية.\nلتجربة مكالمات الصوت والفيديو، اضغط على زر الإضافة أدناه -> مكالمة صوتية/مكالمة فيديو.';
+
+  @override
+  String get aiTab => 'AI';
 }

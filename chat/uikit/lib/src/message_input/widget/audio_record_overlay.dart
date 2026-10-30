@@ -10,6 +10,9 @@ import 'package:tencent_chat_uikit/src/ai/tts/tts_playback_helper.dart';
 import 'package:tencent_chat_uikit/src/ai/tts/tts_text_sanitizer.dart';
 import 'package:tencent_chat_uikit/src/ai/tts/voice_message_config.dart';
 import 'package:tencent_chat_uikit/src/common/language/index.dart';
+import 'package:tencent_chat_uikit/src/message_input/asr/asr_service_error.dart';
+import 'package:tencent_chat_uikit/src/message_input/asr/realtime_asr.dart';
+import 'package:tencent_chat_uikit/src/message_input/src/record_pointer_up_action.dart';
 
 /// State machine of [AudioRecordOverlay].
 ///
@@ -22,6 +25,44 @@ import 'package:tencent_chat_uikit/src/common/language/index.dart';
 /// - [error]: conversion failed (or returned empty / timed out). Red bubble
 ///   with localized error text. Any tap on the overlay closes it.
 enum _OverlayState { recording, converting, editing, error }
+
+const double _recognitionBubbleBottomRatio = 0.34;
+
+@visibleForTesting
+BoxConstraints recognitionBubbleBodyConstraints({
+  required bool expanded,
+  required double screenHeight,
+}) {
+  const compactHeight = 56.0;
+  if (!expanded) {
+    return const BoxConstraints.tightFor(height: compactHeight);
+  }
+  return BoxConstraints(
+    minHeight: compactHeight,
+    maxHeight: screenHeight * 0.4,
+  );
+}
+
+@visibleForTesting
+double recognitionBubbleAnchorFromTop({
+  required double initialViewportHeight,
+}) {
+  return initialViewportHeight * (1 - _recognitionBubbleBottomRatio);
+}
+
+@visibleForTesting
+double recognitionBubbleTop({
+  required double anchorY,
+  required double bubbleHeight,
+}) {
+  return anchorY - bubbleHeight;
+}
+
+@visibleForTesting
+const double recordingHintSlotHeight = 20;
+
+@visibleForTesting
+const double recognitionWaveformViewportHeight = 24;
 
 /// Audio recording overlay widget that follows WeChat-style recording UI.
 ///
@@ -54,6 +95,14 @@ class AudioRecordOverlay extends StatefulWidget {
   /// next to cancel; releasing on it triggers voice-to-text conversion.
   final bool enableVoiceToText;
 
+  /// 滑到「转文字」时边说边出字。还需要 [RealtimeAsr.provider] 已注入可用实现，
+  /// 否则自动退回「松手后上传整段音频再识别」。
+  final bool enableRealtimeVoiceToText;
+
+  /// 松手是否发送原语音。false 时中间区域松手按取消处理、提示改为「滑到转文字」，
+  /// 转文字结果里也不提供「发送原语音」。
+  final bool enableSendRecordedVoice;
+
   /// Manager that performs upload + voice-to-text conversion. Defaults to a
   /// real [AiMediaProcessManager] backed by SDK experimental APIs; tests can
   /// inject a fake.
@@ -70,6 +119,8 @@ class AudioRecordOverlay extends StatefulWidget {
     required this.onRecordCancelled,
     this.onSendText,
     this.enableVoiceToText = false,
+    this.enableRealtimeVoiceToText = true,
+    this.enableSendRecordedVoice = true,
     this.mediaProcessManager,
     this.colorScheme,
     this.chatLocalizations,
@@ -124,6 +175,32 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   /// Lazily-created TTS helper, reusing [_mediaProcessManager].
   TtsPlaybackHelper? _ttsHelper;
 
+  /// 本次长按的实时识别会话。null 表示这次没跑实时识别（关掉了 / 没注入 provider /
+  /// 采集起不来），松手后走原来的整段上传识别。
+  RealtimeAsrSession? _realtimeSession;
+  StreamSubscription<String>? _realtimeSubscription;
+
+  /// 实时识别到目前为止的文本，非空时录音气泡铺开显示它。
+  String _realtimeText = '';
+
+  /// 识别气泡主体底边（箭头根部）相对浮层顶部的固定坐标。
+  ///
+  /// Android 手势条显隐会改变 MediaQuery 高度；如果每帧都按新高度从底部重算，
+  /// 气泡会跟着系统栏上下跳。一次录音只在首次布局时取值，后续 Insets 变化不改它。
+  double? _recognitionBubbleAnchorY;
+
+  /// 手指是否已经滑到过「转文字」一次。会话按下时就建好了，这里只触发一次
+  /// [RealtimeAsrSession.beginRecognize]，滑走再滑回来不重开。
+  bool _hasBegunRealtimeRecognize = false;
+
+  /// 最近一次由程序写进编辑框的文本。和编辑框当前内容不一致就说明用户自己改过，
+  /// 后到的识别结果不能把他的编辑冲掉。
+  String? _lastProgrammaticText;
+
+  /// 语音识别服务不可用的提示框进程内只弹一次：聊天页反复重建，放在页面上就成了
+  /// 每进一次页面弹一次。之后的失败按普通失败展示。
+  static bool _asrUnavailableDialogShown = false;
+
   /// Translate target languages offered in the record-translation selector.
   /// Codes must match the IMSDK text-translation backend contract. Notably
   /// Traditional Chinese is `zh-TR`, NOT the more common BCP-47 `zh-TW` —
@@ -170,6 +247,15 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   /// 35px from the row's right edge.
   static const double _kSendButtonCenterFromRight = 35.0;
 
+  /// 录音识别气泡：只有波形时的宽度。
+  static const double _kRecognitionBubbleCompactWidth = 200.0;
+
+  /// 录音识别气泡离屏幕左右边缘的最小距离。
+  static const double _kRecognitionBubbleEdgeMargin = 16.0;
+
+  /// 实时文本最多占这么高，再多就内部滚动，免得气泡顶出屏幕。
+  static const double _kRecognitionTextMaxHeight = 220.0;
+
   final GlobalKey _cancelButtonKey = GlobalKey();
   final GlobalKey _convertButtonKey = GlobalKey();
 
@@ -185,11 +271,12 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
       vsync: this,
     )..addListener(_updateWaveHeights);
 
-    // Three-dot pulse: 1.2s loop is comfortable.
+    // Three-dot pulse: 1.2s loop is comfortable. Runs from the start because
+    // the realtime bubble shows the same dots while waiting for its first text.
     _dotsAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
-    );
+    )..repeat();
 
     _audioRecorder = AudioRecorder();
     _audioRecorder.initialize(
@@ -208,6 +295,7 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     _dotsAnimationController.dispose();
     _audioRecorder.cancelRecord();
     _audioRecorder.dispose();
+    unawaited(_disposeRealtimeSession());
     _ttsHelper?.stop();
     _editingController?.dispose();
     _editingFocusNode?.dispose();
@@ -257,24 +345,80 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
       filePath: filePath,
       onComplete: (recordInfo) {
         if (recordInfo != null) {
-          if (recordInfo.errorCode == AudioRecordResultCode.errorLessThanMinDuration && mounted) {
-            final chatLocalizations = widget.chatLocalizations ?? ChatLocalizations.of(context);
+          if (recordInfo.errorCode ==
+                  AudioRecordResultCode.errorLessThanMinDuration &&
+              mounted) {
+            final chatLocalizations =
+                widget.chatLocalizations ?? ChatLocalizations.of(context);
             Toast.warning(context, chatLocalizations.sayTimeShort);
           }
-          if (recordInfo.errorCode == AudioRecordResultCode.successExceedMaxDuration && mounted) {
-            final chatLocalizations = widget.chatLocalizations ?? ChatLocalizations.of(context);
+          if (recordInfo.errorCode ==
+                  AudioRecordResultCode.successExceedMaxDuration &&
+              mounted) {
+            final chatLocalizations =
+                widget.chatLocalizations ?? ChatLocalizations.of(context);
             Toast.warning(context, chatLocalizations.recordLimitTips);
           }
           widget.onRecordFinish(recordInfo);
         }
       },
     );
+    // 必须排在录音之后：语音消息本身才是主角，先让它把麦克风占住，
+    // 万一机型不允许同一应用并发采集，让步的是实时识别而不是这条语音。
+    // 采集和会话从按下这一刻就起来，用户滑到「转文字」之前说的话不能丢。
+    unawaited(_primeRealtimeSession());
   }
 
   /// Stop recording and send the audio as a voice message (legacy
   /// release-to-send path).
   void stopRecord() {
     _audioRecorder.stopRecord();
+  }
+
+  Future<void> _primeRealtimeSession() async {
+    if (!widget.enableVoiceToText || !widget.enableRealtimeVoiceToText) {
+      return;
+    }
+    await RealtimeAsr.ensureDefaultProvider();
+    if (!mounted || !RealtimeAsr.isAvailable) {
+      return;
+    }
+    final session = RealtimeAsr.provider.createSession(
+      language: WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+    );
+    final primed = await session.prime();
+    // 采集起来之前手指已经松开（录音结束 / 取消），这次不再需要实时识别
+    if (!primed ||
+        !mounted ||
+        !_isRecording ||
+        _state != _OverlayState.recording) {
+      await session.cancel();
+      return;
+    }
+    _realtimeSubscription = session.onTextChanged.listen((text) {
+      if (!mounted || _state != _OverlayState.recording) return;
+      setState(() {
+        _realtimeText = text;
+      });
+    });
+    setState(() {
+      _realtimeSession = session;
+    });
+    if (_isFingerOverConvert && !_hasBegunRealtimeRecognize) {
+      _hasBegunRealtimeRecognize = true;
+      unawaited(session.beginRecognize());
+    }
+  }
+
+  Future<void> _disposeRealtimeSession({bool cancel = true}) async {
+    final session = _realtimeSession;
+    _realtimeSession = null;
+    _hasBegunRealtimeRecognize = false;
+    await _realtimeSubscription?.cancel();
+    _realtimeSubscription = null;
+    if (cancel) {
+      await session?.cancel();
+    }
   }
 
   /// Production entry point: parent intercepts the record-finish callback
@@ -288,11 +432,68 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     if (!mounted) return;
     _capturedRecordPath = filePath;
     _capturedRecordDurationSec = durationSec;
+    final session = _realtimeSession;
+    final partialText =
+        session != null && session.isRecognizing ? session.text : '';
+    if (partialText.trim().isNotEmpty) {
+      // 边说边识别的文本松手那一刻就在手上，拿它把编辑态一次铺成最终形态，
+      // 别再走一轮「三个点 → 文本」。尾句还在路上，收尾后再补一次完整文本。
+      _enterEditing(partialText);
+    } else {
+      setState(() {
+        _state = _OverlayState.converting;
+      });
+      _dotsAnimationController.repeat();
+    }
+    _finishConversion(filePath);
+  }
+
+  /// 优先用边说边识别的结果；没有（关掉了 / 设备不支持 / 会话没建起来 /
+  /// 一个字都没识别出来）才回落到上传整段音频再识别。
+  Future<void> _finishConversion(String filePath) async {
+    final session = _realtimeSession;
+    if (session != null && session.isRecognizing) {
+      // 松手那一刻尾句往往还在路上，finish() 内部会留一个收尾窗口再返回
+      final realtimeText = await session.finish();
+      await _disposeRealtimeSession(cancel: false);
+      if (!mounted) return;
+      if (realtimeText.trim().isNotEmpty) {
+        _applyRecognizedText(realtimeText);
+        return;
+      }
+    } else {
+      await _disposeRealtimeSession();
+      if (!mounted) return;
+    }
+    await _runConversion(filePath);
+  }
+
+  /// 识别结果到了。还在识别中就进编辑态；已经用部分结果铺开时原地替换，
+  /// 但用户动手改过编辑框就让路。
+  void _applyRecognizedText(String text) {
+    if (_state != _OverlayState.editing) {
+      _enterEditing(text);
+      return;
+    }
+    // 用户改过文本或已经发起翻译，都算他接手了
+    if (_hasUserEditedText() || _isTranslating || _translatedText != null) {
+      return;
+    }
+    _ttsHelper?.stop();
     setState(() {
-      _state = _OverlayState.converting;
+      // 翻译的源文本也要换成最新结果，否则译的是那半句
+      _asrOriginalText = text;
+      _translatedText = null;
+      _isTranslating = false;
+      _isPlayingTts = false;
     });
-    _dotsAnimationController.repeat();
-    _runConversion(filePath);
+    _setControllerText(text);
+  }
+
+  bool _hasUserEditedText() {
+    final applied = _lastProgrammaticText;
+    if (applied == null) return false;
+    return _editingController?.text != applied;
   }
 
   /// Test-only convenience: same as [enterConverting] but with a default
@@ -307,37 +508,67 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     if (!mounted) return;
 
     if (result is AiAsrSuccess && result.text.isNotEmpty) {
-      // Cache the original transcription and reset translation/TTS state for
-      // this new editing session.
-      _asrOriginalText = result.text;
-      _translatedText = null;
-      _isTranslating = false;
-      _isPlayingTts = false;
-      final controller = TextEditingController(text: result.text);
-      controller.selection = TextSelection.collapsed(offset: result.text.length);
-      _editingController?.dispose();
-      _editingController = controller;
-      // FocusNode is initially NOT focused: editing state opens in
-      // "preview" sub-state (gray bubble, no keyboard, waveform visible).
-      // The user must tap the text bubble to start editing.
-      _editingFocusNode?.dispose();
-      final focusNode = FocusNode()..addListener(_onEditingFocusChanged);
-      _editingFocusNode = focusNode;
-      setState(() {
-        _state = _OverlayState.editing;
-      });
-      _dotsAnimationController.stop();
-      _dotsAnimationController.reset();
-      // Force a rebuild so listeners on the controller update the
-      // send-button enabled state.
-      controller.addListener(_onEditingTextChanged);
-    } else {
-      setState(() {
-        _state = _OverlayState.error;
-      });
-      _dotsAnimationController.stop();
-      _dotsAnimationController.reset();
+      _applyRecognizedText(result.text);
+      return;
     }
+    if (result is AiAsrFailure &&
+        AsrServiceError.isServiceUnavailable(result.code)) {
+      _showAsrUnavailableDialogOnce();
+    }
+    // 已经用实时识别的部分结果铺开了，保住它，不切到失败态
+    if (_state == _OverlayState.editing) return;
+    setState(() {
+      _state = _OverlayState.error;
+    });
+    _dotsAnimationController.stop();
+    _dotsAnimationController.reset();
+  }
+
+  /// 每次转文字照常请求，资源包续上后不用重启就能恢复。
+  void _showAsrUnavailableDialogOnce() {
+    if (_asrUnavailableDialogShown) return;
+    _asrUnavailableDialogShown = true;
+    final chatLocale =
+        widget.chatLocalizations ?? ChatLocalizations.of(context);
+    // 走 DialogOverlayManager 插到最上层；Navigator 弹窗会压在录音浮层下面
+    AtomicAlertDialog.showWithConfig(
+      context,
+      config: AlertDialogConfig(
+        title: chatLocale.asrUnavailableTitle,
+        content: chatLocale.asrUnavailableContent,
+        confirmConfig: ButtonConfig(text: chatLocale.asrUnavailableConfirm),
+      ),
+    );
+  }
+
+  /// 拿到文本后进可编辑态。上传识别和边说边识别两条路径共用。
+  void _enterEditing(String text) {
+    // Cache the original transcription and reset translation/TTS state for
+    // this new editing session.
+    _asrOriginalText = text;
+    _translatedText = null;
+    _isTranslating = false;
+    _isPlayingTts = false;
+    final controller = TextEditingController(text: text);
+    controller.selection = TextSelection.collapsed(offset: text.length);
+    _lastProgrammaticText = text;
+    _editingController?.removeListener(_onEditingTextChanged);
+    _editingController?.dispose();
+    _editingController = controller;
+    // FocusNode is initially NOT focused: editing state opens in
+    // "preview" sub-state (gray bubble, no keyboard, waveform visible).
+    // The user must tap the text bubble to start editing.
+    _editingFocusNode?.dispose();
+    final focusNode = FocusNode()..addListener(_onEditingFocusChanged);
+    _editingFocusNode = focusNode;
+    setState(() {
+      _state = _OverlayState.editing;
+    });
+    _dotsAnimationController.stop();
+    _dotsAnimationController.reset();
+    // Force a rebuild so listeners on the controller update the
+    // send-button enabled state.
+    controller.addListener(_onEditingTextChanged);
   }
 
   void _onEditingTextChanged() {
@@ -352,6 +583,7 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   }
 
   Future<void> cancelRecord() async {
+    await _disposeRealtimeSession();
     await _audioRecorder.cancelRecord();
     widget.onRecordCancelled();
   }
@@ -363,6 +595,8 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
         _recordingDurationMs = 0;
         _isFingerOverCancel = false;
         _isFingerOverConvert = false;
+        _realtimeText = '';
+        _recognitionBubbleAnchorY = null;
         _state = _OverlayState.recording;
         _capturedRecordPath = null;
         _capturedRecordDurationSec = 0;
@@ -373,6 +607,7 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
         _editingFocusNode?.dispose();
         _editingFocusNode = null;
         _asrOriginalText = '';
+        _lastProgrammaticText = null;
         _translatedText = null;
         _isTranslating = false;
         _isPlayingTts = false;
@@ -380,6 +615,17 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
       });
     }
   }
+
+  /// 浮层是否还停在录音态。录音到达最长时长自行结束后，浮层可能已经进入转文字流程，
+  /// 父组件收到的迟到松手事件不应再驱动它。
+  bool get isInRecordingState => _state == _OverlayState.recording;
+
+  /// 录音器自行停止（到达最长时长）时，按手指此刻悬停的位置决定怎么收尾。
+  RecordPointerUpAction get hoverReleaseAction => recordPointerUpAction(
+        overCancel: _isFingerOverCancel,
+        overConvert: _isFingerOverConvert,
+        allowSendVoice: widget.enableSendRecordedVoice,
+      );
 
   /// Check if a global position is over the cancel button
   bool isPointerOverCancelButton(Offset globalPosition) {
@@ -395,7 +641,8 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   }
 
   bool _isPointerOverButton(GlobalKey key, Offset globalPosition) {
-    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox =
+        key.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return false;
     final localPos = renderBox.globalToLocal(globalPosition);
     final size = renderBox.size;
@@ -424,6 +671,14 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
         _isFingerOverConvert = isOverConvert;
       });
     }
+    // 首次滑到「转文字」时确保识别已在上行；会话没建起来的话这一刻会重试一次
+    if (isOverConvert && !_hasBegunRealtimeRecognize) {
+      final session = _realtimeSession;
+      if (session != null) {
+        _hasBegunRealtimeRecognize = true;
+        unawaited(session.beginRecognize());
+      }
+    }
   }
 
   int get _remainingSeconds {
@@ -431,7 +686,8 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     return _maxDurationSec - elapsed;
   }
 
-  bool get _showCountdown => _remainingSeconds <= _countdownThresholdSec && _isRecording;
+  bool get _showCountdown =>
+      _remainingSeconds <= _countdownThresholdSec && _isRecording;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -439,8 +695,10 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = widget.colorScheme ?? BaseThemeProvider.colorsOf(context);
-    final chatLocale = widget.chatLocalizations ?? ChatLocalizations.of(context);
+    final colorScheme =
+        widget.colorScheme ?? BaseThemeProvider.colorsOf(context);
+    final chatLocale =
+        widget.chatLocalizations ?? ChatLocalizations.of(context);
 
     return Stack(
       children: [
@@ -464,6 +722,10 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
             ),
           ),
         ),
+
+        // 录音中的识别气泡：浮在屏幕中部，与底部按钮行分开（图 1 / 图 2 / 图 4）。
+        if (_state == _OverlayState.recording)
+          _buildRecognitionBubble(colorScheme),
 
         // Bottom-aligned content panel — content varies by state.
         Positioned(
@@ -534,9 +796,117 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
         _buildHintText(colorScheme, chatLocale),
         const SizedBox(height: 16),
         _buildRecordingButtonsRow(colorScheme, chatLocale),
-        const SizedBox(height: 16),
-        _buildWaveformBar(colorScheme),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  /// 屏幕中部的识别气泡。三种形态，与 Android 端一致：
+  ///
+  /// - 默认：居中的小气泡，只有波形，箭头在正中（图 1）
+  /// - 停在「转文字」且已经识别出字：铺满宽度显示实时文本，箭头指向转文字按钮（图 2）
+  /// - 停在「取消」：小气泡变红并左移到取消按钮上方，箭头指向取消按钮（图 4）
+  Widget _buildRecognitionBubble(SemanticColorScheme colorScheme) {
+    final size = MediaQuery.of(context).size;
+    final anchorY = _recognitionBubbleAnchorY ??=
+        recognitionBubbleAnchorFromTop(initialViewportHeight: size.height);
+    // 没有实时会话（没注入 provider / 开关关了 / 采集起不来）时不铺开：铺开了也永远不会出字，
+    // 那就是一个停在「识别中」的空框。有会话就立刻铺开，不等第一个结果。
+    final expanded = _isFingerOverConvert && _realtimeSession != null;
+    final bubbleColor = _isFingerOverCancel
+        ? colorScheme.textColorError
+        : colorScheme.buttonColorPrimaryDefault;
+
+    // 两个圆形按钮各自在自己那一侧，spaceEvenly 排布下中心大致在 1/4 与 3/4 处
+    final cancelCenterFromLeft = size.width * 0.25;
+    final convertCenterFromRight = size.width * 0.25;
+
+    final double left;
+    final double right;
+    final double arrowRightOffset;
+    if (expanded) {
+      left = _kRecognitionBubbleEdgeMargin;
+      right = _kRecognitionBubbleEdgeMargin;
+      arrowRightOffset =
+          (convertCenterFromRight - _kRecognitionBubbleEdgeMargin)
+              .clamp(20.0, size.width);
+    } else if (_isFingerOverCancel) {
+      left = (cancelCenterFromLeft - _kRecognitionBubbleCompactWidth / 2)
+          .clamp(_kRecognitionBubbleEdgeMargin, size.width);
+      right = (size.width - left - _kRecognitionBubbleCompactWidth)
+          .clamp(_kRecognitionBubbleEdgeMargin, size.width);
+      arrowRightOffset = size.width - right - cancelCenterFromLeft;
+    } else {
+      left = (size.width - _kRecognitionBubbleCompactWidth) / 2;
+      right = left;
+      arrowRightOffset = _kRecognitionBubbleCompactWidth / 2;
+    }
+
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: CustomSingleChildLayout(
+          delegate: _RecognitionBubbleLayoutDelegate(
+            left: left,
+            right: right,
+            anchorY: anchorY,
+          ),
+          child: _BubbleWithArrow(
+            key: const Key('vtt_recognition_bubble'),
+            color: bubbleColor,
+            arrowRightOffset: arrowRightOffset,
+            child: Container(
+              constraints: recognitionBubbleBodyConstraints(
+                expanded: expanded,
+                screenHeight: size.height,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: expanded
+                  ? _buildRecognitionBubbleText(colorScheme)
+                  : Center(
+                      child: _buildWaveform(colorScheme, barCount: 20),
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecognitionBubbleText(SemanticColorScheme colorScheme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Flexible(
+          child: ConstrainedBox(
+            constraints:
+                const BoxConstraints(maxHeight: _kRecognitionTextMaxHeight),
+            child: SingleChildScrollView(
+              reverse: true, // 新识别出的字追加在末尾，让视口跟着走
+              // 还没出字时先放半透明占位，免得铺开的气泡是一片空白
+              child: Text(
+                _realtimeText.isEmpty
+                    ? (widget.chatLocalizations ??
+                            ChatLocalizations.of(context))
+                        .realtimeTranscribing
+                    : _realtimeText,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.4,
+                  color: _realtimeText.isEmpty
+                      ? colorScheme.textColorButton.withValues(alpha: 0.6)
+                      : colorScheme.textColorButton,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+          ),
+        ),
         const SizedBox(height: 8),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: _buildWaveform(colorScheme, barCount: 8),
+        ),
       ],
     );
   }
@@ -555,45 +925,48 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
     );
   }
 
-  /// Full-width rounded waveform bar at the bottom of the overlay.
-  /// Normal: blue/primary background. Cancel hover: red background.
-  Widget _buildWaveformBar(SemanticColorScheme colorScheme) {
-    final barColor = _isFingerOverCancel
-        ? colorScheme.textColorError
-        : colorScheme.buttonColorPrimaryDefault;
+  /// 随音量起伏的竖条，气泡内容用。[barCount] 控制宽度：气泡铺开后波形缩到行尾当状态指示。
+  Widget _buildWaveform(SemanticColorScheme colorScheme,
+      {required int barCount}) {
+    return SizedBox(
+      height: recognitionWaveformViewportHeight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: List.generate(barCount, (index) {
+          // Varied base heights for visual rhythm
+          const baseHeights = [
+            6.0,
+            8.0,
+            14.0,
+            10.0,
+            18.0,
+            8.0,
+            12.0,
+            6.0,
+            14.0,
+            18.0
+          ];
+          final baseHeight = baseHeights[index % baseHeights.length];
+          final waveIndex = index % _waveHeights.length;
+          final animatedHeight = _isRecording
+              ? baseHeight * _waveHeights[waveIndex]
+              : baseHeight * 0.3;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: barColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: List.generate(_waveHeights.length, (index) {
-            // Varied base heights for visual rhythm
-            const baseHeights = [6.0, 8.0, 14.0, 10.0, 18.0, 8.0, 12.0, 6.0, 14.0, 18.0];
-            final baseHeight = baseHeights[index % baseHeights.length];
-            final animatedHeight =
-                _isRecording ? baseHeight * _waveHeights[index] : baseHeight * 0.3;
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.5),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 3,
-                height: animatedHeight.clamp(3.0, 24.0),
-                decoration: BoxDecoration(
-                  color: colorScheme.switchColorButton,
-                  borderRadius: BorderRadius.circular(1.5),
-                ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 3,
+              height: animatedHeight.clamp(3.0, 24.0),
+              decoration: BoxDecoration(
+                color: colorScheme.switchColorButton,
+                borderRadius: BorderRadius.circular(1.5),
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -602,21 +975,33 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
       SemanticColorScheme colorScheme, ChatLocalizations chatLocale) {
     String hintText;
 
-    if (_showCountdown) {
-      hintText = chatLocale.recordCountdownTips(_remainingSeconds);
-    } else if (_isFingerOverCancel) {
+    // 手指位置的提示优先于倒计时：用户正在决定松手干什么，这时候读秒没有意义
+    if (_isFingerOverCancel) {
       hintText = chatLocale.releaseToCancel;
     } else if (_isFingerOverConvert) {
-      hintText = chatLocale.releaseToConvert;
+      // 实时文本已经铺在气泡里了，再写「松开转文字」是噪音
+      hintText = _realtimeSession != null ? '' : chatLocale.releaseToConvert;
+    } else if (_showCountdown) {
+      hintText = chatLocale.recordCountdownTips(_remainingSeconds);
+    } else if (!widget.enableSendRecordedVoice) {
+      // 中间松手不会发语音，只会取消
+      hintText = widget.enableVoiceToText
+          ? chatLocale.slideToTranscribeHint
+          : chatLocale.releaseToCancel;
     } else {
       hintText = chatLocale.releaseToSend;
     }
 
-    return Text(
-      hintText,
-      style: FontScheme.caption2Regular.copyWith(
-        color: colorScheme.textColorSecondary,
-        decoration: TextDecoration.none,
+    return SizedBox(
+      height: recordingHintSlotHeight,
+      child: Center(
+        child: Text(
+          hintText,
+          style: FontScheme.caption2Regular.copyWith(
+            color: colorScheme.textColorSecondary,
+            decoration: TextDecoration.none,
+          ),
+        ),
       ),
     );
   }
@@ -627,8 +1012,9 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   Widget _buildCancelButton(
       SemanticColorScheme colorScheme, ChatLocalizations chatLocale) {
     final isHover = _isFingerOverCancel;
-    final bgColor =
-        isHover ? colorScheme.textColorError : colorScheme.buttonColorSecondaryDefault;
+    final bgColor = isHover
+        ? colorScheme.textColorError
+        : colorScheme.buttonColorSecondaryDefault;
     final textColor =
         isHover ? colorScheme.textColorButton : colorScheme.textColorPrimary;
 
@@ -795,7 +1181,8 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
                     // controls return SizedBox.shrink() for collapsed so
                     // only the white caret line stays. Long-press text
                     // selection still draws normal left/right handles.
-                    selectionControls: _NoCollapsedHandleSelectionControls.instance,
+                    selectionControls:
+                        _NoCollapsedHandleSelectionControls.instance,
                     // Disable the iOS-style magnifier (floating lens that
                     // appears under the finger while tapping/dragging the
                     // caret). It also looks like a "water-drop" on the
@@ -995,6 +1382,7 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
   void _setControllerText(String text) {
     final controller = _editingController;
     if (controller == null) return;
+    _lastProgrammaticText = text;
     controller.text = text;
     controller.selection = TextSelection.collapsed(offset: text.length);
   }
@@ -1159,20 +1547,22 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
             colorScheme: colorScheme,
             onTap: disabled ? null : _onEditingCancelTapped,
           ),
-          _SmallActionButton(
-            key: const Key('vtt_btn_send_original'),
-            label: chatLocale.sendOriginalVoice,
-            iconAsset: 'chat_assets/icon/send_origin_audio.svg',
-            colorScheme: colorScheme,
-            onTap: disabled ? null : _onSendOriginalTapped,
-          ),
+          if (widget.enableSendRecordedVoice)
+            _SmallActionButton(
+              key: const Key('vtt_btn_send_original'),
+              label: chatLocale.sendOriginalVoice,
+              iconAsset: 'chat_assets/icon/send_origin_audio.svg',
+              colorScheme: colorScheme,
+              onTap: disabled ? null : _onSendOriginalTapped,
+            ),
           Transform.translate(
             offset: const Offset(0, -11),
             child: _SendTextButton(
               key: const Key('vtt_btn_send_text'),
               label: chatLocale.send,
               colorScheme: colorScheme,
-              enabled: !disabled && (_editingController?.text.trim().isNotEmpty ?? false),
+              enabled: !disabled &&
+                  (_editingController?.text.trim().isNotEmpty ?? false),
               onTap: _onSendTextTapped,
             ),
           ),
@@ -1266,6 +1656,46 @@ class AudioRecordOverlayState extends State<AudioRecordOverlay>
 // =============================================================================
 // Sub-widgets
 // =============================================================================
+
+class _RecognitionBubbleLayoutDelegate extends SingleChildLayoutDelegate {
+  const _RecognitionBubbleLayoutDelegate({
+    required this.left,
+    required this.right,
+    required this.anchorY,
+  });
+
+  final double left;
+  final double right;
+  final double anchorY;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final width =
+        (constraints.maxWidth - left - right).clamp(0.0, constraints.maxWidth);
+    return BoxConstraints(
+      minWidth: width,
+      maxWidth: width,
+      maxHeight: constraints.maxHeight,
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final maxTop = (size.height - childSize.height).clamp(0.0, size.height);
+    final top = recognitionBubbleTop(
+      anchorY: anchorY,
+      bubbleHeight: childSize.height,
+    ).clamp(0.0, maxTop);
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(_RecognitionBubbleLayoutDelegate oldDelegate) {
+    return left != oldDelegate.left ||
+        right != oldDelegate.right ||
+        anchorY != oldDelegate.anchorY;
+  }
+}
 
 /// Rounded rectangle "bubble" with a downward-pointing triangle tail at
 /// the bottom edge. The tail is positioned via [arrowRightOffset] which
@@ -1364,30 +1794,45 @@ class _ConvertingBubbleContent extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 70),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
       alignment: Alignment.centerLeft,
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) {
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(3, (i) {
-              // Stagger each dot's brightness by 1/3 cycle.
-              final phase = (controller.value + i / 3) % 1.0;
-              final brightness = 0.3 + 0.7 * (1 - (phase * 2 - 1).abs());
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: dotColor.withValues(alpha: brightness),
-                    shape: BoxShape.circle,
-                  ),
+      child: _PulsingDots(controller: controller, dotColor: dotColor),
+    );
+  }
+}
+
+/// Three dots pulsing out of phase. Shown both while the upload-then-convert
+/// request is in flight and while the realtime bubble waits for its first
+/// recognized characters.
+class _PulsingDots extends StatelessWidget {
+  const _PulsingDots({required this.controller, required this.dotColor});
+
+  final AnimationController controller;
+  final Color dotColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (i) {
+            // Stagger each dot's brightness by 1/3 cycle.
+            final phase = (controller.value + i / 3) % 1.0;
+            final brightness = 0.3 + 0.7 * (1 - (phase * 2 - 1).abs());
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: dotColor.withValues(alpha: brightness),
+                  shape: BoxShape.circle,
                 ),
-              );
-            }),
-          );
-        },
-      ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }
@@ -1412,9 +1857,8 @@ class _SmallActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disabled = onTap == null;
-    final iconColor = disabled
-        ? colorScheme.textColorDisable
-        : colorScheme.textColorPrimary;
+    final iconColor =
+        disabled ? colorScheme.textColorDisable : colorScheme.textColorPrimary;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -1515,7 +1959,8 @@ class _SendTextButton extends StatelessWidget {
 ///   that visually reads as a diamond / water-drop too.
 /// Both look distracting on top of the editing bubble's blue background,
 /// so we suppress them while keeping long-press selection fully usable.
-class _NoCollapsedHandleSelectionControls extends MaterialTextSelectionControls {
+class _NoCollapsedHandleSelectionControls
+    extends MaterialTextSelectionControls {
   _NoCollapsedHandleSelectionControls._();
 
   static final _NoCollapsedHandleSelectionControls instance =

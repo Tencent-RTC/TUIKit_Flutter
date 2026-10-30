@@ -1,6 +1,10 @@
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart' hide Badge;
 import 'package:flutter/material.dart';
+import 'package:uikit_next/ai/support_agent_catalog.dart';
+import 'package:uikit_next/common/customer_seat_conversations.dart';
 import 'package:uikit_next/common/language/gen/demo_localizations.dart';
+import 'package:uikit_next/common/message_input_call_red_dot_store.dart';
+import 'package:uikit_next/common/undisplayed_custom_message.dart';
 import 'package:uikit_next/custom_messages/custom_link_message.dart';
 import 'package:uikit_next/pages/settings_page.dart';
 import 'package:uikit_next/widgets/tab_icon.dart';
@@ -13,9 +17,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const int _aiTabIndex = 0;
+
   late ConversationListStore conversationListStore;
   late ChatLocalizations chatLocale;
-  int _currentIndex = 0;
+  int _currentIndex = _aiTabIndex;
+  final ValueNotifier<bool> _aiTabVisible = ValueNotifier<bool>(true);
   late List<_NavItem> _navItems;
   int totalUnreadCount = 0;
 
@@ -27,12 +34,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     conversationListStore = ConversationListStore.create();
-    conversationListStore.state.totalUnreadCount.addListener(_onConversationListChanged);
+    conversationListStore.state.totalUnreadCount
+        .addListener(_onConversationListChanged);
   }
 
   @override
   void dispose() {
-    conversationListStore.state.totalUnreadCount.removeListener(_onConversationListChanged);
+    conversationListStore.state.totalUnreadCount
+        .removeListener(_onConversationListChanged);
+    _aiTabVisible.dispose();
     super.dispose();
   }
 
@@ -48,16 +58,39 @@ class _HomePageState extends State<HomePage> {
     chatLocale = ChatLocalizations.of(context);
     // Both chat entry points get the same configs, so the custom message
     // renders and can be sent however the user reached the conversation.
-    final messageListConfig = CustomLinkMessageManager.messageListConfig;
-    final messageInputConfig = CustomLinkMessageManager.messageInputConfig(DemoLocalizations.of(context)).copyWith(
+    final messageListConfig = UndisplayedCustomMessageLogger.decorate(
+        CustomLinkMessageManager.messageListConfig);
+    final messageInputConfig = CustomLinkMessageManager.messageInputConfig(
+            DemoLocalizations.of(context))
+        .copyWith(
       isShowAudioCall: true,
       isShowVideoCall: true,
+      shouldShowMoreActionRedDot: (actionID) {
+        if (actionID != MessageInputActionIDs.videoCall &&
+            actionID != MessageInputActionIDs.audioCall) {
+          return false;
+        }
+        return MessageInputCallRedDotStore.shouldShow(
+            LoginStore.shared.sdkAppID, actionID);
+      },
+      onMoreActionRedDotTap: (actionID) {
+        MessageInputCallRedDotStore.markClicked(
+            LoginStore.shared.sdkAppID, actionID);
+      },
     );
     _pages = [
+      _KeepAlivePage(
+        child: AIAssistantPage(
+          visible: _aiTabVisible,
+          agentLoader: SupportAgentCatalog.fetch,
+          handoffStatusLoader: SupportAgentCatalog.fetchHandoffStatus,
+        ),
+      ),
       _KeepAlivePage(
         child: ConversationsPage(
           messageListConfig: messageListConfig,
           messageInputConfig: messageInputConfig,
+          shouldHideConversation: CustomerSeatConversations.isCustomerSeat,
         ),
       ),
       _KeepAlivePage(
@@ -69,6 +102,10 @@ class _HomePageState extends State<HomePage> {
       const _KeepAlivePage(child: SettingsPage()),
     ];
     _navItems = [
+      _NavItem(
+        iconType: TabIconType.ai,
+        label: DemoLocalizations.of(context).aiTab,
+      ),
       _NavItem(
         iconType: TabIconType.chats,
         label: chatLocale.chat,
@@ -107,6 +144,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _currentIndex = index;
         });
+        _aiTabVisible.value = index == _aiTabIndex;
       },
       type: BottomNavigationBarType.fixed,
       backgroundColor: colors.bgColorOperate,
@@ -124,11 +162,14 @@ class _HomePageState extends State<HomePage> {
         height: 1.4,
         letterSpacing: -0.24,
       ),
-      items: _navItems.map((item) => _buildNavItem(item, totalUnreadCount, colors)).toList(),
+      items: _navItems
+          .map((item) => _buildNavItem(item, totalUnreadCount, colors))
+          .toList(),
     );
   }
 
-  BottomNavigationBarItem _buildNavItem(_NavItem item, int unreadCount, SemanticColorScheme colors) {
+  BottomNavigationBarItem _buildNavItem(
+      _NavItem item, int unreadCount, SemanticColorScheme colors) {
     final isActive = _navItems.indexOf(item) == _currentIndex;
 
     if (item.iconType == TabIconType.chats) {
@@ -195,7 +236,8 @@ class _KeepAlivePage extends StatefulWidget {
   State<_KeepAlivePage> createState() => _KeepAlivePageState();
 }
 
-class _KeepAlivePageState extends State<_KeepAlivePage> with AutomaticKeepAliveClientMixin {
+class _KeepAlivePageState extends State<_KeepAlivePage>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

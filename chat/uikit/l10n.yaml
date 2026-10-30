@@ -4,4 +4,5 @@ nullable-getter: false
 output-localization-file: chat_localizations.dart
 output-dir: lib/src/common/language/gen
 output-class: ChatLocalizations
+synthetic-package: false
 format: true

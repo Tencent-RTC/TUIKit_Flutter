@@ -20,4 +20,7 @@ class DemoLocalizationsJa extends DemoLocalizations {
   @override
   String get welcomeMessage =>
       'Chat Demo へようこそ！まずはメッセージを送信して、基本的なチャット機能をお試しください。\n友だちを追加するには、連絡先ページに移動してプラスボタンをタップしてください。\n音声通話やビデオ通話を試すには、下部のプラスボタンをタップして「音声通話／ビデオ通話」を選択してください。';
+
+  @override
+  String get aiTab => 'AI';
 }

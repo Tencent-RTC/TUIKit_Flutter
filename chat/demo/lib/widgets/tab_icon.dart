@@ -36,12 +36,15 @@ class TabIcon extends StatelessWidget {
 }
 
 enum TabIconType {
+  ai,
   chats,
   contact,
   settings;
 
   String get assetPath {
     switch (this) {
+      case TabIconType.ai:
+        return 'assets/tab/tab_ai.svg';
       case TabIconType.chats:
         return 'assets/tab/tab_chats.svg';
       case TabIconType.contact:

@@ -1340,4 +1340,90 @@ class ChatLocalizationsKo extends ChatLocalizations {
 
   @override
   String get callingSwitchToAudioAccept => '음성으로 영상 확인';
+
+  @override
+  String get slideToTranscribeHint => '밀어서 텍스트로 변환';
+
+  @override
+  String get realtimeTranscribing => '인식 중…';
+
+  @override
+  String get asrUnavailableTitle => '음성 인식을 사용할 수 없음';
+
+  @override
+  String get asrUnavailableContent =>
+      '이 앱의 음성 인식 패키지를 모두 사용했거나 활성화되지 않아 일시적으로 텍스트로 변환할 수 없습니다.';
+
+  @override
+  String get asrUnavailableConfirm => '확인';
+
+  @override
+  String get aiPageTitle => 'AI 어시스턴트';
+
+  @override
+  String get aiSelectAgent => '어시스턴트 선택';
+
+  @override
+  String get aiAgentsEmpty => '사용 가능한 어시스턴트가 없습니다';
+
+  @override
+  String get aiTransferToHuman => '상담원 연결';
+
+  @override
+  String get aiCallButton => '음성 통화';
+
+  @override
+  String get aiCallHandoffWaiting => '상담원 연결을 기다리는 중입니다. 잠시 후 다시 시도해 주세요';
+
+  @override
+  String get aiCallHandoffRequired => '통화를 걸기 전에 먼저 상담원에게 연결해 주세요';
+
+  @override
+  String get aiCallModeFree => '자유 대화';
+
+  @override
+  String get aiCallListening => '듣고 있습니다...';
+
+  @override
+  String get aiCallThinking => '생각 중...';
+
+  @override
+  String get aiCallSpeaking => '계속 말씀하셔도 됩니다';
+
+  @override
+  String get aiCallMuted => '음소거됨';
+
+  @override
+  String get aiCallDisclaimer => 'AI가 생성한 콘텐츠';
+
+  @override
+  String get aiCallPermissionDenied => '음성 대화에는 마이크 권한이 필요합니다';
+
+  @override
+  String get aiCallStartFailed => '음성 인식을 시작하지 못했습니다. 다시 시도해 주세요';
+
+  @override
+  String get aiCallAsrUnavailableTitle => '음성 인식을 사용할 수 없음';
+
+  @override
+  String get aiCallAsrUnavailableContent =>
+      '이 앱의 음성 인식 리소스 패키지가 모두 소진되었거나 활성화되지 않아 음성 통화를 일시적으로 사용할 수 없습니다.';
+
+  @override
+  String get aiCallAsrUnavailableExit => '통화 종료';
+
+  @override
+  String get aiCallStartFailedRetry => '연결에 실패했습니다. 마이크를 눌러 다시 시도하세요';
+
+  @override
+  String get aiCallSendFailed => '전송에 실패했습니다. 다시 시도해 주세요';
+
+  @override
+  String get aiCallReplyTimeout => '어시스턴트가 응답하지 않았습니다. 다시 시도해 주세요';
+
+  @override
+  String get aiCallAudioUnavailable => '마이크를 사용할 수 없습니다';
+
+  @override
+  String get aiCallPlaybackUnavailable => '음성 재생을 사용할 수 없어 답변이 텍스트로 표시됩니다';
 }

@@ -21,7 +21,7 @@ import 'demo_localizations_zh.dart';
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'gen/demo_localizations.dart';
+/// import 'gen_l10n/demo_localizations.dart';
 ///
 /// return MaterialApp(
 ///   localizationsDelegates: DemoLocalizations.localizationsDelegates,
@@ -129,6 +129,12 @@ abstract class DemoLocalizations {
   /// In en, this message translates to:
   /// **'Welcome to Chat Demo! Send a message to try out the basic chat.\nTo add friends, go to the Contacts page and tap the plus button.\nTo make audio or video calls, tap the plus button below -> Voice Call/Video Call.'**
   String get welcomeMessage;
+
+  /// No description provided for @aiTab.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get aiTab;
 }
 
 class _DemoLocalizationsDelegate

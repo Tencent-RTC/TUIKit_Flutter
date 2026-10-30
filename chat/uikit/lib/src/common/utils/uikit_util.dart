@@ -14,10 +14,14 @@ class UIKitUtil {
   }
 
   static void reportChatInvokeCall() {
+    reportChatFeatureUsage(1020);
+  }
+
+  static void reportChatFeatureUsage(int type) {
     TencentImSDKPlugin.v2TIMManager.callExperimentalAPI(
       api: 'report_tuifeature_usage',
       param: {
-        'report_tuifeature_usage_uicomponent_type': 1020,
+        'report_tuifeature_usage_uicomponent_type': type,
       },
     );
   }

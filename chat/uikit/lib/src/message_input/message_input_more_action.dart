@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+/// Stable identifiers of the built-in "more" panel entries, so hosts can target
+/// one of them — for instance to ask for a red dot — without relying on its
+/// position in the grid.
+class MessageInputActionIDs {
+  const MessageInputActionIDs._();
+
+  static const String album = 'messageInput.album';
+  static const String takePhoto = 'messageInput.takePhoto';
+  static const String recordVideo = 'messageInput.recordVideo';
+  static const String file = 'messageInput.file';
+  static const String videoCall = 'messageInput.videoCall';
+  static const String audioCall = 'messageInput.audioCall';
+}
+
 /// A host-app supplied entry in the message input "more" panel (the grid behind
 /// the plus button), appended after the built-in actions.
 ///
