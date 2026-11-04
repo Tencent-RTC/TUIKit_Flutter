@@ -1,0 +1,266 @@
+{
+  "file_id": "709144137533935",
+  "file_name": "LiveKit 移动端【交互视觉】",
+  "file_url": "https://ardot.tencent.com/file/709144137533935",
+  "export_tool": "Ardot export_nodes",
+  "exported_on": "2026-10-18",
+  "format": "png",
+  "note": "Direct node exports at 1x, 2x and 3x; original 40x40 canvas retained without crop, redraw or iOS conversion. iOS and Flutter display slots: main 52, auxiliary 24, button 36.",
+  "assets": [
+    {
+      "name": "livekit_like_thumb",
+      "node_id": "87:391",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_like_thumb.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            38,
+            36
+          ],
+          "sha256": "7db8b5866a518b0ab1be629f94c09368f08414209e4b4b20b0e9e97cf51453a5"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_like_thumb.png",
+          "pixels": [
+            80,
+            80
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            76,
+            72
+          ],
+          "sha256": "9ce1558afb9df2e2c01ef24a4f72e747b208e0ef32c0f7cfcf8f0971b0fc57b1"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_like_thumb.png",
+          "pixels": [
+            120,
+            120
+          ],
+          "alpha_bounds": [
+            7,
+            8,
+            114,
+            107
+          ],
+          "sha256": "1ad0010da4ffef471b5164a1bc2caa2309b56579e0e16180251c47d4573c717e"
+        }
+      ]
+    },
+    {
+      "name": "livekit_like_heart",
+      "node_id": "87:395",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_like_heart.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            3,
+            5,
+            37,
+            36
+          ],
+          "sha256": "483b140305418c7cdf8e5ebee3666dd2500d30ac34188ad207507eaad6387342"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_like_heart.png",
+          "pixels": [
+            80,
+            80
+          ],
+          "alpha_bounds": [
+            6,
+            11,
+            74,
+            72
+          ],
+          "sha256": "73489308fc3695f8d7b8da39b04e067b5f875d468b6661f2269a06f054ea20b8"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_like_heart.png",
+          "pixels": [
+            120,
+            120
+          ],
+          "alpha_bounds": [
+            9,
+            16,
+            111,
+            107
+          ],
+          "sha256": "a9d1db142e12151dbed36d6d34c15d3c811a5c368db0e7234e0bbb485eeba536"
+        }
+      ]
+    },
+    {
+      "name": "livekit_like_double_heart",
+      "node_id": "87:398",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_like_double_heart.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            1,
+            3,
+            40,
+            38
+          ],
+          "sha256": "ac7f7679bbb486e2155c1fdf6c7485f978227748279c26480762ec2883e8c955"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_like_double_heart.png",
+          "pixels": [
+            80,
+            80
+          ],
+          "alpha_bounds": [
+            3,
+            6,
+            79,
+            75
+          ],
+          "sha256": "adb97460e2b1e80f1ec114816782cb93452363920c18a28526abeb8efbce0968"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_like_double_heart.png",
+          "pixels": [
+            120,
+            120
+          ],
+          "alpha_bounds": [
+            5,
+            9,
+            119,
+            113
+          ],
+          "sha256": "277903f3e53cd0a563ab88caba0189fb71b9b8bede07f71dcd3734d33dc81190"
+        }
+      ]
+    },
+    {
+      "name": "livekit_like_fire",
+      "node_id": "87:402",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_like_fire.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            4,
+            1,
+            36,
+            39
+          ],
+          "sha256": "379b1fa36845b5805197ddbc9e3409784b6a281d49d82de04cd9134ee35089f3"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_like_fire.png",
+          "pixels": [
+            80,
+            80
+          ],
+          "alpha_bounds": [
+            8,
+            2,
+            72,
+            77
+          ],
+          "sha256": "5684b802586e5c9d52011ef6212cad38e6d73c01734b19fc38f645ac7e3be591"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_like_fire.png",
+          "pixels": [
+            120,
+            120
+          ],
+          "alpha_bounds": [
+            13,
+            3,
+            107,
+            115
+          ],
+          "sha256": "aaca9576fd75d4a6c3df65a9d692666f2d06a07e8f9af1e882a39742370efbdb"
+        }
+      ]
+    },
+    {
+      "name": "livekit_like_sparkle",
+      "node_id": "87:405",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_like_sparkle.png",
+          "pixels": [
+            40,
+            40
+          ],
+          "alpha_bounds": [
+            2,
+            2,
+            38,
+            38
+          ],
+          "sha256": "0d553266b6d62638164eae7a87c196b497e3eb9e11c0149a0f3b95a2eb6c0615"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_like_sparkle.png",
+          "pixels": [
+            80,
+            80
+          ],
+          "alpha_bounds": [
+            3,
+            3,
+            77,
+            77
+          ],
+          "sha256": "72d6256e788aa408ab4b5aa831b19fb20841110560ab77a324b4d75b03bedae1"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_like_sparkle.png",
+          "pixels": [
+            120,
+            120
+          ],
+          "alpha_bounds": [
+            5,
+            5,
+            115,
+            115
+          ],
+          "sha256": "496d1e0e4f071019009250f4f730ec1b7549945c069f8219a1959332a056d818"
+        }
+      ]
+    }
+  ]
+}

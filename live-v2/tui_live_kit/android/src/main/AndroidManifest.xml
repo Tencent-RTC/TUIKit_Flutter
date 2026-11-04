@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+      组件库自身能力所需权限，随 plugin 交付，接入方无需重复声明。
+      ACCESS_NETWORK_STATE：`NetworkTypeStreamHandler` 读取网络类型，
+      对应主播端「直播状态 → 设备状态」的网络行。
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!--
+      观众上麦开麦期间的前台服务所需权限。
+      FOREGROUND_SERVICE 与 FOREGROUND_SERVICE_MICROPHONE 在 Android 14（API 34）起为强制声明；
+      RECORD_AUDIO 由接入 App 申请，启动前未授权时服务会被系统拒绝，这里声明供权限校验使用。
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+
+    <application>
+        <service
+            android:name=".foregroundservice.FlutterAudioForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="microphone"/>
+    </application>
+</manifest>

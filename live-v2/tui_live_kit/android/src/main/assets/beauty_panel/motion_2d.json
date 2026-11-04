@@ -1,0 +1,61 @@
+{
+  "displayName": "2D贴纸",
+  "displayNameEn": "2D",
+  "hasSubTitle": true,
+  "verticalLayout": true,
+  "downloadPath": "MotionRes/2dMotionRes/",
+  "propertyList": [
+    {
+      "displayName": "最新",
+      "displayNameEn": "New",
+      "propertyList": [
+        {
+          "displayName": "无",
+          "displayNameEn": "None",
+          "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+          "displayName": "可爱涂鸦",
+          "displayNameEn": "Cute graffiti",
+          "icon": "beauty_panel/panel_icon/motions_icon/video_keaituya.png",
+          "resourceUri": "MotionRes/2dMotionRes/video_keaituya"
+        },
+        {
+          "displayName": "贵妃脸",
+          "displayNameEn": "Round",
+          "icon": "beauty_panel/panel_icon/motions_icon/video_guifeiface.png",
+          "resourceUri": "MotionRes/2dMotionRes/video_guifeiface"
+        }
+      ]
+    },
+    {
+      "displayName": "精选",
+      "displayNameEn": "Featured",
+      "propertyList": [
+        {
+          "displayName": "无",
+          "displayNameEn": "None",
+          "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+          "displayName": "上学前后",
+          "displayNameEn": "School",
+          "icon": "beauty_panel/panel_icon/motions_icon/video_kaixueqianhou.png",
+          "resourceUri": "MotionRes/2dMotionRes/video_kaixueqianhou"
+        },
+        {
+          "displayName": "闪动爱心",
+          "displayNameEn": "Hearts4",
+          "icon": "beauty_panel/panel_icon/motions_icon/video_boys.png",
+          "resourceUri": "MotionRes/2dMotionRes/video_boys"
+        },
+        {
+          "displayName": "元气贴纸",
+          "displayNameEn": "Vigorous",
+          "icon": "beauty_panel/panel_icon/motions_icon/video_xuanmeizhuang.png",
+          "resourceUri": "MotionRes/2dMotionRes/video_xuanmeizhuang"
+        }
+      ]
+    }
+  ]
+}

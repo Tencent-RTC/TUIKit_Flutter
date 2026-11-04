@@ -1,0 +1,215 @@
+{
+  "file": "709144137533935",
+  "resources": [
+    {
+      "node": "1330:41",
+      "scale": 1,
+      "asset": "livekit_living_pk.png",
+      "pixels": [
+        46,
+        38
+      ],
+      "sha256": "035a69961d8461ab30738294b1d237e4ca6d5d731be5c804516b47efca53c515"
+    },
+    {
+      "node": "1330:42",
+      "scale": 1,
+      "asset": "livekit_living_coguest.png",
+      "pixels": [
+        46,
+        38
+      ],
+      "sha256": "6e4eb581c0cb2f26f0b7f2c265b083d4c5e7ca65e915129a996ddf2534f8a969"
+    },
+    {
+      "node": "1330:43",
+      "scale": 1,
+      "asset": "livekit_living_coguest_unread.png",
+      "pixels": [
+        46,
+        38
+      ],
+      "sha256": "a7cd8d4dca2b73aac9086927703b77cbb6b90bc79c1d6576bc0da7c47c988662"
+    },
+    {
+      "node": "77:465",
+      "scale": 1,
+      "asset": "livekit_living_more.png",
+      "pixels": [
+        27,
+        27
+      ],
+      "sha256": "81fc54b6a558d2f71e7ea019b1d4a1e796dca3a66e2d60abfa874108d03aa335"
+    },
+    {
+      "node": "77:745",
+      "scale": 1,
+      "asset": "livekit_living_setting_flip.png",
+      "pixels": [
+        18,
+        16
+      ],
+      "sha256": "3c843eca54a53379a4a5d9071ddf47e9787d2d776de9e216a7d31625bd7bef96"
+    },
+    {
+      "node": "77:756",
+      "scale": 1,
+      "asset": "livekit_living_setting_music.png",
+      "pixels": [
+        16,
+        19
+      ],
+      "sha256": "bfb327994a702ce96c9e903123565442be9636c3b046329235cfbe5aaaee0bcb"
+    },
+    {
+      "node": "1330:41",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_pk.png",
+      "pixels": [
+        92,
+        76
+      ],
+      "sha256": "0554012ee6d3a0d47d706c79a59c3c46d0bcd026d021827524cc151fd47c19d6"
+    },
+    {
+      "node": "1330:42",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_coguest.png",
+      "pixels": [
+        92,
+        76
+      ],
+      "sha256": "b3fd9cd80824117c353fd11c6b6002a082500d5e91b22410e3876d1b9ac42bf2"
+    },
+    {
+      "node": "1330:43",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_coguest_unread.png",
+      "pixels": [
+        92,
+        76
+      ],
+      "sha256": "66234778c63a0b79968ed9164c8231295c97505734c9bbb2bfbf67e67433ea9b"
+    },
+    {
+      "node": "77:465",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_more.png",
+      "pixels": [
+        54,
+        54
+      ],
+      "sha256": "9fdf877bc92c7220c9f8db249e20cdb8a69759d54dc09f81336f1b24462f0112"
+    },
+    {
+      "node": "77:745",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_setting_flip.png",
+      "pixels": [
+        35,
+        31
+      ],
+      "sha256": "c4e8a58aadd8cfdbc3104538acd4f4afc6b80477c65ea891e495f9accec2d864"
+    },
+    {
+      "node": "77:756",
+      "scale": 2,
+      "asset": "2.0x/livekit_living_setting_music.png",
+      "pixels": [
+        32,
+        38
+      ],
+      "sha256": "43d765ed66d14b2c27fe8f3938b1e1f1d228c42f2c66a323b7df9f31e18fdc35"
+    },
+    {
+      "node": "1330:41",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_pk.png",
+      "pixels": [
+        138,
+        114
+      ],
+      "sha256": "57ef0fd863fc2847473fa7f874ba84a069f2bc99fefd1c62af4262723d17c113"
+    },
+    {
+      "node": "1330:42",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_coguest.png",
+      "pixels": [
+        138,
+        114
+      ],
+      "sha256": "659f160f9ebc481bdabe7071d55fe5dac13f75a798723b5bb5a30c7d9f746182"
+    },
+    {
+      "node": "1330:43",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_coguest_unread.png",
+      "pixels": [
+        138,
+        114
+      ],
+      "sha256": "4967fb3369837c32500adc28e31b924f139fcf885e5d34a14a4f39f8066e9ba3"
+    },
+    {
+      "node": "77:465",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_more.png",
+      "pixels": [
+        81,
+        81
+      ],
+      "sha256": "3a6a684bf81d2e04122bd0182f93e6d98bfccb62b0486be464c80b04b9816fd4"
+    },
+    {
+      "node": "77:745",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_setting_flip.png",
+      "pixels": [
+        53,
+        47
+      ],
+      "sha256": "f17859f4b458b380cf49840b6f359498f0809bd8735339e7033ac563774e8101"
+    },
+    {
+      "node": "77:756",
+      "scale": 3,
+      "asset": "3.0x/livekit_living_setting_music.png",
+      "pixels": [
+        47,
+        56
+      ],
+      "sha256": "4e2c7326906848012bab87b476f4f69679e99758d91b7b35db1a45e6f71c1cbc"
+    },
+    {
+      "node": "4820:45",
+      "scale": 1,
+      "asset": "livekit_summary_back.png",
+      "pixels": [
+        44,
+        44
+      ],
+      "sha256": "3b78f696054fb5fe2a70ca7afb307686a16f36e04d2107d434014cac7f0cb8d8"
+    },
+    {
+      "node": "4820:45",
+      "scale": 2,
+      "asset": "2.0x/livekit_summary_back.png",
+      "pixels": [
+        88,
+        88
+      ],
+      "sha256": "82b5dbc31599bffccfeb50eee5cadeb31e8ff1473e13cfa16f60d75325c7d2be"
+    },
+    {
+      "node": "4820:45",
+      "scale": 3,
+      "asset": "3.0x/livekit_summary_back.png",
+      "pixels": [
+        132,
+        132
+      ],
+      "sha256": "f661d18ddafb1bc95757be826fc9ead532618a93e018dff0320f27292c619fcd"
+    }
+  ]
+}

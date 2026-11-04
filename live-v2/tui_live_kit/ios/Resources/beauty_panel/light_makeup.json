@@ -1,0 +1,37 @@
+{
+    "displayName":"轻美妆",
+    "displayNameEn":"Makeup",
+    "downloadPath":"MotionRes/light_makeup/",
+    "verticalLayout":true,
+    "propertyList":[
+        {
+            "displayName":"无",
+            "displayNameEn":"None",
+            "icon":"beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName":"白皙",
+            "displayNameEn":"White",
+            "icon":"beauty_panel/panel_icon/light_makeup_icon/light_baixi.png",
+            "resourceUri":"MotionRes/light_makeup/light_baixi",
+            "sdkParam":{
+                "effectValue":50,
+                "extraInfo":{
+                    "makeupLutStrength":"50"
+                }
+            }
+        },
+        {
+            "displayName":"淡颜",
+            "displayNameEn":"Light",
+            "icon":"beauty_panel/panel_icon/light_makeup_icon/light_danyan.png",
+            "resourceUri":"MotionRes/light_makeup/light_danyan",
+            "sdkParam":{
+                "effectValue":50,
+                "extraInfo":{
+                    "makeupLutStrength":"50"
+                }
+            }
+        }
+    ]
+}

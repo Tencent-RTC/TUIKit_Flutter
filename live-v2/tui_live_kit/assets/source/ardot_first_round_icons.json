@@ -1,0 +1,572 @@
+{
+  "file_id": "709144137533935",
+  "file_name": "LiveKit 移动端【交互视觉】",
+  "file_url": "https://ardot.tencent.com/file/709144137533935",
+  "export_tool": "Ardot export_nodes",
+  "exported_on": "2026-10-18",
+  "format": "png",
+  "note": "Direct node exports at 1x, 2x and 3x. Original canvas, strokes, alpha and raster rounding retained; no crop, redraw or iOS asset conversion. Display slots follow the iOS template independently of the export canvas.",
+  "assets": [
+    {
+      "name": "livekit_living_coguest",
+      "node_id": "1330:42",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_coguest.png",
+          "pixels": [
+            46,
+            38
+          ],
+          "alpha_bounds": [
+            4,
+            5,
+            42,
+            33
+          ],
+          "sha256": "6e4eb581c0cb2f26f0b7f2c265b083d4c5e7ca65e915129a996ddf2534f8a969"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_coguest.png",
+          "pixels": [
+            92,
+            76
+          ],
+          "alpha_bounds": [
+            8,
+            9,
+            84,
+            67
+          ],
+          "sha256": "b3fd9cd80824117c353fd11c6b6002a082500d5e91b22410e3876d1b9ac42bf2"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_coguest.png",
+          "pixels": [
+            138,
+            114
+          ],
+          "alpha_bounds": [
+            12,
+            13,
+            126,
+            101
+          ],
+          "sha256": "659f160f9ebc481bdabe7071d55fe5dac13f75a798723b5bb5a30c7d9f746182"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_coguest_unread",
+      "node_id": "1330:43",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_coguest_unread.png",
+          "pixels": [
+            46,
+            38
+          ],
+          "alpha_bounds": [
+            4,
+            0,
+            44,
+            33
+          ],
+          "sha256": "a7cd8d4dca2b73aac9086927703b77cbb6b90bc79c1d6576bc0da7c47c988662"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_coguest_unread.png",
+          "pixels": [
+            92,
+            76
+          ],
+          "alpha_bounds": [
+            8,
+            1,
+            89,
+            67
+          ],
+          "sha256": "66234778c63a0b79968ed9164c8231295c97505734c9bbb2bfbf67e67433ea9b"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_coguest_unread.png",
+          "pixels": [
+            138,
+            114
+          ],
+          "alpha_bounds": [
+            12,
+            1,
+            133,
+            101
+          ],
+          "sha256": "4967fb3369837c32500adc28e31b924f139fcf885e5d34a14a4f39f8066e9ba3"
+        }
+      ]
+    },
+    {
+      "name": "livekit_pusher_audience_followed",
+      "node_id": "1608:59",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_pusher_audience_followed.png",
+          "pixels": [
+            22,
+            22
+          ],
+          "alpha_bounds": [
+            1,
+            2,
+            22,
+            19
+          ],
+          "sha256": "d0583b272fdb77ad73b62821cc76597e4746f6a9c7835a405a4b38fe25249b4d"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_pusher_audience_followed.png",
+          "pixels": [
+            44,
+            44
+          ],
+          "alpha_bounds": [
+            3,
+            5,
+            43,
+            38
+          ],
+          "sha256": "1768ee7f415f8483ab74d940c7fbc6f47a851c83f3f296171d12399129fec627"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_pusher_audience_followed.png",
+          "pixels": [
+            66,
+            66
+          ],
+          "alpha_bounds": [
+            5,
+            8,
+            65,
+            57
+          ],
+          "sha256": "6e4f18c25b1c559deeb387328d3cd1f57fd3a62ab40daccc52522f4973c0cd3f"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_beauty",
+      "node_id": "77:722",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_beauty.png",
+          "pixels": [
+            19,
+            17
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            19,
+            17
+          ],
+          "sha256": "830288ee4c43d90d5b569c012b643acb7cff8e5a346276dbd536219998fcf106"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_beauty.png",
+          "pixels": [
+            38,
+            34
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            38,
+            34
+          ],
+          "sha256": "a3646fb3963a14ec387da5d6a782a18126ea9b80de00a964ee1e93e5cb709bae"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_beauty.png",
+          "pixels": [
+            57,
+            51
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            57,
+            51
+          ],
+          "sha256": "4ff595efb40099018410199abebf8b1dd5e8b4bc93b015bfa5c85e30555d48a9"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_flip",
+      "node_id": "77:745",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_flip.png",
+          "pixels": [
+            18,
+            16
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            18,
+            16
+          ],
+          "sha256": "3c843eca54a53379a4a5d9071ddf47e9787d2d776de9e216a7d31625bd7bef96"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_flip.png",
+          "pixels": [
+            35,
+            31
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            35,
+            31
+          ],
+          "sha256": "c4e8a58aadd8cfdbc3104538acd4f4afc6b80477c65ea891e495f9accec2d864"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_flip.png",
+          "pixels": [
+            53,
+            47
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            53,
+            47
+          ],
+          "sha256": "f17859f4b458b380cf49840b6f359498f0809bd8735339e7033ac563774e8101"
+        }
+      ]
+    },
+    {
+      "name": "livekit_living_setting_audio",
+      "node_id": "77:752",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_living_setting_audio.png",
+          "pixels": [
+            18,
+            19
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            18,
+            19
+          ],
+          "sha256": "dc4624de14e4f5d885c13c07dd90c92e0966337353106d9abbc1b2140c06a199"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_living_setting_audio.png",
+          "pixels": [
+            36,
+            37
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            36,
+            37
+          ],
+          "sha256": "bc7ffacc248e1fd3dd1c4fbd6bf57193347b5b29d77e95708ec3895a0f605137"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_living_setting_audio.png",
+          "pixels": [
+            54,
+            56
+          ],
+          "alpha_bounds": [
+            0,
+            0,
+            54,
+            56
+          ],
+          "sha256": "05cad924516d1d86d5767d672d77d175d4863ffa2eaebf09ebe9c4390ac1cd8f"
+        }
+      ]
+    },
+    {
+      "name": "livekit_settings_mirror_off",
+      "node_id": "77:345",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_settings_mirror_off.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            3,
+            2,
+            20,
+            22
+          ],
+          "sha256": "fb1d841ebe4e7feb3b209b5dfb1e548b2833c6d9ef180e55eac548a3f646146c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_settings_mirror_off.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            6,
+            5,
+            40,
+            43
+          ],
+          "sha256": "1a39691e45cf3acc2f4d8eb5b0c3707a89ec9a78593fe1845f43401489eb1559"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_settings_mirror_off.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            9,
+            8,
+            60,
+            64
+          ],
+          "sha256": "781ba9fd55a5a8733b30848b5500583478c8e2188d3717478d34954b1a5fccda"
+        }
+      ]
+    },
+    {
+      "name": "livekit_settings_mirror_on",
+      "node_id": "77:354",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_settings_mirror_on.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            4,
+            2,
+            21,
+            22
+          ],
+          "sha256": "92427fabb7e40bdd77ff60c45137703cf007a3675477e9f4f4f709c11d3f33c8"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_settings_mirror_on.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            8,
+            5,
+            42,
+            43
+          ],
+          "sha256": "998d5bd04b21d26fbae7efaa1d11329a77f522235fffd792eb1e551a151e9f30"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_settings_mirror_on.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            12,
+            8,
+            63,
+            64
+          ],
+          "sha256": "5d62ec7a9e79bb795cb1f1bdb35ab722c328513fb2ecfed3163523c405d5e096"
+        }
+      ]
+    },
+    {
+      "name": "livekit_beauty_smooth",
+      "node_id": "439:353",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_beauty_smooth.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            3,
+            2,
+            22,
+            21
+          ],
+          "sha256": "87b81d1fd8bb29583d7e891dee5eb07e73dd0eb6cd29d500379681a3ed35269c"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_beauty_smooth.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            7,
+            5,
+            43,
+            41
+          ],
+          "sha256": "6c2bcd93085d855970d5ee9776094561ef5f588101a94dc9e57d8c26b0aa0e8f"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_beauty_smooth.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            10,
+            7,
+            64,
+            62
+          ],
+          "sha256": "78bc3ad55c38a549e2ebb06dcff8f9aa8bcdb59969c02130dc10942dba45cae3"
+        }
+      ]
+    },
+    {
+      "name": "livekit_beauty_whiteness",
+      "node_id": "439:357",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_beauty_whiteness.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            3,
+            2,
+            21,
+            21
+          ],
+          "sha256": "221c74130f055e786976042afa676fa99353bcb9ffd22d19b408b4c9f72dc28a"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_beauty_whiteness.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            6,
+            5,
+            42,
+            42
+          ],
+          "sha256": "01646e361bdd4a08972be9defb01b6dc2bb23b435d7d84201d8ed3bece776884"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_beauty_whiteness.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            10,
+            8,
+            62,
+            63
+          ],
+          "sha256": "5d95c85f34c08e074dd99d2e9e3e3734083c8c16a9fce407726504912f4f9c38"
+        }
+      ]
+    },
+    {
+      "name": "livekit_beauty_ruddy",
+      "node_id": "439:361",
+      "variants": [
+        {
+          "scale": 1,
+          "path": "livekit_beauty_ruddy.png",
+          "pixels": [
+            24,
+            24
+          ],
+          "alpha_bounds": [
+            4,
+            3,
+            20,
+            21
+          ],
+          "sha256": "caac89505e6ee00f8dcf989dacaed91d8e995f89d568cace88edacb621527b2e"
+        },
+        {
+          "scale": 2,
+          "path": "2.0x/livekit_beauty_ruddy.png",
+          "pixels": [
+            48,
+            48
+          ],
+          "alpha_bounds": [
+            9,
+            6,
+            39,
+            42
+          ],
+          "sha256": "f7589c5759da1128f88a7d30746fd3d8067e4c716466816022848627ba6bcd3c"
+        },
+        {
+          "scale": 3,
+          "path": "3.0x/livekit_beauty_ruddy.png",
+          "pixels": [
+            72,
+            72
+          ],
+          "alpha_bounds": [
+            13,
+            9,
+            59,
+            63
+          ],
+          "sha256": "12a7fdda51b5b754faa994982cf42a0bf31e056e608181fa1a52a88bdac6a1a1"
+        }
+      ]
+    }
+  ]
+}
