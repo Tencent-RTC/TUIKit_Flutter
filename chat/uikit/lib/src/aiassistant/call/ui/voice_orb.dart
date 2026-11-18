@@ -25,6 +25,8 @@ class VoiceOrb extends StatefulWidget {
     required this.colorLight,
     required this.colorCore,
     required this.colorDark,
+    this.auroraStyle = false,
+    this.auroraOnDark = false,
   });
 
   final AICallState state;
@@ -36,6 +38,14 @@ class VoiceOrb extends StatefulWidget {
   final Color colorLight;
   final Color colorCore;
   final Color colorDark;
+
+  /// Aurora look used by the experience demo's AI home and call page: colored
+  /// glows drifting inside a softly deforming outline. Off keeps the original
+  /// drawing; the theme colors are not used while it is on.
+  final bool auroraStyle;
+
+  /// Brighter, clearer glow for dark backgrounds.
+  final bool auroraOnDark;
 
   @override
   State<VoiceOrb> createState() => _VoiceOrbState();
@@ -62,6 +72,12 @@ class _VoiceOrbState extends State<VoiceOrb>
 
   Duration _lastElapsed = Duration.zero;
 
+  /// Aurora motion runs on its own accumulated time, so speed changes only
+  /// affect later increments and never make the picture jump.
+  double _auroraTime = 0;
+  double _smoothEnergy = 0.2;
+  double _smoothBoost = 0;
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +87,8 @@ class _VoiceOrbState extends State<VoiceOrb>
   @override
   void didUpdateWidget(covariant VoiceOrb oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.state != widget.state) {
+    if (oldWidget.state != widget.state ||
+        oldWidget.auroraStyle != widget.auroraStyle) {
       if (widget.state != AICallState.speaking) {
         _displayedLevel = 0;
       }
@@ -89,7 +106,7 @@ class _VoiceOrbState extends State<VoiceOrb>
     _ticker.stop();
     _phase = 0;
     _lastElapsed = Duration.zero;
-    if (widget.state != AICallState.idle) {
+    if (widget.state != AICallState.idle || widget.auroraStyle) {
       _ticker.start();
     }
   }
@@ -115,7 +132,35 @@ class _VoiceOrbState extends State<VoiceOrb>
       if (widget.state == AICallState.speaking) {
         _tickDisplayedLevel(dtMs);
       }
+      if (widget.auroraStyle) {
+        _tickAurora((dtMs / 1000).clamp(0.0, 0.05).toDouble());
+      }
     });
+  }
+
+  /// State energy and the volume boost ease exponentially, so state switches
+  /// and level jitter never change the orb abruptly.
+  void _tickAurora(double dt) {
+    final double targetEnergy;
+    switch (widget.state) {
+      case AICallState.idle:
+        targetEnergy = 0.2;
+        break;
+      case AICallState.listening:
+        targetEnergy = 0.4;
+        break;
+      case AICallState.thinking:
+        targetEnergy = 0.7;
+        break;
+      case AICallState.speaking:
+        targetEnergy = 0.55 + 0.35 * _displayedLevel;
+        break;
+    }
+    _smoothEnergy += (targetEnergy - _smoothEnergy) * (1 - math.exp(-dt * 3));
+    final targetBoost =
+        widget.state == AICallState.speaking ? _displayedLevel : 0.0;
+    _smoothBoost += (targetBoost - _smoothBoost) * (1 - math.exp(-dt * 10));
+    _auroraTime += dt * (0.5 + 1.3 * _smoothEnergy);
   }
 
   /// The coefficients are per 60fps frame; they are scaled by the real frame
@@ -132,6 +177,16 @@ class _VoiceOrbState extends State<VoiceOrb>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.auroraStyle) {
+      return CustomPaint(
+        painter: _AuroraOrbPainter(
+          time: _auroraTime,
+          energy: _smoothEnergy,
+          boost: _smoothBoost,
+          onDark: widget.auroraOnDark,
+        ),
+      );
+    }
     return CustomPaint(
       painter: _VoiceOrbPainter(
         state: widget.state,
@@ -264,5 +319,155 @@ class _VoiceOrbPainter extends CustomPainter {
         colorLight != oldDelegate.colorLight ||
         colorCore != oldDelegate.colorCore ||
         colorDark != oldDelegate.colorDark;
+  }
+}
+
+/// Aurora orb: colored soft lights orbit slowly inside a rounded outline and
+/// blend into each other, with a soft outer glow and a top-left highlight.
+///
+/// The outline only uses low-frequency deformation joined with quadratic
+/// curves, so the edge stays round; the lights are painted with srcATop inside
+/// a layer holding the anti-aliased outline, so the edge does not alias.
+class _AuroraOrbPainter extends CustomPainter {
+  _AuroraOrbPainter({
+    required this.time,
+    required this.energy,
+    required this.boost,
+    required this.onDark,
+  });
+
+  static const double _glowRatio = 0.22;
+
+  /// The glow shader radius as a share of the drawable radius, leaving room
+  /// for up to 1.2x scaling.
+  static const double _glowBase = 0.82;
+  static const int _points = 48;
+  static const Color _base = Color(0xFF5B3CFF);
+  static const Color _glow = Color(0xFF7B5CFF);
+  static const Color _glowOuter = Color(0xFF2EC5FF);
+  static const Color _glowDark = Color(0xFF9B87FF);
+  static const Color _glowOuterDark = Color(0xFF5AD8FF);
+  static const List<Color> _blobColors = [
+    Color(0xFF2EC5FF),
+    Color(0xFF6AF2C6),
+    Color(0xFFFF6FD8),
+    Color(0xFFB36BFF),
+  ];
+  static const List<double> _blobSpeed = [0.9, -0.7, 0.6, -1.1];
+  static const List<double> _blobPhase = [0, 1.6, 3.2, 4.7];
+
+  final double time;
+  final double energy;
+  final double boost;
+  final bool onDark;
+
+  static Color _alpha(Color color, double alpha) =>
+      color.withAlpha((alpha.clamp(0.0, 1.0) * 255).round());
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final maxRadius = size.shortestSide / 2;
+    if (maxRadius <= 0) return;
+    final baseRadius = maxRadius * (1 - _glowRatio);
+    final t = time;
+    final r = baseRadius * (0.86 + 0.018 * math.sin(t * 1.6) + 0.1 * boost);
+    final scale = r / baseRadius;
+
+    // Outer glow. Ends in the same color fully transparent rather than
+    // transparent black, which would look muddy on a dark background.
+    final glowScale = 1 + 0.03 * (math.sin(t * 1.2) + 1) + 0.12 * boost;
+    final glowAlpha = onDark ? 0.8 + 0.2 * energy : 0.55 + 0.35 * energy;
+    final inner = onDark ? _glowDark : _glow;
+    final outer = onDark ? _glowOuterDark : _glowOuter;
+    canvas.drawCircle(
+      center,
+      maxRadius,
+      Paint()
+        ..isAntiAlias = true
+        ..shader = ui.Gradient.radial(
+          center,
+          maxRadius * _glowBase * glowScale,
+          [
+            _alpha(inner, 0.9 * glowAlpha),
+            _alpha(inner, 0.8 * glowAlpha),
+            _alpha(inner, 0.6 * glowAlpha),
+            _alpha(outer, 0.32 * glowAlpha),
+            _alpha(outer, 0.12 * glowAlpha),
+            _alpha(outer, 0),
+          ],
+          const [0, 0.6, 0.78, 0.87, 0.94, 1],
+        ),
+    );
+
+    final amp = r * (0.01 + 0.03 * energy);
+    final xs = List<double>.filled(_points, 0);
+    final ys = List<double>.filled(_points, 0);
+    for (var k = 0; k < _points; k++) {
+      final theta = k * 2 * math.pi / _points;
+      final d = 0.6 * math.sin(2 * theta + t * 1.3) +
+          0.4 * math.sin(3 * theta - t * 0.9);
+      final rr = r + amp * d;
+      xs[k] = center.dx + rr * math.cos(theta);
+      ys[k] = center.dy + rr * math.sin(theta);
+    }
+    final path = Path()
+      ..moveTo((xs[_points - 1] + xs[0]) / 2, (ys[_points - 1] + ys[0]) / 2);
+    for (var k = 0; k < _points; k++) {
+      final n = (k + 1) % _points;
+      path.quadraticBezierTo(
+          xs[k], ys[k], (xs[k] + xs[n]) / 2, (ys[k] + ys[n]) / 2);
+    }
+    path.close();
+
+    final bound = Rect.fromCircle(center: center, radius: r * 1.15);
+    canvas.saveLayer(bound, Paint());
+    canvas.drawPath(
+        path,
+        Paint()
+          ..isAntiAlias = true
+          ..color = _base);
+    for (var i = 0; i < _blobColors.length; i++) {
+      final angle = t * _blobSpeed[i] + _blobPhase[i];
+      final orbit = r * (0.42 + 0.08 * math.sin(t * 0.7 + i));
+      final blobCenter = Offset(center.dx + math.cos(angle) * orbit,
+          center.dy + math.sin(angle) * orbit * 0.9);
+      final color = _blobColors[i];
+      _fillAtop(canvas, bound, blobCenter, baseRadius * 0.95 * scale,
+          [color, _alpha(color, 0.55), _alpha(color, 0)], const [0, 0.45, 1]);
+    }
+    _fillAtop(
+        canvas,
+        bound,
+        Offset(center.dx - r * 0.3, center.dy - r * 0.38),
+        baseRadius * 0.75 * scale,
+        const [Color(0xB3FFFFFF), Color(0x33FFFFFF), Color(0x00FFFFFF)],
+        const [0, 0.45, 1]);
+    _fillAtop(
+        canvas,
+        bound,
+        Offset(center.dx + r * 0.38, center.dy + r * 0.5),
+        baseRadius * 0.9 * scale,
+        const [Color(0x55100A40), Color(0x00100A40)],
+        const [0, 1]);
+    canvas.restore();
+  }
+
+  void _fillAtop(Canvas canvas, Rect bound, Offset center, double radius,
+      List<Color> colors, List<double> stops) {
+    canvas.drawRect(
+      bound,
+      Paint()
+        ..blendMode = BlendMode.srcATop
+        ..shader = ui.Gradient.radial(center, radius, colors, stops),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _AuroraOrbPainter oldDelegate) {
+    return time != oldDelegate.time ||
+        energy != oldDelegate.energy ||
+        boost != oldDelegate.boost ||
+        onDark != oldDelegate.onDark;
   }
 }

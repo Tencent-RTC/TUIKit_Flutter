@@ -66,7 +66,7 @@ import 'chat_localizations_zh.dart';
 /// property.
 abstract class ChatLocalizations {
   ChatLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -89,11 +89,11 @@ abstract class ChatLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -103,7 +103,7 @@ abstract class ChatLocalizations {
     Locale('ko'),
     Locale('zh'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
   /// No description provided for @voiceTranslate.
@@ -2817,6 +2817,48 @@ abstract class ChatLocalizations {
   /// In en, this message translates to:
   /// **'Audio playback is unavailable, replies will be shown as text'**
   String get aiCallPlaybackUnavailable;
+
+  /// No description provided for @aiCallTrySaying.
+  ///
+  /// In en, this message translates to:
+  /// **'Try saying: \"{hint}\"'**
+  String aiCallTrySaying(String hint);
+
+  /// No description provided for @aiCallDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'In call {duration}'**
+  String aiCallDuration(String duration);
+
+  /// No description provided for @aiCallConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get aiCallConnecting;
+
+  /// No description provided for @aiCallLabelMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get aiCallLabelMute;
+
+  /// No description provided for @aiCallLabelUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get aiCallLabelUnmute;
+
+  /// No description provided for @aiCallLabelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitles'**
+  String get aiCallLabelSubtitle;
+
+  /// No description provided for @aiCallLabelHangup.
+  ///
+  /// In en, this message translates to:
+  /// **'Hang up'**
+  String get aiCallLabelHangup;
 }
 
 class _ChatLocalizationsDelegate
@@ -2826,8 +2868,7 @@ class _ChatLocalizationsDelegate
   @override
   Future<ChatLocalizations> load(Locale locale) {
     return SynchronousFuture<ChatLocalizations>(
-      lookupChatLocalizations(locale),
-    );
+        lookupChatLocalizations(locale));
   }
 
   @override
@@ -2868,9 +2909,8 @@ ChatLocalizations lookupChatLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'ChatLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'ChatLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

@@ -519,5 +519,12 @@
   "aiCallSendFailed": "فشل الإرسال، يرجى المحاولة مرة أخرى",
   "aiCallReplyTimeout": "لم يستجب المساعد، يرجى المحاولة مرة أخرى",
   "aiCallAudioUnavailable": "الميكروفون غير متاح",
-  "aiCallPlaybackUnavailable": "تشغيل الصوت غير متاح، وسيتم عرض الردود كنص"
+  "aiCallPlaybackUnavailable": "تشغيل الصوت غير متاح، وسيتم عرض الردود كنص",
+  "aiCallTrySaying": "جرّب أن تقول: \"{hint}\"",
+  "aiCallDuration": "في مكالمة {duration}",
+  "aiCallConnecting": "جارٍ الاتصال…",
+  "aiCallLabelMute": "كتم",
+  "aiCallLabelUnmute": "إلغاء الكتم",
+  "aiCallLabelSubtitle": "الترجمة",
+  "aiCallLabelHangup": "إنهاء"
 }

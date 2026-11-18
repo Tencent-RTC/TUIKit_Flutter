@@ -45,6 +45,17 @@ abstract class MessageInputConfigProtocol {
   /// Called with the entry's id the first time a dotted entry is tapped, so the
   /// host can persist that the dot has been consumed.
   void Function(String actionID)? get onMoreActionRedDotTap;
+
+  /// Filled in when the field and the conversation draft are both empty.
+  /// Stays unused once [shouldShowSendRedDot] returns false.
+  String? get initialInputText;
+
+  /// Whether the send button still carries a red dot. Null means no dot.
+  bool Function()? get shouldShowSendRedDot;
+
+  /// Called when the user sends the current text from the send button or the
+  /// keyboard, so the host can remember that the dot was consumed.
+  void Function()? get onSendRedDotTap;
 }
 
 class ChatMessageInputConfig implements MessageInputConfigProtocol {
@@ -64,6 +75,9 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   final List<MessageInputMoreAction> _customMoreActions;
   final bool Function(String actionID)? _shouldShowMoreActionRedDot;
   final void Function(String actionID)? _onMoreActionRedDotTap;
+  final String? _initialInputText;
+  final bool Function()? _shouldShowSendRedDot;
+  final void Function()? _onSendRedDotTap;
 
   @override
   bool get isShowAudioRecorder => _userIsShowAudioRecorder ?? true;
@@ -119,6 +133,15 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   @override
   void Function(String actionID)? get onMoreActionRedDotTap => _onMoreActionRedDotTap;
 
+  @override
+  String? get initialInputText => _initialInputText;
+
+  @override
+  bool Function()? get shouldShowSendRedDot => _shouldShowSendRedDot;
+
+  @override
+  void Function()? get onSendRedDotTap => _onSendRedDotTap;
+
   const ChatMessageInputConfig({
     bool? isShowAudioRecorder,
     bool? isShowMore,
@@ -136,9 +159,15 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
     List<MessageInputMoreAction> customMoreActions = const [],
     bool Function(String actionID)? shouldShowMoreActionRedDot,
     void Function(String actionID)? onMoreActionRedDotTap,
+    String? initialInputText,
+    bool Function()? shouldShowSendRedDot,
+    void Function()? onSendRedDotTap,
   })  : _customMoreActions = customMoreActions,
         _shouldShowMoreActionRedDot = shouldShowMoreActionRedDot,
         _onMoreActionRedDotTap = onMoreActionRedDotTap,
+        _initialInputText = initialInputText,
+        _shouldShowSendRedDot = shouldShowSendRedDot,
+        _onSendRedDotTap = onSendRedDotTap,
         _userIsShowAudioRecorder = isShowAudioRecorder,
         _userIsShowMore = isShowMore,
         _userEnableReadReceipt = enableReadReceipt,
@@ -173,6 +202,9 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
     List<MessageInputMoreAction>? customMoreActions,
     bool Function(String actionID)? shouldShowMoreActionRedDot,
     void Function(String actionID)? onMoreActionRedDotTap,
+    String? initialInputText,
+    bool Function()? shouldShowSendRedDot,
+    void Function()? onSendRedDotTap,
   }) {
     return ChatMessageInputConfig(
       isShowAudioRecorder: isShowAudioRecorder ?? _userIsShowAudioRecorder,
@@ -191,6 +223,9 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
       customMoreActions: customMoreActions ?? _customMoreActions,
       shouldShowMoreActionRedDot: shouldShowMoreActionRedDot ?? _shouldShowMoreActionRedDot,
       onMoreActionRedDotTap: onMoreActionRedDotTap ?? _onMoreActionRedDotTap,
+      initialInputText: initialInputText ?? _initialInputText,
+      shouldShowSendRedDot: shouldShowSendRedDot ?? _shouldShowSendRedDot,
+      onSendRedDotTap: onSendRedDotTap ?? _onSendRedDotTap,
     );
   }
 }

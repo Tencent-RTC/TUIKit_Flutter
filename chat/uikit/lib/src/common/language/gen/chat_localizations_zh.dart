@@ -1423,6 +1423,31 @@ class ChatLocalizationsZh extends ChatLocalizations {
 
   @override
   String get aiCallPlaybackUnavailable => '语音播放不可用，回复将以文字显示';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return '试试说：“$hint”';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return '通话中 $duration';
+  }
+
+  @override
+  String get aiCallConnecting => '正在接通…';
+
+  @override
+  String get aiCallLabelMute => '静音';
+
+  @override
+  String get aiCallLabelUnmute => '取消静音';
+
+  @override
+  String get aiCallLabelSubtitle => '字幕';
+
+  @override
+  String get aiCallLabelHangup => '挂断';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2844,6 +2869,31 @@ class ChatLocalizationsZhHans extends ChatLocalizationsZh {
 
   @override
   String get aiCallPlaybackUnavailable => '语音播放不可用，回复将以文字显示';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return '试试说：“$hint”';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return '通话中 $duration';
+  }
+
+  @override
+  String get aiCallConnecting => '正在接通…';
+
+  @override
+  String get aiCallLabelMute => '静音';
+
+  @override
+  String get aiCallLabelUnmute => '取消静音';
+
+  @override
+  String get aiCallLabelSubtitle => '字幕';
+
+  @override
+  String get aiCallLabelHangup => '挂断';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4265,4 +4315,29 @@ class ChatLocalizationsZhHant extends ChatLocalizationsZh {
 
   @override
   String get aiCallPlaybackUnavailable => '語音播放不可用，回覆將以文字顯示';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return '試試說：「$hint」';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return '通話中 $duration';
+  }
+
+  @override
+  String get aiCallConnecting => '正在接通…';
+
+  @override
+  String get aiCallLabelMute => '靜音';
+
+  @override
+  String get aiCallLabelUnmute => '取消靜音';
+
+  @override
+  String get aiCallLabelSubtitle => '字幕';
+
+  @override
+  String get aiCallLabelHangup => '掛斷';
 }

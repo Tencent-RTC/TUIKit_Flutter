@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
 import 'package:tencent_cloud_chat_push/tencent_cloud_chat_push.dart';
 
+import 'common/ai_home_hint_store.dart';
 import 'common/language/gen/demo_localizations.dart';
 import 'common/message_input_call_red_dot_store.dart';
 import 'common/undisplayed_custom_message.dart';
@@ -80,6 +81,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initializeApp() async {
     await AppBuilder.init(path: 'assets/appConfig.json');
     await MessageInputCallRedDotStore.load();
+    await AIHomeHintStore.load();
 
     if (mounted) {
       setState(() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:tencent_chat_uikit/src/message_list/stream/markdown_link_dedupe.dart';
 import 'package:tencent_chat_uikit/src/message_list/stream/stream_markdown_sanitizer.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,7 +35,7 @@ class StreamMarkdownView extends StatelessWidget {
     final base = FontScheme.caption1Regular.copyWith(color: foreground);
 
     final sanitized = sanitizeStreamMarkdown(
-      revealed,
+      dedupeLinkOnlyLines(revealed),
       isRevealing: isRevealing,
       withCursor: isRevealing,
     );

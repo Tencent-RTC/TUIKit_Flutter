@@ -1426,4 +1426,29 @@ class ChatLocalizationsJa extends ChatLocalizations {
 
   @override
   String get aiCallPlaybackUnavailable => '音声再生を利用できません。返信はテキストで表示されます';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return '話しかけてみよう：「$hint」';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return '通話中 $duration';
+  }
+
+  @override
+  String get aiCallConnecting => '接続中…';
+
+  @override
+  String get aiCallLabelMute => 'ミュート';
+
+  @override
+  String get aiCallLabelUnmute => 'ミュート解除';
+
+  @override
+  String get aiCallLabelSubtitle => '字幕';
+
+  @override
+  String get aiCallLabelHangup => '終了';
 }

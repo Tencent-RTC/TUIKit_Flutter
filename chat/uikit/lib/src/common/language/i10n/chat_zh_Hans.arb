@@ -519,5 +519,12 @@
   "aiCallSendFailed": "发送失败，请重试",
   "aiCallReplyTimeout": "助手没有响应，请重试",
   "aiCallAudioUnavailable": "麦克风不可用",
-  "aiCallPlaybackUnavailable": "语音播放不可用，回复将以文字显示"
+  "aiCallPlaybackUnavailable": "语音播放不可用，回复将以文字显示",
+  "aiCallTrySaying": "试试说：“{hint}”",
+  "aiCallDuration": "通话中 {duration}",
+  "aiCallConnecting": "正在接通…",
+  "aiCallLabelMute": "静音",
+  "aiCallLabelUnmute": "取消静音",
+  "aiCallLabelSubtitle": "字幕",
+  "aiCallLabelHangup": "挂断"
 }

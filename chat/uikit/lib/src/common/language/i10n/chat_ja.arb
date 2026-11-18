@@ -519,5 +519,12 @@
   "aiCallSendFailed": "送信に失敗しました。再試行してください",
   "aiCallReplyTimeout": "アシスタントが応答しませんでした。再試行してください",
   "aiCallAudioUnavailable": "マイクを利用できません",
-  "aiCallPlaybackUnavailable": "音声再生を利用できません。返信はテキストで表示されます"
+  "aiCallPlaybackUnavailable": "音声再生を利用できません。返信はテキストで表示されます",
+  "aiCallTrySaying": "話しかけてみよう：「{hint}」",
+  "aiCallDuration": "通話中 {duration}",
+  "aiCallConnecting": "接続中…",
+  "aiCallLabelMute": "ミュート",
+  "aiCallLabelUnmute": "ミュート解除",
+  "aiCallLabelSubtitle": "字幕",
+  "aiCallLabelHangup": "終了"
 }
