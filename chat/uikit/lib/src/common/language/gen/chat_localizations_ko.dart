@@ -1426,4 +1426,29 @@ class ChatLocalizationsKo extends ChatLocalizations {
 
   @override
   String get aiCallPlaybackUnavailable => '음성 재생을 사용할 수 없어 답변이 텍스트로 표시됩니다';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return '이렇게 말해 보세요: \"$hint\"';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return '통화 중 $duration';
+  }
+
+  @override
+  String get aiCallConnecting => '연결 중…';
+
+  @override
+  String get aiCallLabelMute => '음소거';
+
+  @override
+  String get aiCallLabelUnmute => '음소거 해제';
+
+  @override
+  String get aiCallLabelSubtitle => '자막';
+
+  @override
+  String get aiCallLabelHangup => '끊기';
 }

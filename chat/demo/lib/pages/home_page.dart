@@ -1,6 +1,7 @@
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart' hide Badge;
 import 'package:flutter/material.dart';
-import 'package:uikit_next/ai/support_agent_catalog.dart';
+import 'package:uikit_next/ai/ai_stay_reporter.dart';
+import 'package:uikit_next/ai/ai_voice_home.dart';
 import 'package:uikit_next/common/customer_seat_conversations.dart';
 import 'package:uikit_next/common/language/gen/demo_localizations.dart';
 import 'package:uikit_next/common/message_input_call_red_dot_store.dart';
@@ -16,9 +17,10 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static const int _aiTabIndex = 0;
 
+  final AIStayReporter _aiStayReporter = AIStayReporter();
   late ConversationListStore conversationListStore;
   late ChatLocalizations chatLocale;
   int _currentIndex = _aiTabIndex;
@@ -33,6 +35,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _aiStayReporter.onEnter();
     conversationListStore = ConversationListStore.create();
     conversationListStore.state.totalUnreadCount
         .addListener(_onConversationListChanged);
@@ -40,10 +44,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _aiStayReporter.onLeave();
     conversationListStore.state.totalUnreadCount
         .removeListener(_onConversationListChanged);
     _aiTabVisible.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (_currentIndex == _aiTabIndex) _aiStayReporter.onEnter();
+    } else if (state == AppLifecycleState.paused) {
+      _aiStayReporter.onLeave();
+    }
   }
 
   void _onConversationListChanged() {
@@ -80,11 +95,7 @@ class _HomePageState extends State<HomePage> {
     );
     _pages = [
       _KeepAlivePage(
-        child: AIAssistantPage(
-          visible: _aiTabVisible,
-          agentLoader: SupportAgentCatalog.fetch,
-          handoffStatusLoader: SupportAgentCatalog.fetchHandoffStatus,
-        ),
+        child: AIVoiceHome(visible: _aiTabVisible),
       ),
       _KeepAlivePage(
         child: ConversationsPage(
@@ -145,6 +156,11 @@ class _HomePageState extends State<HomePage> {
           _currentIndex = index;
         });
         _aiTabVisible.value = index == _aiTabIndex;
+        if (index == _aiTabIndex) {
+          _aiStayReporter.onEnter();
+        } else {
+          _aiStayReporter.onLeave();
+        }
       },
       type: BottomNavigationBarType.fixed,
       backgroundColor: colors.bgColorOperate,

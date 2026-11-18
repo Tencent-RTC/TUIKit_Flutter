@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter/services.dart';
@@ -12,11 +14,91 @@ import '../aiassistant/ai_assistant_usage_reporter.dart';
 import '../aiassistant/ai_constants.dart';
 import '../aiassistant/call/ai_call_controller.dart';
 import '../aiassistant/call/ai_call_page.dart';
+import '../aiassistant/call/ai_call_ui_options.dart';
 import '../common/language/gen/chat_localizations.dart';
 import '../common/utils/uikit_util.dart';
 import '../message_input/message_input.dart';
 import '../message_list/listen/listen_playback_bar.dart';
 import '../message_list/message_list.dart';
+
+/// Optional first-run hint for the experience demo. Omitted hosts see no prompt
+/// and no extra red dots.
+class AIAssistantTrialPrompt {
+  const AIAssistantTrialPrompt({
+    this.initialInputText,
+    this.shouldShowSendRedDot,
+    this.onSendRedDotTap,
+    this.shouldShowCallRedDot,
+    this.onCallRedDotTap,
+    this.backLabel,
+    this.onBack,
+    this.quickQuestions = const [],
+    this.quickQuestionsForAgent,
+    this.headerBanner,
+    this.callUiOptions,
+    this.callUiOptionsForAgent,
+  });
+
+  final String? initialInputText;
+  final bool Function()? shouldShowSendRedDot;
+  final VoidCallback? onSendRedDotTap;
+  final bool Function()? shouldShowCallRedDot;
+  final VoidCallback? onCallRedDotTap;
+
+  /// Back entry on the left of the header; shown only when both are given.
+  final String? backLabel;
+  final VoidCallback? onBack;
+
+  /// Tappable questions beside the transfer button; a tap sends directly.
+  final List<String> quickQuestions;
+
+  /// Questions for the current assistant, refreshed on every switch. Null
+  /// falls back to [quickQuestions].
+  final List<String>? Function(AIAssistantAgent agent)? quickQuestionsForAgent;
+
+  /// Inserted under the header; the host controls its own visibility.
+  final Widget? headerBanner;
+
+  /// Look and guidance of the call page. Null keeps the page as it was.
+  final AICallUiOptions? callUiOptions;
+
+  /// Call page options for the current assistant, e.g. its sample hints. Null
+  /// falls back to [callUiOptions].
+  final AICallUiOptions? Function(AIAssistantAgent agent)?
+      callUiOptionsForAgent;
+}
+
+/// Lets a host drive the page, e.g. start a call from its own landing view.
+///
+/// Notifies when voice support is known or the selected assistant changes.
+class AIAssistantPageController extends ChangeNotifier {
+  _AIAssistantPageState? _state;
+
+  /// Whether the device can run AI voice calls. False until checked.
+  bool get isVoiceCallSupported => _state?._isVoiceCallSupported ?? false;
+
+  /// Whether [isVoiceCallSupported] has been determined.
+  bool get isVoiceSupportChecked => _state?._voiceSupportChecked ?? false;
+
+  AIAssistantAgent? get selectedAgent => _state?._selectedAgent;
+
+  /// An assistant is loaded and the device supports voice calls.
+  bool get canStartVoiceCall => selectedAgent != null && isVoiceCallSupported;
+
+  /// Same as the header call button, including the human handoff check.
+  /// Completes with true after an AI call page was shown and closed.
+  Future<bool> startVoiceCall() async {
+    final state = _state;
+    if (state == null) return false;
+    state._consumeCallRedDot();
+    return state._onCallTap();
+  }
+
+  /// Fetches the directory again, e.g. after the host changed the selection.
+  Future<void> reload() async => _state?._reloadAgents();
+
+  void _notify() => notifyListeners();
+}
 
 @visibleForTesting
 SystemUiOverlayStyle aiAssistantSystemUiOverlayStyle({
@@ -39,6 +121,8 @@ class AIAssistantPage extends StatefulWidget {
     required this.visible,
     required this.agentLoader,
     this.handoffStatusLoader,
+    this.trialPrompt,
+    this.controller,
   });
 
   /// Whether the tab is currently shown. The directory is fetched again every
@@ -52,6 +136,12 @@ class AIAssistantPage extends StatefulWidget {
   ///
   /// When omitted, the call button keeps its original AI voice-call behavior.
   final AIAssistantHandoffStatusLoader? handoffStatusLoader;
+
+  /// Demo-only composer prompt and the two entry red dots. Null keeps the page unchanged.
+  final AIAssistantTrialPrompt? trialPrompt;
+
+  /// Optional handle for hosts that start calls or reload from outside.
+  final AIAssistantPageController? controller;
 
   @override
   State<AIAssistantPage> createState() => _AIAssistantPageState();
@@ -71,6 +161,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
   bool _loaded = false;
   int _fetchGeneration = 0;
   bool _isVoiceCallSupported = false;
+  bool _voiceSupportChecked = false;
   int _callCheckGeneration = 0;
   bool _isCheckingHandoffStatus = false;
 
@@ -81,6 +172,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
   void initState() {
     super.initState();
     widget.visible.addListener(_onVisibilityChanged);
+    widget.controller?._state = this;
     _checkVoiceCallSupport();
     if (widget.visible.value) {
       _reloadAgents();
@@ -101,6 +193,11 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
         (becameVisible || oldWidget.agentLoader != widget.agentLoader)) {
       _reloadAgents();
     }
+    if (oldWidget.controller != widget.controller) {
+      if (oldWidget.controller?._state == this)
+        oldWidget.controller?._state = null;
+      widget.controller?._state = this;
+    }
     if (oldWidget.handoffStatusLoader != widget.handoffStatusLoader) {
       _callCheckGeneration++;
       _isCheckingHandoffStatus = false;
@@ -110,6 +207,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
   @override
   void dispose() {
     widget.visible.removeListener(_onVisibilityChanged);
+    if (widget.controller?._state == this) widget.controller?._state = null;
     _fetchGeneration++;
     _callCheckGeneration++;
     _isCheckingHandoffStatus = false;
@@ -125,7 +223,11 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
   Future<void> _checkVoiceCallSupport() async {
     final supported = await AICallController.isSupported();
     if (!mounted) return;
-    setState(() => _isVoiceCallSupported = supported);
+    setState(() {
+      _isVoiceCallSupported = supported;
+      _voiceSupportChecked = true;
+    });
+    widget.controller?._notify();
   }
 
   Future<void> _reloadAgents() async {
@@ -152,6 +254,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
         _boundConversationID = null;
         _multiSelectState = null;
       });
+      widget.controller?._notify();
       return;
     }
     final currentID = _selectedAgent?.id;
@@ -170,6 +273,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
       _isCheckingHandoffStatus = false;
     }
     setState(() => _selectedAgent = agent);
+    widget.controller?._notify();
     if (_boundConversationID == agent.conversationID) {
       AgentWelcomeInserter.insertIfConversationEmpty(agent);
       return;
@@ -185,18 +289,25 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
     AgentWelcomeInserter.insertIfConversationEmpty(agent);
   }
 
-  void _onCallTap() {
+  void _consumeCallRedDot() {
+    if (widget.trialPrompt?.shouldShowCallRedDot?.call() != true) return;
+    widget.trialPrompt?.onCallRedDotTap?.call();
+    setState(() {});
+  }
+
+  /// Completes with true after an AI call page was shown and closed.
+  Future<bool> _onCallTap() async {
     final agent = _selectedAgent;
-    if (agent == null || !_isVoiceCallSupported) return;
+    if (agent == null || !_isVoiceCallSupported) return false;
     final statusLoader = widget.handoffStatusLoader;
     if (statusLoader == null) {
-      _startAiVoiceCall(agent);
-      return;
+      return _startAiVoiceCall(agent);
     }
-    _checkHandoffStatus(
+    var aiCallShown = false;
+    await _checkHandoffStatus(
       agent: agent,
       statusLoader: statusLoader,
-      onResult: (status) {
+      onResult: (status) async {
         if (status.isSeatCallable) {
           _startHumanCall(
             status.seatImUserId.trim(),
@@ -208,10 +319,11 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
             ChatLocalizations.of(context).aiCallHandoffWaiting,
           );
         } else {
-          _startAiVoiceCall(agent);
+          aiCallShown = await _startAiVoiceCall(agent);
         }
       },
     );
+    return aiCallShown;
   }
 
   void _onCallMessageClick(String _, bool isVideoCall) {
@@ -246,7 +358,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
   Future<void> _checkHandoffStatus({
     required AIAssistantAgent agent,
     required AIAssistantHandoffStatusLoader statusLoader,
-    required void Function(AIAssistantHandoffStatus status) onResult,
+    required FutureOr<void> Function(AIAssistantHandoffStatus status) onResult,
   }) async {
     if (_isCheckingHandoffStatus) return;
     _isCheckingHandoffStatus = true;
@@ -261,7 +373,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
     if (!mounted || generation != _callCheckGeneration) return;
     _isCheckingHandoffStatus = false;
     if (_selectedAgent?.id != agent.id) return;
-    onResult(status);
+    await onResult(status);
   }
 
   void _startHumanCall(String userID, CallMediaType mediaType) {
@@ -277,13 +389,27 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
     UIKitUtil.reportChatInvokeCall();
   }
 
-  void _startAiVoiceCall(AIAssistantAgent agent) {
-    if (!_isVoiceCallSupported) return;
+  Future<bool> _startAiVoiceCall(AIAssistantAgent agent) async {
+    if (!_isVoiceCallSupported) return false;
     _usageReporter.onVoiceEntered();
-    Navigator.of(context).push(
+    final prompt = widget.trialPrompt;
+    final options = prompt?.callUiOptionsForAgent?.call(agent) ??
+        prompt?.callUiOptions ??
+        const AICallUiOptions();
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
-          builder: (_) => AICallPage(robotUserID: agent.imUserId)),
+          builder: (_) =>
+              AICallPage(robotUserID: agent.imUserId, uiOptions: options)),
     );
+    return true;
+  }
+
+  List<String> _quickQuestions(AIAssistantAgent? agent) {
+    final prompt = widget.trialPrompt;
+    if (prompt == null) return const [];
+    final forAgent =
+        agent == null ? null : prompt.quickQuestionsForAgent?.call(agent);
+    return forAgent ?? prompt.quickQuestions;
   }
 
   void _showHandoffRequired() {
@@ -320,6 +446,8 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
         body: Column(
           children: [
             _buildHeader(colors, locale),
+            if (widget.trialPrompt?.headerBanner != null)
+              widget.trialPrompt!.headerBanner!,
             Expanded(child: _buildContent(colors, locale)),
           ],
         ),
@@ -345,7 +473,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Expanded(child: SizedBox.shrink()),
+                    Expanded(child: _buildBackButton(colors)),
                     Expanded(
                       flex: 2,
                       child: GestureDetector(
@@ -399,18 +527,42 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                                 label: locale.aiCallButton,
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
-                                  onTap: _onCallTap,
+                                  onTap: () {
+                                    _consumeCallRedDot();
+                                    _onCallTap();
+                                  },
                                   child: Padding(
                                     padding: const EdgeInsetsDirectional.only(
                                         start: 12, top: 14, bottom: 14),
-                                    child: SvgPicture.asset(
-                                      'chat_assets/icon/aiassistant/ai_call.svg',
-                                      package: 'tencent_chat_uikit',
-                                      width: 20,
-                                      height: 20,
-                                      colorFilter: ColorFilter.mode(
-                                          colors.textColorPrimary,
-                                          BlendMode.srcIn),
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'chat_assets/icon/aiassistant/ai_call.svg',
+                                          package: 'tencent_chat_uikit',
+                                          width: 20,
+                                          height: 20,
+                                          colorFilter: ColorFilter.mode(
+                                              colors.textColorPrimary,
+                                              BlendMode.srcIn),
+                                        ),
+                                        if (widget.trialPrompt
+                                                ?.shouldShowCallRedDot
+                                                ?.call() ==
+                                            true)
+                                          PositionedDirectional(
+                                            top: 0,
+                                            end: 0,
+                                            child: Container(
+                                              width: 8,
+                                              height: 8,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: colors.textColorError,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -424,6 +576,29 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
             ),
             Container(height: 0.5, color: colors.strokeColorPrimary),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(SemanticColorScheme colors) {
+    final label = widget.trialPrompt?.backLabel;
+    final onBack = widget.trialPrompt?.onBack;
+    if (label == null || label.isEmpty || onBack == null) {
+      return const SizedBox.shrink();
+    }
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onBack,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.only(top: 8, bottom: 8, end: 8),
+          child: Text(
+            label,
+            maxLines: 1,
+            style: TextStyle(fontSize: 15, color: colors.textColorPrimary),
+          ),
         ),
       ),
     );
@@ -499,10 +674,11 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                     ),
                     if (showTransferButton)
                       Positioned(
-                        left: 12,
+                        left: 0,
+                        right: 0,
                         bottom: 8,
-                        child: _TransferToHumanButton(
-                            onTap: () => _sendTransferToHuman(conversationID)),
+                        height: _TransferToHumanButton.height,
+                        child: _buildFooterRow(conversationID),
                       ),
                   ],
                 ),
@@ -518,11 +694,15 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                 MessageInput(
                   key: _messageInputKey,
                   conversationID: conversationID,
-                  config: const ChatMessageInputConfig(
+                  config: ChatMessageInputConfig(
                     isShowAudioCall: false,
                     isShowVideoCall: false,
                     isShowMore: false,
                     enableSendRecordedVoice: false,
+                    initialInputText: widget.trialPrompt?.initialInputText,
+                    shouldShowSendRedDot:
+                        widget.trialPrompt?.shouldShowSendRedDot,
+                    onSendRedDotTap: widget.trialPrompt?.onSendRedDotTap,
                   ),
                   onMessageSent: _usageReporter.onMessageSent,
                 ),
@@ -532,6 +712,43 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
         const Positioned.fill(child: ListenPlaybackBar()),
       ],
     );
+  }
+
+  /// Transfer button followed by the assistant's quick questions, scrolling
+  /// horizontally when they do not fit.
+  Widget _buildFooterRow(String conversationID) {
+    final agent = _selectedAgent;
+    final questions = _quickQuestions(agent);
+    return SingleChildScrollView(
+      // A new assistant starts from the left again.
+      key: ValueKey(agent?.id),
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          _TransferToHumanButton(
+              onTap: () => _sendTransferToHuman(conversationID)),
+          for (final question in questions) ...[
+            const SizedBox(width: 8),
+            _QuickQuestionChip(
+              text: question,
+              onTap: () => _sendQuickQuestion(conversationID, question),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendQuickQuestion(String conversationID, String text) async {
+    final result =
+        await MessageInputStore.create(conversationID: conversationID)
+            .sendMessage(payload: TextSendMessagePayload(text: text));
+    if (result.isSuccess) {
+      _usageReporter.onMessageSent();
+    } else if (mounted) {
+      Toast.simple(context, ChatLocalizations.of(context).aiCallSendFailed);
+    }
   }
 
   Future<void> _sendTransferToHuman(String conversationID) async {
@@ -574,6 +791,36 @@ class _TransferToHumanButton extends StatelessWidget {
         child: Text(
           ChatLocalizations.of(context).aiTransferToHuman,
           style: TextStyle(fontSize: 14, color: colors.textColorPrimary),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickQuestionChip extends StatelessWidget {
+  const _QuickQuestionChip({required this.text, required this.onTap});
+
+  final String text;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BaseThemeProvider.colorsOf(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: _TransferToHumanButton.height,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: colors.bgColorOperate,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.textColorLink),
+        ),
+        child: Text(
+          text,
+          maxLines: 1,
+          style: TextStyle(fontSize: 14, color: colors.textColorLink),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ai_call_state.dart';
+import 'spoken_text.dart';
 
 /// Conversation list of the call page's subtitle mode.
 ///
@@ -8,9 +9,13 @@ import '../ai_call_state.dart';
 /// joined by chunkIndex, the AI side the stream message markdown, both kept by
 /// the call controller so subtitles and audio share one state.
 class TranscriptView extends StatefulWidget {
-  const TranscriptView({super.key, required this.entries});
+  const TranscriptView(
+      {super.key, required this.entries, this.plainText = false});
 
   final List<TranscriptEntry> entries;
+
+  /// AI answers are shown without Markdown and reference links, see [SpokenText].
+  final bool plainText;
 
   @override
   State<TranscriptView> createState() => _TranscriptViewState();
@@ -70,7 +75,10 @@ class _TranscriptViewState extends State<TranscriptView> {
                   : _colorAssistant;
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Text(entry.text,
+            child: Text(
+                widget.plainText && !entry.isFromUser
+                    ? SpokenText.from(entry.text)
+                    : entry.text,
                 style: TextStyle(fontSize: 16, height: 1.4, color: color)),
           );
         },

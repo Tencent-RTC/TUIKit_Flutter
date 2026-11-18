@@ -577,5 +577,26 @@
   "aiCallSendFailed": "Failed to send, please try again",
   "aiCallReplyTimeout": "The assistant did not respond, please try again",
   "aiCallAudioUnavailable": "Microphone is unavailable",
-  "aiCallPlaybackUnavailable": "Audio playback is unavailable, replies will be shown as text"
+  "aiCallPlaybackUnavailable": "Audio playback is unavailable, replies will be shown as text",
+  "aiCallTrySaying": "Try saying: \"{hint}\"",
+  "@aiCallTrySaying": {
+    "placeholders": {
+      "hint": {
+        "type": "String"
+      }
+    }
+  },
+  "aiCallDuration": "In call {duration}",
+  "@aiCallDuration": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "aiCallConnecting": "Connecting…",
+  "aiCallLabelMute": "Mute",
+  "aiCallLabelUnmute": "Unmute",
+  "aiCallLabelSubtitle": "Subtitles",
+  "aiCallLabelHangup": "Hang up"
 }

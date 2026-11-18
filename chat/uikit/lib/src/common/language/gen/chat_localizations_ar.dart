@@ -1438,4 +1438,29 @@ class ChatLocalizationsAr extends ChatLocalizations {
   @override
   String get aiCallPlaybackUnavailable =>
       'تشغيل الصوت غير متاح، وسيتم عرض الردود كنص';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return 'جرّب أن تقول: \"$hint\"';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return 'في مكالمة $duration';
+  }
+
+  @override
+  String get aiCallConnecting => 'جارٍ الاتصال…';
+
+  @override
+  String get aiCallLabelMute => 'كتم';
+
+  @override
+  String get aiCallLabelUnmute => 'إلغاء الكتم';
+
+  @override
+  String get aiCallLabelSubtitle => 'الترجمة';
+
+  @override
+  String get aiCallLabelHangup => 'إنهاء';
 }

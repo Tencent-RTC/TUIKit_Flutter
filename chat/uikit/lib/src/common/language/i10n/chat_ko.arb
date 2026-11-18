@@ -519,5 +519,12 @@
   "aiCallSendFailed": "전송에 실패했습니다. 다시 시도해 주세요",
   "aiCallReplyTimeout": "어시스턴트가 응답하지 않았습니다. 다시 시도해 주세요",
   "aiCallAudioUnavailable": "마이크를 사용할 수 없습니다",
-  "aiCallPlaybackUnavailable": "음성 재생을 사용할 수 없어 답변이 텍스트로 표시됩니다"
+  "aiCallPlaybackUnavailable": "음성 재생을 사용할 수 없어 답변이 텍스트로 표시됩니다",
+  "aiCallTrySaying": "이렇게 말해 보세요: \"{hint}\"",
+  "aiCallDuration": "통화 중 {duration}",
+  "aiCallConnecting": "연결 중…",
+  "aiCallLabelMute": "음소거",
+  "aiCallLabelUnmute": "음소거 해제",
+  "aiCallLabelSubtitle": "자막",
+  "aiCallLabelHangup": "끊기"
 }

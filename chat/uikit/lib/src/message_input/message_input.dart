@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:tuikit_atomic_x/album_picker/album_picker.dart';
 import 'package:tencent_chat_uikit/src/common/utils/uikit_util.dart';
 import 'package:tencent_chat_uikit/src/message_input/album_picker_media_send_manager.dart';
+import 'package:tencent_chat_uikit/src/message_input/message_input_initial_text.dart';
 import 'package:tencent_chat_uikit/src/message_input/utils/image_size_reader.dart';
 import 'package:tencent_chat_uikit/src/audio_recoder/audio_recorder.dart';
 import 'package:tuikit_atomic_x/base_component/base_component.dart' hide AlertDialog;
@@ -119,6 +120,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   // Draft related state
   Timer? _draftSaveTimer;
   bool _isLoadingDraft = false;
+  bool _applyingInitialText = false;
+  bool _initialTextUntouched = false;
   static const _draftSaveDelay = Duration(milliseconds: 800);
 
   // @ mention related state
@@ -331,13 +334,42 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
     final result = await _conversationListStore.getConversationInfo(
       conversationID: widget.conversationID,
     );
-    if (result.isSuccess && result.conversationInfo != null) {
-      final draft = result.conversationInfo!.draft;
-      if (draft != null && draft.isNotEmpty) {
-        _setDraftToInput(draft);
+    if (!mounted) {
+      _isLoadingDraft = false;
+      return;
+    }
+    final draft = result.isSuccess ? result.conversationInfo?.draft : null;
+    if (draft != null && draft.isNotEmpty) {
+      _setDraftToInput(draft);
+    } else {
+      final prompt = messageInputTextToPrefill(
+        currentText: _textEditingController.text,
+        draft: draft,
+        initialInputText: widget.config.initialInputText,
+        enabled: widget.config.shouldShowSendRedDot?.call() ?? true,
+      );
+      if (prompt != null) {
+        _applyInitialInputText(prompt);
       }
     }
     _isLoadingDraft = false;
+  }
+
+  /// Shows [prompt] without opening the keyboard or storing it as a draft,
+  /// until the user actually edits it.
+  void _applyInitialInputText(String prompt) {
+    _applyingInitialText = true;
+    _initialTextUntouched = true;
+    _textEditingController.text = prompt;
+    _textEditingController.selection = TextSelection.collapsed(offset: prompt.length);
+    _applyingInitialText = false;
+    if (mounted) {
+      setState(() {
+        _inputMode = _InputMode.text;
+      });
+    } else {
+      _inputMode = _InputMode.text;
+    }
   }
 
   /// Set draft content to input field
@@ -378,6 +410,7 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
 
   /// Save draft immediately (for dispose fallback)
   void _saveDraftImmediately() {
+    if (_initialTextUntouched) return;
     final draftText = _textEditingController.text;
     _conversationListStore.setConversationDraft(
       conversationID: widget.conversationID,
@@ -401,6 +434,8 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
         _showSendButton = hasText;
       });
     }
+    if (_isLoadingDraft || _applyingInitialText) return;
+    _initialTextUntouched = false;
     // Schedule draft save with debounce
     _scheduleDraftSave();
 
@@ -1954,8 +1989,15 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
   }
 
   Widget _buildSendButton(SemanticColorScheme colorsTheme) {
-    return GestureDetector(
-      onTap: _handleTextSendMessagePayload,
+    final showRedDot = widget.config.shouldShowSendRedDot?.call() ?? false;
+    final button = GestureDetector(
+      onTap: () {
+        if (widget.config.shouldShowSendRedDot?.call() == true) {
+          widget.config.onSendRedDotTap?.call();
+          setState(() {});
+        }
+        _handleTextSendMessagePayload();
+      },
       child: Container(
         width: 56,
         height: 32,
@@ -1972,6 +2014,20 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
           ),
         ),
       ),
+    );
+    if (!showRedDot) {
+      return button;
+    }
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        button,
+        PositionedDirectional(
+          top: 0,
+          end: 0,
+          child: _buildRedDot(colorsTheme),
+        ),
+      ],
     );
   }
 

@@ -1444,4 +1444,29 @@ class ChatLocalizationsEn extends ChatLocalizations {
   @override
   String get aiCallPlaybackUnavailable =>
       'Audio playback is unavailable, replies will be shown as text';
+
+  @override
+  String aiCallTrySaying(String hint) {
+    return 'Try saying: \"$hint\"';
+  }
+
+  @override
+  String aiCallDuration(String duration) {
+    return 'In call $duration';
+  }
+
+  @override
+  String get aiCallConnecting => 'Connecting…';
+
+  @override
+  String get aiCallLabelMute => 'Mute';
+
+  @override
+  String get aiCallLabelUnmute => 'Unmute';
+
+  @override
+  String get aiCallLabelSubtitle => 'Subtitles';
+
+  @override
+  String get aiCallLabelHangup => 'Hang up';
 }
