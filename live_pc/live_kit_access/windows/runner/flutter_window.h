@@ -3,6 +3,7 @@
 
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
+#include <flutter/method_channel.h>
 
 #include <memory>
 
@@ -28,6 +29,21 @@ class FlutterWindow : public Win32Window {
 
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
+
+  // Window control channel (frameless title bar): drag / min / max / close
+  // from Flutter, maximize-state notifications back to Flutter.
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      window_channel_;
+  bool was_maximized_ = false;
+
+  void HandleWindowControlCall(
+      const flutter::MethodCall<flutter::EncodableValue>& call,
+      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+  // Subclassed WndProc of the Flutter view child window: forwards edge
+  // WM_NCHITTEST hits to the parent frame (see flutter_window.cpp).
+  static LRESULT CALLBACK FlutterViewWndProc(HWND hwnd, UINT message,
+                                             WPARAM wparam, LPARAM lparam);
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

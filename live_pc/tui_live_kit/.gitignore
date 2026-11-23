@@ -31,7 +31,3 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 /build/
 /coverage/
-
-# macOS 本地构建产物（pod install / flutter build 生成，含本机绝对路径）
-**/Flutter/ephemeral/
-**/Pods/

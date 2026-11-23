@@ -2,6 +2,7 @@
 
 #include <dwmapi.h>
 #include <flutter_windows.h>
+#include <windowsx.h>
 
 #include "resource.h"
 
@@ -15,6 +16,26 @@ namespace {
 #ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 #endif
+
+/// Window attribute that controls the window corner preference (Windows 11+).
+///
+/// Redefined in case the developer's machine has a Windows SDK older than
+/// version 10.0.22000.0.
+/// See: https://learn.microsoft.com/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowcornerpreference
+#ifndef DWMWA_WINDOW_CORNER_PREFERENCE
+#define DWMWA_WINDOW_CORNER_PREFERENCE 33
+#endif
+
+/// Corner preference values for DWMWA_WINDOW_CORNER_PREFERENCE.
+///
+/// Suffix "_LATEST" avoids clashing with the official enum when a newer SDK
+/// already defines DWM_WINDOW_CORNER_PREFERENCE.
+enum DWM_WINDOW_CORNER_PREFERENCE_LATEST {
+  DWMWCP_DEFAULT_LATEST = 0,
+  DWMWCP_DONOTROUND_LATEST = 1,
+  DWMWCP_ROUND_LATEST = 2,
+  DWMWCP_ROUNDSMALL_LATEST = 3,
+};
 
 constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
 
@@ -146,6 +167,44 @@ bool Win32Window::Create(const std::wstring& title,
 
   UpdateTheme(window);
 
+  // Center the window in the target monitor's work area (aligned with the
+  // macOS runner's self.center()). The |origin| parameter only selects the
+  // target monitor; it no longer determines the final window position:
+  // the fixed (100,100) template default placed a 1300x850 (DPI-scaled)
+  // window low on screen with its bottom off-screen at high DPI.
+  MONITORINFO monitor_info{};
+  monitor_info.cbSize = sizeof(monitor_info);
+  if (GetMonitorInfo(monitor, &monitor_info)) {
+    const int window_width = Scale(size.width, scale_factor);
+    const int window_height = Scale(size.height, scale_factor);
+    const int x = monitor_info.rcWork.left +
+        (monitor_info.rcWork.right - monitor_info.rcWork.left - window_width) / 2;
+    const int y = monitor_info.rcWork.top +
+        (monitor_info.rcWork.bottom - monitor_info.rcWork.top - window_height) / 2;
+    SetWindowPos(window, nullptr, x, y, 0, 0,
+                 SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+  }
+
+  // Frameless (headless) title bar: force Windows to re-send WM_NCCALCSIZE
+  // with wparam == TRUE so our handler (client area covering the whole
+  // window) applies to the initial frame metrics. Without this, the frame
+  // calculated during CreateWindow keeps the native title bar until the
+  // first real resize.
+  SetWindowPos(window, nullptr, 0, 0, 0, 0,
+               SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+                   SWP_NOACTIVATE);
+
+  // Windows 11+: explicitly request rounded corners. The default
+  // ROUNDDEFAULT policy can leave frameless (WM_NCCALCSIZE) windows square;
+  // DWMWCP_ROUND forces the system radius (~8px) while keeping the DWM frame
+  // (shadow / snap / minimize animations), and DWM removes the rounding
+  // automatically when the window is maximized. Harmless no-op on Windows 10
+  // (attribute unsupported, the call simply fails and the window stays
+  // square with its DWM shadow).
+  DWM_WINDOW_CORNER_PREFERENCE_LATEST corner_preference = DWMWCP_ROUND_LATEST;
+  DwmSetWindowAttribute(window, DWMWA_WINDOW_CORNER_PREFERENCE,
+                        &corner_preference, sizeof(corner_preference));
+
   return OnCreate();
 }
 
@@ -186,6 +245,71 @@ Win32Window::MessageHandler(HWND hwnd,
         PostQuitMessage(0);
       }
       return 0;
+
+    case WM_NCCALCSIZE:
+      // Frameless (headless) title bar: with wparam == TRUE, returning 0
+      // stretches the client area over the whole window, removing the
+      // native title bar and borders while keeping the DWM frame (shadow,
+      // snap, rounded corners, minimize/restore animations).
+      if (wparam) {
+        return 0;
+      }
+      break;
+
+    case WM_GETMINMAXINFO: {
+      // Constrain the minimum window size (aligned with macOS: 1300x700
+      // logical pixels, scaled by DPI) and keep maximized windows inside
+      // the monitor work area (without a native frame, DefWindowProc no
+      // longer clamps the maximized size).
+      auto* info = reinterpret_cast<MINMAXINFO*>(lparam);
+      UINT dpi = FlutterDesktopGetDpiForHWND(hwnd);
+      double scale = dpi / 96.0;
+      info->ptMinTrackSize.x = Scale(1300, scale);
+      info->ptMinTrackSize.y = Scale(700, scale);
+      HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+      if (monitor) {
+        MONITORINFO monitor_info{};
+        monitor_info.cbSize = sizeof(monitor_info);
+        if (GetMonitorInfo(monitor, &monitor_info)) {
+          info->ptMaxPosition.x =
+              monitor_info.rcWork.left - monitor_info.rcMonitor.left;
+          info->ptMaxPosition.y =
+              monitor_info.rcWork.top - monitor_info.rcMonitor.top;
+          info->ptMaxSize.x = monitor_info.rcWork.right - monitor_info.rcWork.left;
+          info->ptMaxSize.y = monitor_info.rcWork.bottom - monitor_info.rcWork.top;
+        }
+      }
+      return 0;
+    }
+
+    case WM_NCHITTEST: {
+      // With the non-client area removed, resize borders are gone too.
+      // Expose 8-px (DPI-scaled) resize hot zones on the window edges;
+      // everything else falls through as client area (dragging is handled
+      // by the Flutter title bar via WM_NCLBUTTONDOWN/HTCAPTION).
+      if (IsZoomed(hwnd) || IsIconic(hwnd)) {
+        break;
+      }
+      POINT cursor{GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)};
+      ScreenToClient(hwnd, &cursor);
+      RECT client{};
+      GetClientRect(hwnd, &client);
+      UINT dpi = FlutterDesktopGetDpiForHWND(hwnd);
+      const int border = Scale(8, dpi / 96.0);
+      const bool left = cursor.x < border;
+      const bool right = cursor.x >= client.right - border;
+      const bool top = cursor.y < border;
+      const bool bottom = cursor.y >= client.bottom - border;
+      if (top && left) return HTTOPLEFT;
+      if (top && right) return HTTOPRIGHT;
+      if (bottom && left) return HTBOTTOMLEFT;
+      if (bottom && right) return HTBOTTOMRIGHT;
+      if (left) return HTLEFT;
+      if (right) return HTRIGHT;
+      if (top) return HTTOP;
+      if (bottom) return HTBOTTOM;
+      break;
+    }
 
     case WM_DPICHANGED: {
       auto newRectSize = reinterpret_cast<RECT*>(lparam);

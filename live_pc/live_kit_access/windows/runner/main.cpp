@@ -5,6 +5,19 @@
 #include "flutter_window.h"
 #include "utils.h"
 
+namespace {
+
+// Window title (also the Win32 window class caption shown in the taskbar).
+constexpr const wchar_t kWindowTitle[] = L"live_kit_access";
+
+// Default window geometry, aligned with the macOS runner (1300x850).
+// The minimum size (1300x700, DPI-scaled) is enforced separately in
+// Win32Window::MessageHandler (WM_GETMINMAXINFO).
+const Win32Window::Point kDefaultWindowOrigin{100, 100};
+const Win32Window::Size kDefaultWindowSize{1300, 850};
+
+}  // namespace
+
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
   // Attach to console when present (e.g., 'flutter run') or create a
@@ -25,9 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   FlutterWindow window(project);
-  Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
-  if (!window.Create(L"live_kit_access", origin, size)) {
+  if (!window.Create(kWindowTitle, kDefaultWindowOrigin, kDefaultWindowSize)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

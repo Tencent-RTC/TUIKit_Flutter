@@ -1,20 +1,36 @@
+import 'dart:io';
+
 import 'package:atomic_x_core/api/login/login_store.dart';
 import 'package:flutter/material.dart';
-import 'package:tencent_live_kit_desktop/l10n/live_kit_localizations.dart';
-import 'package:tencent_live_kit_desktop/pusher/pusher_style.dart';
-import 'package:tencent_live_kit_desktop/tui_live_kit.dart';
+import 'package:tencent_live_kit_desktop/tencent_live_kit_desktop.dart';
 import 'generate_test_user_sig.dart';
+import 'title_bar.dart';
+import 'window_controls_bar.dart';
 
 const LinearGradient _pageGradient = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
-  colors: [PusherStyle.bgBase1, PusherStyle.bgBase2, PusherStyle.bgBase3],
+  colors: [LiveKitStyle.bgBase1, LiveKitStyle.bgBase2, LiveKitStyle.bgBase3],
   stops: [0, 0.5, 1],
 );
 
 const LinearGradient _loginButtonGradient = LinearGradient(
-  colors: [PusherStyle.brand, PusherStyle.brand2],
+  colors: [LiveKitStyle.brand, LiveKitStyle.brand2],
 );
+
+class _LoginStrings {
+  const _LoginStrings(this.isZh);
+
+  final bool isZh;
+
+  String get tabUsername => isZh ? '用户名登录' : 'Username Login';
+  String get usernameHint => isZh ? '请输入用户名' : 'Enter username';
+  String get button => isZh ? '登录' : 'Login';
+  String get brandTitle => isZh ? '直播推流助手' : 'Live Streaming Assistant';
+  String get usernameEmpty => isZh ? '请先输入用户名' : 'Please enter your username first';
+  String get sdkConfigMissing => isZh ? '未配置 SDKAppID 或 SecretKey' : 'SDKAppID or SecretKey is not configured';
+  String exception(String error) => isZh ? '登录失败：$error' : 'Login failed: $error';
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,6 +43,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _userIdController = TextEditingController();
   String? _loggedInUserId;
   bool _isLoggingIn = false;
+  String? _errorText;
+
+  _LoginStrings get _strings => _LoginStrings(Localizations.localeOf(context).languageCode == 'zh');
 
   @override
   void dispose() {
@@ -39,18 +58,25 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    final strings = _strings;
+
     final String userId = _userIdController.text.trim();
     if (userId.isEmpty) {
+      setState(() => _errorText = strings.usernameEmpty);
       return;
     }
 
     final int sdkAppId = GenerateTestUserSig.sdkAppId;
     final String userSig = GenerateTestUserSig.genTestUserSig(userId);
     if (sdkAppId <= 0 || userSig.isEmpty) {
+      setState(() => _errorText = strings.sdkConfigMissing);
       return;
     }
 
-    setState(() => _isLoggingIn = true);
+    setState(() {
+      _isLoggingIn = true;
+      _errorText = null;
+    });
 
     try {
       final handler = await LoginStore.shared.login(
@@ -65,13 +91,26 @@ class _LoginPageState extends State<LoginPage> {
 
       if (handler.isSuccess) {
         setState(() => _loggedInUserId = userId);
+      } else {
+        final detail = handler.errorMessage?.isNotEmpty == true
+            ? '${handler.errorMessage} (${handler.errorCode})'
+            : '${handler.errorCode}';
+        setState(() => _errorText = strings.exception(detail));
       }
-    } catch (_) {
-      // 静默处理：失败仅复位按钮状态，不打断用户。
+    } catch (e) {
+      if (mounted) {
+        setState(() => _errorText = strings.exception(e.toString()));
+      }
     } finally {
       if (mounted && _loggedInUserId == null) {
         setState(() => _isLoggingIn = false);
       }
+    }
+  }
+
+  void _onUserIdChanged(String _) {
+    if (_errorText != null) {
+      setState(() => _errorText = null);
     }
   }
 
@@ -86,10 +125,21 @@ class _LoginPageState extends State<LoginPage> {
               key: const ValueKey<String>('access-login'),
               child: _buildLoginForm(),
             )
-          : PusherView(
-              key: const ValueKey<String>('access-live'),
-              hostName: _loggedInUserId!,
-              liveID: 'live_$_loggedInUserId',
+          : Material(
+              type: MaterialType.transparency,
+              child: Stack(
+                key: const ValueKey<String>('access-live'),
+                children: [
+                  Positioned.fill(
+                    child: PusherView(
+                      hostName: _loggedInUserId!,
+                      liveID: 'live_$_loggedInUserId',
+                      topInset: 44,
+                    ),
+                  ),
+                  const Positioned(top: 0, left: 0, right: 0, child: AppTitleBar()),
+                ],
+              ),
             ),
     );
   }
@@ -109,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                 gradient: RadialGradient(
                   center: Alignment(-0.8, -1.2),
                   radius: 1.2,
-                  colors: [PusherStyle.bgGlow1, Color(0x00FF4691)],
+                  colors: [LiveKitStyle.bgGlow1, Color(0x00FF4691)],
                 ),
               ),
             ),
@@ -120,21 +170,32 @@ class _LoginPageState extends State<LoginPage> {
                 gradient: RadialGradient(
                   center: Alignment(1.1, 1.2),
                   radius: 1.2,
-                  colors: [PusherStyle.bgGlow2, Color(0x0014EBC8)],
+                  colors: [LiveKitStyle.bgGlow2, Color(0x0014EBC8)],
                 ),
               ),
             ),
           ),
+          // Frameless window: transparent top drag zone (with double-click
+          // maximize) + control buttons at the top-right on Windows. The
+          // centered login card doesn't overlap the 44px top zone, so no
+          // interaction is affected.
+          const WindowDragArea(height: 44),
+          if (Platform.isWindows)
+            const Positioned(
+              top: 0,
+              right: 0,
+              child: WindowControlsBar(),
+            ),
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 32),
               child: Container(
                 width: 480,
                 padding: const EdgeInsets.all(48),
-                decoration: PusherStyle.glassPanel(radius: 24).copyWith(
+                decoration: LiveKitStyle.glassPanel(radius: 24).copyWith(
                   boxShadow: const [
                     BoxShadow(
-                      color: PusherStyle.shadowBlack,
+                      color: LiveKitStyle.shadowBlack,
                       offset: Offset(0, 24),
                       blurRadius: 48,
                       spreadRadius: -12,
@@ -150,7 +211,39 @@ class _LoginPageState extends State<LoginPage> {
                     _buildLoginTab(),
                     const SizedBox(height: 24),
                     _buildUsernameInput(),
-                    const SizedBox(height: 24),
+                    SizedBox(
+                      height: 40,
+                      child: _errorText == null
+                          ? null
+                          : Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text.rich(
+                                TextSpan(
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    height: 1.4,
+                                    color: LiveKitStyle.danger,
+                                  ),
+                                  children: [
+                                    const WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        size: 14,
+                                        color: LiveKitStyle.danger,
+                                      ),
+                                    ),
+                                    const WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: SizedBox(width: 4),
+                                    ),
+                                    TextSpan(text: _errorText!),
+                                  ],
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                    ),
                     _buildLoginButton(),
                   ],
                 ),
@@ -173,19 +266,19 @@ class _LoginPageState extends State<LoginPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: PusherStyle.brand,
+              color: LiveKitStyle.brand,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.live_tv,
-                color: PusherStyle.whitePure, size: 24),
+                color: LiveKitStyle.whitePure, size: 24),
           ),
           const SizedBox(width: 12),
           Text(
-            LiveKitLocalizations.of(context).loginBrandTitle,
+            _strings.brandTitle,
             style: const TextStyle(
               fontSize: 44,
               fontWeight: FontWeight.w900,
-              color: PusherStyle.brand,
+              color: LiveKitStyle.brand,
               height: 1.1,
             ),
           ),
@@ -194,22 +287,24 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  /// 单 tab 标题（与最初单 tab 版式一致）。
+  /// Single-tab heading (same layout as the original single-tab version).
   Widget _buildLoginTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          LiveKitLocalizations.of(context).loginTabUsername,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: PusherStyle.whitePure,
+    return IntrinsicWidth(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _strings.tabUsername,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: LiveKitStyle.whitePure,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Container(width: 22, height: 3, color: PusherStyle.brand),
-      ],
+          const SizedBox(height: 8),
+          Container(height: 3, color: LiveKitStyle.brand),
+        ],
+      ),
     );
   }
 
@@ -217,7 +312,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: PusherStyle.softPanel(radius: 10),
+      decoration: LiveKitStyle.softPanel(radius: 10),
       child: child,
     );
   }
@@ -227,19 +322,20 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         children: [
           const Icon(Icons.person_outline,
-              size: 20, color: PusherStyle.textHint),
+              size: 20, color: LiveKitStyle.textHint),
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
               controller: _userIdController,
-              style: const TextStyle(color: PusherStyle.whitePure, fontSize: 15),
-              cursorColor: PusherStyle.brand,
+              style: const TextStyle(color: LiveKitStyle.whitePure, fontSize: 15),
+              cursorColor: LiveKitStyle.brand,
               decoration: InputDecoration.collapsed(
-                hintText: LiveKitLocalizations.of(context).loginUsernameHint,
+                hintText: _strings.usernameHint,
                 hintStyle:
-                    const TextStyle(color: PusherStyle.textHint, fontSize: 15),
+                    const TextStyle(color: LiveKitStyle.textHint, fontSize: 15),
               ),
               textInputAction: TextInputAction.go,
+              onChanged: _onUserIdChanged,
               onSubmitted: (_) => _startLogin(),
             ),
           ),
@@ -265,7 +361,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(26),
               boxShadow: [
                 BoxShadow(
-                  color: PusherStyle.brand.withAlpha(89),
+                  color: LiveKitStyle.brand.withAlpha(89),
                   offset: const Offset(0, 8),
                   blurRadius: 24,
                 ),
@@ -277,15 +373,15 @@ class _LoginPageState extends State<LoginPage> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    color: PusherStyle.whitePure,
+                    color: LiveKitStyle.whitePure,
                   ),
                 )
               : Text(
-                  LiveKitLocalizations.of(context).loginButton,
+                  _strings.button,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: PusherStyle.whitePure,
+                    color: LiveKitStyle.whitePure,
                   ),
                 ),
           ),

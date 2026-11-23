@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tencent_live_kit_desktop/l10n/language_store.dart';
-import 'package:tencent_live_kit_desktop/l10n/live_kit_localizations.dart';
-import 'package:tencent_live_kit_desktop/pusher/pusher_style.dart';
+import 'package:tencent_live_kit_desktop/tencent_live_kit_desktop.dart';
 
 import 'login_page.dart';
+import 'win_clipboard_paste_fix.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // App-lifetime Win+V clipboard-history paste fix (Windows-only inside):
+  // covers the login page and every other text field even when the pusher
+  // page (which holds its own reference) is not open.
+  WinClipboardPasteFix.instance.install();
   runApp(const LiveKitAccessApp());
 }
 
@@ -15,9 +18,7 @@ class LiveKitAccessApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 语言切换入口（推流页 header 地球图标）写入 LanguageStore.locale，
-    // 此处监听并覆盖 MaterialApp.locale；null = 跟随系统。
-    return ValueListenableBuilder<Locale?>(
+    return ValueListenableBuilder<Locale>(
       valueListenable: LanguageStore.locale,
       builder: (context, locale, _) {
         return MaterialApp(
@@ -36,20 +37,25 @@ class LiveKitAccessApp extends StatelessWidget {
 }
 
 ThemeData _buildAccessTheme() {
-  return ThemeData(
+  final base = ThemeData(
     useMaterial3: false,
     brightness: Brightness.dark,
     colorScheme: const ColorScheme.dark(
-      primary: PusherStyle.brand,
-      surface: PusherStyle.bgBase2,
-      onSurface: PusherStyle.textPrimary,
+      primary: LiveKitStyle.brand,
+      surface: LiveKitStyle.bgBase2,
+      onSurface: LiveKitStyle.textPrimary,
     ),
-    scaffoldBackgroundColor: PusherStyle.bgBase1,
+    scaffoldBackgroundColor: LiveKitStyle.bgBase1,
     inputDecorationTheme: const InputDecorationTheme(
       filled: true,
-      fillColor: PusherStyle.white5,
-      hintStyle: TextStyle(color: PusherStyle.textHint),
+      fillColor: LiveKitStyle.white5,
+      hintStyle: TextStyle(color: LiveKitStyle.textHint),
     ),
     snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
+  );
+  return base.copyWith(
+    textTheme: base.textTheme.apply(
+      fontFamilyFallback: LiveKitStyle.cjkFontFamilyFallback,
+    ),
   );
 }
