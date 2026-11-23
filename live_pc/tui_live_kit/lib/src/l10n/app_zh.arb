@@ -1,0 +1,244 @@
+{
+  "@@locale": "zh",
+  "barrageEmpty": "暂无消息",
+  "barrageNewMessages": "{count} 条新消息",
+  "@barrageNewMessages": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "barrageInputHint": "发条弹幕互动一下...",
+  "barrageErrorMuted": "你已被禁言，暂时无法发送评论",
+  "barrageErrorAllMuted": "当前直播间已开启全员禁言",
+  "barrageErrorTooFrequent": "发送太快了，请稍后再试",
+  "barrageErrorContentRejected": "评论内容不符合规范，请修改后重试",
+  "barrageErrorTooLong": "评论内容过长，请缩短后发送",
+  "barrageErrorLoginExpired": "登录已失效，请重新登录",
+  "barrageErrorLoginElsewhere": "账号已在其他设备登录，请重新登录",
+  "barrageErrorNotJoined": "尚未进入直播间，暂时无法发送评论",
+  "barrageErrorRoomUnavailable": "直播间已不可用，无法发送评论",
+  "barrageErrorNoPermission": "暂时无法在当前直播间发送评论",
+  "barrageErrorNetwork": "网络连接异常，请检查网络后重试",
+  "barrageErrorTimeout": "评论发送超时，请稍后重试",
+  "barrageErrorSendRejected": "评论未能发送，请稍后重试",
+  "barrageErrorSendFailed": "评论发送失败，请稍后重试",
+  "interactionTitle": "互动消息",
+  "barrageHostTag": "主播",
+  "giftEmpty": "暂无礼物",
+  "giftNewItems": "{count} 件新礼物",
+  "@giftNewItems": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "giftSent": "送出",
+  "audienceTitle": "观众",
+  "audienceEmpty": "暂无观众",
+  "audienceMute": "禁言",
+  "audienceUnmute": "取消禁言",
+  "audienceKick": "踢出",
+  "audienceMutedTag": "已禁言",
+  "audienceMutedToast": "已禁言「{name}」",
+  "@audienceMutedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "audienceUnmutedToast": "已解除对「{name}」的禁言",
+  "@audienceUnmutedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "audienceKickedToast": "已将「{name}」踢出直播间",
+  "@audienceKickedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "commonCancel": "取消",
+  "commonSave": "保存",
+  "commonAdd": "添加",
+  "commonClose": "关闭",
+  "sceneDefault": "场景",
+  "sceneCustomSuggestion": "场景 {index}",
+  "@sceneCustomSuggestion": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "sceneCopySuffix": "{name} {index}",
+  "@sceneCopySuffix": {
+    "placeholders": {
+      "name": {},
+      "index": {}
+    }
+  },
+  "sceneMenuRename": "重命名",
+  "sceneMenuDuplicate": "复制",
+  "sceneMenuDelete": "删除",
+  "sceneRenameTitle": "重命名场景",
+  "sceneNameHint": "场景名称",
+  "sceneNameLimit": "名称不能超过 20 个字符",
+  "sceneGroupLandscape": "横屏场景",
+  "sceneGroupPortrait": "竖屏场景",
+  "sourceAddTitle": "添加画面源",
+  "sourceTypeCamera": "摄像头",
+  "sourceTypeCameraDesc": "采集摄像头画面",
+  "sourceTypeScreen": "屏幕",
+  "sourceTypeScreenDesc": "屏幕 / 窗口捕获",
+  "sourceTypeImage": "图片",
+  "sourceTypeImageDesc": "静态图片素材",
+  "sourceTypeOnlineVideo": "在线视频",
+  "sourceTypeOnlineVideoDesc": "网络视频流地址",
+  "sourceTypeVideoFile": "视频文件",
+  "sourceTypeVideoFileDesc": "本地视频文件",
+  "sourceNameCamera": "摄像头画面",
+  "sourceNameScreen": "屏幕共享",
+  "errorStartMixing": "启动混流失败",
+  "errorSourceNotFound": "画面源不存在",
+  "errorSourceDuplicated": "相同的内容已在当前场景中添加，不能重复添加",
+  "liveShareCopied": "直播间 ID 已复制",
+  "liveShareTooltip": "分享直播间（复制房间 ID）",
+  "errorAddSource": "添加画面源失败（错误码 {code}）",
+  "@errorAddSource": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "cameraEditTitle": "编辑摄像头",
+  "cameraAddTitle": "添加摄像头",
+  "cameraDeviceLabel": "选择可用摄像头",
+  "cameraDeviceHint": "选择摄像头",
+  "cameraNotFound": "未检测到摄像头设备",
+  "cameraResolutionLabel": "采集分辨率",
+  "cameraMirrorLabel": "镜像",
+  "imageEditTitle": "编辑图片",
+  "imageAddTitle": "添加图片",
+  "imageFileLabel": "图片文件",
+  "imagePickPlaceholder": "选择本地图片",
+  "imagePickButton": "选择图片",
+  "imageFormatsHint": "支持 BMP / JPG / PNG / GIF 格式",
+  "imageFormatsHintNoGif": "支持 BMP / JPG / PNG 格式",
+  "imageSizeTooLarge": "图片尺寸不能超过 8192×8192",
+  "videoFileEditTitle": "编辑视频文件",
+  "videoFileAddTitle": "添加视频文件",
+  "videoFileLabel": "视频文件",
+  "videoPickPlaceholder": "选择本地视频",
+  "videoPickButton": "选择视频",
+  "videoFileFormatsHint": "支持 MOV / MP4 / MKV 格式",
+  "onlineVideoEditTitle": "编辑在线视频",
+  "onlineVideoAddTitle": "添加在线视频",
+  "onlineVideoUrlLabel": "视频地址",
+  "onlineVideoUrlHint": "rtmp:// 直播流，或 .m3u8 / .flv / .mov / .mp4 / .mkv 格式的 http(s) 媒体地址",
+  "onlineVideoUrlInvalid": "请输入合法的 RTMP 直播流地址或 HTTP(S) 媒体地址\nHTTP(S) 媒体地址支持 .m3u8 / .flv / .mov / .mp4 / .mkv 格式",
+  "onlineVideoCacheLabel": "网络缓存",
+  "screenEditTitle": "编辑屏幕共享",
+  "screenAddTitle": "添加屏幕共享",
+  "screenTabWindow": "窗口",
+  "screenEmpty": "未发现可共享的{kind}\n请检查「系统设置 → 隐私与安全性 → 屏幕录制」权限",
+  "@screenEmpty": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "screenEnumFailed": "枚举共享源失败",
+  "filePickRequired": "请选择{label}文件",
+  "@filePickRequired": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fileFormatUnsupported": "不支持的{label}格式：.{ext}",
+  "@fileFormatUnsupported": {
+    "placeholders": {
+      "label": {},
+      "ext": {}
+    }
+  },
+  "fileNotReadable": "文件不存在或不可读",
+  "playbackVolume": "播放音量",
+  "tabSources": "画面源",
+  "tabBeauty": "美颜",
+  "tabMore": "更多能力",
+  "featureComingSoon": "敬请期待",
+  "beautyNoCamera": "当前场景下未添加摄像头",
+  "beautyAllCamerasHidden": "摄像头已屏蔽，取消屏蔽后可设置美颜",
+  "beautyFilterTitle": "美颜滤镜",
+  "beautySkinSmooth": "磨皮",
+  "beautyWhiteness": "美白",
+  "beautyRuddy": "红润",
+  "runtimeSourceError": "画面源\"{sourceName}\"：{reason}",
+  "@runtimeSourceError": {
+    "placeholders": {
+      "sourceName": {},
+      "reason": {}
+    }
+  },
+  "errorImageLoadFailed": "图片加载失败",
+  "errorCameraNotAuthorized": "摄像头未授权",
+  "errorCameraIsOccupied": "摄像头被占用",
+  "errorCameraDisconnected": "摄像头已断开",
+  "errorVideoFileNotExist": "视频文件不存在",
+  "errorOnlineVideoProtocol": "在线视频协议不支持",
+  "errorLocalVideoFormat": "本地视频格式不支持",
+  "errorHevcDecoder": "无可用解码器",
+  "errorInvalidParams": "参数错误",
+  "errorUnknown": "未知错误",
+  "errorOperationFailed": "操作失败，请重试",
+  "errorOnlineVideoConnectFailed": "在线视频连接失败",
+  "errorOnlineVideoConnectionLost": "在线视频连接中断",
+  "errorScreenSourceClosed": "分享的窗口或屏幕已关闭",
+  "errorScreenDisplayChanged": "显示器已断开或发生变更",
+  "errorCameraRunFailed": "摄像头运行失败",
+  "errorScreenRunFailed": "屏幕采集失败",
+  "errorImageRunFailed": "图片显示失败",
+  "errorVideoFilePlayFailed": "视频文件播放失败",
+  "errorOnlineVideoPlayFailed": "在线视频播放失败",
+  "mixingStoppedSourceLost": "画面源丢失，混流已停止",
+  "orientationLandscape": "横屏",
+  "orientationPortrait": "竖屏",
+  "liveStart": "开始直播",
+  "liveStarting": "开播中…",
+  "liveStartFailed": "开播失败，错误码：{code}；错误信息：{message}",
+  "@liveStartFailed": {
+    "placeholders": {
+      "code": {},
+      "message": {}
+    }
+  },
+  "liveStartFailedSensitiveInfo": "开播失败：直播间名称等信息包含敏感内容，请修改后重试",
+  "liveEnd": "结束直播",
+  "liveInfoEditTitle": "修改直播间信息",
+  "liveInfoNameLabel": "直播间名称",
+  "liveInfoVisibilityLabel": "可见范围",
+  "liveInfoVisibilityPublic": "公开",
+  "liveInfoVisibilityPrivate": "隐私",
+  "liveInfoSave": "保存设置",
+  "liveDefaultName": "{name}的房间",
+  "@liveDefaultName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "liveStatsGiftSenders": "{count} 人送礼",
+  "@liveStatsGiftSenders": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "liveSummaryTitle": "直播已结束",
+  "liveSummaryDuration": "直播时长",
+  "liveSummaryGiftsSent": "收到礼物",
+  "liveSummaryViewers": "观看人次",
+  "liveSummaryMessages": "评论数",
+  "liveSummaryLikes": "点赞次数",
+  "liveSummaryGiftSenders": "送礼人数",
+  "liveSummaryGiftIncome": "礼物收益",
+  "liveSummaryUnitPiece": "件",
+  "liveSummaryUnitCoin": "币",
+  "liveSummaryUnitPerson": "人",
+  "liveSummaryUnitMessage": "条",
+  "liveSummaryUnitTime": "次",
+  "liveSummaryDone": "完成"
+}

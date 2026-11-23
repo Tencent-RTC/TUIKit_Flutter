@@ -1,3 +1,3 @@
-## 0.0.1
+## 5.3.0
 
-* TODO: Describe initial release.
+* Initial release of the Tencent Live Kit desktop plugin for macOS.

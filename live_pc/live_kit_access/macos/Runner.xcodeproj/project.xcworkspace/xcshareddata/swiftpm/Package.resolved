@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "atomicxcore_mac_swiftpm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tencent-RTC/AtomicXCore_Mac_SwiftPM.git",
+      "state" : {
+        "revision" : "01338c709e01dd10e9f451f851fc593aa87a40d7",
+        "version" : "5.3.1"
+      }
+    },
+    {
+      "identity" : "atomicxcore_mediamixing_mac_swiftpm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tencent-RTC/AtomicXCore_Mediamixing_Mac_SwiftPM.git",
+      "state" : {
+        "revision" : "c01a65920f3ab79125c7a297143e7926185943fd",
+        "version" : "5.3.1"
+      }
+    },
+    {
+      "identity" : "chat_sdk_swiftpm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tencent-RTC/Chat_SDK_SwiftPM.git",
+      "state" : {
+        "revision" : "04b3bab4666740a9f70d75054bb3572e1e4fd506",
+        "version" : "9.1.7834"
+      }
+    },
+    {
+      "identity" : "trtc_mac_swiftpm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tencent-RTC/TRTC_Mac_SwiftPM.git",
+      "state" : {
+        "revision" : "0bd263abcd73c51a9bf9aed186fa3a9472f2c1f5",
+        "version" : "13.6.21648"
+      }
+    }
+  ],
+  "version" : 2
+}

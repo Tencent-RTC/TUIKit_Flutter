@@ -4,11 +4,13 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   atomic_x_core
+  atomic_x_core_media_mixing
   file_selector_windows
   tencent_cloud_chat_sdk
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  jni
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

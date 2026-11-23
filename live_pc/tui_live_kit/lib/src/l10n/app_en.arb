@@ -1,0 +1,244 @@
+{
+  "@@locale": "en",
+  "barrageEmpty": "No messages yet",
+  "barrageNewMessages": "{count} new messages",
+  "@barrageNewMessages": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "barrageInputHint": "Send a barrage...",
+  "barrageErrorMuted": "You are muted and cannot send comments.",
+  "barrageErrorAllMuted": "Comments are disabled for everyone in this live room.",
+  "barrageErrorTooFrequent": "You are sending too quickly. Please try again later.",
+  "barrageErrorContentRejected": "This comment does not meet the content guidelines. Please edit it and try again.",
+  "barrageErrorTooLong": "Your comment is too long. Please shorten it and try again.",
+  "barrageErrorLoginExpired": "Your session has expired. Please log in again.",
+  "barrageErrorLoginElsewhere": "Your account is logged in on another device. Please log in again.",
+  "barrageErrorNotJoined": "Please join the live room before sending comments.",
+  "barrageErrorRoomUnavailable": "This live room is unavailable. Comments cannot be sent.",
+  "barrageErrorNoPermission": "You do not have permission to send comments in this live room.",
+  "barrageErrorNetwork": "Network connection error. Please check your connection and try again.",
+  "barrageErrorTimeout": "Sending your comment timed out. Please try again later.",
+  "barrageErrorSendRejected": "Your comment could not be sent. Please try again later.",
+  "barrageErrorSendFailed": "Failed to send comment. Please try again later.",
+  "interactionTitle": "Interaction",
+  "barrageHostTag": "Host",
+  "giftEmpty": "No gifts yet",
+  "giftNewItems": "{count} new gifts",
+  "@giftNewItems": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "giftSent": "sent",
+  "audienceTitle": "Audience",
+  "audienceEmpty": "No audience yet",
+  "audienceMute": "Mute",
+  "audienceUnmute": "Unmute",
+  "audienceKick": "Remove",
+  "audienceMutedTag": "Muted",
+  "audienceMutedToast": "Muted \"{name}\"",
+  "@audienceMutedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "audienceUnmutedToast": "Unmuted \"{name}\"",
+  "@audienceUnmutedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "audienceKickedToast": "Removed \"{name}\" from the live",
+  "@audienceKickedToast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonAdd": "Add",
+  "commonClose": "Close",
+  "sceneDefault": "Scene",
+  "sceneCustomSuggestion": "Scene {index}",
+  "@sceneCustomSuggestion": {
+    "placeholders": {
+      "index": {}
+    }
+  },
+  "sceneCopySuffix": "{name} {index}",
+  "@sceneCopySuffix": {
+    "placeholders": {
+      "name": {},
+      "index": {}
+    }
+  },
+  "sceneMenuRename": "Rename",
+  "sceneMenuDuplicate": "Duplicate",
+  "sceneMenuDelete": "Delete",
+  "sceneRenameTitle": "Rename Scene",
+  "sceneNameHint": "Scene name",
+  "sceneNameLimit": "Name cannot exceed 20 characters",
+  "sceneGroupLandscape": "Landscape Scenes",
+  "sceneGroupPortrait": "Portrait Scenes",
+  "sourceAddTitle": "Add Source",
+  "sourceTypeCamera": "Camera",
+  "sourceTypeCameraDesc": "Capture camera video",
+  "sourceTypeScreen": "Screen",
+  "sourceTypeScreenDesc": "Screen / window capture",
+  "sourceTypeImage": "Image",
+  "sourceTypeImageDesc": "Static image",
+  "sourceTypeOnlineVideo": "Online Video",
+  "sourceTypeOnlineVideoDesc": "Network video stream URL",
+  "sourceTypeVideoFile": "Video File",
+  "sourceTypeVideoFileDesc": "Local video file",
+  "sourceNameCamera": "Camera Feed",
+  "sourceNameScreen": "Screen Share",
+  "errorStartMixing": "Failed to start mixing",
+  "errorSourceNotFound": "Source not found",
+  "errorSourceDuplicated": "The same content has already been added to this scene",
+  "liveShareCopied": "Live room ID copied",
+  "liveShareTooltip": "Share live room (copy room ID)",
+  "errorAddSource": "Failed to add source (error code {code})",
+  "@errorAddSource": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "cameraEditTitle": "Edit Camera",
+  "cameraAddTitle": "Add Camera",
+  "cameraDeviceLabel": "Select an available camera",
+  "cameraDeviceHint": "Select camera",
+  "cameraNotFound": "No camera device detected",
+  "cameraResolutionLabel": "Capture Resolution",
+  "cameraMirrorLabel": "Mirror",
+  "imageEditTitle": "Edit Image",
+  "imageAddTitle": "Add Image",
+  "imageFileLabel": "Image File",
+  "imagePickPlaceholder": "Choose a local image",
+  "imagePickButton": "Choose Image",
+  "imageFormatsHint": "Supports BMP / JPG / PNG / GIF",
+  "imageFormatsHintNoGif": "Supports BMP / JPG / PNG",
+  "imageSizeTooLarge": "Image size cannot exceed 8192×8192",
+  "videoFileEditTitle": "Edit Video File",
+  "videoFileAddTitle": "Add Video File",
+  "videoFileLabel": "Video File",
+  "videoPickPlaceholder": "Choose a local video",
+  "videoPickButton": "Choose Video",
+  "videoFileFormatsHint": "Supports MOV / MP4 / MKV",
+  "onlineVideoEditTitle": "Edit Online Video",
+  "onlineVideoAddTitle": "Add Online Video",
+  "onlineVideoUrlLabel": "Video URL",
+  "onlineVideoUrlHint": "RTMP live stream URL, or an HTTP(S) media URL in .m3u8 / .flv / .mov / .mp4 / .mkv format",
+  "onlineVideoUrlInvalid": "Please enter a valid RTMP live stream URL or an HTTP(S) media URL\nSupported HTTP(S) media formats: .m3u8 / .flv / .mov / .mp4 / .mkv",
+  "onlineVideoCacheLabel": "Network Cache",
+  "screenEditTitle": "Edit Screen Share",
+  "screenAddTitle": "Add Screen Share",
+  "screenTabWindow": "Window",
+  "screenEmpty": "No shareable {kind} found\nCheck \"System Settings → Privacy & Security → Screen Recording\" permission",
+  "@screenEmpty": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "screenEnumFailed": "Failed to enumerate share sources",
+  "filePickRequired": "Please select a {label} file",
+  "@filePickRequired": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fileFormatUnsupported": "Unsupported {label} format: .{ext}",
+  "@fileFormatUnsupported": {
+    "placeholders": {
+      "label": {},
+      "ext": {}
+    }
+  },
+  "fileNotReadable": "File does not exist or is unreadable",
+  "playbackVolume": "Playback Volume",
+  "tabSources": "Sources",
+  "tabBeauty": "Beauty",
+  "tabMore": "More",
+  "featureComingSoon": "Coming soon",
+  "beautyNoCamera": "No camera added in this scene",
+  "beautyAllCamerasHidden": "All cameras are hidden. Unhide a camera to adjust beauty effects",
+  "beautyFilterTitle": "Beauty Filter",
+  "beautySkinSmooth": "Smooth",
+  "beautyWhiteness": "Whiteness",
+  "beautyRuddy": "Ruddy",
+  "runtimeSourceError": "Source \"{sourceName}\": {reason}",
+  "@runtimeSourceError": {
+    "placeholders": {
+      "sourceName": {},
+      "reason": {}
+    }
+  },
+  "errorImageLoadFailed": "Image failed to load",
+  "errorCameraNotAuthorized": "Camera not authorized",
+  "errorCameraIsOccupied": "Camera is occupied",
+  "errorCameraDisconnected": "Camera disconnected",
+  "errorVideoFileNotExist": "Video file does not exist",
+  "errorOnlineVideoProtocol": "Unsupported online video protocol",
+  "errorLocalVideoFormat": "Unsupported local video format",
+  "errorHevcDecoder": "No available decoder",
+  "errorInvalidParams": "Invalid parameters",
+  "errorUnknown": "Unknown error",
+  "errorOperationFailed": "Operation failed, please try again",
+  "errorOnlineVideoConnectFailed": "Online video connection failed",
+  "errorOnlineVideoConnectionLost": "Online video connection lost",
+  "errorScreenSourceClosed": "Shared window or screen was closed",
+  "errorScreenDisplayChanged": "Display disconnected or changed",
+  "errorCameraRunFailed": "Camera source failed",
+  "errorScreenRunFailed": "Screen capture failed",
+  "errorImageRunFailed": "Image display failed",
+  "errorVideoFilePlayFailed": "Video file playback failed",
+  "errorOnlineVideoPlayFailed": "Online video playback failed",
+  "mixingStoppedSourceLost": "Source lost, mixing stopped",
+  "orientationLandscape": "Landscape",
+  "orientationPortrait": "Portrait",
+  "liveStart": "Start Live",
+  "liveStarting": "Starting…",
+  "liveStartFailed": "Failed to start live, error code: {code}; error: {message}",
+  "@liveStartFailed": {
+    "placeholders": {
+      "code": {},
+      "message": {}
+    }
+  },
+  "liveStartFailedSensitiveInfo": "Failed to start live: the live info contains sensitive content, please edit and retry",
+  "liveEnd": "End Live",
+  "liveInfoEditTitle": "Edit Live Info",
+  "liveInfoNameLabel": "Live Name",
+  "liveInfoVisibilityLabel": "Visibility",
+  "liveInfoVisibilityPublic": "Public",
+  "liveInfoVisibilityPrivate": "Private",
+  "liveInfoSave": "Save Settings",
+  "liveDefaultName": "{name}'s Room",
+  "@liveDefaultName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "liveStatsGiftSenders": "{count} sent gifts",
+  "@liveStatsGiftSenders": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "liveSummaryTitle": "Live stream ended",
+  "liveSummaryDuration": "Live duration",
+  "liveSummaryGiftsSent": "Gifts received",
+  "liveSummaryViewers": "Viewers",
+  "liveSummaryMessages": "Comments",
+  "liveSummaryLikes": "Likes",
+  "liveSummaryGiftSenders": "Gift senders",
+  "liveSummaryGiftIncome": "Gift value",
+  "liveSummaryUnitPiece": "items",
+  "liveSummaryUnitCoin": "coins",
+  "liveSummaryUnitPerson": "people",
+  "liveSummaryUnitMessage": "msgs",
+  "liveSummaryUnitTime": "times",
+  "liveSummaryDone": "Done"
+}

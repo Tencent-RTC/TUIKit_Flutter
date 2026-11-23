@@ -6,9 +6,13 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 
+/// 仅用于本地联调的测试 UserSig 生成器。
+///
+/// 正式环境请改为由业务服务端签发 UserSig，避免将密钥放在客户端。
 class GenerateTestUserSig {
   GenerateTestUserSig._();
 
+  /// 可通过 `--dart-define=LIVEKIT_SDKAPPID=xxx` 覆盖。
   static const int sdkAppId = int.fromEnvironment(
     'LIVEKIT_SDKAPPID',
     defaultValue: 0,
@@ -16,11 +20,13 @@ class GenerateTestUserSig {
 
   static const int _expireTime = 604800;
 
+  /// 可通过 `--dart-define=LIVEKIT_SECRETKEY=xxx` 覆盖。
   static const String _secretKey = String.fromEnvironment(
     'LIVEKIT_SECRETKEY',
     defaultValue: '',
   );
 
+  /// 服务端若已下发 UserSig，可通过 `--dart-define=LIVEKIT_USERSIG=xxx` 覆盖。
   static const String _presetUserSig = String.fromEnvironment('LIVEKIT_USERSIG');
 
   static String genTestUserSig(String userId) {
