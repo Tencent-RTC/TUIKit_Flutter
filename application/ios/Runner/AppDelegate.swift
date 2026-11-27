@@ -1,17 +1,19 @@
 import Flutter
 import UIKit
-// import tencent_effect_flutter
-// import tencent_rtc_sdk
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-//     let instance = XmagicProcesserFactory()
-//     TencentRTCCloud.setBeautyProcesserFactory(factory: instance)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "LogShareBridge") {
+      LogShareBridge.register(with: registrar)
+    }
   }
 }

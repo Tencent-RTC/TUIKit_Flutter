@@ -1,96 +1,105 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:atomic_x_core/atomicxcore.dart';
+import 'common/platform/effect_license.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:tencent_calls_uikit/tencent_calls_uikit.dart';
-import 'package:tencent_live_uikit/tencent_live_uikit.dart';
-import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
-import 'package:tencent_chat_uikit/tencent_chat_uikit.dart';
-// import 'package:te_beauty_kit/te_beauty_kit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:tencent_chat_uikit/tencent_chat_uikit.dart' as chat;
+import 'login/login_store.dart';
+import 'login/login_view.dart';
+import 'register/register_view.dart';
+import 'home/home_view.dart';
 
-import 'src/login/index.dart';
-import 'src/utils/index.dart';
-
-void main() {
-  runApp(const MyApp());
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  final preferences = await SharedPreferences.getInstance();
+  Map<String, dynamic> savedTheme = {};
+  try {
+    final decoded = jsonDecode(preferences.getString('BaseComponentThemeKey') ?? '{}');
+    if (decoded is Map<String, dynamic>) savedTheme = decoded;
+  } on FormatException {
+    savedTheme = {};
+  }
+  savedTheme['mode'] = 1;
+  await preferences.setString('BaseComponentThemeKey', jsonEncode(savedTheme));
+  unawaited(AppEffectLicense.initialize());
+  runApp(const AppUIKit());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
+class AppUIKit extends StatefulWidget {
+  const AppUIKit({super.key});
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AppUIKit> createState() => _AppUIKitState();
 }
 
-class _MyAppState extends State<MyApp> {
-  late final ThemeState _themeState;
-
+class _AppUIKitState extends State<AppUIKit> {
+  final auth = AppLoginStore();
+  final theme = chat.ThemeState();
+  final locale = chat.LocaleProvider();
+  final navigator = GlobalKey<NavigatorState>();
+  bool _lastReady = false;
   @override
   void initState() {
     super.initState();
-    _themeState = ThemeState();
-    _initializeApp();
+    auth.addListener(_authChanged);
   }
 
-  Future<void> _initializeApp() async {
-    await AppBuilder.init(path: 'assets/appConfig.json');
+  void _authChanged() {
+    if (auth.sessionReady && !_lastReady) unawaited(AppEffectLicense.initialize());
+    _lastReady = auth.sessionReady;
+    if (!auth.sessionReady && !auth.pusherVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !auth.sessionReady && !auth.pusherVisible) {
+          navigator.currentState?.popUntil((route) => route.isFirst);
+        }
+      });
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: LocaleProvider()),
-      ],
-      child: Builder(builder: (context) {
-        return ComponentTheme(
-          themeState: _themeState,
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            navigatorObservers: [
-              AppNavigatorObserver.instance,
-              TUILiveKitNavigatorObserver.instance,
-              RoomNavigatorObserver.instance,
-              TUICallKit.navigatorObserver
-            ],
-            localizationsDelegates: const [
-              ...AppLocalizations.localizationsDelegates,
-              ...LiveKitLocalizations.localizationsDelegates,
-              ...BarrageLocalizations.localizationsDelegates,
-              ...GiftLocalizations.localizationsDelegates,
-              ...RoomLocalizations.localizationsDelegates,
-              // ...TEBeautyKitLocalizations.localizationsDelegates,
-              AtomicLocalizations.delegate,
-              ChatLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
-              Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-              Locale('zh'),
-            ],
-            locale: Provider.of<LocaleProvider>(context).locale,
-            builder: (context, child) => Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: GestureDetector(
-                onTap: () {
-                  hideKeyboard(context);
-                },
-                child: child,
-              ),
-            ),
-            home: const LoginWidget(),
-          ),
-        );
-      }),
-    );
+  void dispose() {
+    auth.removeListener(_authChanged);
+    auth.dispose();
+    theme.dispose();
+    locale.dispose();
+    super.dispose();
   }
 
-  void hideKeyboard(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-  }
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: locale,
+    builder: (context, child) => chat.BaseThemeProvider(
+      themeState: theme,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigator,
+        locale: locale.locale,
+        theme: ThemeData(colorSchemeSeed: const Color(0xff006EFF), brightness: Brightness.light, useMaterial3: true),
+        localizationsDelegates: const [
+          chat.ChatLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: chat.ChatLocalizations.supportedLocales,
+        home: AnimatedBuilder(
+          animation: auth,
+          builder: (context, _) {
+            final state = LoginStore.shared.loginState;
+            if (auth.pusherVisible) {
+              return HomeView(key: ValueKey(locale.locale?.languageCode), auth: auth, locale: locale);
+            }
+            if (!auth.sessionReady || state.loginStatus != LoginStatus.logined || state.loginUserInfo == null) {
+              return LoginView(store: auth);
+            }
+            if (state.loginUserInfo!.nickname?.isNotEmpty != true) return const RegisterView();
+            return HomeView(key: ValueKey(locale.locale?.languageCode), auth: auth, locale: locale);
+          },
+        ),
+      ),
+    ),
+  );
 }

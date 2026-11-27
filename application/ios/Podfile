@@ -1,73 +1,39 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '14.0'
-
-# TRTC 主库版本，统一在此维护，升级 SDK 只改这一处。
-# 这个版本号与tencent_rtc_sdk中的ios的依赖版本一致，否则会出现版本不兼容的问题。
-# 主库与 ReplayKitExt 必须同版本，否则 iOS 屏幕共享不可用。
-TXLITEAVSDK_VERSION = '13.5.21355'
-
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+platform :ios, '15.0'
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
-
-project 'Runner', {
-  'Debug' => :debug,
-  'Profile' => :release,
-  'Release' => :release,
-}
-
+project 'Runner', {'Debug' => :debug, 'Profile' => :release, 'Release' => :release}
 def flutter_root
-  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-  unless File.exist?(generated_xcode_build_settings_path)
-    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  config = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  File.foreach(config) do |line|
+    match = line.match(/FLUTTER_ROOT\=(.*)/)
+    return match[1].strip if match
   end
-
-  File.foreach(generated_xcode_build_settings_path) do |line|
-    matches = line.match(/FLUTTER_ROOT\=(.*)/)
-    return matches[1].strip if matches
-  end
-  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+  raise 'Run flutter pub get first'
 end
-
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
-
 flutter_ios_podfile_setup
-
-pre_install do |installer|
-  # workaround for https://github.com/CocoaPods/CocoaPods/issues/3289
-  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
-end
-
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-
-  pod 'TCMediaX', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.248/TCMediaX.podspec'
-  pod 'TCEffectPlayer', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.248/TCEffectPlayer.podspec'
-  pod 'YTCommonXMagic', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/YTCommonXMagic_1.3.1/YTCommonXMagic.podspec'
-
-  pod 'TXLiteAVSDK_Professional', TXLITEAVSDK_VERSION
-
+  # CI-only: explicitly bind the Flutter plugin to the downloaded AtomicXCore binary.
+  if ENV['ATOMICXCORE_LOCAL_POD_PATH']
+    pod 'AtomicXCore', :path => ENV.fetch('ATOMICXCORE_LOCAL_POD_PATH')
+  end
+  pod 'TEBeautyKit/S1-07', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/TEBeautyKit/4.2.0.21/TEBeautyKit.podspec'
+  pod 'TencentEffect_S1-07', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/TencentEffect/iOS/podspec/4.3.0.25/TencentEffect_S1-07.podspec'
+  pod 'TCMediaX', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCMediaX.podspec'
+  pod 'TCEffectPlayer', :podspec => 'https://mediacloud-76607.gzc.vod.tencent-cloud.com/MediaX/iOS/podspec/release/3.3/3.3.256/TCEffectPlayer.podspec'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
   end
-
-  target 'TUIKitReplay' do
-    inherit! :search_paths
-    pod 'TXLiteAVSDK_Professional/ReplayKitExt', TXLITEAVSDK_VERSION
-  end
-
 end
-
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-      target.build_configurations.each do |config|
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
-        '$(inherited)',
-        'PERMISSION_MICROPHONE=1',
-        'PERMISSION_CAMERA=1',
-        ]
-      end
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0' if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] += ['PERMISSION_CAMERA=1', 'PERMISSION_MICROPHONE=1', 'PERMISSION_PHOTOS=1']
+    end
   end
 end

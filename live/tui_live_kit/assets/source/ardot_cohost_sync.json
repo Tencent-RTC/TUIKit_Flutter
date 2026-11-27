@@ -1,0 +1,167 @@
+[
+  {
+    "name": "livekit_cohost_invitation_badge",
+    "node_id": "5074:2593",
+    "variants": [
+      {
+        "scale": 1,
+        "path": "livekit_cohost_invitation_badge.png",
+        "pixels": [
+          52,
+          57
+        ],
+        "sha256": "5d6fe47b544837b3fdfe874913f1c23c2c5ac29e31ada12a49711ebb886c41df"
+      },
+      {
+        "scale": 2,
+        "path": "2.0x/livekit_cohost_invitation_badge.png",
+        "pixels": [
+          104,
+          114
+        ],
+        "sha256": "61be3864c2d7328f13c750ece6e1d4e0c51f3341ae2ffe9df0ef4cf52205f4dc"
+      },
+      {
+        "scale": 3,
+        "path": "3.0x/livekit_cohost_invitation_badge.png",
+        "pixels": [
+          156,
+          171
+        ],
+        "sha256": "90ef71e92f5c2f7eef70dccdd7aa9af3dbecfba6a4a160f21e0e2fa340cf1714"
+      }
+    ]
+  },
+  {
+    "name": "livekit_cohost_radar_sweep",
+    "node_id": "5074:337",
+    "variants": [
+      {
+        "scale": 1,
+        "path": "livekit_cohost_radar_sweep.png",
+        "pixels": [
+          136,
+          142
+        ],
+        "sha256": "2668e881f91c1ab1c6e0c30673591a75be64c320fef1e79a258445ee645fe91d"
+      },
+      {
+        "scale": 2,
+        "path": "2.0x/livekit_cohost_radar_sweep.png",
+        "pixels": [
+          272,
+          284
+        ],
+        "sha256": "0ef17a4d40a7a4263a052fdbcfd0e4e0b99624b9e27c5d13c925621ae3289d22"
+      },
+      {
+        "scale": 3,
+        "path": "3.0x/livekit_cohost_radar_sweep.png",
+        "pixels": [
+          408,
+          426
+        ],
+        "sha256": "2413135349c36ab800578bf1d98632e14641480a749f18f02003199d5d88a5f8"
+      }
+    ]
+  },
+  {
+    "name": "livekit_living_cohost",
+    "node_id": "5074:209",
+    "variants": [
+      {
+        "scale": 1,
+        "path": "livekit_living_cohost.png",
+        "pixels": [
+          46,
+          38
+        ],
+        "sha256": "ed1ce6bc18ebf398e90acd4402801edec2dfa678c894a5c7b812f8125e48223f"
+      },
+      {
+        "scale": 2,
+        "path": "2.0x/livekit_living_cohost.png",
+        "pixels": [
+          92,
+          76
+        ],
+        "sha256": "258404870dc897942d901b5bbbd0380e2a912316a08fbe0028b8827ac772938f"
+      },
+      {
+        "scale": 3,
+        "path": "3.0x/livekit_living_cohost.png",
+        "pixels": [
+          138,
+          114
+        ],
+        "sha256": "539a56f8f47202cc7e5392519ce4086d138e1ab08c84ba26f413b9702945dd8c"
+      }
+    ]
+  },
+  {
+    "name": "livekit_cohost_add",
+    "node_id": "5074:1468",
+    "variants": [
+      {
+        "scale": 1,
+        "path": "livekit_cohost_add.png",
+        "pixels": [
+          14,
+          17
+        ],
+        "sha256": "c72100f3cec95dd544187909228a61ac73607fc8ad177c17afe1f58b81ea5fcf"
+      },
+      {
+        "scale": 3,
+        "path": "3.0x/livekit_cohost_add.png",
+        "pixels": [
+          42,
+          51
+        ],
+        "sha256": "4d507c9c4a39e729e873d0245278509db0f2a30f7d417f0cf9443bd1fb8304ad"
+      },
+      {
+        "scale": 2,
+        "path": "2.0x/livekit_cohost_add.png",
+        "pixels": [
+          28,
+          34
+        ],
+        "sha256": "aef18bc4a81679ff84f110f07049eb0b307bf6afe4ee81c6e471b0689be1aadd"
+      }
+    ]
+  },
+  {
+    "name": "livekit_cohost_back",
+    "node_id": "5074:1642",
+    "variants": [
+      {
+        "scale": 1,
+        "path": "livekit_cohost_back.png",
+        "pixels": [
+          22,
+          22
+        ],
+        "sha256": "e4913eb152f804aed5e29e56fe6ddce2afca7bae8ca37c249c508679e6f8e8da"
+      },
+      {
+        "scale": 3,
+        "path": "3.0x/livekit_cohost_back.png",
+        "pixels": [
+          66,
+          66
+        ],
+        "sha256": "9853eeadd9178bf029ab282e85eaf4589a0150b7bce16edf1daa56425d3404ea"
+      },
+      {
+        "scale": 2,
+        "path": "2.0x/livekit_cohost_back.png",
+        "pixels": [
+          44,
+          44
+        ],
+        "sha256": "713e37d2274f59cb0bee476e4d418f675f826e50adcb0d97d9d7c6b0c5a9771a"
+      }
+    ]
+  }
+]
