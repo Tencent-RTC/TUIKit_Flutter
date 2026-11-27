@@ -1,107 +1,63 @@
-/// Module:   GenerateTestUserSig
-///
-/// Description: generates UserSig for testing. UserSig is a security signature designed by Tencent Cloud for its cloud services.
-///           It is calculated based on `SDKAppID`, `UserID`, and `EXPIRETIME` using the HMAC-SHA256 encryption algorithm.
-///
-/// Attention: do not use the code below in your commercial app. This is because:
-///
-///            The code may be able to calculate UserSig correctly, but it is only for quick testing of the SDK’s basic features, not for commercial apps.
-///            `SECRETKEY` in client code can be easily decompiled and reversed, especially on web.
-///             Once your key is disclosed, attackers will be able to steal your Tencent Cloud traffic.
-///
-///            The correct method is to deploy the `UserSig` calculation code and encryption key on your project server so that your app can request from your server a `UserSig` that is calculated whenever one is needed.
-///           Given that it is more difficult to hack a server than a client app, server-end calculation can better protect your key.
-///
-/// Reference: https://cloud.tencent.com/document/product/647/17275#Server
-library;
-
-// ignore_for_file: slash_for_doc_comments
-
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:crypto/crypto.dart';
 
-const tencentEffectLicenseURL = "";
-const tencentEffectLicenseKey = "";
+/// Android、iOS 共用的 SDK 配置；默认值用于当前接入工程的开发调试。
+/// 登录参数覆盖优先级：APP_* → LIVEKIT_* → 此文件默认值。
+abstract final class GenerateTestUserSig {
+  /// 腾讯云应用 ID。
+  static const int sdkAppId = int.fromEnvironment(
+    'APP_SDKAPPID',
+    defaultValue: int.fromEnvironment('LIVEKIT_SDKAPPID', defaultValue: 1400704311),
+  );
 
-class GenerateTestUserSig {
-  /**
-   * Tencent Cloud `SDKAppID`. Set it to the `SDKAppID` of your account.
-   *
-   * You can view your `SDKAppID` after creating an application in the [TRTC console](https://console.cloud.tencent.com/trtc).
-   * `SDKAppID` uniquely identifies a Tencent Cloud account.
-   */
-  static int sdkAppId = 0;
+  /// 测试 UserSig 签名密钥；显式传空可关闭客户端签名。
+  static const String secretKey = String.fromEnvironment(
+    'APP_SECRETKEY',
+    defaultValue: String.fromEnvironment(
+      'LIVEKIT_SECRETKEY',
+      defaultValue: 'f466445b65ad86a830221a3cbb26ff8a402cda22a1c362d10866bd27e95b4422',
+    ),
+  );
 
-  /**
-   * Signature validity period, which should not be set too short
-   * <p>
-   * Unit: second
-   * Default value: 604800 (7 days)
-   */
-  static int expireTime = 604800;
+  /// 服务端签发的 UserSig，非空时优先使用。
+  static const String userSig = String.fromEnvironment(
+    'APP_USERSIG',
+    defaultValue: String.fromEnvironment('LIVEKIT_USERSIG'),
+  );
 
-  /**
-   * Follow the steps below to obtain the key required for UserSig calculation.
-   *
-   * Step 1. Log in to the [TRTC console](https://console.cloud.tencent.com/trtc), and create an application if you don’t have one.
-   * Step 2. Find your application, click “Application Info”, and click the “Quick Start” tab.
-   * Step 3. Copy and paste the key to the code, as shown below.
-   *
-   * Note: this method is for testing only. Before commercial launch, please migrate the UserSig calculation code and key to your backend server to prevent key disclosure and traffic stealing.
-   * Reference: https://cloud.tencent.com/document/product/647/17275#Server
-   */
-  static String secretKey =
-      '';
+  /// 测试 UserSig 有效期，单位为秒。
+  static const int userSigExpireSeconds = 604800;
 
-  static genTestSig(String userId) {
-    int currTime = _getCurrentTime();
-    String sig = '';
-    Map<String, dynamic> sigDoc = <String, dynamic>{};
-    sigDoc.addAll({
-      "TLS.ver": "2.0",
-      "TLS.identifier": userId,
-      "TLS.sdkappid": sdkAppId,
-      "TLS.expire": expireTime,
-      "TLS.time": currTime,
+  /// 高级美颜与 MP4 特效授权；显式传空可关闭授权提交。
+  static const String effectLicenseUrl = String.fromEnvironment(
+    'APP_EFFECT_LICENSE_URL',
+    defaultValue: 'https://license.vod2.myqcloud.com/license/v2/1252463788_1/v_cube.license',
+  );
+  static const String effectLicenseKey = String.fromEnvironment(
+    'APP_EFFECT_LICENSE_KEY',
+    defaultValue: 'f5109b0ec0ba0027f809cb947d204c65',
+  );
+
+  static String genTestUserSig({required String identifier}) {
+    final user = identifier;
+    const appId = sdkAppId;
+    const supplied = userSig;
+    if (supplied.isNotEmpty) return supplied;
+    const key = secretKey;
+    if (key.isEmpty) return '';
+    final time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    const expire = userSigExpireSeconds;
+    final data = 'TLS.identifier:$user\nTLS.sdkappid:$appId\nTLS.time:$time\nTLS.expire:$expire\n';
+    final sig = base64Encode(Hmac(sha256, utf8.encode(key)).convert(utf8.encode(data)).bytes);
+    final json = jsonEncode({
+      'TLS.ver': '2.0',
+      'TLS.identifier': user,
+      'TLS.sdkappid': appId,
+      'TLS.expire': expire,
+      'TLS.time': time,
+      'TLS.sig': sig,
     });
-
-    sig = _hmacsha256(
-      identifier: userId,
-      currTime: currTime,
-      expire: expireTime,
-    );
-    sigDoc['TLS.sig'] = sig;
-    String jsonStr = json.encode(sigDoc);
-    List<int> compress = zlib.encode(utf8.encode(jsonStr));
-    return _escape(content: base64.encode(compress));
-  }
-
-  static int _getCurrentTime() {
-    return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
-  }
-
-  static String _hmacsha256({
-    required String identifier,
-    required int currTime,
-    required int expire,
-  }) {
-    int sdkappid = sdkAppId;
-    String contentToBeSigned =
-        "TLS.identifier:$identifier\nTLS.sdkappid:$sdkappid\nTLS.time:$currTime\nTLS.expire:$expire\n";
-    Hmac hmacSha256 = Hmac(sha256, utf8.encode(secretKey));
-    Digest hmacSha256Digest =
-        hmacSha256.convert(utf8.encode(contentToBeSigned));
-    return base64.encode(hmacSha256Digest.bytes);
-  }
-
-  static String _escape({
-    required String content,
-  }) {
-    return content
-        .replaceAll('+', '*')
-        .replaceAll('/', '-')
-        .replaceAll('=', '_');
+    return base64Encode(zlib.encode(utf8.encode(json))).replaceAll('+', '*').replaceAll('/', '-').replaceAll('=', '_');
   }
 }

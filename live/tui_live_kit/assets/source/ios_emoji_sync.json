@@ -1,0 +1,1432 @@
+{
+  "source_commit": "28fb7340",
+  "source_policy": "62 emoji PNGs reuse the user-authorized iOS assets from 2026-11-18; four Ardot control icons are recorded in ardot_pusher_ui_sync.json.",
+  "entries": [
+    {
+      "name": "live_barrage_emoji_0",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_0.imageset/live_barrage_emoji_0@2x.png",
+          "asset": "live_barrage_emoji_0.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "4f79df91c2354dcebf372f91381ceb513a247831a6fb592026db013f0d64ca0a"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_0.imageset/live_barrage_emoji_0@2x.png",
+          "asset": "2.0x/live_barrage_emoji_0.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "4f79df91c2354dcebf372f91381ceb513a247831a6fb592026db013f0d64ca0a"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_1",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_1.imageset/live_barrage_emoji_1@2x.png",
+          "asset": "live_barrage_emoji_1.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "8a4797b8f97bfda42fdee5077f2f509bba231099d2d71245fff2a1ce0cefc932"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_1.imageset/live_barrage_emoji_1@2x.png",
+          "asset": "2.0x/live_barrage_emoji_1.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "8a4797b8f97bfda42fdee5077f2f509bba231099d2d71245fff2a1ce0cefc932"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_2",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_2.imageset/live_barrage_emoji_2@2x.png",
+          "asset": "live_barrage_emoji_2.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "344f0958ab3d22101a0a73a10a6e6880717eebe5d4324137807d0e5e10b21066"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_2.imageset/live_barrage_emoji_2@2x.png",
+          "asset": "2.0x/live_barrage_emoji_2.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "344f0958ab3d22101a0a73a10a6e6880717eebe5d4324137807d0e5e10b21066"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_3",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_3.imageset/live_barrage_emoji_3@2x.png",
+          "asset": "live_barrage_emoji_3.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "bfec46dc6db00002fbfb966100b6816426c52b7a8c5c6c3ab491ac097ee42439"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_3.imageset/live_barrage_emoji_3@2x.png",
+          "asset": "2.0x/live_barrage_emoji_3.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "bfec46dc6db00002fbfb966100b6816426c52b7a8c5c6c3ab491ac097ee42439"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_4",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_4.imageset/live_barrage_emoji_4@2x.png",
+          "asset": "live_barrage_emoji_4.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7f7fa4ce13d4926a95f8bff6572f47b08f6c149b29c46de9754f6436abbf260a"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_4.imageset/live_barrage_emoji_4@2x.png",
+          "asset": "2.0x/live_barrage_emoji_4.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7f7fa4ce13d4926a95f8bff6572f47b08f6c149b29c46de9754f6436abbf260a"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_5",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_5.imageset/live_barrage_emoji_5@2x.png",
+          "asset": "live_barrage_emoji_5.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "37dfc8eff201c0745cced32ed4ea6c2952ed563a6bc0e1cbc2e217cfe29a97fc"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_5.imageset/live_barrage_emoji_5@2x.png",
+          "asset": "2.0x/live_barrage_emoji_5.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "37dfc8eff201c0745cced32ed4ea6c2952ed563a6bc0e1cbc2e217cfe29a97fc"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_6",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_6.imageset/live_barrage_emoji_6@2x.png",
+          "asset": "live_barrage_emoji_6.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "dc9e4b3ea73b524ad74ee67963c131621a53ee28a60f58e3fa1ea748ca5ad59a"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_6.imageset/live_barrage_emoji_6@2x.png",
+          "asset": "2.0x/live_barrage_emoji_6.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "dc9e4b3ea73b524ad74ee67963c131621a53ee28a60f58e3fa1ea748ca5ad59a"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_7",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_7.imageset/live_barrage_emoji_7@2x.png",
+          "asset": "live_barrage_emoji_7.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "352800f06689023329d4f458f0b3ca1990cec208f3eccbc5feabe2b4256efcd9"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_7.imageset/live_barrage_emoji_7@2x.png",
+          "asset": "2.0x/live_barrage_emoji_7.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "352800f06689023329d4f458f0b3ca1990cec208f3eccbc5feabe2b4256efcd9"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_8",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_8.imageset/live_barrage_emoji_8@2x.png",
+          "asset": "live_barrage_emoji_8.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "4c65b99cb453397a93fb9ed9f0d8cc7da23f885e2755450ae2b99226302bc549"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_8.imageset/live_barrage_emoji_8@2x.png",
+          "asset": "2.0x/live_barrage_emoji_8.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "4c65b99cb453397a93fb9ed9f0d8cc7da23f885e2755450ae2b99226302bc549"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_9",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_9.imageset/live_barrage_emoji_9@2x.png",
+          "asset": "live_barrage_emoji_9.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "a96f27dc516eaf8bfff5ce76c24832e467d59ef9d42fe52756d761e705f5148a"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_9.imageset/live_barrage_emoji_9@2x.png",
+          "asset": "2.0x/live_barrage_emoji_9.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "a96f27dc516eaf8bfff5ce76c24832e467d59ef9d42fe52756d761e705f5148a"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_10",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_10.imageset/live_barrage_emoji_10@2x.png",
+          "asset": "live_barrage_emoji_10.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "0b867f64d457032a957f04d571e85743b936c253b7a3c6cc6e9901b129f1cfb5"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_10.imageset/live_barrage_emoji_10@2x.png",
+          "asset": "2.0x/live_barrage_emoji_10.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "0b867f64d457032a957f04d571e85743b936c253b7a3c6cc6e9901b129f1cfb5"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_11",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_11.imageset/live_barrage_emoji_11@2x.png",
+          "asset": "live_barrage_emoji_11.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "b2068c9a8272de1ff08bd05c05ee506b8b050ff1bb50730071c452a351826a70"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_11.imageset/live_barrage_emoji_11@2x.png",
+          "asset": "2.0x/live_barrage_emoji_11.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "b2068c9a8272de1ff08bd05c05ee506b8b050ff1bb50730071c452a351826a70"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_12",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_12.imageset/live_barrage_emoji_12@2x.png",
+          "asset": "live_barrage_emoji_12.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "0b4624163e7134aa8e6d6feac0125c747534fcdbc3c0b6145ddcb71ad2841e3b"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_12.imageset/live_barrage_emoji_12@2x.png",
+          "asset": "2.0x/live_barrage_emoji_12.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "0b4624163e7134aa8e6d6feac0125c747534fcdbc3c0b6145ddcb71ad2841e3b"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_13",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_13.imageset/live_barrage_emoji_13@2x.png",
+          "asset": "live_barrage_emoji_13.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "e35e97a61d6be59b312cdc1de4ee24a43a6a331a32120e6960aae89948ed3257"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_13.imageset/live_barrage_emoji_13@2x.png",
+          "asset": "2.0x/live_barrage_emoji_13.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "e35e97a61d6be59b312cdc1de4ee24a43a6a331a32120e6960aae89948ed3257"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_14",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_14.imageset/live_barrage_emoji_14@2x.png",
+          "asset": "live_barrage_emoji_14.png",
+          "pixels": [
+            172,
+            160
+          ],
+          "sha256": "738b4cbc1a49eecd0fe60758914eafcd0d6c1d76a67ce74e1ed0c876b769796c"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_14.imageset/live_barrage_emoji_14@2x.png",
+          "asset": "2.0x/live_barrage_emoji_14.png",
+          "pixels": [
+            172,
+            160
+          ],
+          "sha256": "738b4cbc1a49eecd0fe60758914eafcd0d6c1d76a67ce74e1ed0c876b769796c"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_15",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_15.imageset/live_barrage_emoji_15@2x.png",
+          "asset": "live_barrage_emoji_15.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "63f87ce270bb5f51e18aa7e652005b0075214305a27f6330deb3580b46e923e4"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_15.imageset/live_barrage_emoji_15@2x.png",
+          "asset": "2.0x/live_barrage_emoji_15.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "63f87ce270bb5f51e18aa7e652005b0075214305a27f6330deb3580b46e923e4"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_16",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_16.imageset/live_barrage_emoji_16@2x.png",
+          "asset": "live_barrage_emoji_16.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "2d16e940405e7ec874998a0b6c3bbfe0e2a07c1ee64843d1d59e27f5868de248"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_16.imageset/live_barrage_emoji_16@2x.png",
+          "asset": "2.0x/live_barrage_emoji_16.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "2d16e940405e7ec874998a0b6c3bbfe0e2a07c1ee64843d1d59e27f5868de248"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_17",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_17.imageset/live_barrage_emoji_17@2x.png",
+          "asset": "live_barrage_emoji_17.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "e6f7a57cdbbb09eb90243e212da344dbb32730c3c0b247d484d9427ade4e65b7"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_17.imageset/live_barrage_emoji_17@2x.png",
+          "asset": "2.0x/live_barrage_emoji_17.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "e6f7a57cdbbb09eb90243e212da344dbb32730c3c0b247d484d9427ade4e65b7"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_18",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_18.imageset/live_barrage_emoji_18@2x.png",
+          "asset": "live_barrage_emoji_18.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "88e0f3c3b5e65163f46cdc37d9bc404d49b820bd7f96dda54281e02488330701"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_18.imageset/live_barrage_emoji_18@2x.png",
+          "asset": "2.0x/live_barrage_emoji_18.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "88e0f3c3b5e65163f46cdc37d9bc404d49b820bd7f96dda54281e02488330701"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_19",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_19.imageset/live_barrage_emoji_19@2x.png",
+          "asset": "live_barrage_emoji_19.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "077fa3ccfe1c1e59fbaf133eab59da426ebf6cca84f6c617fdfe2bd22ceb5f09"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_19.imageset/live_barrage_emoji_19@2x.png",
+          "asset": "2.0x/live_barrage_emoji_19.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "077fa3ccfe1c1e59fbaf133eab59da426ebf6cca84f6c617fdfe2bd22ceb5f09"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_20",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_20.imageset/live_barrage_emoji_20@2x.png",
+          "asset": "live_barrage_emoji_20.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "34427beec3d79070ff184e33bcf6e32bd4a924ba8948867185711baf7cde0bee"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_20.imageset/live_barrage_emoji_20@2x.png",
+          "asset": "2.0x/live_barrage_emoji_20.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "34427beec3d79070ff184e33bcf6e32bd4a924ba8948867185711baf7cde0bee"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_21",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_21.imageset/live_barrage_emoji_21@2x.png",
+          "asset": "live_barrage_emoji_21.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "186a430ccf58450da98a584f61095d5710babea1850172394dfd2085af3947b6"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_21.imageset/live_barrage_emoji_21@2x.png",
+          "asset": "2.0x/live_barrage_emoji_21.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "186a430ccf58450da98a584f61095d5710babea1850172394dfd2085af3947b6"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_22",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_22.imageset/live_barrage_emoji_22@2x.png",
+          "asset": "live_barrage_emoji_22.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "066c3e93967c4681c43c6ce852775d23a14a3a1a33ee3c31fce589d97b2bfc2f"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_22.imageset/live_barrage_emoji_22@2x.png",
+          "asset": "2.0x/live_barrage_emoji_22.png",
+          "pixels": [
+            160,
+            161
+          ],
+          "sha256": "066c3e93967c4681c43c6ce852775d23a14a3a1a33ee3c31fce589d97b2bfc2f"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_23",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_23.imageset/live_barrage_emoji_23@2x.png",
+          "asset": "live_barrage_emoji_23.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "261d044adfc650637afd85105fe1c12f490768a2ea3bfa765c59d5987fbbe572"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_23.imageset/live_barrage_emoji_23@2x.png",
+          "asset": "2.0x/live_barrage_emoji_23.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "261d044adfc650637afd85105fe1c12f490768a2ea3bfa765c59d5987fbbe572"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_24",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_24.imageset/live_barrage_emoji_24@2x.png",
+          "asset": "live_barrage_emoji_24.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "76870033aa2f3d21cc82654dcc87ed4fd1a63d6e9a26de3cb00713e8120a0ebc"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_24.imageset/live_barrage_emoji_24@2x.png",
+          "asset": "2.0x/live_barrage_emoji_24.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "76870033aa2f3d21cc82654dcc87ed4fd1a63d6e9a26de3cb00713e8120a0ebc"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_25",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_25.imageset/live_barrage_emoji_25@2x.png",
+          "asset": "live_barrage_emoji_25.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "43c30945f3e3cc66d30d37ccac722eb8de1287a03f46b121825b20b08bbd1fdb"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_25.imageset/live_barrage_emoji_25@2x.png",
+          "asset": "2.0x/live_barrage_emoji_25.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "43c30945f3e3cc66d30d37ccac722eb8de1287a03f46b121825b20b08bbd1fdb"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_26",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_26.imageset/live_barrage_emoji_26@2x.png",
+          "asset": "live_barrage_emoji_26.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "3be0f730a2ac04d33bea105ed12367e18219d6b9ce937e7dfe2261b6e896addb"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_26.imageset/live_barrage_emoji_26@2x.png",
+          "asset": "2.0x/live_barrage_emoji_26.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "3be0f730a2ac04d33bea105ed12367e18219d6b9ce937e7dfe2261b6e896addb"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_27",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_27.imageset/live_barrage_emoji_27@2x.png",
+          "asset": "live_barrage_emoji_27.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "e837ae40b608a5541b7ff6cb979ed52a5904fe4bb331745369528c82145ce95f"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_27.imageset/live_barrage_emoji_27@2x.png",
+          "asset": "2.0x/live_barrage_emoji_27.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "e837ae40b608a5541b7ff6cb979ed52a5904fe4bb331745369528c82145ce95f"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_28",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_28.imageset/live_barrage_emoji_28@2x.png",
+          "asset": "live_barrage_emoji_28.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7a53ca7c28186c04f2594a0c26de8a55e123148f709c1b2b8f78230f569a051e"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_28.imageset/live_barrage_emoji_28@2x.png",
+          "asset": "2.0x/live_barrage_emoji_28.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7a53ca7c28186c04f2594a0c26de8a55e123148f709c1b2b8f78230f569a051e"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_29",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_29.imageset/live_barrage_emoji_29@2x.png",
+          "asset": "live_barrage_emoji_29.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "b5391aae69624c8b7fbc855e5adbbdc984ab78b1f9ba269d891c52c68c6f9757"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_29.imageset/live_barrage_emoji_29@2x.png",
+          "asset": "2.0x/live_barrage_emoji_29.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "b5391aae69624c8b7fbc855e5adbbdc984ab78b1f9ba269d891c52c68c6f9757"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_30",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_30.imageset/live_barrage_emoji_30@2x.png",
+          "asset": "live_barrage_emoji_30.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "d4950c0cf629810d1963339aa4bfbe91f34d3339915dd7a4121005fae4cc73f5"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_30.imageset/live_barrage_emoji_30@2x.png",
+          "asset": "2.0x/live_barrage_emoji_30.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "d4950c0cf629810d1963339aa4bfbe91f34d3339915dd7a4121005fae4cc73f5"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_31",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_31.imageset/live_barrage_emoji_31@2x.png",
+          "asset": "live_barrage_emoji_31.png",
+          "pixels": [
+            164,
+            164
+          ],
+          "sha256": "c559e0fb58188fd94d22b10fd64c35cf97ea654efebe4fe77604a3f8ebd5b6d6"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_31.imageset/live_barrage_emoji_31@2x.png",
+          "asset": "2.0x/live_barrage_emoji_31.png",
+          "pixels": [
+            164,
+            164
+          ],
+          "sha256": "c559e0fb58188fd94d22b10fd64c35cf97ea654efebe4fe77604a3f8ebd5b6d6"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_32",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_32.imageset/live_barrage_emoji_32@2x.png",
+          "asset": "live_barrage_emoji_32.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "83f8b99d985235ee4c70d446dabf9453e087a140f75752734f407f008225ea77"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_32.imageset/live_barrage_emoji_32@2x.png",
+          "asset": "2.0x/live_barrage_emoji_32.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "83f8b99d985235ee4c70d446dabf9453e087a140f75752734f407f008225ea77"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_33",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_33.imageset/live_barrage_emoji_33@2x.png",
+          "asset": "live_barrage_emoji_33.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "2688e42aeee60e52eade167dec4a0d84e99ba5686eccd39a149b7706b879408d"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_33.imageset/live_barrage_emoji_33@2x.png",
+          "asset": "2.0x/live_barrage_emoji_33.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "2688e42aeee60e52eade167dec4a0d84e99ba5686eccd39a149b7706b879408d"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_34",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_34.imageset/live_barrage_emoji_34@2x.png",
+          "asset": "live_barrage_emoji_34.png",
+          "pixels": [
+            160,
+            163
+          ],
+          "sha256": "72879b522face037bed85cd6b3ebab07a94f724b63c4b1e452268da316e6b998"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_34.imageset/live_barrage_emoji_34@2x.png",
+          "asset": "2.0x/live_barrage_emoji_34.png",
+          "pixels": [
+            160,
+            163
+          ],
+          "sha256": "72879b522face037bed85cd6b3ebab07a94f724b63c4b1e452268da316e6b998"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_35",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_35.imageset/live_barrage_emoji_35@2x.png",
+          "asset": "live_barrage_emoji_35.png",
+          "pixels": [
+            160,
+            163
+          ],
+          "sha256": "f7991410710ba58f079501ae929154ae1c31676ab0f3ee3b0b8cfbbe3ac7d0a2"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_35.imageset/live_barrage_emoji_35@2x.png",
+          "asset": "2.0x/live_barrage_emoji_35.png",
+          "pixels": [
+            160,
+            163
+          ],
+          "sha256": "f7991410710ba58f079501ae929154ae1c31676ab0f3ee3b0b8cfbbe3ac7d0a2"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_36",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_36.imageset/live_barrage_emoji_36@2x.png",
+          "asset": "live_barrage_emoji_36.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "05afcd1bc4c90aa0fe6625cf1dcddc4e3a0a8e16d7d5f2d3d89e0bbb7b3fceff"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_36.imageset/live_barrage_emoji_36@2x.png",
+          "asset": "2.0x/live_barrage_emoji_36.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "05afcd1bc4c90aa0fe6625cf1dcddc4e3a0a8e16d7d5f2d3d89e0bbb7b3fceff"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_37",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_37.imageset/live_barrage_emoji_37@2x.png",
+          "asset": "live_barrage_emoji_37.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "aebcc7c80c1b44ef39b71fa1a194ecaf6f02c5f1d89c9d3edc61e72dc0fb85e5"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_37.imageset/live_barrage_emoji_37@2x.png",
+          "asset": "2.0x/live_barrage_emoji_37.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "aebcc7c80c1b44ef39b71fa1a194ecaf6f02c5f1d89c9d3edc61e72dc0fb85e5"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_38",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_38.imageset/live_barrage_emoji_38@2x.png",
+          "asset": "live_barrage_emoji_38.png",
+          "pixels": [
+            154,
+            162
+          ],
+          "sha256": "ea0dbb9da957a7c03b665c974811b9919c3e00e5f4e09bea5251062e4653f924"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_38.imageset/live_barrage_emoji_38@2x.png",
+          "asset": "2.0x/live_barrage_emoji_38.png",
+          "pixels": [
+            154,
+            162
+          ],
+          "sha256": "ea0dbb9da957a7c03b665c974811b9919c3e00e5f4e09bea5251062e4653f924"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_39",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_39.imageset/live_barrage_emoji_39@2x.png",
+          "asset": "live_barrage_emoji_39.png",
+          "pixels": [
+            144,
+            152
+          ],
+          "sha256": "36f8c0786b8d69adc9e37ecbdd073968fe725efe50993cbaa84f5d3cd7cfc175"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_39.imageset/live_barrage_emoji_39@2x.png",
+          "asset": "2.0x/live_barrage_emoji_39.png",
+          "pixels": [
+            144,
+            152
+          ],
+          "sha256": "36f8c0786b8d69adc9e37ecbdd073968fe725efe50993cbaa84f5d3cd7cfc175"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_40",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_40.imageset/live_barrage_emoji_40@2x.png",
+          "asset": "live_barrage_emoji_40.png",
+          "pixels": [
+            160,
+            166
+          ],
+          "sha256": "9efaae781933b1890ee10182e6c7eec20581ae4fc557c8ad14ba62dad3b5bb94"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_40.imageset/live_barrage_emoji_40@2x.png",
+          "asset": "2.0x/live_barrage_emoji_40.png",
+          "pixels": [
+            160,
+            166
+          ],
+          "sha256": "9efaae781933b1890ee10182e6c7eec20581ae4fc557c8ad14ba62dad3b5bb94"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_41",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_41.imageset/live_barrage_emoji_41@2x.png",
+          "asset": "live_barrage_emoji_41.png",
+          "pixels": [
+            152,
+            154
+          ],
+          "sha256": "babc68da6efb71f76165a96f7e54c6dbaccd09ce94a7385179d738eda6175e36"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_41.imageset/live_barrage_emoji_41@2x.png",
+          "asset": "2.0x/live_barrage_emoji_41.png",
+          "pixels": [
+            152,
+            154
+          ],
+          "sha256": "babc68da6efb71f76165a96f7e54c6dbaccd09ce94a7385179d738eda6175e36"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_42",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_42.imageset/live_barrage_emoji_42@2x.png",
+          "asset": "live_barrage_emoji_42.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "6044a9457a5dde7d6d990409ec14061e22159e4da4c2095e39851b761619e752"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_42.imageset/live_barrage_emoji_42@2x.png",
+          "asset": "2.0x/live_barrage_emoji_42.png",
+          "pixels": [
+            144,
+            144
+          ],
+          "sha256": "6044a9457a5dde7d6d990409ec14061e22159e4da4c2095e39851b761619e752"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_43",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_43.imageset/live_barrage_emoji_43@2x.png",
+          "asset": "live_barrage_emoji_43.png",
+          "pixels": [
+            150,
+            160
+          ],
+          "sha256": "e147d8e334aa3094adcd400e1c2bd53f0c3db0552da2bbb578278935a6ed71d2"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_43.imageset/live_barrage_emoji_43@2x.png",
+          "asset": "2.0x/live_barrage_emoji_43.png",
+          "pixels": [
+            150,
+            160
+          ],
+          "sha256": "e147d8e334aa3094adcd400e1c2bd53f0c3db0552da2bbb578278935a6ed71d2"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_44",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_44.imageset/live_barrage_emoji_44@2x.png",
+          "asset": "live_barrage_emoji_44.png",
+          "pixels": [
+            144,
+            152
+          ],
+          "sha256": "e5f9956cbd22731ea5f427c5c33c35794aeac2fb0273d1aa04d19c4db6deaa24"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_44.imageset/live_barrage_emoji_44@2x.png",
+          "asset": "2.0x/live_barrage_emoji_44.png",
+          "pixels": [
+            144,
+            152
+          ],
+          "sha256": "e5f9956cbd22731ea5f427c5c33c35794aeac2fb0273d1aa04d19c4db6deaa24"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_45",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_45.imageset/live_barrage_emoji_45@2x.png",
+          "asset": "live_barrage_emoji_45.png",
+          "pixels": [
+            158,
+            156
+          ],
+          "sha256": "c70d6024b7900d9d47d442daba541f9616b7c5d06d5efb446dc41078e1e96c11"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_45.imageset/live_barrage_emoji_45@2x.png",
+          "asset": "2.0x/live_barrage_emoji_45.png",
+          "pixels": [
+            158,
+            156
+          ],
+          "sha256": "c70d6024b7900d9d47d442daba541f9616b7c5d06d5efb446dc41078e1e96c11"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_46",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_46.imageset/live_barrage_emoji_46@2x.png",
+          "asset": "live_barrage_emoji_46.png",
+          "pixels": [
+            162,
+            151
+          ],
+          "sha256": "c53b805922a466579c130e80c14f53badcec5e48fac27c71c639ca8aa0ce0a70"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_46.imageset/live_barrage_emoji_46@2x.png",
+          "asset": "2.0x/live_barrage_emoji_46.png",
+          "pixels": [
+            162,
+            151
+          ],
+          "sha256": "c53b805922a466579c130e80c14f53badcec5e48fac27c71c639ca8aa0ce0a70"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_47",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_47.imageset/live_barrage_emoji_47@2x.png",
+          "asset": "live_barrage_emoji_47.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7519c8995a3fa637515d1ae8700eb008d401ffeb75029600a32c4c6d21859a66"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_47.imageset/live_barrage_emoji_47@2x.png",
+          "asset": "2.0x/live_barrage_emoji_47.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "7519c8995a3fa637515d1ae8700eb008d401ffeb75029600a32c4c6d21859a66"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_48",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_48.imageset/live_barrage_emoji_48@2x.png",
+          "asset": "live_barrage_emoji_48.png",
+          "pixels": [
+            168,
+            157
+          ],
+          "sha256": "f779fa91f41cd2478250efe231c471b8159e25079bbf62c62beb1521824b3f76"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_48.imageset/live_barrage_emoji_48@2x.png",
+          "asset": "2.0x/live_barrage_emoji_48.png",
+          "pixels": [
+            168,
+            157
+          ],
+          "sha256": "f779fa91f41cd2478250efe231c471b8159e25079bbf62c62beb1521824b3f76"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_49",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_49.imageset/live_barrage_emoji_49@2x.png",
+          "asset": "live_barrage_emoji_49.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "1b48887dcde0162d5e314671fdc157155af02fe73b4c4942a3e02c1406cc3d3b"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_49.imageset/live_barrage_emoji_49@2x.png",
+          "asset": "2.0x/live_barrage_emoji_49.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "1b48887dcde0162d5e314671fdc157155af02fe73b4c4942a3e02c1406cc3d3b"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_50",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_50.imageset/live_barrage_emoji_50@2x.png",
+          "asset": "live_barrage_emoji_50.png",
+          "pixels": [
+            144,
+            148
+          ],
+          "sha256": "4b4dc088b5b05810847c180437021567705d943b2ac7db9447e666a42c38c032"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_50.imageset/live_barrage_emoji_50@2x.png",
+          "asset": "2.0x/live_barrage_emoji_50.png",
+          "pixels": [
+            144,
+            148
+          ],
+          "sha256": "4b4dc088b5b05810847c180437021567705d943b2ac7db9447e666a42c38c032"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_51",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_51.imageset/live_barrage_emoji_51@2x.png",
+          "asset": "live_barrage_emoji_51.png",
+          "pixels": [
+            163,
+            158
+          ],
+          "sha256": "aa99e70b11f33faf6f337d1f85be5b80d973b903a53b938719bab4d7cd62f13a"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_51.imageset/live_barrage_emoji_51@2x.png",
+          "asset": "2.0x/live_barrage_emoji_51.png",
+          "pixels": [
+            163,
+            158
+          ],
+          "sha256": "aa99e70b11f33faf6f337d1f85be5b80d973b903a53b938719bab4d7cd62f13a"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_52",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_52.imageset/live_barrage_emoji_52@2x.png",
+          "asset": "live_barrage_emoji_52.png",
+          "pixels": [
+            144,
+            156
+          ],
+          "sha256": "8710299814ae48a0a8bb42cd589b0acbf2cf92b71d9e17ef13bfe375d49c191f"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_52.imageset/live_barrage_emoji_52@2x.png",
+          "asset": "2.0x/live_barrage_emoji_52.png",
+          "pixels": [
+            144,
+            156
+          ],
+          "sha256": "8710299814ae48a0a8bb42cd589b0acbf2cf92b71d9e17ef13bfe375d49c191f"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_53",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_53.imageset/live_barrage_emoji_53@2x.png",
+          "asset": "live_barrage_emoji_53.png",
+          "pixels": [
+            152,
+            160
+          ],
+          "sha256": "bb75d5e2c0b5d967031a7436762d14d45ad789a4c2b13b9817c92292f9297a83"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_53.imageset/live_barrage_emoji_53@2x.png",
+          "asset": "2.0x/live_barrage_emoji_53.png",
+          "pixels": [
+            152,
+            160
+          ],
+          "sha256": "bb75d5e2c0b5d967031a7436762d14d45ad789a4c2b13b9817c92292f9297a83"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_54",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_54.imageset/live_barrage_emoji_54@2x.png",
+          "asset": "live_barrage_emoji_54.png",
+          "pixels": [
+            168,
+            168
+          ],
+          "sha256": "5d95743cfa9f9161cafe0e3c67c0f8660558975910e29cdd9b9e925d9ef05761"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_54.imageset/live_barrage_emoji_54@2x.png",
+          "asset": "2.0x/live_barrage_emoji_54.png",
+          "pixels": [
+            168,
+            168
+          ],
+          "sha256": "5d95743cfa9f9161cafe0e3c67c0f8660558975910e29cdd9b9e925d9ef05761"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_55",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_55.imageset/live_barrage_emoji_55@2x.png",
+          "asset": "live_barrage_emoji_55.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "77061ddfaf23b9631663e7d429068b6a25b127df0c3536d1d5291505c7c71990"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_55.imageset/live_barrage_emoji_55@2x.png",
+          "asset": "2.0x/live_barrage_emoji_55.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "77061ddfaf23b9631663e7d429068b6a25b127df0c3536d1d5291505c7c71990"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_56",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_56.imageset/live_barrage_emoji_56@2x.png",
+          "asset": "live_barrage_emoji_56.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "ad1de4b89f69b62e70c560ddcabe93de8a1f5834cf17daeccbf377ce90719951"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_56.imageset/live_barrage_emoji_56@2x.png",
+          "asset": "2.0x/live_barrage_emoji_56.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "ad1de4b89f69b62e70c560ddcabe93de8a1f5834cf17daeccbf377ce90719951"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_57",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_57.imageset/live_barrage_emoji_57@2x.png",
+          "asset": "live_barrage_emoji_57.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "6b660abec80b9e438f61f0e732c9cdad264d964039e2f4b8850d60caf4693088"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_57.imageset/live_barrage_emoji_57@2x.png",
+          "asset": "2.0x/live_barrage_emoji_57.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "6b660abec80b9e438f61f0e732c9cdad264d964039e2f4b8850d60caf4693088"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_58",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_58.imageset/live_barrage_emoji_58@2x.png",
+          "asset": "live_barrage_emoji_58.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "9037a4d042a55d642e89b317cc678c05cf66df2c50a2fb8cc0534ff21ffb96ad"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_58.imageset/live_barrage_emoji_58@2x.png",
+          "asset": "2.0x/live_barrage_emoji_58.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "9037a4d042a55d642e89b317cc678c05cf66df2c50a2fb8cc0534ff21ffb96ad"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_59",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_59.imageset/live_barrage_emoji_59@2x.png",
+          "asset": "live_barrage_emoji_59.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "a5bde56c92feac5442a0e48612b34a467f2c304547f274b33b6df1f2f73e1ff9"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_59.imageset/live_barrage_emoji_59@2x.png",
+          "asset": "2.0x/live_barrage_emoji_59.png",
+          "pixels": [
+            160,
+            160
+          ],
+          "sha256": "a5bde56c92feac5442a0e48612b34a467f2c304547f274b33b6df1f2f73e1ff9"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_60",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_60.imageset/live_barrage_emoji_60@2x.png",
+          "asset": "live_barrage_emoji_60.png",
+          "pixels": [
+            171,
+            158
+          ],
+          "sha256": "e18d18d7be0949ed79e2297512ef484dfdbd66d6ac7cea2f28e8d2044a2ab2c0"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_60.imageset/live_barrage_emoji_60@2x.png",
+          "asset": "2.0x/live_barrage_emoji_60.png",
+          "pixels": [
+            171,
+            158
+          ],
+          "sha256": "e18d18d7be0949ed79e2297512ef484dfdbd66d6ac7cea2f28e8d2044a2ab2c0"
+        }
+      }
+    },
+    {
+      "name": "live_barrage_emoji_61",
+      "scales": {
+        "1x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_61.imageset/live_barrage_emoji_61@2x.png",
+          "asset": "live_barrage_emoji_61.png",
+          "pixels": [
+            151,
+            152
+          ],
+          "sha256": "5cba289588e64bf3b06618772dbd08b78fc7cc3bb3c614b4576886e4446d60c9"
+        },
+        "2x": {
+          "source": "ios/live/TUILiveKit/Resources/Assets.xcassets/live_barrage_emoji_61.imageset/live_barrage_emoji_61@2x.png",
+          "asset": "2.0x/live_barrage_emoji_61.png",
+          "pixels": [
+            151,
+            152
+          ],
+          "sha256": "5cba289588e64bf3b06618772dbd08b78fc7cc3bb3c614b4576886e4446d60c9"
+        }
+      }
+    }
+  ]
+}
