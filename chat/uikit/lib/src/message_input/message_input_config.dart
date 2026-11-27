@@ -5,6 +5,7 @@ import 'message_input_more_action.dart';
 abstract class MessageInputConfigProtocol {
   bool get isShowAudioRecorder;
   bool get isShowMore;
+  bool get isShowEmoji;
   bool get enableReadReceipt;
   bool get enableMention;
   bool get enableVoiceToTextOnRecord;
@@ -61,6 +62,7 @@ abstract class MessageInputConfigProtocol {
 class ChatMessageInputConfig implements MessageInputConfigProtocol {
   final bool? _userIsShowAudioRecorder;
   final bool? _userIsShowMore;
+  final bool? _userIsShowEmoji;
   final bool? _userEnableReadReceipt;
   final bool? _userEnableMention;
   final bool? _userEnableVoiceToTextOnRecord;
@@ -84,6 +86,9 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
 
   @override
   bool get isShowMore => _userIsShowMore ?? true;
+
+  @override
+  bool get isShowEmoji => _userIsShowEmoji ?? true;
 
   @override
   bool get enableReadReceipt {
@@ -145,6 +150,7 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   const ChatMessageInputConfig({
     bool? isShowAudioRecorder,
     bool? isShowMore,
+    bool? isShowEmoji,
     bool? enableReadReceipt,
     bool? enableMention,
     bool? enableVoiceToTextOnRecord,
@@ -170,6 +176,7 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
         _onSendRedDotTap = onSendRedDotTap,
         _userIsShowAudioRecorder = isShowAudioRecorder,
         _userIsShowMore = isShowMore,
+        _userIsShowEmoji = isShowEmoji,
         _userEnableReadReceipt = enableReadReceipt,
         _userEnableMention = enableMention,
         _userEnableVoiceToTextOnRecord = enableVoiceToTextOnRecord,
@@ -188,6 +195,7 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
   ChatMessageInputConfig copyWith({
     bool? isShowAudioRecorder,
     bool? isShowMore,
+    bool? isShowEmoji,
     bool? enableReadReceipt,
     bool? enableMention,
     bool? enableVoiceToTextOnRecord,
@@ -209,6 +217,7 @@ class ChatMessageInputConfig implements MessageInputConfigProtocol {
     return ChatMessageInputConfig(
       isShowAudioRecorder: isShowAudioRecorder ?? _userIsShowAudioRecorder,
       isShowMore: isShowMore ?? _userIsShowMore,
+      isShowEmoji: isShowEmoji ?? _userIsShowEmoji,
       enableReadReceipt: enableReadReceipt ?? _userEnableReadReceipt,
       enableMention: enableMention ?? _userEnableMention,
       enableVoiceToTextOnRecord: enableVoiceToTextOnRecord ?? _userEnableVoiceToTextOnRecord,

@@ -44,6 +44,26 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            // 显式开启混淆（Flutter Gradle 插件 release 默认也会开启，构建时传 --no-shrink 除外）
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // release 只打 arm64-v8a（同时过滤插件 AAR 中的 LiteAV / IMSDK / AtomicEngine 等 so）
+            ndk {
+                abiFilters 'arm64-v8a'
+            }
+        }
+        debug {
+            // AtomicEngine 只提供 armeabi-v7a / arm64-v8a，无法提供 x86_64 模拟器 ABI
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+    }
+
+    // so 在 APK 内 deflate 压缩存储（extractNativeLibs=true），减小 APK 下载体积
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }

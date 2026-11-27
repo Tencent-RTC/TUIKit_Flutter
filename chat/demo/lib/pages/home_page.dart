@@ -1,7 +1,7 @@
 import 'package:tencent_chat_uikit/tencent_chat_uikit.dart' hide Badge;
 import 'package:flutter/material.dart';
 import 'package:uikit_next/ai/ai_stay_reporter.dart';
-import 'package:uikit_next/ai/ai_voice_home.dart';
+import 'package:uikit_next/ai/ai_chat_home.dart';
 import 'package:uikit_next/common/customer_seat_conversations.dart';
 import 'package:uikit_next/common/language/gen/demo_localizations.dart';
 import 'package:uikit_next/common/message_input_call_red_dot_store.dart';
@@ -18,13 +18,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  static const int _aiTabIndex = 0;
+  static const bool _showAITab = false;
+  static const int _aiTabIndex = _showAITab ? 0 : -1;
 
   final AIStayReporter _aiStayReporter = AIStayReporter();
   late ConversationListStore conversationListStore;
   late ChatLocalizations chatLocale;
-  int _currentIndex = _aiTabIndex;
-  final ValueNotifier<bool> _aiTabVisible = ValueNotifier<bool>(true);
+  int _currentIndex = 0;
+  final ValueNotifier<bool> _aiTabVisible = ValueNotifier<bool>(_showAITab);
   late List<_NavItem> _navItems;
   int totalUnreadCount = 0;
 
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _aiStayReporter.onEnter();
+    if (_currentIndex == _aiTabIndex) _aiStayReporter.onEnter();
     conversationListStore = ConversationListStore.create();
     conversationListStore.state.totalUnreadCount
         .addListener(_onConversationListChanged);
@@ -94,9 +95,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       },
     );
     _pages = [
-      _KeepAlivePage(
-        child: AIVoiceHome(visible: _aiTabVisible),
-      ),
+      if (_showAITab)
+        _KeepAlivePage(
+          child: AIChatHome(visible: _aiTabVisible),
+        ),
       _KeepAlivePage(
         child: ConversationsPage(
           messageListConfig: messageListConfig,
@@ -113,10 +115,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       const _KeepAlivePage(child: SettingsPage()),
     ];
     _navItems = [
-      _NavItem(
-        iconType: TabIconType.ai,
-        label: DemoLocalizations.of(context).aiTab,
-      ),
+      if (_showAITab)
+        _NavItem(
+          iconType: TabIconType.ai,
+          label: DemoLocalizations.of(context).aiTab,
+        ),
       _NavItem(
         iconType: TabIconType.chats,
         label: chatLocale.chat,

@@ -37,6 +37,8 @@ class AIAssistantTrialPrompt {
     this.headerBanner,
     this.callUiOptions,
     this.callUiOptionsForAgent,
+    this.showCallButton = true,
+    this.onTitleTap,
   });
 
   final String? initialInputText;
@@ -66,6 +68,8 @@ class AIAssistantTrialPrompt {
   /// falls back to [callUiOptions].
   final AICallUiOptions? Function(AIAssistantAgent agent)?
       callUiOptionsForAgent;
+  final bool showCallButton;
+  final void Function(Rect anchor)? onTitleTap;
 }
 
 /// Lets a host drive the page, e.g. start a call from its own landing view.
@@ -419,6 +423,18 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
     );
   }
 
+  void _onTitleTap() {
+    final onTitleTap = widget.trialPrompt?.onTitleTap;
+    if (onTitleTap == null) {
+      _showAgentPicker();
+      return;
+    }
+    final box =
+        _titleAnchorKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+    onTitleTap(box.localToGlobal(Offset.zero) & box.size);
+  }
+
   Future<void> _showAgentPicker() async {
     final agents = _agents;
     if (agents.length <= 1) return;
@@ -457,8 +473,11 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
 
   Widget _buildHeader(SemanticColorScheme colors, ChatLocalizations locale) {
     final agent = _selectedAgent;
-    final canSwitch = agent != null && _agents.length > 1;
-    final showCall = agent != null && _isVoiceCallSupported;
+    final canSwitch = widget.trialPrompt?.onTitleTap != null ||
+        (agent != null && _agents.length > 1);
+    final showCall = agent != null &&
+        _isVoiceCallSupported &&
+        (widget.trialPrompt?.showCallButton ?? true);
     return Container(
       color: colors.bgColorOperate,
       child: SafeArea(
@@ -479,7 +498,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                       child: GestureDetector(
                         key: _titleAnchorKey,
                         behavior: HitTestBehavior.opaque,
-                        onTap: canSwitch ? _showAgentPicker : null,
+                        onTap: canSwitch ? _onTitleTap : null,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -698,6 +717,7 @@ class _AIAssistantPageState extends State<AIAssistantPage> {
                     isShowAudioCall: false,
                     isShowVideoCall: false,
                     isShowMore: false,
+                    isShowEmoji: false,
                     enableSendRecordedVoice: false,
                     initialInputText: widget.trialPrompt?.initialInputText,
                     shouldShowSendRedDot:

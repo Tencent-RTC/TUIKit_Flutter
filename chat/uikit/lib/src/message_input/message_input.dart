@@ -1744,42 +1744,45 @@ class MessageInputState extends State<MessageInput> with TickerProviderStateMixi
                             ),
                 ),
 
-                // Gap: 10pt between input field and emoji icon
-                const SizedBox(width: 10),
+                if (widget.config.isShowEmoji) ...[
+                  // Gap: 10pt between input field and emoji icon
+                  const SizedBox(width: 10),
 
-                // Right: Emoji button (28×28pt icon)
-                SizedBox(
-                  height: 34,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: _toggleEmojiPanel,
-                      child: _showEmojiPanel
-                          ? SvgPicture.asset(
-                              'chat_assets/icon/keyboard.svg',
-                              package: 'tencent_chat_uikit',
-                              colorFilter: ColorFilter.mode(
-                                colorsTheme.textColorSecondary,
-                                BlendMode.srcIn,
+                  // Right: Emoji button (28×28pt icon)
+                  SizedBox(
+                    height: 34,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: _toggleEmojiPanel,
+                        child: _showEmojiPanel
+                            ? SvgPicture.asset(
+                                'chat_assets/icon/keyboard.svg',
+                                package: 'tencent_chat_uikit',
+                                colorFilter: ColorFilter.mode(
+                                  colorsTheme.textColorSecondary,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 28,
+                                height: 28,
+                              )
+                            : SvgPicture.asset(
+                                'chat_assets/icon/emoji.svg',
+                                package: 'tencent_chat_uikit',
+                                colorFilter: ColorFilter.mode(
+                                  colorsTheme.textColorSecondary,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 26,
+                                height: 26,
                               ),
-                              width: 28,
-                              height: 28,
-                            )
-                          : SvgPicture.asset(
-                              'chat_assets/icon/emoji.svg',
-                              package: 'tencent_chat_uikit',
-                              colorFilter: ColorFilter.mode(
-                                colorsTheme.textColorSecondary,
-                                BlendMode.srcIn,
-                              ),
-                              width: 26,
-                              height: 26,
-                            ),
+                      ),
                     ),
                   ),
-                ),
 
-                // Gap: 10pt between emoji and more/send
-                const SizedBox(width: 10),
+                  // Gap: 10pt between emoji and more/send
+                  const SizedBox(width: 10),
+                ] else
+                  const SizedBox(width: 10),
 
                 // Right: More button or Send button (28×28pt icon)
                 SizedBox(
